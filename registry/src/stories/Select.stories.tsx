@@ -21,7 +21,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: (args) => (
     <Select {...args}>
-      <SelectTrigger className="w-48">
+      <SelectTrigger className="w-48" aria-label="Periodo">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
@@ -37,3 +37,6 @@ export const Default: Story = {
     </Select>
   ),
 }
+
+/** Open, for the visual tests and to see the overlay. */
+export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }
