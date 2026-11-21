@@ -1,0 +1,8 @@
+.git
+**/node_modules
+**/dist
+registry/storybook-static
+registry/public/r
+registry/test-results
+registry/playwright-report
+.atl

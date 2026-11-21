@@ -24,7 +24,7 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 | T6 | 1 Publish | S3 | inline | done | Fresh `shadcn init -t vite -b base` app: `GH_TOKEN=… npx shadcn add cristianruben-dev/auradata-design/auradata-theme …/login --overwrite` installed the theme, the login block, the AuraData button and logo, `card`/`field`/`input` from shadcn and 11 SVGs in `public/brand/continua`; `tsc -b` and `vite build` OK. `public/r` stays ignored |
 | T7 | 1 Publish | S2 | inline | done (install pending a token scope) | GitHub Packages as `@cristianruben-dev/auradata-tokens`, installed under the alias `@auradata/tokens`; Changesets v3 and `.github/workflows/release.yml`; `npm pack --dry-run` 25 files (dist + assets) |
 | T8 | 1 Publish | S2-S4 | inline | done | `.github/workflows/ci.yml`: build, stories, visual (in the Playwright image). First GitHub run green: build 55s, stories 59s, visual 4m36s (113 passed), run 44920523803 |
-| T9 | 1 Publish | S4 | inline | pending | Host Storybook privately (decide: Chromatic, Vercel with protection, or none) |
+| T9 | 1 Publish | S4 | inline | in progress | Coolify (user: "utiliza el mcp de coolify"), basic auth (user: "Usuario y contraseña (Recommended)"): `storybook.Dockerfile` (node build → nginx, robots Disallow) built and served locally, 200 on `/` and the logos |
 | T10 | 2 Tokens | S2 | inline | done | RED 4 tests → GREEN 10/10 vitest; `npm run build` and lint clean |
 | T11 | 2 Tokens | S2 | inline | done | `test/contrast.test.mjs`: RED 3 pairs → user chose fixes → GREEN 53/53 vitest; `npm run build` OK |
 | T12 | 2 Tokens | S2 | inline | done | RED 18 tests → GREEN 71/71 vitest; `npm run build` OK. The `ProductTag` component goes to T17 |
