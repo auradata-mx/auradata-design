@@ -54,3 +54,14 @@ export const NoResults: Story = {
     await waitFor(() => expect(screen.getByText('Sin resultados')).toBeVisible())
   },
 }
+
+/** Open while the results load: «Buscando…» with a spinner, announced as a status, instead of «Sin resultados». */
+export const Loading: Story = {
+  args: { defaultOpen: true, loading: true },
+  play: async () => {
+    const input = await screen.findByPlaceholderText('Busca informes, datasets o acciones…')
+    await userEvent.type(input, 'nómina')
+    await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Buscando…'))
+    await expect(screen.queryByText('Sin resultados')).toBeNull()
+  },
+}

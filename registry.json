@@ -388,7 +388,8 @@
       ],
       "registryDependencies": [
         "command",
-        "cristianruben-dev/auradata-design/button"
+        "cristianruben-dev/auradata-design/button",
+        "spinner"
       ],
       "files": [
         {

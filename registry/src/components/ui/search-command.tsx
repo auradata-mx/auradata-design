@@ -1,4 +1,4 @@
-// registry: auradata (a ⌘K / Ctrl+K search over reports, datasets and actions, in Spanish)
+// registry: auradata (a ⌘K / Ctrl+K search over reports, datasets and actions, in Spanish, with a loading row)
 import * as React from "react"
 import { useCommandState } from "cmdk"
 import { SearchIcon } from "lucide-react"
@@ -15,6 +15,7 @@ import {
   CommandList,
   CommandShortcut,
 } from "@/components/ui/command"
+import { Spinner } from "@/components/ui/spinner"
 
 type SearchCommandItem = {
   id: string
@@ -44,6 +45,10 @@ type SearchCommandProps = Omit<
   emptyText?: React.ReactNode
   /** The letter that opens the search with ⌘ (macOS) or Ctrl. Pass `null` for no shortcut. */
   hotkey?: string | null
+  /** The results are loading (a search on the server): «Buscando…» instead of «Sin resultados». */
+  loading?: boolean
+  /** What the loading row says. */
+  loadingText?: React.ReactNode
 }
 
 /** "⌘K" on Apple devices, "Ctrl K" elsewhere. */
@@ -76,6 +81,8 @@ function SearchCommand({
   placeholder = "Busca informes, datasets o acciones…",
   emptyText = "Sin resultados",
   hotkey = "k",
+  loading = false,
+  loadingText = "Buscando…",
   className,
   children = "Buscar…",
   ...props
@@ -132,7 +139,17 @@ function SearchCommand({
       >
         <Command>
           <CommandInput placeholder={placeholder} />
-          <CommandEmpty>{emptyText}</CommandEmpty>
+          {loading ? (
+            <div
+              role="status"
+              className="flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground"
+            >
+              <Spinner aria-hidden className="motion-reduce:animate-none" />
+              {loadingText}
+            </div>
+          ) : (
+            <CommandEmpty>{emptyText}</CommandEmpty>
+          )}
           <Results>
             {groups.map((group) => (
               // A border, not a CommandSeparator: a listbox may not hold role=separator (axe).
