@@ -169,6 +169,9 @@
         "class-variance-authority",
         "cn"
       ],
+      "registryDependencies": [
+        "spinner"
+      ],
       "files": [
         {
           "path": "registry/src/components/ui/button.tsx",

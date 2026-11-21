@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { RefreshCwIcon } from 'lucide-react'
 import { expect, userEvent, within } from 'storybook/test'
 
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -52,5 +53,29 @@ export const LinkFocus: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.tab()
     await expect(document.activeElement).toBe(within(canvasElement).getByRole('link', { name: 'Ver todos los informes' }))
+  },
+}
+
+/** While its action runs: the spinner sits before the label, the button is disabled and `aria-busy`, so it is not sent twice. */
+export const Loading: Story = {
+  args: { loading: true, children: 'Guardando…' },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'Guardando…' })
+    await expect(button).toBeDisabled()
+    await expect(button).toHaveAttribute('aria-busy', 'true')
+    await expect(button.querySelector('[data-slot=spinner]')).not.toBeNull()
+  },
+}
+
+/** An icon button while loading: the spinner takes the icon's place, the name stays. */
+export const LoadingIcon: Story = {
+  name: 'Loading icon',
+  args: { loading: true, size: 'icon', 'aria-label': 'Actualizar', children: <RefreshCwIcon aria-hidden /> },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'Actualizar' })
+    await expect(button).toBeDisabled()
+    await expect(button).toHaveAttribute('aria-busy', 'true')
+    await expect(button.querySelector('[data-slot=spinner]')).not.toBeNull()
+    await expect(button.querySelector('.lucide-refresh-cw')).toBeNull()
   },
 }
