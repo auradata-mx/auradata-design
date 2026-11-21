@@ -89,6 +89,17 @@ test('publishes the chat block with the KPI card and the chart palette', () => {
   expect(item('chat').dependencies).toContain('recharts')
 })
 
+test("builds the chat block on shadcn's chat primitives, installed bare from shadcn", () => {
+  expect(item('chat').registryDependencies).toEqual(
+    expect.arrayContaining(['message', 'bubble', 'message-scroller', 'code-block', 'trace']),
+  )
+  // Stock primitives: shadcn installs them (and @shadcn/react with the scroller); this registry does not.
+  const names = registry.items.map((entry) => entry.name)
+  for (const primitive of ['message', 'bubble', 'message-scroller', 'code-block', 'trace']) {
+    expect(names).not.toContain(primitive)
+  }
+})
+
 test('installs the stock spinner with the button, for its loading state', () => {
   expect(item('button').registryDependencies).toEqual(['spinner'])
   expect(registry.items.map((entry) => entry.name)).not.toContain('spinner')

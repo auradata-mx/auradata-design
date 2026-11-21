@@ -562,13 +562,18 @@
         "recharts"
       ],
       "registryDependencies": [
+        "bubble",
         "card",
         "chart",
+        "code-block",
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/chart-palette",
         "cristianruben-dev/auradata-design/kpi-card",
         "cristianruben-dev/auradata-design/logo",
-        "textarea"
+        "message",
+        "message-scroller",
+        "textarea",
+        "trace"
       ],
       "files": [
         {

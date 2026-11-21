@@ -225,6 +225,42 @@ export const ChatError: ChatStory = {
   },
 }
 
+const SQL = `SELECT region, SUM(total) AS ventas
+FROM pedidos_2026
+WHERE fecha >= DATE '2026-11-01'
+GROUP BY region
+ORDER BY ventas DESC;`
+
+/** An answer that shows the SQL it ran: hidden under «Ver consulta SQL» until asked for. */
+export const ChatWithSql: ChatStory = {
+  name: 'Chat with SQL',
+  render: (args) => <ChatFrame {...args} />,
+  args: {
+    messages: [
+      { id: '1', role: 'user', text: '¿Qué región vendió más en noviembre?' },
+      {
+        id: '2',
+        role: 'assistant',
+        text: 'El Centro, con $2.10 M; le siguen el Norte ($1.39 M) y el Sur ($0.88 M).',
+        sql: SQL,
+      },
+    ],
+    onSend: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // The scroller keeps the messages hidden until its first scroll: wait for them.
+    const toggle = await canvas.findByRole('button', { name: 'Ver consulta SQL' })
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(canvas.queryByText(/FROM pedidos_2026/)).toBeNull()
+    await userEvent.click(toggle)
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    await expect(await canvas.findByText(/FROM pedidos_2026/)).toBeVisible()
+    // Rest state for the screenshot: the query open, nothing focused.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
 type LoginStory = StoryObj<typeof Login>
 
 /** The server said no: a destructive alert above the form and both inputs marked invalid. */
