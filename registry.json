@@ -350,6 +350,21 @@
       ]
     },
     {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/switch.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "theme-toggle",
       "type": "registry:ui",
       "title": "Theme toggle",
@@ -455,10 +470,10 @@
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/page-header",
+        "cristianruben-dev/auradata-design/switch",
         "field",
         "input",
         "select",
-        "switch",
         "tabs"
       ],
       "files": [
