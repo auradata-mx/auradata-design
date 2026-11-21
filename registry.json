@@ -186,6 +186,29 @@
       ]
     },
     {
+      "name": "date-range-filter",
+      "type": "registry:ui",
+      "title": "Date range filter",
+      "dependencies": [
+        "cn",
+        "date-fns",
+        "lucide-react",
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "calendar",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/format",
+        "popover"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/date-range-filter.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "kpi-card",
       "type": "registry:ui",
       "title": "Kpi card",
