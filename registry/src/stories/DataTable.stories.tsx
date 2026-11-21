@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, waitFor, within } from 'storybook/test'
 
 import { Badge } from '@/components/ui/badge'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
@@ -68,3 +69,43 @@ export const Empty: Story = { args: { data: [], emptyMessage: 'Aún no hay infor
 
 /** The column menu open, for the visual tests and to see the overlay. */
 export const Open: Story = { args: { defaultColumnsOpen: true } }
+
+/**
+ * A narrow container: the table scrolls sideways inside its border, nothing spills out of the page, and a fade
+ * on the edge says there are more columns that way.
+ */
+export const Narrow: Story = {
+  render: (args) => (
+    <div className="max-w-[22rem]">
+      <DataTable {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const table = canvasElement.querySelector<HTMLElement>('[data-slot="data-table"]')!
+    const region = canvasElement.querySelector<HTMLElement>('[data-slot="data-table-region"]')!
+    const scroller = canvasElement.querySelector<HTMLElement>('[data-slot="table-container"]')!
+    await expect(table.scrollWidth).toBeLessThanOrEqual(table.clientWidth)
+    await expect(scroller.scrollWidth).toBeGreaterThan(scroller.clientWidth)
+    await waitFor(() => expect(region).toHaveAttribute('data-more', 'end'))
+    scroller.scrollLeft = scroller.scrollWidth
+    await waitFor(() => expect(region).toHaveAttribute('data-more', 'start'))
+    const last = within(scroller).getByRole('columnheader', { name: /Estado/ }).getBoundingClientRect()
+    await expect(last.right).toBeLessThanOrEqual(scroller.getBoundingClientRect().right + 1)
+    scroller.scrollLeft = 0
+    await waitFor(() => expect(region).toHaveAttribute('data-more', 'end'))
+  },
+}
+
+/** While the rows load: one skeleton row per row of the page, the table region `aria-busy`, the pager disabled. */
+export const Loading: Story = {
+  args: { data: [], loading: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const region = canvasElement.querySelector<HTMLElement>('[data-slot="data-table-region"]')!
+    await expect(region).toHaveAttribute('aria-busy', 'true')
+    await expect(region.querySelectorAll('tbody tr')).toHaveLength(10)
+    await expect(canvas.queryByText('Sin resultados')).toBeNull()
+    await expect(canvas.getByRole('button', { name: 'Anterior' })).toBeDisabled()
+    await expect(canvas.getByRole('button', { name: 'Siguiente' })).toBeDisabled()
+  },
+}

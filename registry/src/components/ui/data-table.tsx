@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state and a sideways scroll on narrow screens)
 import * as React from "react"
 import {
   columnFilteringFeature,
@@ -33,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
@@ -66,6 +67,38 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   pageSizeOptions?: number[]
   /** Open the column menu on mount, for its story and visual test. */
   defaultColumnsOpen?: boolean
+  /** The rows are loading: skeleton rows for a full page, the table region `aria-busy`, the pager disabled. */
+  loading?: boolean
+}
+
+type MoreColumns = "none" | "start" | "end" | "both"
+
+/**
+ * Which sides of a sideways-scrolling table hide columns, kept up to date on scroll and resize.
+ * The ref goes on an element that holds the table's own scroll container.
+ */
+function useMoreColumns() {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const [more, setMore] = React.useState<MoreColumns>("none")
+  React.useEffect(() => {
+    const scroller = ref.current?.querySelector<HTMLElement>("[data-slot=table-container]")
+    if (!scroller) return
+    const update = () => {
+      const start = scroller.scrollLeft > 1
+      const end = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 1
+      setMore(start && end ? "both" : start ? "start" : end ? "end" : "none")
+    }
+    update()
+    scroller.addEventListener("scroll", update, { passive: true })
+    const observer = new ResizeObserver(update)
+    observer.observe(scroller)
+    if (scroller.firstElementChild) observer.observe(scroller.firstElementChild)
+    return () => {
+      scroller.removeEventListener("scroll", update)
+      observer.disconnect()
+    }
+  }, [])
+  return [ref, more] as const
 }
 
 /** The name of a column in the column menu: its string header, else its id. */
@@ -85,6 +118,7 @@ function DataTable<TData extends RowData>({
   pageSize = 10,
   pageSizeOptions = [10, 20, 50],
   defaultColumnsOpen,
+  loading = false,
   className,
   ...props
 }: DataTableProps<TData>) {
@@ -93,6 +127,7 @@ function DataTable<TData extends RowData>({
   const [columnVisibility, setColumnVisibility] = React.useState<ColumnVisibilityState>({})
   const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize })
   const pageSizeLabel = React.useId()
+  const [regionRef, more] = useMoreColumns()
 
   const table = useTable({
     features: dataTableFeatures,
@@ -152,7 +187,28 @@ function DataTable<TData extends RowData>({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-lg border">
+      {/* On a narrow screen the table scrolls sideways inside its border; a fade marks the side with more columns. */}
+      <div
+        ref={regionRef}
+        data-slot="data-table-region"
+        data-more={more}
+        aria-busy={loading || undefined}
+        className="relative overflow-hidden rounded-lg border"
+      >
+        <div
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-linear-to-r from-background to-transparent transition-opacity",
+            more === "start" || more === "both" ? "opacity-100" : "opacity-0"
+          )}
+        />
+        <div
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-linear-to-l from-background to-transparent transition-opacity",
+            more === "end" || more === "both" ? "opacity-100" : "opacity-0"
+          )}
+        />
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -193,7 +249,17 @@ function DataTable<TData extends RowData>({
             ))}
           </TableHeader>
           <TableBody>
-            {rows.length ? (
+            {loading ? (
+              Array.from({ length: pagination.pageSize }, (_, index) => (
+                <TableRow key={index}>
+                  {table.getVisibleLeafColumns().map((column) => (
+                    <TableCell key={column.id}>
+                      <Skeleton aria-hidden className="h-5 w-full min-w-16" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : rows.length ? (
               rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
@@ -226,6 +292,7 @@ function DataTable<TData extends RowData>({
             items={pageSizeOptions.map((size) => ({ value: size, label: String(size) }))}
             value={pagination.pageSize}
             onValueChange={(size) => table.setPageSize(Number(size))}
+            disabled={loading}
           >
             <SelectTrigger size="sm" aria-labelledby={pageSizeLabel}>
               <SelectValue />
@@ -247,11 +314,11 @@ function DataTable<TData extends RowData>({
             variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+            disabled={loading || !table.getCanPreviousPage()}
           >
             Anterior
           </Button>
-          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={loading || !table.getCanNextPage()}>
             Siguiente
           </Button>
         </div>

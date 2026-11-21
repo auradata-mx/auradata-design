@@ -193,6 +193,7 @@
         "dropdown-menu",
         "input",
         "select",
+        "skeleton",
         "table"
       ],
       "files": [
