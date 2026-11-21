@@ -3,6 +3,7 @@ import { ChartColumnIcon, DatabaseIcon, LayoutDashboardIcon, UsersIcon } from 'l
 
 import { AppShell, type NavGroup } from '@/components/blocks/app-shell'
 import { Login } from '@/components/blocks/login'
+import { NotFound } from '@/components/blocks/not-found'
 import { Settings } from '@/components/blocks/settings'
 import { Button } from '@/components/ui/button'
 import { KpiCard } from '@/components/ui/kpi-card'
@@ -72,3 +73,5 @@ export const SettingsPage: Story = {
     </AppShell>
   ),
 }
+
+export const NotFoundPage: Story = { name: 'Not found', render: () => <NotFound /> }

@@ -209,6 +209,25 @@
       ]
     },
     {
+      "name": "error-state",
+      "type": "registry:ui",
+      "title": "Error state",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "empty"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/error-state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "kpi-card",
       "type": "registry:ui",
       "title": "Kpi card",
@@ -408,6 +427,22 @@
       "files": [
         {
           "path": "registry/src/components/blocks/login.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "not-found",
+      "type": "registry:block",
+      "title": "Not found",
+      "dependencies": [],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/logo"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/not-found.tsx",
           "type": "registry:block"
         }
       ]
