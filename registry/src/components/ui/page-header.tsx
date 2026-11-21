@@ -1,4 +1,4 @@
-// registry: auradata (the header of every AuraData page)
+// registry: auradata (the header of every AuraData page: long titles wrap, actions drop under them on a phone)
 import { cn } from "cn"
 
 type PageHeaderProps = Omit<React.ComponentProps<"header">, "title"> & {
@@ -13,15 +13,19 @@ function PageHeader({ title, description, actions, className, children, ...props
   return (
     <header
       data-slot="page-header"
-      className={cn("flex flex-wrap items-end justify-between gap-4 border-b border-border pb-4", className)}
+      className={cn(
+        "flex flex-col gap-4 border-b border-border pb-4 sm:flex-row sm:items-end sm:justify-between",
+        className
+      )}
       {...props}
     >
-      <div className="grid gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+      {/* The title takes the room left by the actions and wraps; a single long word breaks instead of overflowing. */}
+      <div className="grid min-w-0 flex-1 gap-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-balance wrap-break-word">{title}</h1>
         {description && <p className="text-sm text-muted-foreground">{description}</p>}
         {children}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </header>
   )
 }
