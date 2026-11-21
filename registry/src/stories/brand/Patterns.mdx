@@ -1,0 +1,108 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { Button } from '@/components/ui/button'
+import { DateRangeFilter, presetRange } from '@/components/ui/date-range-filter'
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { KpiCard } from '@/components/ui/kpi-card'
+import { PageHeader } from '@/components/ui/page-header'
+
+<Meta title="Brand/11 Patrones" />
+
+export const TODAY = new Date(2026, 10, 21)
+
+# Patrones: formularios e informes
+
+Dos piezas que se repiten en todos los productos. Ármalas siempre igual y con los mismos componentes.
+
+## Formularios
+
+<div className="sb-unstyled my-6 max-w-sm">
+  <form onSubmit={(event) => event.preventDefault()} noValidate>
+    <FieldGroup>
+      <Field>
+        <FieldLabel htmlFor="pattern-name">Nombre del informe</FieldLabel>
+        <Input id="pattern-name" defaultValue="Ventas 2026" />
+        <FieldDescription>Así lo verá tu equipo.</FieldDescription>
+      </Field>
+      <Field data-invalid>
+        <FieldLabel htmlFor="pattern-email">Correo para el resumen</FieldLabel>
+        <Input id="pattern-email" type="email" aria-invalid defaultValue="ana@" />
+        <FieldError>{'Escribe un correo completo, como ana@empresa.mx.'}</FieldError>
+      </Field>
+      <div className="flex gap-2">
+        <Button type="submit">Guardar cambios</Button>
+        <Button type="button" variant="outline">Cancelar</Button>
+      </div>
+    </FieldGroup>
+  </form>
+</div>
+
+| Parte | Regla |
+| --- | --- |
+| Estructura | `FieldGroup` con un `Field` por campo; `FieldSet` y `FieldLegend` para agrupar |
+| Etiqueta | Siempre visible, con `FieldLabel` y `htmlFor`. El placeholder es un ejemplo, nunca la etiqueta |
+| Ayuda | `FieldDescription` debajo, en una línea: para qué sirve el campo |
+| Error | `aria-invalid` en el control, `data-invalid` en el `Field` y `FieldError` con cómo corregirlo |
+| Botones | Al final, la acción principal primero, con verbo: «Guardar cambios», no «Aceptar» |
+
+### Cuándo validar
+
+| Momento | Qué validar |
+| --- | --- |
+| Al escribir | Nada. No marques un error mientras la persona aún escribe |
+| Al salir del campo | El formato: un correo, un número, una fecha |
+| Al enviar | Todo. Lleva el foco al primer campo con error |
+| Después del servidor | Lo que solo el servidor sabe («Ya existe un informe con ese nombre») en el campo; lo demás, en un `Alert` arriba del formulario |
+
+### Los mensajes de error
+
+Qué está mal y cómo arreglarlo, sin culpas (ver [Voz](?path=/docs/brand-05-voz--docs)).
+
+| Sí | No |
+| --- | --- |
+| {'Escribe un correo completo, como ana@empresa.mx.'} | Correo inválido |
+| El nombre ya existe. Prueba con otro. | ¡Error! Nombre duplicado |
+| Elige una fecha anterior al 21 nov 2026. | Fecha fuera de rango |
+
+### Al enviar
+
+El botón principal muestra un spinner y «Guardando…», queda deshabilitado con `aria-busy` y los campos siguen visibles. Al terminar, un toast confirma («Cambios guardados»); si falla, el error queda en el formulario, no en un toast que se va. Ver [Estados](?path=/docs/brand-09-estados-y-accesibilidad--docs).
+
+## Un informe de AuraData BI
+
+De arriba abajo, siempre en este orden:
+
+| Orden | Bloque | Componente | Qué lleva |
+| --- | --- | --- | --- |
+| 1 | Encabezado | `PageHeader` | El título y, a la derecha, el periodo y las acciones |
+| 2 | Filtros | `DateRangeFilter` | El periodo primero; luego los segmentos (región, producto) |
+| 3 | KPI | `KpiCard` | De 3 a 4, con su cambio contra el periodo anterior |
+| 4 | Gráficas | `Chart` | La tendencia primero, luego las comparaciones |
+| 5 | Detalle | `DataTable` | Búsqueda, orden y columnas |
+
+<div className="sb-unstyled my-6 grid gap-6 rounded-2xl border p-6">
+  <PageHeader
+    title="Ventas 2026"
+    description="Actualizado hace 5 minutos."
+    actions={
+      <>
+        <DateRangeFilter today={TODAY} defaultValue={presetRange('this-month', TODAY)} />
+        <Button>Compartir</Button>
+      </>
+    }
+  />
+  <div className="grid gap-4 lg:grid-cols-3">
+    <KpiCard label="Ventas del mes" value="$4.16 M" change={0.062} comparison="vs. octubre" />
+    <KpiCard label="Clientes activos" value="1,284" change={-0.021} comparison="vs. octubre" />
+    <KpiCard label="Costo de envío" value="$182,400" change={0.04} goodDirection="down" comparison="vs. octubre" />
+  </div>
+</div>
+
+| Regla | Por qué |
+| --- | --- |
+| Los filtros arriba de todo lo que filtran | Quien lee sabe de qué periodo son los números antes de verlos |
+| El periodo siempre visible | «1 nov 2026 – 21 nov 2026» en el botón, no solo «Este mes» al abrirlo |
+| Un KPI, una comparación | «vs. octubre» dice contra qué se mide el cambio |
+| Estados por bloque | Cada gráfica carga, falla o queda vacía sola: un `ErrorState` no tumba la página |
+
+Ve el shell completo en [Blocks / App / Shell](?path=/story/blocks-app--shell) y las piezas en [Layout y grilla](?path=/docs/brand-08-layout-y-grilla--docs).

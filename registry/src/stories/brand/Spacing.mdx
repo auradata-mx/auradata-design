@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { EaseCurves, RadiusScale, ShadowScale, SpaceScale } from './TokenSwatches'
+
+<Meta title="Brand/07 Espaciado, radios, sombras y movimiento" />
+
+# Aire, esquinas suaves y movimiento tranquilo
+
+Todo lo de esta página se lee de `@auradata/tokens`. Usa el token o su clase de Tailwind; nunca escribas un valor a mano.
+
+## Espaciado
+
+Una grilla de 4 px, los mismos pasos de Tailwind y de antd: `--aura-space-4` es `p-4`, `gap-4`, `m-4`.
+
+<SpaceScale />
+
+| Uso | Paso |
+| --- | --- |
+| Ícono y su texto, dentro de un control | `space-1` a `space-2` |
+| Campos de un formulario, tarjetas de una fila | `space-4` |
+| Bloques de una página y su margen (encabezado, KPI, gráficas) | `space-6` |
+| Secciones de una página de marketing | `space-16` arriba y abajo, `py-24` desde `md` |
+
+## Radios
+
+<RadiusScale />
+
+| Token | Dónde |
+| --- | --- |
+| `radius-md` | El `--radius` de shadcn. De él salen `rounded-lg` (botones, campos, menús) y `rounded-xl` (tarjetas, diálogos) |
+| `radius-card` | Las tarjetas de marketing: CTA y preguntas frecuentes |
+| `radius-sm`, `radius-lg` | AuraData BI: `borderRadiusSM` y `borderRadiusLG` de antd |
+
+En shadcn no escribas un radio: usa `rounded-lg` o `rounded-xl` y deja que `--radius` lo decida.
+
+## Sombras
+
+Pocas y suaves. La mayoría de las superficies se separan con un borde, no con una sombra.
+
+<ShadowScale />
+
+| Token | Dónde |
+| --- | --- |
+| `shadow-card` | Una tarjeta que se separa del fondo: beneficios, preguntas frecuentes, la caja del chat |
+| `shadow-float` | Lo que se levanta: una tarjeta de beneficios al pasar el mouse, la pregunta abierta |
+
+Úsalas con `shadow-(--aura-shadow-card)`.
+
+En oscuro las sombras cambian solas: `--aura-shadow-*` tiene su valor en `.dark`.
+
+## Movimiento
+
+<EaseCurves />
+
+`ease-fluid` arranca rápido y aterriza suave: úsala para lo que se levanta o flota. No hay token de duración; usa las de Tailwind que ya usan los componentes:
+
+| Duración | Para qué |
+| --- | --- |
+| `duration-100` a `duration-200` | Hover y foco de controles, menús y paneles que se abren |
+| `duration-500` a `duration-700` con `ease-fluid` | Superficies de marketing que se levantan: tarjetas de beneficios, la pregunta abierta |
+
+## Reglas de movimiento
+
+- **Respeta `prefers-reduced-motion`.** Toda animación lleva `motion-reduce:animate-none` o `motion-reduce:transition-none`.
+- **`aura-background` es la única animación ambiental.** Nada más se mueve solo: ni íconos, ni degradados, ni números.
+- **El movimiento explica un cambio** (algo se abre, entra o se guarda). Si no explica nada, quítalo.
