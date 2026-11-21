@@ -1,0 +1,46 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks'
+import theme from '@auradata/tokens/shadcn-theme.json'
+import brand from '../../../../packages/tokens/src/tokens/brand.json'
+
+<Meta title="Brand/04 Color" />
+
+# Energía en el acento. Claridad en la base
+
+Azul, violeta y verde identifican la marca. Los neutros sostienen la lectura y dejan espacio al contenido.
+
+## La marca
+
+<ColorPalette>
+  <ColorItem title="Azul Aura" subtitle="--aura-brand-blue · el primario" colors={{ blue: brand.brand.blue.$value }} />
+  <ColorItem title="Violeta Aura" subtitle="--aura-brand-violet" colors={{ violet: brand.brand.violet.$value }} />
+  <ColorItem title="Verde Aura" subtitle="--aura-brand-green" colors={{ green: brand.brand.green.$value }} />
+  <ColorItem title="Noche" subtitle="--aura-brand-night · el fondo oscuro" colors={{ night: brand.brand.night.$value, border: brand.brand['night-border'].$value }} />
+</ColorPalette>
+
+## El degradado
+
+<div className="sb-unstyled my-6">
+  <p className="w-fit bg-(image:--gradient-brand) bg-clip-text text-4xl leading-tight font-semibold tracking-tight text-transparent">
+    Claramente imaginado. Precisamente construido.
+  </p>
+</div>
+
+100°, azul al 0 %, violeta al 55 % y verde al 100 % (`--aura-gradient-brand`). Solo como acento: el tag del producto o una palabra de un titular. Nunca de fondo de un bloque de texto ni en botones.
+
+## La interfaz
+
+Los productos usan los colores por su función, nunca por su valor: `primary`, `muted-foreground`, `destructive`… La tabla completa, en claro y oscuro, está en [Tokens](?path=/docs/brand-tokens--docs).
+
+<ColorPalette>
+  <ColorItem title="Texto" subtitle="foreground · muted-foreground" colors={{ claro: theme.light.foreground, 'claro, secundario': theme.light['muted-foreground'], oscuro: theme.dark.foreground, 'oscuro, secundario': theme.dark['muted-foreground'] }} />
+  <ColorItem title="Superficies" subtitle="background · muted · border" colors={{ background: theme.light.background, muted: theme.light.muted, border: theme.light.border }} />
+  <ColorItem title="Estados" subtitle="success · warning · info · destructive" colors={{ success: theme.light.success, warning: theme.light.warning, info: theme.light.info, destructive: theme.light.destructive }} />
+  <ColorItem title="Gráficas" subtitle="--chart-1 … --chart-8, en este orden" colors={[1, 2, 3, 4, 5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])} />
+</ColorPalette>
+
+## El color acompaña al mensaje
+
+- Para textos de lectura, negro y gris oscuro sobre superficies claras.
+- El verde y los tonos suaves son acentos: nunca la única señal de un estado. Un estado lleva también un ícono o una palabra.
+- Todo texto pasa WCAG AA (4.5:1) en claro y en oscuro: lo comprueban los tests de `@auradata/tokens` y de cada story.
+- Los colores de estado como texto no siempre llegan a AA: úsalos en íconos o de relleno, con su `-foreground` encima.

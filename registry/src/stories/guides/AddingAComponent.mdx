@@ -1,0 +1,35 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Guides/Agregar un componente" />
+
+# Agregar un componente
+
+La base es shadcn sobre Base UI. El tema de AuraData le da la marca a cualquier componente de shadcn, así que la mayoría no se copia: se instala de shadcn.
+
+## ¿Lo necesito en esta librería?
+
+| Caso | Qué hacer |
+| --- | --- |
+| Un componente de shadcn tal cual | Nada en el registry. La app hace `npx shadcn add <nombre>`. Si ayuda verlo con la marca, agrégalo aquí solo con su story |
+| Un componente de shadcn que cambiamos | Cópialo con `npx shadcn add`, cámbialo y márcalo con `// registry: auradata (<qué cambió>)` |
+| Un componente propio de AuraData | Créalo en `src/components/ui`, compuesto de shadcn, y márcalo |
+| Una página entera (login, shell) | Un bloque en `src/components/blocks`, marcado |
+
+## Los pasos
+
+```bash
+cd registry
+npx shadcn add <component>     # de shadcn, sobre Base UI
+npm run registry               # registry.json y public/r, nunca a mano
+```
+
+1. Escribe su story en `src/stories/`, en español y con datos de AuraData BI (informes, ventas, regiones).
+2. Para un overlay (diálogo, menú, select), agrega una story `Open` con `defaultOpen`: así la prueba visual lo ve abierto.
+3. Corre las pruebas: `npm run test:stories` (render y axe en claro) y `npm run test:visual:docker` (capturas y axe en oscuro).
+4. Mira las capturas nuevas en `tests/__screenshots__` antes de hacer commit.
+
+## Reglas
+
+- Nunca escribas un color, una fuente o un radio: usa las clases de shadcn (`bg-primary`, `text-muted-foreground`) o las variables `--aura-*`.
+- Todo texto pasa WCAG AA en claro y en oscuro. Si axe falla, se arregla el componente o el token, no la prueba.
+- Los textos siguen la [voz](?path=/docs/brand-05-voz--docs).

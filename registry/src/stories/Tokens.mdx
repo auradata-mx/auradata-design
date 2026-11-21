@@ -1,10 +1,11 @@
-import { Meta, ColorPalette, ColorItem, Typeset } from '@storybook/addon-docs/blocks'
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks'
+import { TypeScale } from './TypeScale'
 import theme from '@auradata/tokens/shadcn-theme.json'
 
 <Meta title="Brand/Tokens" />
 
 export const pairs = (mode) =>
-  Object.entries(theme[mode]).filter(([name]) => !name.startsWith('chart-') && name !== 'radius')
+  Object.entries(theme[mode]).filter(([name]) => !name.startsWith('chart-') && !['radius', 'gradient-brand'].includes(name))
 
 # AuraData tokens
 
@@ -31,12 +32,12 @@ Every value on this page is read from `@auradata/tokens`. Change `packages/token
 <ColorPalette>
   <ColorItem
     title="AuraData"
-    subtitle="--chart-1 … --chart-5"
-    colors={['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'].map((name) => theme.light[name])}
+    subtitle="--chart-1 … --chart-8"
+    colors={[1, 2, 3, 4, 5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])}
   />
 </ColorPalette>
 
 ## Type
 
-<Typeset fontFamily={theme.theme['font-sans']} fontSizes={[32, 24, 18, 14, 12]} sampleText="Informes que se entienden" />
-<Typeset fontFamily={theme.theme['font-mono']} fontSizes={[18, 14, 12]} sampleText="$1,284,500 · 12.4%" />
+<TypeScale font="sans" sizes={[38, 30, 24, 20, 16, 14, 12]} sample="Informes que se entienden" />
+<TypeScale font="mono" sizes={[18, 14, 12]} sample="$1,284,500 · 12.4 %" />

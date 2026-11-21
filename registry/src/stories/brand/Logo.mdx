@@ -1,0 +1,75 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Brand/02 Logotipo" />
+
+export const LOGOS = [
+  ['horizontal-color', 'Horizontal a color', 'La versión principal para encabezados, firmas y documentos.'],
+  ['horizontal-negro', 'Horizontal a una tinta', 'Para aplicaciones monocromáticas sobre fondos claros.'],
+  ['horizontal-blanco', 'Horizontal en blanco', 'Para fondos oscuros con suficiente contraste.', true],
+  ['horizontal-texto-degradado', 'Horizontal con texto a color', 'Una alternativa expresiva para piezas de marca.'],
+  ['vertical-color', 'Vertical a color', 'Para portadas y composiciones con más espacio vertical.'],
+  ['vertical-negro', 'Vertical a una tinta', 'La composición centrada en negro.'],
+  ['vertical-blanco', 'Vertical en blanco', 'La composición centrada sobre fondos oscuros.', true],
+  ['vertical-texto-degradado', 'Vertical con texto a color', 'Para composiciones centradas con énfasis en la marca.'],
+  ['isotipo-color', 'Isotipo a color', 'Para avatares y espacios donde AuraData ya es reconocible.'],
+  ['isotipo-negro', 'Isotipo en negro', 'El símbolo por sí solo en una tinta.'],
+  ['isotipo-blanco', 'Isotipo en blanco', 'El símbolo por sí solo sobre fondo oscuro.', true],
+]
+
+# Una marca, distintas composiciones
+
+Usa la versión horizontal como primera opción. Elige la vertical o el isotipo según el espacio y el contexto. En código, usa el componente [`Logo`](?path=/story/auradata-logo--auto): `variant="auto"` pone la versión a color en claro y la blanca en oscuro.
+
+<div className="sb-unstyled my-8 grid gap-4 md:grid-cols-2">
+  {LOGOS.map(([file, name, use, dark]) => (
+    <article key={file} className="overflow-hidden rounded-2xl border border-border bg-card">
+      <div className="flex h-48 items-center justify-center p-8" style={dark ? { background: 'var(--aura-brand-night)' } : undefined}>
+        <img src={`/brand/continua/${file}.svg`} alt={name} className="max-h-32 max-w-full object-contain" />
+      </div>
+      <div className="border-t border-border p-5">
+        <h3 className="font-semibold">{name}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">{use}</p>
+        <p className="mt-3 font-mono text-xs text-muted-foreground">@auradata/tokens/assets/continua/{file}.svg</p>
+      </div>
+    </article>
+  ))}
+</div>
+
+Los fondos son transparentes. Los SVG conservan el símbolo como imagen incrustada y el nombre como trazados: sirven para pantalla. Para impresión de gran formato hace falta un máster completamente vectorial.
+
+## Dale espacio para respirar
+
+Deja alrededor del logo un margen de al menos la mitad de la altura del símbolo. Conserva siempre su proporción (en CSS, fija la altura y deja `width: auto`) y comprueba la legibilidad al tamaño final.
+
+<div className="sb-unstyled my-6 max-w-xl rounded-2xl border border-border bg-card p-10">
+  <div className="rounded-xl border border-dashed border-primary p-6">
+    <img src="/brand/continua/horizontal-color.svg" alt="Espacio libre alrededor del logotipo" className="w-full" />
+  </div>
+</div>
+
+## Consistencia antes que efectos
+
+- Conserva los colores y la inclinación del símbolo.
+- No estires, recortes ni separes sus cintas.
+- No agregues sombras, contornos ni efectos al logotipo.
+- Usa la versión blanca sobre fondos oscuros y la negra sobre fondos claros.
+- Escribe el nombre como **AuraData**, con A y D mayúsculas.
+
+## El producto junto al logo
+
+Cada producto lleva su nombre junto al logo con [`ProductTag`](?path=/story/auradata-logo--auto): «BI» en AuraData BI. Es el único lugar donde el degradado de marca va sobre texto en una interfaz.
+
+## Favicons e iconos de aplicación
+
+Revisa siempre el tamaño real: a 16 px los pequeños cortes de la órbita pierden detalle.
+
+<div className="sb-unstyled my-6 grid grid-cols-3 gap-4 md:grid-cols-6">
+  {[16, 32, 48, 180, 192, 512].map((size) => (
+    <div key={size} className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-4">
+      <div className="flex h-16 items-center">
+        <img src={`/brand/continua/favicon-${size}.png`} width={Math.min(size, 64)} height={Math.min(size, 64)} alt={`Favicon de ${size} px`} />
+      </div>
+      <span className="font-mono text-xs text-muted-foreground">{size} px</span>
+    </div>
+  ))}
+</div>

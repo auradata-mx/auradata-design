@@ -2,6 +2,7 @@ import type { Decorator, Preview } from '@storybook/react-vite'
 import { useEffect, type ReactNode } from 'react'
 
 import '../src/index.css'
+import { auradata } from './theme'
 
 /** Puts the .dark class on the document, as the apps do. */
 function ThemeFrame({ dark, padded, children }: { dark: boolean; padded: boolean; children: ReactNode }) {
@@ -36,6 +37,7 @@ const preview: Preview = {
   decorators: [withTheme],
   parameters: {
     layout: 'fullscreen',
+    docs: { theme: auradata },
     controls: {
       matchers: {
         color: /(background|color)$/i,

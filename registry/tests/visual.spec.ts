@@ -17,6 +17,12 @@ const index = JSON.parse(
 const stories = Object.values(index.entries).filter(
   (entry) => entry.type === "story"
 )
+/** "brand-03-tipografía" → "brand-03-tipografia": file names stay ASCII on every OS. */
+const ascii = (id: string) =>
+  id.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+const docs = Object.values(index.entries).filter(
+  (entry) => entry.type === "docs"
+)
 
 for (const theme of ["light", "dark"] as const) {
   test.describe(theme, () => {
@@ -47,3 +53,26 @@ for (const theme of ["light", "dark"] as const) {
     }
   })
 }
+
+// The brand guide and the other docs pages: Storybook renders them light only.
+test.describe("docs", () => {
+  for (const page of docs) {
+    test(page.title, async ({ page: browser }) => {
+      await browser.goto(`/iframe.html?id=${page.id}&viewMode=docs`)
+      await browser.locator(".sbdocs-content").first().waitFor()
+      await browser.evaluate(() => document.fonts.ready)
+      await browser.waitForLoadState("networkidle")
+      const { violations } = await new AxeBuilder({ page: browser })
+        .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+        .analyze()
+      expect(
+        violations.map(
+          (v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`
+        )
+      ).toEqual([])
+      await expect(browser).toHaveScreenshot(`docs/${ascii(page.id)}.png`, {
+        fullPage: true,
+      })
+    })
+  }
+})
