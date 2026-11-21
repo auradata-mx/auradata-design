@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Tokens, registry and Storybook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm run lint -w registry
+      - run: npm run build-storybook -w registry
+      - uses: actions/upload-artifact@v5
+        with:
+          name: storybook
+          path: registry/storybook-static
+          retention-days: 7
+
+  stories:
+    name: Story tests and a11y (light)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @auradata/tokens
+      - run: npx playwright install --with-deps chromium
+        working-directory: registry
+      - run: npm run test:stories -w registry
+
+  visual:
+    name: Visual regression and a11y (dark)
+    runs-on: ubuntu-latest
+    # The same image the baselines come from (npm run test:visual:docker).
+    container: mcr.microsoft.com/playwright:v1.65.1-noble
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @auradata/tokens
+      - run: npm run build-storybook -w registry
+      - run: npm run test:visual -w registry
+        env:
+          HOME: /root
+      - uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          name: visual-report
+          path: |
+            registry/playwright-report
+            registry/test-results
+          retention-days: 7
