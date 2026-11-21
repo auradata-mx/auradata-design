@@ -65,9 +65,16 @@ const SHADCN = {
   accent: 'color-fill-secondary',
   'accent-foreground': 'color-text',
   destructive: 'color-error',
+  'destructive-foreground': 'color-error-foreground',
+  success: 'color-success',
+  'success-foreground': 'color-success-foreground',
+  warning: 'color-warning',
+  'warning-foreground': 'color-warning-foreground',
+  info: 'color-info',
+  'info-foreground': 'color-info-foreground',
   border: 'color-border',
   input: 'color-border',
-  ring: 'color-primary',
+  ring: 'color-focus-ring',
   'chart-1': 'chart-1',
   'chart-2': 'chart-2',
   'chart-3': 'chart-3',
@@ -81,7 +88,7 @@ const SHADCN = {
   'sidebar-accent': 'color-fill-secondary',
   'sidebar-accent-foreground': 'color-text',
   'sidebar-border': 'color-border',
-  'sidebar-ring': 'color-primary',
+  'sidebar-ring': 'color-focus-ring',
 };
 
 function shadcnCss() {
@@ -89,12 +96,19 @@ function shadcnCss() {
   return HEADER + "/* Import after tokens.css and shadcn's own theme, so these win. */\n" + block(':root, .dark', entries);
 }
 
+/** shadcn variables a stock shadcn theme lacks: the registry theme item maps them into Tailwind. */
+const SHADCN_EXTRA = ['destructive-foreground', 'success', 'success-foreground', 'warning', 'warning-foreground', 'info', 'info-foreground'];
+
 /** The shadcn mapping with resolved values: the cssVars of a registry:theme item. */
 function shadcnTheme(light, dark) {
   const resolved = (tokens) =>
     Object.fromEntries(Object.entries(SHADCN).map(([name, aura]) => [name, tokens[aura]]));
   return {
-    theme: { 'font-sans': light['font-sans'], 'font-mono': light['font-mono'] },
+    theme: {
+      'font-sans': light['font-sans'],
+      'font-mono': light['font-mono'],
+      ...Object.fromEntries(SHADCN_EXTRA.map((name) => [`color-${name}`, `var(--${name})`])),
+    },
     light: resolved(light),
     dark: resolved(dark),
   };
@@ -179,6 +193,18 @@ function antdTheme(tokens, algorithm) {
       borderRadiusLG: px(tokens['radius-lg']),
       borderRadiusSM: px(tokens['radius-sm']),
       motionEaseOut: tokens['ease-fluid'],
+      fontSize: px(tokens['font-size-base']),
+      fontSizeSM: px(tokens['font-size-sm']),
+      fontSizeLG: px(tokens['font-size-lg']),
+      fontSizeXL: px(tokens['font-size-xl']),
+      fontSizeHeading1: px(tokens['font-size-4xl']),
+      fontSizeHeading2: px(tokens['font-size-3xl']),
+      fontSizeHeading3: px(tokens['font-size-2xl']),
+      fontSizeHeading4: px(tokens['font-size-xl']),
+      fontSizeHeading5: px(tokens['font-size-lg']),
+      fontWeightStrong: Number(tokens['font-weight-strong']),
+      lineHeight: Number(tokens['line-height-base']),
+      zIndexPopupBase: Number(tokens['z-index-dropdown']),
       ...colors,
     },
     algorithm,

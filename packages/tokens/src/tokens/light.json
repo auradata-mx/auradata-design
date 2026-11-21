@@ -17,7 +17,12 @@
     "text-secondary": { "$value": "#666666" },
     "text-tertiary": { "$value": "#737373", "$description": "Darker than #9B9B9B so small labels stay readable (4.7:1)" },
     "fill-secondary": { "$value": "#F5F5F5" },
-    "selection": { "$value": "#DBEAFE" }
+    "selection": { "$value": "#DBEAFE" },
+    "focus-ring": { "$value": "#181818", "$description": "The focus outline of auradata.mx" },
+    "info-foreground": { "$value": "#FFFFFF" },
+    "success-foreground": { "$value": "#0A0A0F", "$description": "White reads 3.8:1 on the green; night reads 5.2:1" },
+    "warning-foreground": { "$value": "#0A0A0F" },
+    "error-foreground": { "$value": "#FFFFFF" }
   },
   "shadow": {
     "$type": "shadow",

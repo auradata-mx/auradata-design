@@ -8,8 +8,6 @@
     "night-border": { "$value": "#26262F" }
   },
   "chart": {
-    "$type": "color",
-    "$description": "The AuraData categorical palette, in order",
     "1": { "$value": "#2563EB" },
     "2": { "$value": "#7C3AED" },
     "3": { "$value": "#10B981" },
@@ -17,7 +15,9 @@
     "5": { "$value": "#EC4899" },
     "6": { "$value": "#06B6D4" },
     "7": { "$value": "#F97316" },
-    "8": { "$value": "#64748B" }
+    "8": { "$value": "#64748B" },
+    "$type": "color",
+    "$description": "The AuraData categorical palette, in order"
   },
   "font": {
     "$type": "fontFamily",
@@ -33,5 +33,61 @@
   },
   "ease": {
     "fluid": { "$type": "cubicBezier", "$value": "cubic-bezier(0.32, 0.72, 0, 1)", "$description": "Quick start, long soft landing" }
+  },
+  "space": {
+    "0": { "$value": "0px" },
+    "1": { "$value": "4px" },
+    "2": { "$value": "8px" },
+    "3": { "$value": "12px" },
+    "4": { "$value": "16px" },
+    "5": { "$value": "20px" },
+    "6": { "$value": "24px" },
+    "8": { "$value": "32px" },
+    "10": { "$value": "40px" },
+    "12": { "$value": "48px" },
+    "16": { "$value": "64px" },
+    "$type": "dimension",
+    "$description": "A 4px grid, the same steps as Tailwind and antd"
+  },
+  "font-size": {
+    "$type": "dimension",
+    "$description": "The antd scale AuraData BI uses: 14px body, headings 38 to 16",
+    "sm": { "$value": "12px" },
+    "base": { "$value": "14px" },
+    "lg": { "$value": "16px" },
+    "xl": { "$value": "20px" },
+    "2xl": { "$value": "24px" },
+    "3xl": { "$value": "30px" },
+    "4xl": { "$value": "38px" }
+  },
+  "font-weight": {
+    "$type": "fontWeight",
+    "normal": { "$value": 400 },
+    "medium": { "$value": 500 },
+    "strong": { "$value": 600 },
+    "bold": { "$value": 700 }
+  },
+  "line-height": {
+    "$type": "number",
+    "tight": { "$value": 1.25 },
+    "base": { "$value": 1.5 }
+  },
+  "z-index": {
+    "$type": "number",
+    "$description": "Layers, from the page up; antd popups start at 1000",
+    "base": { "$value": 0 },
+    "dropdown": { "$value": 1000 },
+    "sticky": { "$value": 1020 },
+    "overlay": { "$value": 1040 },
+    "modal": { "$value": 1050 },
+    "popover": { "$value": 1060 },
+    "toast": { "$value": 1070 },
+    "tooltip": { "$value": 1080 }
+  },
+  "focus": {
+    "$type": "dimension",
+    "$description": "The focus outline of auradata.mx: 2px, 2px away from the element",
+    "width": { "$value": "2px" },
+    "offset": { "$value": "2px" }
   }
 }

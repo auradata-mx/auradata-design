@@ -101,3 +101,60 @@ test('infima.css themes Docusaurus in light and dark', () => {
   expect(css).toMatch(/\[data-theme='dark'\] \{[^}]*--ifm-color-primary: #3B82F6;/s);
   expect(css).toContain('--ifm-font-family-monospace:');
 });
+
+test('tokens.css carries the full scale: space, type, z-index and focus', () => {
+  const css = read('tokens.css');
+  expect(css).toContain('--aura-space-1: 4px;');
+  expect(css).toContain('--aura-space-4: 16px;');
+  expect(css).toContain('--aura-font-size-base: 14px;');
+  expect(css).toContain('--aura-font-size-4xl: 38px;');
+  expect(css).toContain('--aura-font-weight-strong: 600;');
+  expect(css).toContain('--aura-line-height-base: 1.5;');
+  expect(css).toContain('--aura-z-index-modal: 1050;');
+  expect(css).toContain('--aura-focus-width: 2px;');
+  expect(css).toContain('--aura-focus-offset: 2px;');
+  expect(css).toMatch(/:root \{[^}]*--aura-color-focus-ring: #181818;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-focus-ring: #F5F5F7;/s);
+  expect(css).toMatch(/:root \{[^}]*--aura-color-success-foreground: #0A0A0F;/s);
+});
+
+test('shadcn.css adds success, warning and info with foregrounds, and the focus ring', () => {
+  const css = read('shadcn.css');
+  for (const status of ['success', 'warning', 'info']) {
+    expect(css).toContain(`--${status}: var(--aura-color-${status});`);
+    expect(css).toContain(`--${status}-foreground: var(--aura-color-${status}-foreground);`);
+  }
+  expect(css).toContain('--destructive-foreground: var(--aura-color-error-foreground);');
+  expect(css).toContain('--ring: var(--aura-color-focus-ring);');
+});
+
+test('shadcn-theme.json exposes the status colors to Tailwind', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.light).toMatchObject({ success: '#059669', 'success-foreground': '#0A0A0F', ring: '#181818' });
+  expect(theme.dark).toMatchObject({ warning: '#F5B544', 'warning-foreground': '#0A0A0F' });
+  expect(theme.theme).toMatchObject({
+    'color-success': 'var(--success)',
+    'color-success-foreground': 'var(--success-foreground)',
+    'color-destructive-foreground': 'var(--destructive-foreground)',
+  });
+});
+
+test('antd.json carries the type scale and the popup z-index', () => {
+  const { light, dark } = JSON.parse(read('antd.json'));
+  const scale = {
+    fontSize: 14,
+    fontSizeSM: 12,
+    fontSizeLG: 16,
+    fontSizeXL: 20,
+    fontSizeHeading1: 38,
+    fontSizeHeading2: 30,
+    fontSizeHeading3: 24,
+    fontSizeHeading4: 20,
+    fontSizeHeading5: 16,
+    fontWeightStrong: 600,
+    lineHeight: 1.5,
+    zIndexPopupBase: 1000,
+  };
+  expect(light.token).toMatchObject(scale);
+  expect(dark.token).toMatchObject(scale);
+});

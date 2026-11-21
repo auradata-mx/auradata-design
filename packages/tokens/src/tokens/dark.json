@@ -17,7 +17,12 @@
     "text-secondary": { "$value": "#A3A3AD" },
     "text-tertiary": { "$value": "#8B8B96" },
     "fill-secondary": { "$value": "#1C1C24" },
-    "selection": { "$value": "#1E3A8A" }
+    "selection": { "$value": "#1E3A8A" },
+    "focus-ring": { "$value": "#F5F5F7" },
+    "info-foreground": { "$value": "#0A0A0F" },
+    "success-foreground": { "$value": "#0A0A0F" },
+    "warning-foreground": { "$value": "#0A0A0F" },
+    "error-foreground": { "$value": "#0A0A0F" }
   },
   "shadow": {
     "$type": "shadow",
