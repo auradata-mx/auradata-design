@@ -74,3 +74,17 @@ test('publishes the marketing blocks with the eyebrow, the gradient heading and 
   expect(item('faq').registryDependencies).toEqual(['accordion', 'cristianruben-dev/auradata-design/section-header'])
   expect(item('site-footer').registryDependencies).toEqual(['cristianruben-dev/auradata-design/logo'])
 })
+
+test('publishes the chat block with the KPI card and the chart palette', () => {
+  expect(item('chat')?.type).toBe('registry:block')
+  expect(item('chat').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/kpi-card',
+      'cristianruben-dev/auradata-design/chart-palette',
+      'cristianruben-dev/auradata-design/logo',
+      'chart',
+      'textarea',
+    ]),
+  )
+  expect(item('chat').dependencies).toContain('recharts')
+})

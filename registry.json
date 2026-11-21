@@ -508,6 +508,31 @@
       ]
     },
     {
+      "name": "chat",
+      "type": "registry:block",
+      "title": "Chat",
+      "dependencies": [
+        "cn",
+        "lucide-react",
+        "recharts"
+      ],
+      "registryDependencies": [
+        "card",
+        "chart",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/chart-palette",
+        "cristianruben-dev/auradata-design/kpi-card",
+        "cristianruben-dev/auradata-design/logo",
+        "textarea"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/chat.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
       "name": "cta-band",
       "type": "registry:block",
       "title": "Cta band",
