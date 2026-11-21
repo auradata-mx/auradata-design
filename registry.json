@@ -598,9 +598,12 @@
       "name": "login",
       "type": "registry:block",
       "title": "Login",
-      "dependencies": [],
+      "dependencies": [
+        "lucide-react"
+      ],
       "registryDependencies": [
         "card",
+        "cristianruben-dev/auradata-design/alert",
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/logo",
         "field",

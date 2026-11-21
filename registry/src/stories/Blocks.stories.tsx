@@ -224,3 +224,90 @@ export const ChatError: ChatStory = {
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
+
+type LoginStory = StoryObj<typeof Login>
+
+/** The server said no: a destructive alert above the form and both inputs marked invalid. */
+export const SignInError: LoginStory = {
+  name: 'Sign in error',
+  render: (args) => <Login {...args} />,
+  args: { product: 'BI', error: 'El correo o la contraseña no son correctos.' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('alert')).toHaveTextContent('El correo o la contraseña no son correctos.')
+    await expect(canvas.getByLabelText('Correo')).toHaveAttribute('aria-invalid', 'true')
+    await expect(canvas.getByLabelText('Contraseña')).toHaveAttribute('aria-invalid', 'true')
+  },
+}
+
+/** Signing in: the button spins and the inputs wait, so the form is not sent twice. */
+export const SignInPending: LoginStory = {
+  name: 'Sign in pending',
+  render: (args) => <Login {...args} />,
+  args: { product: 'BI', pending: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const submit = canvas.getByRole('button', { name: 'Entrando…' })
+    await expect(submit).toBeDisabled()
+    await expect(submit).toHaveAttribute('aria-busy', 'true')
+    await expect(canvas.getByLabelText('Correo')).toBeDisabled()
+    await expect(canvas.getByLabelText('Contraseña')).toBeDisabled()
+  },
+}
+
+/** «Entrar» sends the form: `onSubmit` gets it with what was typed (the inputs carry `name`). */
+export const SignInSubmit: LoginStory = {
+  name: 'Sign in submit',
+  render: (args) => <Login {...args} />,
+  args: { product: 'BI', onSubmit: fn((event: React.FormEvent<HTMLFormElement>) => event.preventDefault()) },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.type(canvas.getByLabelText('Correo'), 'ana@empresa.mx')
+    await userEvent.type(canvas.getByLabelText('Contraseña'), 'aurora-2026')
+    await userEvent.click(canvas.getByRole('button', { name: 'Entrar' }))
+    await expect(args.onSubmit).toHaveBeenCalledTimes(1)
+    const event = (args.onSubmit as ReturnType<typeof fn>).mock.calls[0][0] as React.FormEvent<HTMLFormElement>
+    const values = Object.fromEntries(new FormData(event.target as HTMLFormElement))
+    await expect(values).toEqual({ email: 'ana@empresa.mx', password: 'aurora-2026' })
+    // Rest state for the screenshot: nothing focused.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+type SettingsStory = StoryObj<typeof Settings>
+
+/** What the server rejected, under its field: `FieldError` text and `aria-invalid`; the other fields stay as they are. */
+export const SettingsErrors: SettingsStory = {
+  name: 'Settings errors',
+  render: (args) => (
+    <div className="p-6">
+      <Settings {...args} />
+    </div>
+  ),
+  args: {
+    errors: { email: 'Ese correo ya lo usa otra cuenta. Escribe otro.' },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByLabelText('Correo')).toHaveAttribute('aria-invalid', 'true')
+    await expect(canvas.getByRole('alert')).toHaveTextContent('Ese correo ya lo usa otra cuenta. Escribe otro.')
+    await expect(canvas.getByLabelText('Nombre')).not.toHaveAttribute('aria-invalid')
+    await expect(canvas.getByRole('combobox', { name: 'Idioma' })).not.toHaveAttribute('aria-invalid')
+  },
+}
+
+/** Saving: «Guardando…» with a spinner, disabled and `aria-busy`. */
+export const SettingsSaving: SettingsStory = {
+  name: 'Settings saving',
+  render: (args) => (
+    <div className="p-6">
+      <Settings {...args} />
+    </div>
+  ),
+  args: { saving: true },
+  play: async ({ canvasElement }) => {
+    const save = within(canvasElement).getByRole('button', { name: 'Guardando…' })
+    await expect(save).toBeDisabled()
+    await expect(save).toHaveAttribute('aria-busy', 'true')
+  },
+}
