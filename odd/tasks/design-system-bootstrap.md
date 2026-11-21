@@ -20,7 +20,7 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 | T2 | 0 Bootstrap | S2 | inline | done | RED (no build.mjs) → GREEN 6/6 vitest; commit afb1e1b |
 | T3 | 0 Bootstrap | S3 | inline | done | `shadcn build` 5 items; fresh app installed theme + button, `--primary: #2563EB`, build OK |
 | T4 | 0 Bootstrap | S4 | inline | done | `storybook build` OK, lint and `tsc -b` clean |
-| T5 | 1 Publish | S3 | inline | blocked: user decision | Private GitHub repo and push. Decide the account (`cristianruben-dev`, where superset and seseq live, or `cristianruben-softoil`, the active `gh` account) |
+| T5 | 1 Publish | S3 | inline | done | Private repo `cristianruben-dev/auradata-design`, `origin` = `git@github-personal:cristianruben-dev/auradata-design.git`, `main` pushed |
 | T6 | 1 Publish | S3 | inline | pending | Prove a private GitHub registry install from a fresh app (`components.json` `registries`, `GH_TOKEN`); decide whether `registry/public/r` must be committed |
 | T7 | 1 Publish | S2 | inline | pending | Distribute `@auradata/tokens`: GitHub Packages (npm) or a git dependency; Changesets for versions and changelog |
 | T8 | 1 Publish | S2-S4 | inline | pending | CI on GitHub Actions: `npm test`, `npm run build`, lint, `build-storybook`; registry and tokens outputs built in CI |
@@ -47,4 +47,5 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 - L4: Open for T6: whether a private GitHub registry reads `registry.json` from the repo or needs the built `public/r` committed (ignored for now).
 - L5 (2026-11-20, user): "podemos hacer que este chat se vaya como al proyecto de Aura Data Design … hay que hacer un plan completito de todo lo que tenemos que hacer". Registered the T3 Code project `auradata-design`; a thread cannot change its workspace, so work continues from a thread of that project.
 - L6: The personal repos (superset, seseq-administration) live on `cristianruben-dev` (`github-personal` SSH host), while `gh` is logged in as `cristianruben-softoil`: T5 waits on which account owns the repo.
-- Next: T5 once the account is decided, then T6-T8.
+- L7 (2026-11-21, user): "pregúntame en qué cuenta de GitHub va el repo privado (T5)" … "Mientras tanto, avanza con lo que no depende de esas decisiones, en orden: T10, T11, T12 (tokens), luego T16 y T17 (registry). Una rama por fase a partir de `main`, un commit por tarea". Answer: `cristianruben-dev`. Created the private repo with that account's `gh` token (`GH_TOKEN=$(gh auth token --user cristianruben-dev)`, the active account stays `cristianruben-softoil`) and pushed `main` over `github-personal`.
+- Next: T10-T12 on `feat/tokens-phase-2`, then T16-T17 on a registry branch; T6-T9 after (T7 and T9 wait on user decisions).
