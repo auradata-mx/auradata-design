@@ -29,3 +29,11 @@ test('installs the Continua SVGs with the logo', () => {
   expect(targets).toContain('~/public/brand/continua/horizontal-color.svg')
   expect(targets).toHaveLength(11)
 })
+
+test('publishes the blocks with their components', () => {
+  for (const name of ['login', 'app-shell', 'settings']) {
+    expect(item(name)?.type).toBe('registry:block')
+  }
+  expect(item('login').registryDependencies).toEqual(expect.arrayContaining(['@auradata/button', '@auradata/logo', 'card', 'field', 'input']))
+  expect(item('app-shell').registryDependencies).toEqual(expect.arrayContaining(['@auradata/logo', 'sidebar', 'avatar']))
+})

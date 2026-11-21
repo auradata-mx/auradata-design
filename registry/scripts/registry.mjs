@@ -2,8 +2,9 @@
  * Writes registry.json from the source, so the registry never drifts from it:
  *
  *   - one registry:theme item, `auradata-theme`, with the cssVars that @auradata/tokens builds;
- *   - one item per AuraData file of src/components/ui (registry:ui), src/hooks (registry:hook) and
- *     src/lib (registry:lib), with the npm packages and the registry items it imports;
+ *   - one item per AuraData file of src/components/ui (registry:ui), src/components/blocks
+ *     (registry:block), src/hooks (registry:hook) and src/lib (registry:lib), with the npm packages
+ *     and the registry items it imports;
  *   - the Continua SVGs of @auradata/tokens with the logo item, installed into public/brand/continua.
  *
  * An AuraData file says so on a line of its own: `// registry: auradata (<why>)`. The other files are
@@ -60,13 +61,14 @@ function dependenciesOf(source) {
 
 const FOLDERS = {
   'components/ui': { dir: uiDir, type: 'registry:ui', extension: '.tsx' },
+  'components/blocks': { dir: join(root, 'src/components/blocks'), type: 'registry:block', extension: '.tsx' },
   hooks: { dir: hooksDir, type: 'registry:hook', extension: '.ts' },
   lib: { dir: libDir, type: 'registry:lib', extension: '.ts' },
 };
 
 /** Other registry items a file imports: "@auradata/<name>" for ours, the bare shadcn name otherwise. */
 function registryDependenciesOf(source) {
-  const imports = [...source.matchAll(/from\s+["']@\/(components\/ui|hooks|lib)\/([^"']+)["']/g)];
+  const imports = [...source.matchAll(/from\s+["']@\/(components\/ui|components\/blocks|hooks|lib)\/([^"']+)["']/g)];
   const names = imports
     // utils (cn) comes with every shadcn app.
     .filter(([, folder, name]) => !(folder === 'lib' && name === 'utils'))

@@ -39,7 +39,8 @@ or a product: read it from a token.
 
 ## What the registry publishes
 
-The theme, the AuraData components (logo, KPI card, page header, chart palette) and the shadcn components AuraData
+The theme, the AuraData components (logo, KPI card, page header, chart palette), the blocks (`login`, `app-shell`,
+`settings`) and the shadcn components AuraData
 changed (button and badge: a solid destructive variant that passes WCAG AA; the `use-mobile` hook). Every other shadcn
 component comes straight from shadcn: the theme already gives it the brand. Storybook still shows them all, so the brand
 can be seen on each one.

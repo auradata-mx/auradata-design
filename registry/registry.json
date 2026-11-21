@@ -249,6 +249,68 @@
       ]
     },
     {
+      "name": "app-shell",
+      "type": "registry:block",
+      "title": "App shell",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@auradata/logo",
+        "avatar",
+        "breadcrumb",
+        "dropdown-menu",
+        "separator",
+        "sidebar"
+      ],
+      "files": [
+        {
+          "path": "src/components/blocks/app-shell.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "login",
+      "type": "registry:block",
+      "title": "Login",
+      "dependencies": [],
+      "registryDependencies": [
+        "@auradata/button",
+        "@auradata/logo",
+        "card",
+        "field",
+        "input"
+      ],
+      "files": [
+        {
+          "path": "src/components/blocks/login.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "settings",
+      "type": "registry:block",
+      "title": "Settings",
+      "dependencies": [],
+      "registryDependencies": [
+        "@auradata/button",
+        "@auradata/page-header",
+        "field",
+        "input",
+        "select",
+        "switch",
+        "tabs"
+      ],
+      "files": [
+        {
+          "path": "src/components/blocks/settings.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
       "name": "use-mobile",
       "type": "registry:hook",
       "title": "Use mobile",
