@@ -48,3 +48,13 @@ test('publishes the blocks with their components', () => {
     expect.arrayContaining(['cristianruben-dev/auradata-design/logo', 'sidebar', 'avatar']),
   )
 })
+
+test('installs the workspace switcher and the theme toggle with the app shell', () => {
+  expect(item('app-shell').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/workspace-switcher',
+      'cristianruben-dev/auradata-design/theme-toggle',
+    ]),
+  )
+  expect(item('workspace-switcher').registryDependencies).toContain('cristianruben-dev/auradata-design/initials')
+})

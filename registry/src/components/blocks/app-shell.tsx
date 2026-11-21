@@ -36,6 +36,9 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { WorkspaceSwitcher } from "@/components/ui/workspace-switcher"
+import { initials } from "@/lib/initials"
 
 export type NavItem = { title: string; href: string; icon: LucideIcon; active?: boolean }
 export type NavGroup = { label: string; items: NavItem[] }
@@ -50,16 +53,12 @@ type AppShellProps = {
   breadcrumbs?: string[]
   /** Buttons on the right of the top bar. */
   actions?: React.ReactNode
+  /** The workspaces of the user: a switcher at the top of the sidebar. */
+  workspaces?: React.ComponentProps<typeof WorkspaceSwitcher>
+  /** The app theme: a light, dark or system menu at the right of the top bar. */
+  theme?: React.ComponentProps<typeof ThemeToggle>
   children: React.ReactNode
 }
-
-const initials = (name: string) =>
-  name
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase()
 
 function UserMenu({ user }: { user: User }) {
   return (
@@ -95,7 +94,16 @@ function UserMenu({ user }: { user: User }) {
 }
 
 /** The sidebar with the logo, the sections and the user; the top bar with where you are and the page actions. */
-export function AppShell({ product, nav, user, breadcrumbs = [], actions, children }: AppShellProps) {
+export function AppShell({
+  product,
+  nav,
+  user,
+  breadcrumbs = [],
+  actions,
+  workspaces,
+  theme,
+  children,
+}: AppShellProps) {
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon">
@@ -105,6 +113,11 @@ export function AppShell({ product, nav, user, breadcrumbs = [], actions, childr
           {product && <ProductTag className="group-data-[collapsible=icon]:hidden">{product}</ProductTag>}
         </SidebarHeader>
         <SidebarContent>
+          {workspaces && (
+            <SidebarGroup className="pb-0">
+              <WorkspaceSwitcher {...workspaces} />
+            </SidebarGroup>
+          )}
           {nav.map((group) => (
             <SidebarGroup key={group.label}>
               <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
@@ -154,7 +167,12 @@ export function AppShell({ product, nav, user, breadcrumbs = [], actions, childr
               </Breadcrumb>
             </>
           )}
-          {actions && <div className="ml-auto flex items-center gap-2">{actions}</div>}
+          {(actions || theme) && (
+            <div className="ml-auto flex items-center gap-2">
+              {actions}
+              {theme && <ThemeToggle {...theme} />}
+            </div>
+          )}
         </header>
         {/* SidebarInset is the <main> landmark already. */}
         <div className="flex-1 p-6">{children}</div>

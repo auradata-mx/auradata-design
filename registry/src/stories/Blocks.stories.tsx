@@ -20,6 +20,15 @@ const NAV: NavGroup[] = [
   { label: 'Administrar', items: [{ title: 'Equipo', href: '#equipo', icon: UsersIcon }] },
 ]
 const USER = { name: 'Ana López', email: 'ana@empresa.mx' }
+const WORKSPACES = {
+  workspaces: [
+    { id: 'ventas', name: 'Ventas', description: '12 miembros' },
+    { id: 'finanzas', name: 'Finanzas', description: '5 miembros' },
+  ],
+  current: 'ventas',
+  onCreate: () => {},
+}
+const THEME = { theme: 'system' as const, onThemeChange: () => {} }
 
 const meta = {
   title: 'Blocks/App',
@@ -34,7 +43,15 @@ export const SignIn: Story = { render: () => <Login product="BI" /> }
 
 export const Shell: Story = {
   render: () => (
-    <AppShell product="BI" nav={NAV} user={USER} breadcrumbs={['Informes', 'Ventas 2026']} actions={<Button>Compartir</Button>}>
+    <AppShell
+      product="BI"
+      nav={NAV}
+      user={USER}
+      workspaces={WORKSPACES}
+      theme={THEME}
+      breadcrumbs={['Informes', 'Ventas 2026']}
+      actions={<Button>Compartir</Button>}
+    >
       <div className="grid gap-6">
         <PageHeader title="Ventas 2026" description="Actualizado hace 5 minutos." />
         <div className="grid gap-4 lg:grid-cols-3">
@@ -50,7 +67,7 @@ export const Shell: Story = {
 export const SettingsPage: Story = {
   name: 'Settings',
   render: () => (
-    <AppShell product="BI" nav={NAV} user={USER} breadcrumbs={['Ajustes']}>
+    <AppShell product="BI" nav={NAV} user={USER} workspaces={WORKSPACES} theme={THEME} breadcrumbs={['Ajustes']}>
       <Settings />
     </AppShell>
   ),
