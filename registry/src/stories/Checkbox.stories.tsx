@@ -75,8 +75,8 @@ export const Focus: Story = {
 }
 
 /**
- * Some of the regions picked: the parent box is `indeterminate` (`aria-checked="mixed"`). The stock indicator
- * draws the same check as checked, on an unfilled box, not a dash (L37).
+ * Some of the regions picked: the parent box is `indeterminate` (`aria-checked="mixed"`): filled as checked, with a
+ * dash instead of the check.
  */
 export const Indeterminate: Story = {
   render: () => (
@@ -97,8 +97,18 @@ export const Indeterminate: Story = {
     </FieldSet>
   ),
   play: async ({ canvasElement }) => {
-    const parent = within(canvasElement).getByRole('checkbox', { name: 'Todas las regiones' })
+    const canvas = within(canvasElement)
+    const parent = canvas.getByRole('checkbox', { name: 'Todas las regiones' })
     await expect(parent).toHaveAttribute('aria-checked', 'mixed')
+    const shown = (control: HTMLElement) =>
+      [...control.querySelectorAll('svg')].filter((icon) => getComputedStyle(icon).display !== 'none')
+    const [dash] = shown(parent)
+    await expect(shown(parent)).toHaveLength(1)
+    await expect(dash).toHaveClass('lucide-minus')
+    const checked = canvas.getByRole('checkbox', { name: 'Norte' })
+    await expect(shown(checked)[0]).toHaveClass('lucide-check')
+    // Filled as a checked box, so the dash reads on it.
+    await expect(getComputedStyle(parent).backgroundColor).toBe(getComputedStyle(checked).backgroundColor)
   },
 }
 

@@ -1,10 +1,10 @@
-// registry: auradata (shadcn alert with success, warning and info variants; status colors tint the box and the icon, never the text)
+// registry: auradata (shadcn alert with success, warning and info variants; status colors tint the box and the icon, never the text; the action takes its own column)
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg:not([class*='size-'])]:size-4",
+  "group/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2 text-left text-sm has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 has-data-[slot=alert-action]:grid-cols-[1fr_auto] has-data-[slot=alert-action]:gap-x-3 has-[>svg]:has-data-[slot=alert-action]:grid-cols-[auto_1fr_auto] *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -62,7 +62,7 @@ function AlertDescription({
     <div
       data-slot="alert-description"
       className={cn(
-        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+        "text-sm text-balance text-muted-foreground group-has-[>svg]/alert:col-start-2 md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
         className
       )}
       {...props}
@@ -74,7 +74,9 @@ function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="alert-action"
-      className={cn("absolute top-2 right-2", className)}
+      // AuraData: its own grid column, at its natural width, so a long label never covers the title (stock
+      // positioned it absolutely in 72 px of padding).
+      className={cn("col-start-[-2] row-span-2 row-start-1 self-start", className)}
       {...props}
     />
   )

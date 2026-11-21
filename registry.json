@@ -137,6 +137,22 @@
       }
     },
     {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/accordion.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "alert",
       "type": "registry:ui",
       "title": "Alert",
@@ -220,6 +236,22 @@
       ]
     },
     {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "combobox",
       "type": "registry:ui",
       "title": "Combobox",
@@ -230,7 +262,7 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
-        "input-group"
+        "cristianruben-dev/auradata-design/input-group"
       ],
       "files": [
         {
@@ -250,9 +282,9 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/select",
         "dropdown-menu",
         "input",
-        "select",
         "skeleton",
         "table"
       ],
@@ -330,6 +362,26 @@
       "files": [
         {
           "path": "registry/src/components/ui/gradient-heading.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input-group",
+      "type": "registry:ui",
+      "title": "Input group",
+      "dependencies": [
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "input",
+        "textarea"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/input-group.tsx",
           "type": "registry:ui"
         }
       ]
@@ -472,6 +524,22 @@
       "files": [
         {
           "path": "registry/src/components/ui/section-header.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/select.tsx",
           "type": "registry:ui"
         }
       ]
@@ -630,7 +698,7 @@
         "cn"
       ],
       "registryDependencies": [
-        "accordion",
+        "cristianruben-dev/auradata-design/accordion",
         "cristianruben-dev/auradata-design/section-header"
       ],
       "files": [
@@ -705,10 +773,10 @@
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/page-header",
+        "cristianruben-dev/auradata-design/select",
         "cristianruben-dev/auradata-design/switch",
         "field",
         "input",
-        "select",
         "tabs"
       ],
       "files": [

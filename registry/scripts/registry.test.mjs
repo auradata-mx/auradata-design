@@ -7,14 +7,18 @@ const item = (name) => registry.items.find((entry) => entry.name === name)
 
 test('publishes the theme, the AuraData components and the shadcn ones AuraData changed', () => {
   const names = registry.items.map((entry) => entry.name)
-  for (const name of ['auradata-theme', 'logo', 'kpi-card', 'page-header', 'chart-palette', 'button', 'badge', 'use-mobile']) {
+  for (const name of [
+    'auradata-theme', 'logo', 'kpi-card', 'page-header', 'chart-palette', 'button', 'badge', 'use-mobile',
+    // T52: shadcn components whose states AuraData fixed.
+    'checkbox', 'accordion', 'select', 'input-group',
+  ]) {
     expect(names).toContain(name)
   }
 })
 
 test('leaves the stock shadcn components to shadcn', () => {
   const names = registry.items.map((entry) => entry.name)
-  for (const name of ['card', 'dialog', 'sidebar', 'select', 'chart', 'empty', 'input']) {
+  for (const name of ['card', 'dialog', 'sidebar', 'chart', 'empty', 'input']) {
     expect(names).not.toContain(name)
   }
 })
@@ -70,8 +74,11 @@ test('publishes the marketing blocks with the eyebrow, the gradient heading and 
       'cristianruben-dev/auradata-design/gradient-heading',
     ]),
   )
-  // The FAQ takes the stock accordion from shadcn.
-  expect(item('faq').registryDependencies).toEqual(['accordion', 'cristianruben-dev/auradata-design/section-header'])
+  // The FAQ takes AuraData's accordion (its disabled item dims, T52).
+  expect(item('faq').registryDependencies).toEqual([
+    'cristianruben-dev/auradata-design/accordion',
+    'cristianruben-dev/auradata-design/section-header',
+  ])
   expect(item('site-footer').registryDependencies).toEqual(['cristianruben-dev/auradata-design/logo'])
 })
 

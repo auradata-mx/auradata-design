@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, within } from 'storybook/test'
 import { CopyIcon, SearchIcon, SendIcon } from 'lucide-react'
 
 import { Field, FieldError, FieldLabel } from '@/components/ui/field'
@@ -97,16 +98,24 @@ export const Invalid: Story = {
 }
 
 /**
- * Disabled: the group dims with its input. Only an icon addon here: a text addon («MXN») dims to 1.99:1 and
- * fails axe, since it is not a disabled control itself (L37).
+ * Disabled: `disabled` on the group disables its input and marks the group `aria-disabled`, so the dimmed text
+ * addons («$», «MXN») are disabled content too (WCAG exempts it from contrast, and axe knows).
  */
 export const Disabled: Story = {
   render: (args) => (
-    <InputGroup {...args}>
-      <InputGroupInput placeholder="Buscar informes…" aria-label="Buscar informes" disabled />
+    <InputGroup {...args} disabled>
       <InputGroupAddon>
-        <SearchIcon />
+        <InputGroupText>$</InputGroupText>
+      </InputGroupAddon>
+      <InputGroupInput defaultValue="1,284,500" aria-label="Meta de ventas" />
+      <InputGroupAddon align="inline-end">
+        <InputGroupText>MXN</InputGroupText>
       </InputGroupAddon>
     </InputGroup>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('textbox', { name: 'Meta de ventas' })).toBeDisabled()
+    await expect(canvasElement.querySelector('[data-slot="input-group"]')).toHaveAttribute('aria-disabled', 'true')
+  },
 }

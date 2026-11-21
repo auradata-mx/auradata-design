@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect } from 'storybook/test'
 import { CircleAlertIcon, CircleCheckIcon, InfoIcon, TriangleAlertIcon } from 'lucide-react'
 
 import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -68,8 +69,8 @@ export const WithAction: Story = {
 }
 
 /**
- * A long title and description wrap inside the box; the action keeps its top corner. The alert reserves
- * `pr-18` (72 px) for it, so keep its label short: «Revisar la conexión» ran over the title (L37).
+ * A long title and description wrap beside the action, which keeps its natural width at the top corner and never
+ * covers the text.
  */
 export const LongText: Story = {
   name: 'Long text',
@@ -84,8 +85,19 @@ export const LongText: Story = {
         datos de ese día hasta que la conexión con el almacén de datos vuelva a responder.
       </AlertDescription>
       <AlertAction>
-        <Button size="sm" variant="outline">Revisar</Button>
+        <Button size="sm" variant="outline">Revisar conexiones</Button>
       </AlertAction>
     </Alert>
   ),
+  play: async ({ canvasElement }) => {
+    const rect = (slot: string) => canvasElement.querySelector(`[data-slot="${slot}"]`)!.getBoundingClientRect()
+    const action = canvasElement.querySelector('[data-slot="alert-action"] button')!.getBoundingClientRect()
+    for (const slot of ['alert-title', 'alert-description']) {
+      const text = rect(slot)
+      const overlaps =
+        action.left < text.right && text.left < action.right && action.top < text.bottom && text.top < action.bottom
+      await expect(overlaps, slot).toBe(false)
+    }
+    await expect(action.right).toBeLessThanOrEqual(rect('alert').right)
+  },
 }

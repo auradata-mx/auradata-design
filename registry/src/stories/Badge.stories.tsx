@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { expect, within } from 'storybook/test'
+
 import { Badge } from '@/components/ui/badge'
 
 const meta = {
@@ -42,17 +44,23 @@ export const Status: Story = {
 }
 
 /**
- * A long label never wraps (`whitespace-nowrap`): the first badge runs past its narrow box. The second takes
- * `max-w-full` and truncates its text with an ellipsis, the full label in `title`. Better: keep labels short.
+ * A long label never wraps: the badge stops at its box and the text ends in «…». Better: keep labels short.
  */
 export const LongText: Story = {
   name: 'Long text',
   render: () => (
-    <div className="grid max-w-48 gap-2 rounded-md border p-2">
+    <div data-testid="box" className="grid max-w-48 gap-2 rounded-md border p-2">
       <Badge variant="warning">Desactualizado desde el 3 de noviembre de 2026</Badge>
-      <Badge variant="warning" className="max-w-full" title="Desactualizado desde el 3 de noviembre de 2026">
-        <span className="truncate">Desactualizado desde el 3 de noviembre de 2026</span>
-      </Badge>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const box = within(canvasElement).getByTestId('box')
+    const badge = box.querySelector<HTMLElement>('[data-slot="badge"]')!
+    const inner = box.getBoundingClientRect()
+    const padding = parseFloat(getComputedStyle(box).paddingRight)
+    await expect(badge.getBoundingClientRect().right).toBeLessThanOrEqual(inner.right - padding + 0.5)
+    const label = within(badge).getByText('Desactualizado desde el 3 de noviembre de 2026')
+    await expect(getComputedStyle(label).textOverflow).toBe('ellipsis')
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth)
+  },
 }

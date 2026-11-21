@@ -56,10 +56,7 @@ export const Multiple: Story = {
   },
 }
 
-/**
- * An item that cannot open («¿Cada cuánto…?»). The stock trigger dims on `aria-disabled`, which Base UI does not
- * set, so it looks like the others (L37); the play checks it stays shut.
- */
+/** An item that cannot open («¿Cada cuánto…?»): its trigger dims and shows the not-allowed cursor, and stays shut. */
 export const DisabledItem: Story = {
   name: 'Disabled item',
   render: (args) => (
@@ -76,6 +73,8 @@ export const DisabledItem: Story = {
     const trigger = within(canvasElement).getByRole('button', { name: QUESTIONS[1].question })
     await userEvent.click(trigger)
     await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    await expect(getComputedStyle(trigger).opacity).toBe('0.5')
+    await expect(getComputedStyle(trigger).cursor).toBe('not-allowed')
     trigger.blur()
   },
 }

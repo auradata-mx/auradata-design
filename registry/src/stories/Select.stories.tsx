@@ -140,7 +140,10 @@ const DATASETS = [
   { value: 'rentabilidad', label: 'Rentabilidad por sucursal y línea de producto, Bajío y Occidente' },
 ]
 
-/** A selected value longer than the trigger: it is cut at the edge (no ellipsis, L37), the chevron stays in place. */
+/**
+ * A selected value longer than the trigger ends in «…» and the chevron stays in place; the list shows the full
+ * label, wrapped.
+ */
 export const LongValue: Story = {
   name: 'Long value',
   args: { items: DATASETS, defaultValue: 'rentabilidad' },
@@ -158,4 +161,25 @@ export const LongValue: Story = {
       </SelectContent>
     </Select>
   ),
+  play: async ({ canvasElement }) => {
+    const value = canvasElement.querySelector<HTMLElement>('[data-slot="select-value"]')!
+    await expect(value).toHaveTextContent(DATASETS[1].label)
+    await expect(getComputedStyle(value).textOverflow).toBe('ellipsis')
+    await expect(value.scrollWidth).toBeGreaterThan(value.clientWidth)
+    const trigger = within(canvasElement).getByRole('combobox', { name: 'Dataset' })
+    await expect(value.getBoundingClientRect().right).toBeLessThanOrEqual(trigger.getBoundingClientRect().right)
+  },
+}
+
+/** The list of a long value, open: the option wraps, so the whole label reads there. */
+export const LongValueOpen: Story = {
+  ...LongValue,
+  name: 'Long value open',
+  args: { ...LongValue.args, defaultOpen: true },
+  play: async () => {
+    const option = await within(document.body).findByRole('option', { name: DATASETS[1].label })
+    const popup = option.closest<HTMLElement>('[data-slot="select-content"]')!
+    await expect(option.scrollWidth).toBeLessThanOrEqual(option.clientWidth)
+    await expect(option.getBoundingClientRect().right).toBeLessThanOrEqual(popup.getBoundingClientRect().right)
+  },
 }
