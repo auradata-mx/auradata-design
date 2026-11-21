@@ -45,8 +45,8 @@ npx shadcn add <component>              # from shadcn, on Base UI
 npm run registry                        # regenerates registry.json and public/r
 ```
 
-Add a story in `registry/src/stories/`. `scripts/registry.mjs` lists every file of `src/components/ui` with the packages
-it imports, so `registry.json` is never edited by hand.
+Add a story in `registry/src/stories/`. `scripts/registry.mjs` lists every file of `src/components/ui` and `src/hooks` with
+the packages and registry items it imports, so `registry.json` is never edited by hand.
 
 ## Installing from an app
 
