@@ -21,3 +21,6 @@ export const Default: Story = {
     </TooltipProvider>
   ),
 }
+
+/** Open, for the visual tests and to see the overlay. */
+export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }

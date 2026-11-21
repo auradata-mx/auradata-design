@@ -24,3 +24,6 @@ export const Default: Story = {
     </Sheet>
   ),
 }
+
+/** Open, for the visual tests and to see the overlay. */
+export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }
