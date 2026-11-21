@@ -1,0 +1,42 @@
+import { Meta, ColorPalette, ColorItem, Typeset } from '@storybook/addon-docs/blocks'
+import theme from '@auradata/tokens/shadcn-theme.json'
+
+<Meta title="Brand/Tokens" />
+
+export const pairs = (mode) =>
+  Object.entries(theme[mode]).filter(([name]) => !name.startsWith('chart-') && name !== 'radius')
+
+# AuraData tokens
+
+Every value on this page is read from `@auradata/tokens`. Change `packages/tokens/src/tokens` and rebuild; never edit a color in a component.
+
+## Light
+
+<ColorPalette>
+  {pairs('light').map(([name, value]) => (
+    <ColorItem key={name} title={name} subtitle={`--${name}`} colors={{ [name]: value }} />
+  ))}
+</ColorPalette>
+
+## Dark
+
+<ColorPalette>
+  {pairs('dark').map(([name, value]) => (
+    <ColorItem key={name} title={name} subtitle={`--${name}`} colors={{ [name]: value }} />
+  ))}
+</ColorPalette>
+
+## Chart palette
+
+<ColorPalette>
+  <ColorItem
+    title="AuraData"
+    subtitle="--chart-1 … --chart-5"
+    colors={['chart-1', 'chart-2', 'chart-3', 'chart-4', 'chart-5'].map((name) => theme.light[name])}
+  />
+</ColorPalette>
+
+## Type
+
+<Typeset fontFamily={theme.theme['font-sans']} fontSizes={[32, 24, 18, 14, 12]} sampleText="Informes que se entienden" />
+<Typeset fontFamily={theme.theme['font-mono']} fontSizes={[18, 14, 12]} sampleText="$1,284,500 · 12.4%" />

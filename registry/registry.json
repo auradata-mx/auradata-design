@@ -1,0 +1,148 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "auradata",
+  "homepage": "https://auradata.mx",
+  "items": [
+    {
+      "name": "auradata-theme",
+      "type": "registry:theme",
+      "title": "AuraData theme",
+      "description": "The AuraData brand: Azul Aura, Outfit and Geist Mono, light and dark.",
+      "cssVars": {
+        "theme": {
+          "font-sans": "Outfit, -apple-system, 'Segoe UI', sans-serif",
+          "font-mono": "'Geist Mono', ui-monospace, SFMono-Regular, monospace"
+        },
+        "light": {
+          "background": "#FFFFFF",
+          "foreground": "#0A0A0F",
+          "card": "#FFFFFF",
+          "card-foreground": "#0A0A0F",
+          "popover": "#FFFFFF",
+          "popover-foreground": "#0A0A0F",
+          "primary": "#2563EB",
+          "primary-foreground": "#FFFFFF",
+          "secondary": "#F5F5F5",
+          "secondary-foreground": "#0A0A0F",
+          "muted": "#F5F5F5",
+          "muted-foreground": "#666666",
+          "accent": "#F5F5F5",
+          "accent-foreground": "#0A0A0F",
+          "destructive": "#DC2626",
+          "border": "#E5E5E5",
+          "input": "#E5E5E5",
+          "ring": "#2563EB",
+          "chart-1": "#2563EB",
+          "chart-2": "#7C3AED",
+          "chart-3": "#10B981",
+          "chart-4": "#F59E0B",
+          "chart-5": "#EC4899",
+          "radius": "8px",
+          "sidebar": "#F5F5F5",
+          "sidebar-foreground": "#0A0A0F",
+          "sidebar-primary": "#2563EB",
+          "sidebar-primary-foreground": "#FFFFFF",
+          "sidebar-accent": "#F5F5F5",
+          "sidebar-accent-foreground": "#0A0A0F",
+          "sidebar-border": "#E5E5E5",
+          "sidebar-ring": "#2563EB"
+        },
+        "dark": {
+          "background": "#111117",
+          "foreground": "#F5F5F7",
+          "card": "#111117",
+          "card-foreground": "#F5F5F7",
+          "popover": "#191921",
+          "popover-foreground": "#F5F5F7",
+          "primary": "#3B82F6",
+          "primary-foreground": "#FFFFFF",
+          "secondary": "#1C1C24",
+          "secondary-foreground": "#F5F5F7",
+          "muted": "#1C1C24",
+          "muted-foreground": "#A3A3AD",
+          "accent": "#1C1C24",
+          "accent-foreground": "#F5F5F7",
+          "destructive": "#F87171",
+          "border": "#26262F",
+          "input": "#26262F",
+          "ring": "#3B82F6",
+          "chart-1": "#2563EB",
+          "chart-2": "#7C3AED",
+          "chart-3": "#10B981",
+          "chart-4": "#F59E0B",
+          "chart-5": "#EC4899",
+          "radius": "8px",
+          "sidebar": "#0A0A0F",
+          "sidebar-foreground": "#F5F5F7",
+          "sidebar-primary": "#3B82F6",
+          "sidebar-primary-foreground": "#FFFFFF",
+          "sidebar-accent": "#1C1C24",
+          "sidebar-accent-foreground": "#F5F5F7",
+          "sidebar-border": "#26262F",
+          "sidebar-ring": "#3B82F6"
+        }
+      }
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}
