@@ -11,6 +11,7 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 - S4: Storybook as the workshop and catalog of the registry components.
 - S5: UI SDK (vercel-labs/ui) stays out while it is in beta.
 - S6 (user, 2026-11-20): "hay que hacer un plan completito de todo lo que tenemos que hacer": the plan below covers publishing, completing the tokens, adopting them in each product, growing the registry, quality and brand docs.
+- S7 (user, 2026-11-21): "Pues vamos a agregar y arreglar todo lo que me dices por favor", about the proposal: status components (Alert and Badge in success, warning, info), number and date formatting (es-MX), data table, date range filter with presets, ⌘K search, workspace switcher and light/dark toggle, error and 404 states, an ECharts theme in the tokens, marketing blocks (hero, CTA band, benefits grid, FAQ, footer) with eyebrow, gradient heading and aura background, the faint dark switch, a KPI sparkline, and AI Elements for chat. Only what shadcn lacks or AuraData changes is published; each new component has a story and passes the story, a11y and visual checks.
 
 ## Tasks
 
@@ -37,6 +38,18 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 | T19 | 5 Quality | S4 | inline | done | `npm run test:stories -w registry`: every story renders and passes axe (light). RED 3 stories (destructive tint 4.13:1, select without a name) → GREEN 47/47. CI in T8 |
 | T20 | 5 Quality | S4 | inline | done | Playwright: every story light and dark, axe WCAG A/AA in dark plus a screenshot; Linux baselines from `npm run test:visual:docker`; 94/94 |
 | T21 | 5 Quality | S1 | inline | done | `.github/dependabot.yml`: weekly npm (grouped: ui-stack, storybook, testing, tokens, react, tooling) and GitHub Actions. Dependabot over Renovate: no GitHub app to install. Takes effect once pushed |
+| T23 | 7 Components | S7 | inline | pending | Status: shadcn `alert` and `badge` with `success`, `warning`, `info` variants |
+| T24 | 7 Components | S7 | inline | pending | `lib/format`: es-MX currency, compact, percent, number, date; unit tests |
+| T25 | 7 Components | S7 | inline | pending | `data-table` on TanStack Table: sort, filter, pagination, empty state |
+| T26 | 7 Components | S7 | inline | pending | `date-range-filter`: calendar in a popover with presets (Hoy, Últimos 7 días, Este mes, Este trimestre, Este año) |
+| T27 | 7 Components | S7 | inline | pending | `search-command`: ⌘K palette on shadcn `command` |
+| T28 | 7 Components | S7 | inline | pending | `workspace-switcher` and `theme-toggle`, wired into `app-shell` |
+| T29 | 7 Components | S7 | inline | pending | `error-state` and a `not-found` block |
+| T30 | 7 Tokens | S7 | inline | pending | `echarts.json` (light and dark ECharts themes) from the tokens, with tests |
+| T31 | 7 Components | S7 | inline | pending | Marketing: `eyebrow`, `gradient-heading`, `aura-background`; blocks `hero`, `cta-band`, `benefits-grid`, `faq`, `site-footer` |
+| T32 | 7 Components | S7 | inline | pending | Dark switch track that reads against the background (3:1 non-text) |
+| T33 | 7 Components | S7 | inline | pending | KPI card with an optional sparkline in the brand palette |
+| T34 | 7 Components | S7 | inline | pending | Chat block on AI Elements |
 | T22 | 6 Docs | S4 | inline | done | `Brand/01-05` (identidad, logotipo, tipografía, color, voz), `Guides/Agregar un componente`; Storybook UI and docs themed from the tokens; docs pages in the visual tests (axe + screenshot), 113/113 |
 
 ## Log
@@ -62,4 +75,5 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 - L19 (2026-11-21, user): T7 "GitHub Packages (Recommended)"; then, on the scope, "No, usa cristianruben-dev (Recommended)": GitHub Packages only takes the owner's scope and the `auradata` GitHub account is a user that is not theirs. The workspace package is renamed `@cristianruben-dev/auradata-tokens`; the registry depends on `"@auradata/tokens": "npm:@cristianruben-dev/auradata-tokens@^0.1.0"` and npm links that alias to the workspace, so no import changed. The package gains `publishConfig` (npm.pkg.github.com, restricted), `repository` and `prepack: node build.mjs`. The release workflow uses `changesets/action`: with no changeset pending it publishes the unpublished 0.1.0.
 - L20 (T7): Release run 44922469989 published `@cristianruben-dev/auradata-tokens@0.1.0` and its tag; CI green. Installing it locally gave 403: the `cristianruben-dev` `gh` token has `repo`, `gist`, `read:org`, `admin:public_key`, no `read:packages`. The user runs `gh auth refresh -h github.com -s read:packages` (with `cristianruben-dev` active) once; then the scratch install is retried.
 - L21 (T9): Deployed on Coolify with basic auth (password given to the user in chat, not stored in git). `design.auradata.mx` is in the app domains, but the zone has a proxied wildcard that answers 521 for unknown hosts and Coolify has no Cloudflare token: the user adds an A record `design` → 46.225.238.143, as `bi`. Local Docker builds failed pulling images through the macOS keychain credential helper (error -50); an empty `DOCKER_CONFIG` with the plugins symlinked works.
-- Next: the DNS record for design.auradata.mx; retry the tokens install once the token has `read:packages`; T13-T15 adoption in each product repo; T13-T15 adoption in each product repo; T6 needs the push; T7 and T9 wait on user decisions; T7 and T9 wait on user decisions; T6-T9 after (T7 and T9 wait on user decisions).
+- L22 (2026-11-21, user): "Que más tenemos que agregarle a esto de nuestro auradata design que componentes nos faltan que deberíamos de hacer?" → proposal (S7) → "Pues vamos a agregar y arreglar todo lo que me dices por favor". Phase 7 on `feat/components-phase-7`.
+- Next: T23-T34; the user adds the DNS record for design.auradata.mx and the `read:packages` scope; T13-T15 adoption in each product repo.
