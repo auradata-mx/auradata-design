@@ -1,5 +1,5 @@
-// registry: auradata (the AuraData BI chat panel: ask your data)
-import { ArrowUpIcon, SparklesIcon } from "lucide-react"
+// registry: auradata (the AuraData BI chat panel: ask your data, with failed answers that retry)
+import { ArrowUpIcon, CircleAlertIcon, RotateCwIcon, SparklesIcon } from "lucide-react"
 import { useEffect, useId, useRef, useState } from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { cn } from "cn"
@@ -37,6 +37,8 @@ export type ChatMessage = {
   text: string
   /** KPI cards or charts under an assistant's text. */
   embeds?: ChatEmbed[]
+  /** An assistant answer that failed: «No pudimos responder», the text as the reason, and «Reintentar». */
+  status?: "error"
 }
 
 type ChatProps = Omit<React.ComponentProps<"section">, "title"> & {
@@ -45,6 +47,8 @@ type ChatProps = Omit<React.ComponentProps<"section">, "title"> & {
   onSend: (text: string) => void
   /** An answer is on its way: shows a thinking row and holds new questions. */
   loading?: boolean
+  /** «Reintentar» on a failed answer: called with that message's id. */
+  onRetry?: (messageId: string) => void
   /** Questions to start with, shown while there are no messages. */
   suggestions?: string[]
   title?: string
@@ -98,13 +102,33 @@ function AssistantAvatar() {
   )
 }
 
-function Message({ message }: { message: ChatMessage }) {
+function Message({ message, onRetry }: { message: ChatMessage; onRetry?: (messageId: string) => void }) {
   if (message.role === "user") {
     return (
       <li data-slot="chat-message" data-role="user" className="flex justify-end">
         <p className="max-w-[80%] rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-sm whitespace-pre-wrap text-primary-foreground">
           {message.text}
         </p>
+      </li>
+    )
+  }
+  if (message.status === "error") {
+    return (
+      <li data-slot="chat-message" data-role="assistant" data-status="error" className="flex gap-3">
+        <AssistantAvatar />
+        <div className="grid min-w-0 flex-1 justify-items-start gap-2 pt-1">
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <CircleAlertIcon aria-hidden className="size-4 shrink-0 text-destructive" />
+            No pudimos responder
+          </p>
+          {message.text && <p className="text-sm text-muted-foreground">{message.text}</p>}
+          {onRetry && (
+            <Button variant="outline" size="sm" onClick={() => onRetry(message.id)}>
+              <RotateCwIcon data-icon="inline-start" aria-hidden />
+              Reintentar
+            </Button>
+          )}
+        </div>
       </li>
     )
   }
@@ -146,6 +170,7 @@ function Chat({
   messages,
   onSend,
   loading = false,
+  onRetry,
   suggestions = [],
   title = "Pregúntale a tus datos",
   description = "Escribe una pregunta sobre tus informes y datasets. Te respondo con números y gráficas.",
@@ -212,7 +237,7 @@ function Chat({
             <div role="log" aria-live="polite">
               <ol className="flex flex-col gap-6">
                 {messages.map((message) => (
-                  <Message key={message.id} message={message} />
+                  <Message key={message.id} message={message} onRetry={onRetry} />
                 ))}
                 {loading && <Thinking />}
               </ol>

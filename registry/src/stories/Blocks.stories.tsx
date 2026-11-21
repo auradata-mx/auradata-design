@@ -202,3 +202,25 @@ export const ChatLoading: ChatStory = {
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
+
+/** An answer that failed: «No pudimos responder» and «Reintentar», which asks the app to try that message again. */
+export const ChatError: ChatStory = {
+  name: 'Chat error',
+  render: (args) => <ChatFrame {...args} />,
+  args: {
+    messages: [
+      CONVERSATION[0],
+      { id: '2', role: 'assistant', text: 'Se agotó el tiempo de espera de la consulta.', status: 'error' },
+    ],
+    onSend: fn(),
+    onRetry: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText('No pudimos responder')).toBeVisible()
+    await userEvent.click(canvas.getByRole('button', { name: 'Reintentar' }))
+    await expect(args.onRetry).toHaveBeenCalledWith('2')
+    // Rest state for the screenshot: nothing focused.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
