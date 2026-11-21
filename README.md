@@ -66,11 +66,17 @@ or a product: read it from a token.
 
 ## What the registry publishes
 
-The theme, the AuraData components (logo, KPI card, page header, chart palette), the blocks (`login`, `app-shell`,
-`settings`) and the shadcn components AuraData
-changed (button and badge: a solid destructive variant that passes WCAG AA; the `use-mobile` hook). Every other shadcn
-component comes straight from shadcn: the theme already gives it the brand. Storybook still shows them all, so the brand
-can be seen on each one.
+The theme and these items, listed in `/registry.json`:
+
+| Kind | Items |
+| --- | --- |
+| AuraData components | `logo` (and `ProductTag`), `kpi-card` (optional sparkline), `page-header`, `data-table`, `date-range-filter`, `search-command`, `workspace-switcher`, `theme-toggle`, `error-state` |
+| Helpers | `format` (es-MX currency, compact, percent, number, date), `chart-palette`, `initials`, the `use-mobile` hook |
+| Blocks | `login`, `app-shell`, `settings`, `not-found` |
+| shadcn components AuraData changed | `button` (solid destructive), `badge` and `alert` (`success`, `warning`, `info`), `switch` (a track that reads in dark) |
+
+Every other shadcn component comes straight from shadcn: the theme already gives it the brand. Storybook still shows them
+all, so the brand can be seen on each one.
 
 A file is published when it says so on a line of its own: `// registry: auradata (<why>)`.
 
