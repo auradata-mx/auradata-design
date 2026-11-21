@@ -38,6 +38,12 @@ const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
     docs: { theme: auradata },
+    // The brand first, then what apps install, then the stock shadcn components.
+    options: {
+      storySort: {
+        order: ['Brand', ['01 Identidad', '02 Logotipo', '03 Tipografía', '04 Color', '05 Voz', 'Tokens'], 'Guides', 'AuraData', 'Blocks', 'Components'],
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
