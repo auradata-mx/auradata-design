@@ -1,9 +1,17 @@
 {
-  "name": "@auradata/tokens",
+  "name": "@cristianruben-dev/auradata-tokens",
   "version": "0.1.0",
-  "private": true,
   "license": "UNLICENSED",
   "description": "AuraData brand tokens for every product: CSS variables, Tailwind 4, shadcn, Docusaurus and antd.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cristianruben-dev/auradata-design.git",
+    "directory": "packages/tokens"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
   "type": "module",
   "files": ["dist", "assets"],
   "exports": {
@@ -17,7 +25,8 @@
   },
   "scripts": {
     "build": "node build.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepack": "node build.mjs"
   },
   "devDependencies": {
     "style-dictionary": "5.8.0",

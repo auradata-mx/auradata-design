@@ -4,7 +4,7 @@ The AuraData brand for every product, in one private repository.
 
 | Part | What it is | Who uses it |
 | --- | --- | --- |
-| `packages/tokens` (`@auradata/tokens`) | The brand as data (colors light and dark, fonts, radii, shadows, motion, chart palette), built by Style Dictionary | Every product |
+| `packages/tokens` (`@auradata/tokens`, published as `@cristianruben-dev/auradata-tokens`) | The brand as data (colors light and dark, fonts, radii, shadows, motion, chart palette), built by Style Dictionary | Every product |
 | `registry` | A shadcn registry: components on Base UI and Tailwind 4, themed by the tokens | New React apps, React islands of auradata.mx |
 | `registry` (Storybook) | The workshop and catalog of the registry components | People building components |
 
@@ -22,6 +22,32 @@ The AuraData brand for every product, in one private repository.
 The brand gradient, `--aura-gradient-brand`, is only a headline accent: the product tag ("BI") or one word of a title.
 
 The logo SVGs embed the mark as a PNG and draw the name with Outfit outlines: fine for screens, not a vector master for print.
+
+## Installing the tokens
+
+They are a private package on GitHub Packages. GitHub only takes packages under the owner's scope, so the package is
+`@cristianruben-dev/auradata-tokens`; products install it under the alias `@auradata/tokens`, so every import reads
+`@auradata/tokens/...`.
+
+```ini
+# .npmrc of the product
+@cristianruben-dev:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+```bash
+export GITHUB_TOKEN=$(gh auth token --user cristianruben-dev)   # or a classic token with read:packages
+pnpm add @auradata/tokens@npm:@cristianruben-dev/auradata-tokens  # npm install works the same
+```
+
+In CI, `GITHUB_TOKEN` needs `read:packages` on this repository's package: a token of another repository's workflow only
+reads it once the package grants that repository access (package settings, "Manage Actions access").
+
+## Releasing the tokens
+
+A change products will see needs a changeset: `npx changeset`, pick the bump (patch for a fix, minor for a new token,
+major for a renamed or removed one) and write one line. The release workflow opens a "Version packages" pull request on
+`main`; merging it publishes the version with its `CHANGELOG.md`.
 
 ## Commands
 

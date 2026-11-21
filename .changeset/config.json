@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@4/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "cristianruben-dev/auradata-design" }],
+  "commit": false,
+  "access": "restricted",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "privatePackages": { "version": false, "tag": false }
+}

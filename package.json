@@ -7,7 +7,11 @@
     "registry"
   ],
   "scripts": {
-    "build": "npm run build -w @auradata/tokens && npm run build -w registry",
-    "test": "npm test -w @auradata/tokens"
+    "build": "npm run build -w @cristianruben-dev/auradata-tokens && npm run build -w registry",
+    "test": "npm test -w @cristianruben-dev/auradata-tokens"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3"
   }
 }
