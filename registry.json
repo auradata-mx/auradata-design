@@ -48,6 +48,7 @@
           "info-foreground": "#FFFFFF",
           "border": "#E5E5E5",
           "input": "#E5E5E5",
+          "control-border": "#858585",
           "ring": "#181818",
           "chart-1": "#2563EB",
           "chart-2": "#7C3AED",
@@ -93,6 +94,7 @@
           "info-foreground": "#0A0A0F",
           "border": "#26262F",
           "input": "#26262F",
+          "control-border": "#6B6B76",
           "ring": "#F5F5F7",
           "chart-1": "#2563EB",
           "chart-2": "#7C3AED",
@@ -119,6 +121,9 @@
           ":focus-visible": {
             "outline": "2px solid var(--ring)",
             "outline-offset": "2px"
+          },
+          ":where([data-slot=\"checkbox\"], [data-slot=\"radio-group-item\"])": {
+            "--input": "var(--control-border)"
           }
         },
         ":where([class*=\"focus-visible:ring-\"]:not([class~=\"focus-visible:ring-0\"], [data-slot=\"field-label\"]:has(> [data-slot=\"field\"]) *)):focus-visible,\n:where([class*=\"focus-visible:ring-\"]):has(> input:focus-visible),\n:where([class*=\"focus-within:ring-\"]:not([class*=\"focus-within:ring-0\"])):has(:focus-visible),\n:where([data-slot=\"input-group\"]:not([data-slot=\"combobox-content\"] *)):has([data-slot=\"input-group-control\"]:focus-visible),\n:where([data-slot=\"code-block\"]):has(> [data-slot=\"code-block-content\"]:focus-visible),\n:where([data-slot=\"field-label\"]:has(> [data-slot=\"field\"])):has(:focus-visible)": {

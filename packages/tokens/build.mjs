@@ -76,6 +76,7 @@ const SHADCN = {
   'info-foreground': 'color-info-foreground',
   border: 'color-border',
   input: 'color-border',
+  'control-border': 'color-border-control',
   ring: 'color-focus-ring',
   'chart-1': 'chart-1',
   'chart-2': 'chart-2',
@@ -129,7 +130,12 @@ function focusCss(tokens) {
     `:where(${card}):has(:focus-visible)`,
   ];
   return {
-    '@layer base': { ':focus-visible': outline },
+    '@layer base': {
+      ':focus-visible': outline,
+      // WCAG 1.4.11: the --input border of an unchecked checkbox or radio reads 1.26:1; theirs reads 3:1.
+      // Only --input changes on them, so the checked, invalid and focused borders stay shadcn's.
+      ':where([data-slot="checkbox"], [data-slot="radio-group-item"])': { '--input': 'var(--control-border)' },
+    },
     [rings.join(',\n')]: { ...outline, '--tw-ring-shadow': '0 0 #0000' },
     ':where([data-slot$="viewport"]):focus-visible': { 'outline-offset': `-${width}` },
   };

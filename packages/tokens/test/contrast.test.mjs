@@ -67,3 +67,15 @@ describe.each(['light', 'dark'])('%s theme', (name) => {
     expect(ratio, `${theme[text]} on ${theme[background]} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
   });
 });
+
+/** WCAG 1.4.11: the boundary of a control (unchecked checkbox and radio) against what surrounds it. */
+const NON_TEXT = 3;
+
+describe.each(['light', 'dark'])('%s theme controls', (name) => {
+  test.each(SURFACES)('border-control on %s passes WCAG 1.4.11', (surface) => {
+    const theme = themes[name];
+    expect(theme['border-control'], '--aura-color-border-control').toBeDefined();
+    const ratio = contrast(theme['border-control'], theme[surface]);
+    expect(ratio, `${theme['border-control']} on ${theme[surface]} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(NON_TEXT);
+  });
+});

@@ -225,7 +225,7 @@ test('echarts.json themes ECharts in light and dark from the tokens', () => {
 // a shadcn app installs: the stock 3px ring at 50% gives way to it, without copying any component.
 test('shadcn.css gives every component the brand focus ring', () => {
   const css = read('shadcn.css');
-  expect(css).toMatch(/@layer base \{\s*:focus-visible \{\s*outline: 2px solid var\(--ring\);\s*outline-offset: 2px;\s*\}\s*\}/);
+  expect(css).toMatch(/@layer base \{\s*:focus-visible \{\s*outline: 2px solid var\(--ring\);\s*outline-offset: 2px;\s*\}/);
   // Unlayered, so it wins over the stock `outline-none` and `ring-*` utilities.
   expect(css).toMatch(/^:where\(\[class\*="focus-visible:ring-"\][^{]*:focus-visible[^{]*\{[^}]*outline: 2px solid var\(--ring\);[^}]*outline-offset: 2px;[^}]*--tw-ring-shadow: 0 0 #0000;/m);
   // Scrolling viewports clip anything outside them: their ring goes inside.
@@ -239,4 +239,15 @@ test('shadcn-theme.json carries the same focus ring as the css of a registry the
   expect(rings).toHaveLength(1);
   expect(rings[0][1]).toMatchObject({ outline: '2px solid var(--ring)', 'outline-offset': '2px' });
   expect(read('shadcn.css')).toContain(rings[0][0]);
+});
+
+// Unchecked checkbox and radio borders read 1.26:1 with --input; they take --control-border instead.
+test('the theme gives checkboxes and radios a border that reads 3:1', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.light['control-border']).toBe('#858585');
+  expect(theme.dark['control-border']).toBe('#6B6B76');
+  const rule = { '--input': 'var(--control-border)' };
+  expect(theme.css['@layer base'][':where([data-slot="checkbox"], [data-slot="radio-group-item"])']).toEqual(rule);
+  expect(read('shadcn.css')).toContain('--control-border: var(--aura-color-border-control);');
+  expect(read('shadcn.css')).toMatch(/:where\(\[data-slot="checkbox"\], \[data-slot="radio-group-item"\]\) \{\s*--input: var\(--control-border\);/);
 });

@@ -13,6 +13,7 @@
     "bg-elevated": { "$value": "#FFFFFF" },
     "border": { "$value": "#E5E5E5" },
     "border-secondary": { "$value": "#EDEDED" },
+    "border-control": { "$value": "#858585", "$description": "The edge of an unchecked checkbox or radio: 3.38:1 on #F5F5F5 (WCAG 1.4.11), like the switch track" },
     "text": { "$value": "#0A0A0F" },
     "text-secondary": { "$value": "#666666" },
     "text-tertiary": { "$value": "#6E6E6E", "$description": "Darker than #9B9B9B so small labels stay readable: 5.1:1 on white, 4.7:1 on #F5F5F5" },

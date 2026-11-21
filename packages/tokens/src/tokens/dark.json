@@ -13,6 +13,7 @@
     "bg-elevated": { "$value": "#191921" },
     "border": { "$value": "#26262F" },
     "border-secondary": { "$value": "#1D1D25" },
+    "border-control": { "$value": "#6B6B76" },
     "text": { "$value": "#F5F5F7" },
     "text-secondary": { "$value": "#A3A3AD" },
     "text-tertiary": { "$value": "#8B8B96" },
