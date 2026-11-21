@@ -38,7 +38,7 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 | T19 | 5 Quality | S4 | inline | done | `npm run test:stories -w registry`: every story renders and passes axe (light). RED 3 stories (destructive tint 4.13:1, select without a name) → GREEN 47/47. CI in T8 |
 | T20 | 5 Quality | S4 | inline | done | Playwright: every story light and dark, axe WCAG A/AA in dark plus a screenshot; Linux baselines from `npm run test:visual:docker`; 94/94 |
 | T21 | 5 Quality | S1 | inline | done | `.github/dependabot.yml`: weekly npm (grouped: ui-stack, storybook, testing, tokens, react, tooling) and GitHub Actions. Dependabot over Renovate: no GitHub app to install. Takes effect once pushed |
-| T23 | 7 Components | S7 | inline | pending | Status: shadcn `alert` and `badge` with `success`, `warning`, `info` variants |
+| T23 | 7 Components | S7 | inline | done | Status: shadcn `alert` (marked: status tints the box, border and icon, text keeps the foreground) and `badge` (solid fill + `-foreground`) with `success`, `warning`, `info`; stories Alert (Default, Variants, WithAction), Badge Status; story tests 57/57 (axe light), visual 121/121 (axe dark), registry 9 items |
 | T24 | 7 Components | S7 | inline | pending | `lib/format`: es-MX currency, compact, percent, number, date; unit tests |
 | T25 | 7 Components | S7 | inline | pending | `data-table` on TanStack Table: sort, filter, pagination, empty state |
 | T26 | 7 Components | S7 | inline | pending | `date-range-filter`: calendar in a popover with presets (Hoy, Últimos 7 días, Este mes, Este trimestre, Este año) |

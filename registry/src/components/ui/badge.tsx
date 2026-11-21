@@ -1,4 +1,4 @@
-// registry: auradata (shadcn badge with a solid destructive variant)
+// registry: auradata (shadcn badge with solid destructive, success, warning and info variants)
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -15,6 +15,10 @@ const badgeVariants = cva(
         // AuraData: a solid fill. The stock tint put #DC2626 on #FCE9E9, 4.1:1, below WCAG AA.
         destructive:
           "bg-destructive text-destructive-foreground focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/90",
+        // AuraData: status badges are solid too; each -foreground reads AA on its fill.
+        success: "bg-success text-success-foreground [a]:hover:bg-success/90",
+        warning: "bg-warning text-warning-foreground [a]:hover:bg-warning/90",
+        info: "bg-info text-info-foreground [a]:hover:bg-info/90",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
         ghost:
