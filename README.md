@@ -94,10 +94,10 @@ The theme and these items, listed in `/registry.json`:
 
 | Kind | Items |
 | --- | --- |
-| AuraData components | `logo` (and `ProductTag`), `kpi-card` (optional sparkline), `page-header`, `data-table`, `date-range-filter`, `search-command`, `workspace-switcher`, `theme-toggle`, `error-state`, `eyebrow`, `gradient-heading`, `aura-background`, `section-header` |
+| AuraData components | `logo` (and `ProductTag`), `kpi-card` (optional sparkline, loading, no data), `page-header`, `data-table` (loading), `date-range-filter`, `search-command` (loading), `workspace-switcher`, `theme-toggle`, `error-state`, `eyebrow`, `gradient-heading`, `aura-background`, `section-header` |
 | Helpers | `format` (es-MX currency, compact, percent, number, date), `chart-palette`, `initials`, the `use-mobile` hook |
-| Blocks | `login`, `app-shell`, `settings`, `not-found`, `chat` (ask your data: KPI and chart answers); marketing: `hero`, `cta-band`, `benefits-grid`, `faq`, `site-footer` |
-| shadcn components AuraData changed | `button` (solid destructive), `badge` and `alert` (`success`, `warning`, `info`), `switch` (a track that reads in dark) |
+| Blocks | `login` (error, pending), `app-shell`, `settings` (field errors, saving), `not-found`, `chat` (ask your data: KPI and chart answers, failed answer with retry); marketing: `hero`, `cta-band`, `benefits-grid`, `faq`, `site-footer` |
+| shadcn components AuraData changed | `button` (solid destructive, `loading`), `badge` and `alert` (`success`, `warning`, `info`), `switch` (a track that reads in dark) |
 
 Every other shadcn component comes straight from shadcn: the theme already gives it the brand. Storybook still shows them
 all, so the brand can be seen on each one.
