@@ -25,7 +25,7 @@ jobs:
       - run: npm run lint -w registry
       - run: npm run test:unit -w registry
       - run: npm run build-storybook -w registry
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         with:
           name: storybook
           path: registry/storybook-static
@@ -63,7 +63,7 @@ jobs:
       - run: npm run test:visual -w registry
         env:
           HOME: /root
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: visual-report
