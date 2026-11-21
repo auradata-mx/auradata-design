@@ -1,9 +1,10 @@
 import { spawnSync } from 'node:child_process'
+import { request as httpRequest } from 'node:http'
 import { createHmac, randomBytes } from 'node:crypto'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 
 import { createAuthServer, loadConfig } from './index.mjs'
 
@@ -32,6 +33,42 @@ const login = (fields, headers = {}) =>
     headers: { 'content-type': 'application/x-www-form-urlencoded', ...headers },
     body: new URLSearchParams(fields).toString(),
   })
+
+/** Signs in against another server (the rate-limit tests each get a fresh one). */
+const loginAt = (at, fields, headers = {}) =>
+  fetch(at + '/login', {
+    method: 'POST',
+    redirect: 'manual',
+    headers: { 'content-type': 'application/x-www-form-urlencoded', ...headers },
+    body: new URLSearchParams(fields).toString(),
+  })
+
+/** A server of its own, so failed attempts never leak between rate-limit tests. */
+async function freshServer() {
+  const own = createAuthServer(
+    loadConfig({ SITE_PASSWORD: password, SESSION_SECRET: secret, STATIC_DIR: scratch, LOGIN_DIR: scratch })
+  )
+  await new Promise((resolve) => own.listen(0, '127.0.0.1', resolve))
+  return { at: `http://127.0.0.1:${own.address().port}`, close: () => new Promise((resolve) => own.close(resolve)) }
+}
+
+/** Sends the headers at once and the body after a delay, as a burst of slow clients would. */
+function slowLogin(at, body, headers, delayMs) {
+  return new Promise((resolve, reject) => {
+    const payload = Buffer.from(body)
+    const req = httpRequest(at + '/login', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', 'content-length': payload.length, ...headers },
+    })
+    req.on('response', (response) => {
+      response.resume()
+      resolve(response.statusCode)
+    })
+    req.on('error', reject)
+    req.flushHeaders()
+    setTimeout(() => req.end(payload), delayMs)
+  })
+}
 
 const sessionCookie = (response) => (response.headers.get('set-cookie') ?? '').split(';')[0]
 
@@ -138,7 +175,17 @@ describe('signing in', () => {
     expect(response.headers.get('set-cookie')).toContain('Secure')
   })
 
-  test.each(['//evil.com', '/\\evil.com', 'https://evil.com', 'javascript:alert(1)', ''])(
+  test.each([
+    '//evil.com',
+    '/\\evil.com',
+    'https://evil.com',
+    'javascript:alert(1)',
+    '',
+    '/\t/evil.example',
+    '/\t\\evil.example',
+    '/\n/x',
+    '/caf\u00e9',
+  ])(
     'never redirects off the site (next=%j)',
     async (next) => {
       const response = await login({ password, next }, { 'x-forwarded-for': ip() })
@@ -152,6 +199,23 @@ describe('signing in', () => {
     expect(response.status).toBe(303)
     expect(response.headers.get('location')).toBe('/login')
     expect(response.headers.get('set-cookie')).toMatch(/^aura_session=;.*Max-Age=0/)
+
+    const sameSite = await fetch(base + '/logout', { method: 'POST', redirect: 'manual', headers: { origin: base } })
+    expect(sameSite.status).toBe(303)
+  })
+
+  test('signing out from another site is refused', async () => {
+    for (const origin of ['https://evil.example', 'null']) {
+      const response = await fetch(base + '/logout', { method: 'POST', redirect: 'manual', headers: { origin } })
+      expect(response.status).toBe(403)
+      expect(response.headers.get('set-cookie')).toBeNull()
+    }
+  })
+
+  test('a body over 4 KB gets 413', async () => {
+    const response = await login({ password: 'x'.repeat(5000) }, { 'x-forwarded-for': ip() })
+    expect(response.status).toBe(413)
+    expect(response.headers.get('set-cookie')).toBeNull()
   })
 })
 
@@ -173,6 +237,11 @@ describe('with a session', () => {
 
     const script = await get('/app.js', { cookie })
     expect(script.headers.get('content-type')).toMatch(/^text\/javascript/)
+  })
+
+  test('the Storybook may only be framed by itself', async () => {
+    expect((await get('/', { cookie })).headers.get('x-frame-options')).toBe('SAMEORIGIN')
+    expect((await get('/login')).headers.get('x-frame-options')).toBe('DENY')
   })
 
   test('a directory serves its index.html and a missing file is 404', async () => {
@@ -204,27 +273,63 @@ describe('with a session', () => {
 })
 
 describe('rate limit', () => {
+  let own
+  beforeEach(async () => {
+    own = await freshServer()
+  })
+  afterEach(() => own.close())
+
+  const fail = (headers) => loginAt(own.at, { password: 'wrong' }, headers)
+
   test('ten failed attempts from one address get 429, other addresses are not affected', async () => {
-    const address = ip()
     for (let attempt = 0; attempt < 10; attempt++) {
-      expect((await login({ password: 'wrong' }, { 'x-forwarded-for': address })).status).toBe(303)
+      expect((await fail({ 'x-forwarded-for': '198.51.100.1' })).status).toBe(303)
     }
-    const blocked = await login({ password }, { 'x-forwarded-for': `${address}, 10.0.0.1` })
+    const blocked = await loginAt(own.at, { password }, { 'x-forwarded-for': '198.51.100.1' })
     expect(blocked.status).toBe(429)
     expect(await blocked.text()).toMatch(/intentos/)
     expect(blocked.headers.get('set-cookie')).toBeNull()
 
-    expect((await login({ password }, { 'x-forwarded-for': ip() })).status).toBe(303)
+    expect((await loginAt(own.at, { password }, { 'x-forwarded-for': '198.51.100.2' })).status).toBe(303)
   })
 
   test('a successful sign-in clears the count of its address', async () => {
-    const address = ip()
-    for (let attempt = 0; attempt < 9; attempt++) await login({ password: 'wrong' }, { 'x-forwarded-for': address })
-    expect((await login({ password }, { 'x-forwarded-for': address })).status).toBe(303)
+    const headers = { 'x-forwarded-for': '198.51.100.3' }
+    for (let attempt = 0; attempt < 9; attempt++) await fail(headers)
+    expect((await loginAt(own.at, { password }, headers)).status).toBe(303)
+    for (let attempt = 0; attempt < 10; attempt++) expect((await fail(headers)).status).toBe(303)
+    expect((await fail(headers)).status).toBe(429)
+  })
+
+  test('a forged first x-forwarded-for entry does not change the key: the last one, from the proxy, does', async () => {
     for (let attempt = 0; attempt < 10; attempt++) {
-      expect((await login({ password: 'wrong' }, { 'x-forwarded-for': address })).status).toBe(303)
+      expect((await fail({ 'x-forwarded-for': `9.9.9.${attempt}, 1.1.1.1` })).status).toBe(303)
     }
-    expect((await login({ password: 'wrong' }, { 'x-forwarded-for': address })).status).toBe(429)
+    expect((await fail({ 'x-forwarded-for': '9.9.9.99, 1.1.1.1' })).status).toBe(429)
+  })
+
+  test('cf-connecting-ip is the key when present', async () => {
+    for (let attempt = 0; attempt < 10; attempt++) {
+      expect((await fail({ 'cf-connecting-ip': '192.0.2.7', 'x-forwarded-for': `10.0.0.${attempt}` })).status).toBe(303)
+    }
+    expect((await fail({ 'cf-connecting-ip': '192.0.2.7', 'x-forwarded-for': '10.0.0.200' })).status).toBe(429)
+    expect((await fail({ 'cf-connecting-ip': '192.0.2.8', 'x-forwarded-for': '10.0.0.200' })).status).toBe(303)
+  })
+
+  test('a concurrent burst with slow bodies gets at most ten attempts', async () => {
+    const body = new URLSearchParams({ password: 'wrong' }).toString()
+    const statuses = await Promise.all(
+      Array.from({ length: 40 }, () => slowLogin(own.at, body, { 'cf-connecting-ip': '192.0.2.9' }, 300))
+    )
+    expect(statuses.filter((status) => status !== 429).length).toBeLessThanOrEqual(10)
+  })
+
+  test('after 100 failures across all addresses every sign-in gets 429', async () => {
+    for (let attempt = 0; attempt < 100; attempt++) {
+      // Fifty addresses, two failures each: no address reaches its own limit.
+      expect((await fail({ 'cf-connecting-ip': `192.0.2.${attempt % 50}` })).status).toBe(303)
+    }
+    expect((await loginAt(own.at, { password }, { 'cf-connecting-ip': '203.0.113.250' })).status).toBe(429)
   })
 })
 

@@ -13,6 +13,8 @@ import { fileURLToPath } from 'node:url'
 const COOKIE = 'aura_session'
 const SESSION_MS = 30 * 24 * 60 * 60 * 1000
 const MAX_FAILURES = 10
+/** A backstop across every address, in case the per-address key is ever spread out. */
+const MAX_GLOBAL_FAILURES = 100
 const FAILURE_WINDOW_MS = 15 * 60 * 1000
 const MAX_BODY_BYTES = 4096
 
@@ -85,32 +87,58 @@ function sessionCookie(request, secret) {
 const clearedCookie = (request) =>
   `${COOKIE}=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax${isHttps(request) ? '; Secure' : ''}`
 
-/** Only a path on this site: "/x", never "//host", "/\host" or "https://host". */
-const safeNext = (next) => (typeof next === 'string' && /^\/(?![/\\])/.test(next) ? next : '/')
+/**
+ * Only a path on this site in printable ASCII: "/x", never "//host", "/\host", "https://host",
+ * nor tabs or newlines, which browsers strip from Location ("/\t/host" would become "//host").
+ */
+const safeNext = (next) => (typeof next === 'string' && /^\/(?![/\\])[\x21-\x7e]*$/.test(next) ? next : '/')
 
-const clientIp = (request) =>
-  String(request.headers['x-forwarded-for'] ?? '').split(',')[0].trim() || request.socket.remoteAddress || 'unknown'
+/**
+ * The client address for the rate limit. In production the path is client → Cloudflare → Traefik →
+ * this server: Cloudflare sets cf-connecting-ip, and the last x-forwarded-for entry is the one the
+ * nearest proxy added. The first entries come from the client and can be forged.
+ */
+function clientKey(request) {
+  const cloudflare = String(request.headers['cf-connecting-ip'] ?? '').trim()
+  if (cloudflare) return cloudflare
+  const forwarded = String(request.headers['x-forwarded-for'] ?? '').split(',').map((entry) => entry.trim()).filter(Boolean)
+  return forwarded.at(-1) || request.socket.remoteAddress || 'unknown'
+}
+
+/** A same-site request: no Origin (a plain navigation or an old browser) or one whose host is ours. */
+function sameOrigin(request) {
+  const origin = request.headers.origin
+  if (origin === undefined) return true
+  try {
+    return new URL(origin).host === request.headers.host
+  } catch {
+    return false
+  }
+}
 
 function send(response, status, headers = {}, body = '') {
   response.writeHead(status, { ...COMMON_HEADERS, ...headers })
   response.end(body)
 }
 
+/** The form, or null when the body is over MAX_BODY_BYTES (read to the end and dropped, so 413 can be sent). */
 function readForm(request) {
   return new Promise((done, fail) => {
     let size = 0
     const chunks = []
     request.on('data', (chunk) => {
       size += chunk.length
-      if (size > MAX_BODY_BYTES) {
-        fail(new Error('body too large'))
-        request.destroy()
-      } else chunks.push(chunk)
+      if (size <= MAX_BODY_BYTES) chunks.push(chunk)
     })
-    request.on('end', () => done(new URLSearchParams(Buffer.concat(chunks).toString('utf8'))))
+    request.on('end', () =>
+      done(size > MAX_BODY_BYTES ? null : new URLSearchParams(Buffer.concat(chunks).toString('utf8')))
+    )
     request.on('error', fail)
   })
 }
+
+const tooLarge = (response) =>
+  send(response, 413, { 'content-type': 'text/plain; charset=utf-8', connection: 'close' }, 'Solicitud demasiado grande')
 
 /** Maps a URL path inside root, or null when it is malformed or leaves root. */
 function resolveInside(root, urlPath) {
@@ -127,7 +155,7 @@ function resolveInside(root, urlPath) {
 
 async function serveFile(request, response, root, urlPath, extraHeaders = {}) {
   let file = resolveInside(root, urlPath)
-  if (!file) return send(response, 404, { 'content-type': 'text/plain; charset=utf-8' }, 'No encontrado')
+  if (!file) return send(response, 404, { ...extraHeaders, 'content-type': 'text/plain; charset=utf-8' }, 'No encontrado')
   try {
     let info = await stat(file)
     if (info.isDirectory()) {
@@ -136,7 +164,7 @@ async function serveFile(request, response, root, urlPath, extraHeaders = {}) {
     }
     if (!info.isFile()) throw new Error('not a file')
   } catch {
-    return send(response, 404, { 'content-type': 'text/plain; charset=utf-8' }, 'No encontrado')
+    return send(response, 404, { ...extraHeaders, 'content-type': 'text/plain; charset=utf-8' }, 'No encontrado')
   }
   const type = TYPES[extname(file).toLowerCase()] ?? 'application/octet-stream'
   const headers = { ...COMMON_HEADERS, ...extraHeaders, 'content-type': type }
@@ -159,48 +187,54 @@ async function serveFile(request, response, root, urlPath, extraHeaders = {}) {
 /** Builds the HTTP server; listen() is the caller's. */
 export function createAuthServer(config) {
   const passwordDigest = digest(config.password)
-  /** Failed sign-ins per client address: { count, resetAt }. */
+  /** Failed sign-ins per client address, and across all of them: { count, resetAt }. */
   const failures = new Map()
+  let global = { count: 0, resetAt: 0 }
 
-  const blocked = (ip, now) => {
-    const entry = failures.get(ip)
-    if (entry && entry.resetAt <= now) failures.delete(ip)
-    return (failures.get(ip)?.count ?? 0) >= MAX_FAILURES
+  const current = (entry, now) => (entry && entry.resetAt > now ? entry : { count: 0, resetAt: now + FAILURE_WINDOW_MS })
+
+  const blocked = (key, now) => {
+    global = current(global, now)
+    return global.count >= MAX_GLOBAL_FAILURES || current(failures.get(key), now).count >= MAX_FAILURES
   }
 
-  const recordFailure = (ip, now) => {
-    const entry = failures.get(ip)
-    if (entry && entry.resetAt > now) entry.count++
-    else failures.set(ip, { count: 1, resetAt: now + FAILURE_WINDOW_MS })
+  const recordFailure = (key, now) => {
+    const entry = current(failures.get(key), now)
+    entry.count++
+    failures.set(key, entry)
+    global.count++
     if (failures.size > 10000) {
-      for (const [key, value] of failures) if (value.resetAt <= now) failures.delete(key)
+      for (const [stale, value] of failures) if (value.resetAt <= now) failures.delete(stale)
     }
   }
+
+  const tooMany = (response) =>
+    send(
+      response,
+      429,
+      { 'content-type': 'text/plain; charset=utf-8', 'retry-after': String(FAILURE_WINDOW_MS / 1000) },
+      'Demasiados intentos. Espera 15 minutos y vuelve a intentarlo.'
+    )
 
   async function signIn(request, response) {
-    const ip = clientIp(request)
+    if (Number(request.headers['content-length'] ?? 0) > MAX_BODY_BYTES) {
+      request.resume()
+      return tooLarge(response)
+    }
+    const form = await readForm(request)
+    if (!form) return tooLarge(response)
+    // From here to the response there is no await: the check and the record of a failure happen in
+    // one step, so a burst of concurrent requests cannot all pass the check before any is counted.
+    const key = clientKey(request)
     const now = Date.now()
-    if (blocked(ip, now)) {
-      return send(
-        response,
-        429,
-        { 'content-type': 'text/plain; charset=utf-8', 'retry-after': String(FAILURE_WINDOW_MS / 1000) },
-        'Demasiados intentos. Espera 15 minutos y vuelve a intentarlo.'
-      )
-    }
-    let form
-    try {
-      form = await readForm(request)
-    } catch {
-      return send(response, 413, { 'content-type': 'text/plain; charset=utf-8' }, 'Solicitud demasiado grande')
-    }
+    if (blocked(key, now)) return tooMany(response)
     const next = safeNext(form.get('next'))
     const given = digest(form.get('password') ?? '')
     if (form.get('password') && timingSafeEqual(given, passwordDigest)) {
-      failures.delete(ip)
+      failures.delete(key)
       return send(response, 303, { location: next, 'set-cookie': sessionCookie(request, config.secret) })
     }
-    recordFailure(ip, now)
+    recordFailure(key, now)
     const query = new URLSearchParams({ error: '1' })
     if (next !== '/') query.set('next', next)
     return send(response, 303, { location: `/login?${query}` })
@@ -218,6 +252,7 @@ export function createAuthServer(config) {
     }
     if (path === '/login' && method === 'POST') return signIn(request, response)
     if (path === '/logout' && method === 'POST') {
+      if (!sameOrigin(request)) return send(response, 403, { 'content-type': 'text/plain; charset=utf-8' }, 'No permitido')
       return send(response, 303, { location: '/login', 'set-cookie': clearedCookie(request) })
     }
     if ((path === '/login' || path === '/login/' || path.startsWith('/login/')) && reading) {
@@ -233,7 +268,7 @@ export function createAuthServer(config) {
       return send(response, 401, { 'content-type': 'text/plain; charset=utf-8' }, 'Inicia sesión para continuar.')
     }
     if (!reading) return send(response, 405, { allow: 'GET, HEAD' })
-    return serveFile(request, response, config.staticDir, path)
+    return serveFile(request, response, config.staticDir, path, { 'x-frame-options': 'SAMEORIGIN' })
   }
 
   return createServer((request, response) => {

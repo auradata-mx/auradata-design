@@ -11,7 +11,7 @@ RUN npm ci --no-audit --no-fund \
 FROM node:26-slim
 WORKDIR /app
 ENV NODE_ENV=production \
-  PORT=80 \
+  PORT=8080 \
   STATIC_DIR=/app/storybook-static \
   LOGIN_DIR=/app/login-dist
 COPY --from=build /app/registry/server/index.mjs /app/registry/server/index.mjs
@@ -19,7 +19,9 @@ COPY --from=build /app/registry/storybook-static /app/storybook-static
 COPY --from=build /app/registry/login-dist /app/login-dist
 # Private catalog: keep it out of search engines (the server also answers /robots.txt itself).
 RUN printf 'User-agent: *\nDisallow: /\n' > /app/storybook-static/robots.txt
-EXPOSE 80
+# Not root: the server only reads the built files, on an unprivileged port.
+USER node
+EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD ["node", "-e", "fetch('http://127.0.0.1:' + (process.env.PORT || 80) + '/healthz').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+  CMD ["node", "-e", "fetch('http://127.0.0.1:' + (process.env.PORT || 8080) + '/healthz').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
 CMD ["node", "registry/server/index.mjs"]

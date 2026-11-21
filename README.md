@@ -67,7 +67,9 @@ in that browser. Ask whoever administers AuraData for the password; it is never 
 
 The image runs `registry/server/index.mjs` (Node, no dependencies): it serves the built Storybook only with a signed
 session cookie, and without it only the sign-in page (`registry/login`), `/robots.txt` and `/healthz`. Ten wrong
-passwords from one address lock it out for 15 minutes. Set two variables in Coolify:
+passwords from one address (Cloudflare's `cf-connecting-ip`, else the last `x-forwarded-for` entry) lock it out for 15
+minutes, and 100 across all addresses lock the sign-in for everyone for 15 minutes. The container runs as the `node` user
+on port 8080, so Coolify's exposed port is 8080. Set two variables in Coolify:
 
 | Variable | What it is |
 | --- | --- |
