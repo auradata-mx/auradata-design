@@ -1,6 +1,6 @@
 {
   "name": "@cristianruben-dev/auradata-tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "UNLICENSED",
   "description": "AuraData brand tokens for every product: CSS variables, Tailwind 4, shadcn, Docusaurus, antd and ECharts.",
   "repository": {
