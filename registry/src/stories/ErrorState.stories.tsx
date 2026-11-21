@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn, userEvent, within } from 'storybook/test'
 
 import { ErrorState } from '@/components/ui/error-state'
 
@@ -27,5 +28,15 @@ export const DetailOpen: Story = {
   ...WithDetail,
   play: async ({ canvasElement }) => {
     canvasElement.querySelector('details')?.setAttribute('open', '')
+  },
+}
+
+/** «Reintentar» calls `onRetry`. */
+export const Retry: Story = {
+  args: { onRetry: fn() },
+  play: async ({ args, canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Reintentar' }))
+    await expect(args.onRetry).toHaveBeenCalledOnce()
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }

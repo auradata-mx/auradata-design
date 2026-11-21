@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -40,3 +41,20 @@ export const Default: Story = {
 
 /** Open, for the visual tests and to see the overlay. */
 export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }
+
+/** The trigger opens the dialog, Escape closes it and the focus goes back to the trigger. */
+export const EscapeCloses: Story = {
+  ...Default,
+  name: 'Escape closes',
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', { name: 'Eliminar informe' })
+    const body = within(canvasElement.ownerDocument.body)
+    await userEvent.click(trigger)
+    await body.findByRole('dialog', { name: '¿Eliminar «Ventas 2026»?' })
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull())
+    await waitFor(() => expect(document.activeElement).toBe(trigger))
+    // Closed, nothing focused: the screenshot shows the resting trigger.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { ThemeToggle, type Theme } from '@/components/ui/theme-toggle'
 
@@ -36,4 +37,25 @@ export const Open: Story = {
       <Wired defaultOpen />
     </div>
   ),
+}
+
+/** Choosing «Oscuro» calls `onThemeChange('dark')`; the menu stays open until Escape. */
+export const ChooseDark: Story = {
+  name: 'Choose dark',
+  args: { onThemeChange: fn() },
+  render: (args) => (
+    <div className="flex justify-end">
+      <ThemeToggle {...args} />
+    </div>
+  ),
+  play: async ({ args, canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Cambiar tema' }))
+    await userEvent.click(await body.findByRole('menuitemradio', { name: 'Oscuro' }))
+    await expect(args.onThemeChange).toHaveBeenCalledWith('dark')
+    // A radio item keeps the menu open; Escape closes it.
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull())
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -85,4 +85,22 @@ export const Vertical: Story = {
       <TabsContent value="products">Tres productos suman el 70 %.</TabsContent>
     </Tabs>
   ),
+}
+
+/** A click shows the tab's panel; ArrowRight moves to the next tab and Enter shows its panel. */
+export const Switching: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole('tab', { name: 'Regiones' }))
+    await expect(canvas.getByRole('tab', { name: 'Regiones' })).toHaveAttribute('aria-selected', 'true')
+    // The old panel stays in the DOM while it fades out: wait for one panel.
+    await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveTextContent('El Centro concentra la mitad de las ventas.'))
+    await userEvent.keyboard('{ArrowRight}')
+    await expect(document.activeElement).toBe(canvas.getByRole('tab', { name: 'Productos' }))
+    await userEvent.keyboard('{Enter}')
+    await waitFor(() => expect(canvas.getByRole('tab', { name: 'Productos' })).toHaveAttribute('aria-selected', 'true'))
+    await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveTextContent('Tres productos suman el 70 %.'))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
 }

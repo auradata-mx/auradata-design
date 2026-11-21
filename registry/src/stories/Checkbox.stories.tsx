@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, fn, userEvent, within } from 'storybook/test'
 
 import { Checkbox } from '@/components/ui/checkbox'
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet, FieldLegend } from '@/components/ui/field'
@@ -111,4 +111,22 @@ export const Invalid: Story = {
       <FieldError id="terms-error" className="basis-full">Acepta los términos para crear tu cuenta.</FieldError>
     </Field>
   ),
+}
+
+/** A click checks it (`aria-checked`) and calls `onCheckedChange(true)`; a second click unchecks it. */
+export const Toggle: Story = {
+  args: { onCheckedChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const control = within(canvasElement).getByRole('checkbox', { name: 'Compartir con el equipo' })
+    await expect(control).toHaveAttribute('aria-checked', 'false')
+    await userEvent.click(control)
+    await expect(control).toHaveAttribute('aria-checked', 'true')
+    await expect(args.onCheckedChange).toHaveBeenLastCalledWith(true, expect.anything())
+    await userEvent.click(control)
+    await expect(control).toHaveAttribute('aria-checked', 'false')
+    await expect(args.onCheckedChange).toHaveBeenLastCalledWith(false, expect.anything())
+    await userEvent.click(control)
+    // Checked, unfocused: the screenshot shows the checked control without a ring.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
 }

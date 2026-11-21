@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, waitFor, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Badge } from '@/components/ui/badge'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
@@ -107,5 +107,44 @@ export const Loading: Story = {
     await expect(canvas.queryByText('Sin resultados')).toBeNull()
     await expect(canvas.getByRole('button', { name: 'Anterior' })).toBeDisabled()
     await expect(canvas.getByRole('button', { name: 'Siguiente' })).toBeDisabled()
+  },
+}
+
+/** A click on «Nombre» sorts the rows by name: its header says so with `aria-sort`. */
+export const Sort: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const header = canvas.getByRole('columnheader', { name: /Nombre/ })
+    await expect(header).toHaveAttribute('aria-sort', 'none')
+    await userEvent.click(within(header).getByRole('button'))
+    await expect(header).toHaveAttribute('aria-sort', 'ascending')
+    const first = canvasElement.querySelector('tbody tr td')!
+    await expect(first).toHaveTextContent('Campañas de marketing')
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Typing in the search keeps only the rows that match. */
+export const Filter: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const rows = () => canvasElement.querySelectorAll('tbody tr')
+    await expect(rows()).toHaveLength(10)
+    await userEvent.type(canvas.getByRole('searchbox', { name: 'Buscar informes…' }), 'inventario')
+    await waitFor(() => expect(rows()).toHaveLength(2))
+    await expect(canvas.getByText('Página 1 de 1')).toBeInTheDocument()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** «Siguiente» goes to the second of three pages. */
+export const Paging: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByText('Página 1 de 3')).toBeInTheDocument()
+    await userEvent.click(canvas.getByRole('button', { name: 'Siguiente' }))
+    await expect(canvas.getByText('Página 2 de 3')).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Anterior' })).toBeEnabled()
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }

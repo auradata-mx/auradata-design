@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, fn, userEvent, within } from 'storybook/test'
 
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -70,5 +70,23 @@ export const Focus: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.tab()
     await expect(document.activeElement).toBe(within(canvasElement).getByRole('switch', { name: 'Actualizar cada hora' }))
+  },
+}
+
+/** A click checks it (`aria-checked`) and calls `onCheckedChange(true)`; a second click unchecks it. */
+export const Toggle: Story = {
+  args: { onCheckedChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const control = within(canvasElement).getByRole('switch', { name: 'Actualizar cada hora' })
+    await expect(control).toHaveAttribute('aria-checked', 'false')
+    await userEvent.click(control)
+    await expect(control).toHaveAttribute('aria-checked', 'true')
+    await expect(args.onCheckedChange).toHaveBeenLastCalledWith(true, expect.anything())
+    await userEvent.click(control)
+    await expect(control).toHaveAttribute('aria-checked', 'false')
+    await expect(args.onCheckedChange).toHaveBeenLastCalledWith(false, expect.anything())
+    await userEvent.click(control)
+    // Checked, unfocused: the screenshot shows the checked control without a ring.
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }

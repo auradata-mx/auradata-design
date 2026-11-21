@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { DateRangeFilter, presetRange } from '@/components/ui/date-range-filter'
 
@@ -22,3 +23,26 @@ export const Empty: Story = { args: { defaultValue: undefined } }
 
 /** Open, for the visual tests and to see the presets and the calendar. */
 export const Open: Story = { args: { defaultOpen: true } }
+
+/** A preset, then a custom range picked on the calendar: the button's label follows each choice. */
+export const Choosing: Story = {
+  args: { onValueChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    const trigger = within(canvasElement).getByRole('button')
+    await expect(trigger).toHaveTextContent('1 nov 2026 – 21 nov 2026')
+    await userEvent.click(trigger)
+    const dialog = await body.findByRole('dialog', { name: 'Periodo' })
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Últimos 7 días' }))
+    await expect(trigger).toHaveTextContent('15 nov 2026 – 21 nov 2026')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Personalizado' }))
+    await userEvent.click(dialog.querySelector<HTMLElement>('[data-day="2026-11-03"] button')!)
+    await userEvent.click(dialog.querySelector<HTMLElement>('[data-day="2026-11-10"] button')!)
+    await expect(trigger).toHaveTextContent('3 nov 2026 – 10 nov 2026')
+    await expect(within(dialog).getByRole('button', { name: 'Personalizado' })).toHaveAttribute('aria-pressed', 'true')
+    await expect(args.onValueChange).toHaveBeenCalled()
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull())
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import {
   Combobox,
@@ -96,4 +97,21 @@ export const Invalid: Story = {
       <FieldError>Elige el dataset del informe.</FieldError>
     </Field>
   ),
+}
+
+/** Typing filters the list; picking an option sets the value and calls `onValueChange`. */
+export const Choosing: Story = {
+  ...Default,
+  args: { ...Default.args, onValueChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    const input = within(canvasElement).getByRole('combobox', { name: 'Dataset' })
+    await userEvent.type(input, 'ventas')
+    await waitFor(() => expect(body.getAllByRole('option')).toHaveLength(1))
+    await userEvent.click(body.getByRole('option', { name: 'Ventas por región' }))
+    await expect(args.onValueChange).toHaveBeenCalledWith('Ventas por región', expect.anything())
+    await waitFor(() => expect(input).toHaveValue('Ventas por región'))
+    await waitFor(() => expect(body.queryByRole('listbox')).toBeNull())
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
 }

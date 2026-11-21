@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, waitFor, within } from 'storybook/test'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -104,4 +104,43 @@ export const DisabledItems: Story = {
       </DropdownMenuContent>
     </DropdownMenu>
   ),
+}
+
+function KeyboardMenu({ onSelect }: { onSelect: (item: string) => void }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
+      <DropdownMenuContent className="w-52">
+        {['Editar', 'Duplicar', 'Descargar como PDF'].map((item) => (
+          <DropdownMenuItem key={item} onClick={() => onSelect(item)}>
+            {item}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+/** With the keyboard only: Enter opens the menu, ArrowDown moves to the next item, Enter picks it. */
+export const Keyboard: StoryObj<typeof KeyboardMenu> = {
+  args: { onSelect: fn() },
+  render: (args) => <KeyboardMenu {...args} />,
+  play: async ({ args, canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    const trigger = within(canvasElement).getByRole('button', { name: 'Acciones' })
+    await userEvent.tab()
+    await expect(document.activeElement).toBe(trigger)
+    await userEvent.keyboard('{Enter}')
+    await body.findByRole('menu')
+    await waitFor(() => expect(document.activeElement).toHaveAttribute('role', 'menuitem'))
+    const items = body.getAllByRole('menuitem')
+    const from = items.indexOf(document.activeElement as HTMLElement)
+    await userEvent.keyboard('{ArrowDown}')
+    await waitFor(() => expect(document.activeElement).toBe(items[from + 1]))
+    const picked = items[from + 1].textContent!
+    await userEvent.keyboard('{Enter}')
+    await expect(args.onSelect).toHaveBeenCalledWith(picked)
+    await waitFor(() => expect(body.queryByRole('menu')).toBeNull())
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
 }
