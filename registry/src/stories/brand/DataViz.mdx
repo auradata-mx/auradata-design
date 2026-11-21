@@ -1,0 +1,103 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import theme from '@auradata/tokens/shadcn-theme.json'
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { chartConfig } from '@/lib/chart-palette'
+import { formatCompact, formatCurrency, formatDate, formatNumber, formatPercent } from '@/lib/format'
+
+<Meta title="Brand/10 Visualización de datos" />
+
+export const SALES = [
+  { month: 'Jul', norte: 1180, centro: 1920, sur: 790 },
+  { month: 'Ago', norte: 1210, centro: 1980, sur: 820 },
+  { month: 'Sep', norte: 1150, centro: 2010, sur: 870 },
+  { month: 'Oct', norte: 1284, centro: 2031, sur: 846 },
+]
+
+export const config = chartConfig({ norte: 'Norte', centro: 'Centro', sur: 'Sur' })
+
+# Gráficas que se leen a la primera
+
+Una gráfica responde una pregunta. Elige la forma por la pregunta, usa la paleta en orden y escribe los números como en México.
+
+## La paleta, en orden
+
+La serie 1 siempre es Azul Aura. Cada serie nueva toma el siguiente color; nunca saltes ni elijas por gusto. `chartConfig()` de `lib/chart-palette` lo hace por ti.
+
+<div className="sb-unstyled my-6 grid grid-cols-4 gap-4 md:grid-cols-8">
+  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+    <div key={n} className="grid gap-1">
+      <div className="h-12 rounded-md" style={{ background: theme.light[`chart-${n}`] }} />
+      <code className="font-mono text-xs text-foreground">chart-{n}</code>
+      <span className="font-mono text-xs text-muted-foreground">{theme.light[`chart-${n}`]}</span>
+    </div>
+  ))}
+</div>
+
+Más de ocho series no se leen: agrupa el resto en «Otros».
+
+## Qué gráfica usar
+
+| Pregunta | Forma | Ejemplo |
+| --- | --- | --- |
+| ¿Cuánto vale ahora y cómo va? | KPI (`KpiCard`) con cambio y sparkline | Ventas del mes, vs. el mes anterior |
+| ¿Cuál es más grande? | Barras, ordenadas de mayor a menor | Ventas por región |
+| ¿Cómo cambia en el tiempo? | Líneas | Ventas diarias de 90 días |
+| ¿Cómo se suma el total en el tiempo? | Área apilada | Ingresos por producto, mes a mes |
+| ¿Cuál es el detalle? | Tabla (`DataTable`) | Las ventas de cada cliente |
+
+Evita el pastel con más de tres partes y los ejes 3D: comparar ángulos y volúmenes es difícil.
+
+<div className="sb-unstyled my-6">
+  <ChartContainer config={config} className="h-64 w-full max-w-xl">
+    <BarChart data={SALES} accessibilityLayer>
+      <CartesianGrid vertical={false} />
+      <XAxis dataKey="month" tickLine={false} axisLine={false} />
+      <YAxis tickLine={false} axisLine={false} width={48} tickFormatter={(value) => formatNumber(value)} />
+      <ChartTooltip content={<ChartTooltipContent />} />
+      <ChartLegend content={<ChartLegendContent />} itemSorter={null} />
+      {Object.keys(config).map((key) => (
+        <Bar key={key} dataKey={key} fill={`var(--color-${key})`} radius={4} />
+      ))}
+    </BarChart>
+  </ChartContainer>
+</div>
+
+## El color nunca es la única señal
+
+- Cada serie tiene **leyenda o etiqueta** con su nombre.
+- Un cambio lleva **flecha y signo**, no solo verde o rojo: `KpiCard` pinta solo la flecha.
+- Bueno y malo dependen de la métrica: más costos es malo (`goodDirection="down"`).
+- El tooltip repite el valor con su formato.
+
+## Números y fechas
+
+Siempre con `lib/format` (es-MX). Estos ejemplos los escribe la librería, no esta página:
+
+| Qué | Función | Resultado |
+| --- | --- | --- |
+| Dinero | `formatCurrency(1284500)` | {formatCurrency(1284500)} |
+| Dinero corto, en KPI | `formatCompact(4160000, { currency: 'MXN' })` | {formatCompact(4160000, { currency: 'MXN' })} |
+| Cantidad corta | `formatCompact(1284)` | {formatCompact(1284)} |
+| Número | `formatNumber(1284500.75)` | {formatNumber(1284500.75)} |
+| Porcentaje | `formatPercent(0.124)` | {formatPercent(0.124)} |
+| Cambio | `formatPercent(0.062, { signDisplay: 'exceptZero' })` | {formatPercent(0.062, { signDisplay: 'exceptZero' })} |
+| Fecha | `formatDate('2026-11-21')` | {formatDate('2026-11-21')} |
+| Periodo | `DateRangeFilter` | {formatDate('2026-11-01')} – {formatDate('2026-11-21')} |
+
+Las cifras de tablas y KPI llevan `tabular-nums`, para que las columnas se alineen.
+
+## AuraData BI: ECharts
+
+Las gráficas de AuraData BI son de ECharts. Usan el tema de `@auradata/tokens/echarts.json`, con la misma paleta, la fuente Outfit y los colores de texto y ejes de los tokens, en claro y oscuro:
+
+```ts
+import * as echarts from 'echarts'
+import theme from '@auradata/tokens/echarts.json'
+
+echarts.registerTheme('auradata', theme.light)
+echarts.registerTheme('auradata-dark', theme.dark)
+const chart = echarts.init(element, 'auradata')
+```
+
+No escribas colores en la configuración de una gráfica: el tema ya los tiene.
