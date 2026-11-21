@@ -3,6 +3,7 @@ import { ArrowDownRightIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-rea
 import { cn } from "cn"
 
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+import { formatPercent } from "@/lib/format"
 
 type KpiCardProps = Omit<React.ComponentProps<typeof Card>, "children"> & {
   label: React.ReactNode
@@ -30,11 +31,6 @@ function KpiCard({
   const direction = change === undefined || change === 0 ? "flat" : change > 0 ? "up" : "down"
   const tone = direction === "flat" ? "flat" : direction === goodDirection ? "good" : "bad"
   const Icon = { up: ArrowUpRightIcon, down: ArrowDownRightIcon, flat: ArrowRightIcon }[direction]
-  const percent = new Intl.NumberFormat(locale, {
-    style: "percent",
-    maximumFractionDigits: 1,
-    signDisplay: "exceptZero",
-  })
   return (
     <Card data-slot="kpi-card" className={cn("gap-2", className)} {...props}>
       <CardHeader>
@@ -52,7 +48,7 @@ function KpiCard({
                 tone === "bad" && "text-destructive"
               )}
             />
-            <span className="font-medium text-foreground tabular-nums">{percent.format(change)}</span>
+            <span className="font-medium text-foreground tabular-nums">{formatPercent(change, { locale, signDisplay: "exceptZero" })}</span>
             {comparison && <span>{comparison}</span>}
           </div>
         )}

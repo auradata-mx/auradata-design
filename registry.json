@@ -171,7 +171,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "card"
+        "card",
+        "cristianruben-dev/auradata-design/format"
       ],
       "files": [
         {
@@ -348,6 +349,18 @@
       "files": [
         {
           "path": "registry/src/lib/chart-palette.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "format",
+      "type": "registry:lib",
+      "title": "Format",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/src/lib/format.ts",
           "type": "registry:lib"
         }
       ]
