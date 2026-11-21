@@ -45,7 +45,7 @@ Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vit
 | T27 | 7 Components | S7 | inline | done | `search-command` on shadcn `command` + `dialog` (`command`, `input-group` stock, stories only): a «Buscar…» button with its shortcut (⌘K on Apple, Ctrl K elsewhere), ⌘K / Ctrl+K toggles it from anywhere, groups from props (story: Informes, Datasets, Acciones), «Sin resultados»; play test NoResults (Ctrl+K, type, empty text) GREEN; axe RED twice: `role=separator` inside the listbox (→ a border between groups) and an empty listbox (→ the list hides while nothing matches, the empty text sits outside it); screenshot: the last group clipped (→ list max height `min(26rem, 60vh)`); story tests 72/72, visual 151/151, unit 20/20 |
 | T28 | 7 Components | S7 | inline | pending | `workspace-switcher` and `theme-toggle`, wired into `app-shell` |
 | T29 | 7 Components | S7 | inline | pending | `error-state` and a `not-found` block |
-| T30 | 7 Tokens | S7 | inline | pending | `echarts.json` (light and dark ECharts themes) from the tokens, with tests |
+| T30 | 7 Tokens | S7 | delegated (parallel with T23) | done | `echarts.json` light/dark from the tokens; RED 1/74 (ENOENT) → GREEN 74/74; changeset minor; c00e517 |
 | T31 | 7 Components | S7 | inline | pending | Marketing: `eyebrow`, `gradient-heading`, `aura-background`; blocks `hero`, `cta-band`, `benefits-grid`, `faq`, `site-footer` |
 | T32 | 7 Components | S7 | inline | pending | Dark switch track that reads against the background (3:1 non-text) |
 | T33 | 7 Components | S7 | inline | pending | KPI card with an optional sparkline in the brand palette |
