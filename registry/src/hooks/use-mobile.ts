@@ -1,3 +1,4 @@
+// registry: auradata (shadcn use-mobile on useSyncExternalStore)
 import * as React from "react"
 
 const MOBILE_BREAKPOINT = 768

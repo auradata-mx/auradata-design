@@ -1,3 +1,4 @@
+// registry: auradata (the Continua logo and the product tag)
 import { cn } from "cn"
 
 /** The Continua logo files, as the registry installs them into public/brand/continua. */

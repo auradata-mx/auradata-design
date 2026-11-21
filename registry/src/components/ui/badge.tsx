@@ -1,3 +1,4 @@
+// registry: auradata (shadcn badge with a solid destructive variant)
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"

@@ -1,3 +1,4 @@
+// registry: auradata (the brand chart palette)
 import type { ChartConfig } from "@/components/ui/chart"
 
 /** The AuraData categorical palette, in order: --chart-1 (Azul Aura) to --chart-8. */

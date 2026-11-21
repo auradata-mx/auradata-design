@@ -2,16 +2,20 @@
  * Writes registry.json from the source, so the registry never drifts from it:
  *
  *   - one registry:theme item, `auradata-theme`, with the cssVars that @auradata/tokens builds;
- *   - one registry:ui item per file in src/components/ui, with the npm packages it imports;
- *   - one registry:hook item per file in src/hooks, which the components import as @/hooks/<name>;
- *   - one registry:lib item per file in src/lib but utils.ts, which every shadcn app already has;
+ *   - one item per AuraData file of src/components/ui (registry:ui), src/hooks (registry:hook) and
+ *     src/lib (registry:lib), with the npm packages and the registry items it imports;
  *   - the Continua SVGs of @auradata/tokens with the logo item, installed into public/brand/continua.
+ *
+ * An AuraData file says so on a line of its own: `// registry: auradata (<why>)`. The other files are
+ * stock shadcn, kept for Storybook: apps install them from shadcn, and items that import them name
+ * them bare ("card"), which the shadcn CLI resolves to its own registry.
  *
  * `shadcn build` then turns registry.json into public/r/*.json.
  */
-import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { basename, join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const root = join(import.meta.dirname, '..');
 const uiDir = join(root, 'src/components/ui');
@@ -27,12 +31,14 @@ const EXTRA_FILES = {
     .map((file) => ({
       path: `../packages/tokens/assets/continua/${file}`,
       type: 'registry:file',
-      target: `public/brand/continua/${file}`,
+      // "~/" is the project root: a bare path lands under src/ in a Vite app.
+      target: `~/public/brand/continua/${file}`,
     })),
 };
 
-/** Shadcn ships these itself: never registry items of their own. */
-const SHADCN_OWNED = new Set(['utils']);
+/** The line that makes a source file an item of this registry. */
+const MARKER = /^\/\/ registry: auradata\b/m;
+const isAuraData = (source) => MARKER.test(source);
 const require = createRequire(import.meta.url);
 const theme = require('@auradata/tokens/shadcn-theme.json');
 
@@ -52,56 +58,72 @@ function dependenciesOf(source) {
   return [...new Set(specifiers.map(packageOf).filter(Boolean))].sort();
 }
 
-/** Other registry items a file imports through the @/components/ui and @/hooks aliases. */
+const FOLDERS = {
+  'components/ui': { dir: uiDir, type: 'registry:ui', extension: '.tsx' },
+  hooks: { dir: hooksDir, type: 'registry:hook', extension: '.ts' },
+  lib: { dir: libDir, type: 'registry:lib', extension: '.ts' },
+};
+
+/** Other registry items a file imports: "@auradata/<name>" for ours, the bare shadcn name otherwise. */
 function registryDependenciesOf(source) {
-  const names = [...source.matchAll(/from\s+["']@\/(?:components\/ui|hooks|lib)\/([^"']+)["']/g)].map((match) => match[1]);
-  return [...new Set(names)].filter((name) => !SHADCN_OWNED.has(name)).sort();
+  const imports = [...source.matchAll(/from\s+["']@\/(components\/ui|hooks|lib)\/([^"']+)["']/g)];
+  const names = imports
+    // utils (cn) comes with every shadcn app.
+    .filter(([, folder, name]) => !(folder === 'lib' && name === 'utils'))
+    .map(([, folder, name]) => {
+      const { dir, extension } = FOLDERS[folder];
+      return isAuraData(readFileSync(join(dir, name + extension), 'utf8')) ? `@auradata/${name}` : name;
+    });
+  return [...new Set(names)].sort();
 }
 
 /** "dropdown-menu" → "Dropdown menu". */
 const titleOf = (name) => (name.charAt(0).toUpperCase() + name.slice(1)).replaceAll('-', ' ');
 
-/** One registry item per source file of a folder. */
-function itemsOf(dir, folder, type, extension) {
+/** One registry item per AuraData source file of a folder. */
+function itemsOf(folder) {
+  const { dir, type, extension } = FOLDERS[folder];
   return readdirSync(dir)
-    .filter((file) => file.endsWith(extension) && !SHADCN_OWNED.has(basename(file, extension)))
+    .filter((file) => file.endsWith(extension))
     .sort()
-    .map((file) => {
-      const source = readFileSync(join(dir, file), 'utf8');
+    .map((file) => ({ file, source: readFileSync(join(dir, file), 'utf8') }))
+    .filter(({ source }) => isAuraData(source))
+    .map(({ file, source }) => {
       const name = basename(file, extension);
-      const registryDependencies = registryDependenciesOf(source).map((dep) => `@auradata/${dep}`);
+      const registryDependencies = registryDependenciesOf(source);
       return {
         name,
         type,
         title: titleOf(name),
         dependencies: dependenciesOf(source),
         ...(registryDependencies.length ? { registryDependencies } : {}),
-        files: [{ path: `${folder}/${file}`, type }, ...(EXTRA_FILES[name] ?? [])],
+        files: [{ path: `src/${folder}/${file}`, type }, ...(EXTRA_FILES[name] ?? [])],
       };
     });
 }
 
-const components = [
-  ...itemsOf(uiDir, 'src/components/ui', 'registry:ui', '.tsx'),
-  ...itemsOf(hooksDir, 'src/hooks', 'registry:hook', '.ts'),
-  ...itemsOf(libDir, 'src/lib', 'registry:lib', '.ts'),
-];
+export function buildRegistry() {
+  return {
+    $schema: 'https://ui.shadcn.com/schema/registry.json',
+    name: 'auradata',
+    homepage: 'https://auradata.mx',
+    items: [
+      {
+        name: 'auradata-theme',
+        type: 'registry:theme',
+        title: 'AuraData theme',
+        description: 'The AuraData brand: Azul Aura, Outfit and Geist Mono, light and dark.',
+        cssVars: theme,
+      },
+      ...Object.keys(FOLDERS).flatMap(itemsOf),
+    ],
+  };
+}
 
-const registry = {
-  $schema: 'https://ui.shadcn.com/schema/registry.json',
-  name: 'auradata',
-  homepage: 'https://auradata.mx',
-  items: [
-    {
-      name: 'auradata-theme',
-      type: 'registry:theme',
-      title: 'AuraData theme',
-      description: 'The AuraData brand: Azul Aura, Outfit and Geist Mono, light and dark.',
-      cssVars: theme,
-    },
-    ...components,
-  ],
-};
-
-writeFileSync(join(root, 'registry.json'), JSON.stringify(registry, null, 2) + '\n');
-console.log(`registry.json: ${registry.items.length} items`);
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const registry = buildRegistry();
+  writeFileSync(join(root, 'registry.json'), JSON.stringify(registry, null, 2) + '\n');
+  // shadcn build only adds files: drop the items that left the registry.
+  rmSync(join(root, 'public/r'), { recursive: true, force: true });
+  console.log(`registry.json: ${registry.items.length} items`);
+}

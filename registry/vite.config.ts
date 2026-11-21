@@ -17,6 +17,10 @@ export default defineConfig({
   test: {
     projects: [
       {
+        // The scripts that build the registry.
+        test: { name: "unit", include: ["scripts/**/*.test.mjs"], environment: "node" },
+      },
+      {
         // Every story is a test: it must render, pass its play function and pass axe (a11y).
         extends: true,
         plugins: [

@@ -15,7 +15,8 @@
     "build-storybook": "storybook build",
     "test:stories": "vitest run --project=storybook",
     "test:visual": "playwright test",
-    "test:visual:docker": "docker run --rm --ipc=host -v \"$PWD/..\":/work -w /work/registry mcr.microsoft.com/playwright:v1.65.1-noble npx playwright test"
+    "test:visual:docker": "docker run --rm --ipc=host -v \"$PWD/..\":/work -w /work/registry mcr.microsoft.com/playwright:v1.65.1-noble npx playwright test",
+    "test:unit": "vitest run --project=unit"
   },
   "dependencies": {
     "@auradata/tokens": "^0.1.0",

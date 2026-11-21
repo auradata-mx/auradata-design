@@ -37,16 +37,38 @@ npm run storybook -w registry           # catalog on http://localhost:6006
 Edit `packages/tokens/src/tokens` (`brand.json`, `light.json`, `dark.json`) and rebuild. Never write a color in a component
 or a product: read it from a token.
 
+## What the registry publishes
+
+The theme, the AuraData components (logo, KPI card, page header, chart palette) and the shadcn components AuraData
+changed (button and badge: a solid destructive variant that passes WCAG AA; the `use-mobile` hook). Every other shadcn
+component comes straight from shadcn: the theme already gives it the brand. Storybook still shows them all, so the brand
+can be seen on each one.
+
+A file is published when it says so on a line of its own: `// registry: auradata (<why>)`.
+
 ## Adding a component
 
 ```bash
 cd registry
-npx shadcn add <component>              # from shadcn, on Base UI
+npx shadcn add <component>              # from shadcn, on Base UI: a story shows it with the brand
 npm run registry                        # regenerates registry.json and public/r
 ```
 
-Add a story in `registry/src/stories/`. `scripts/registry.mjs` lists every file of `src/components/ui` and `src/hooks` with
-the packages and registry items it imports, so `registry.json` is never edited by hand.
+Add a story in `registry/src/stories/`. To publish a new or changed component, add the `// registry: auradata` line:
+`scripts/registry.mjs` lists those files of `src/components/ui`, `src/hooks` and `src/lib` with the packages and registry
+items they import, so `registry.json` is never edited by hand.
+
+## Checks
+
+```bash
+npm test                                # tokens: values, contrast, assets
+npm run test:unit -w registry           # the registry generator
+npm run test:stories -w registry        # every story renders and passes axe (light)
+npm run build-storybook -w registry && npm run test:visual:docker -w registry   # screenshots and axe (dark), as CI
+```
+
+Screenshot baselines live in `registry/tests/__screenshots__` and are Linux only: update them with
+`npm run test:visual:docker -w registry -- --update-snapshots`, then look at the changed images before committing.
 
 ## Installing from an app
 
@@ -54,6 +76,7 @@ Once the repository is on GitHub (private), add the registry to the app's `compo
 
 ```bash
 npx shadcn add @auradata/auradata-theme @auradata/button
+npx shadcn add dialog select tabs        # straight from shadcn: the theme gives them the brand
 npx shadcn add @auradata/logo           # also copies the Continua SVGs into public/brand/continua
 ```
 

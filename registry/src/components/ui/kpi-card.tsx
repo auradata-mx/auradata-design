@@ -1,3 +1,4 @@
+// registry: auradata (a KPI card of the brand)
 import { ArrowDownRightIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react"
 import { cn } from "cn"
 

@@ -1,3 +1,4 @@
+// registry: auradata (the header of every AuraData page)
 import { cn } from "cn"
 
 type PageHeaderProps = Omit<React.ComponentProps<"header">, "title"> & {
