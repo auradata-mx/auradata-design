@@ -1,0 +1,13 @@
+{
+  "name": "auradata-design",
+  "private": true,
+  "license": "UNLICENSED",
+  "workspaces": [
+    "packages/*",
+    "registry"
+  ],
+  "scripts": {
+    "build": "npm run build -w @auradata/tokens && npm run build -w registry",
+    "test": "npm test -w @auradata/tokens"
+  }
+}

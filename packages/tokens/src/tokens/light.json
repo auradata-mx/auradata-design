@@ -1,0 +1,27 @@
+{
+  "color": {
+    "$type": "color",
+    "primary": { "$value": "#2563EB" },
+    "primary-foreground": { "$value": "#FFFFFF" },
+    "link": { "$value": "#2563EB" },
+    "info": { "$value": "#2563EB" },
+    "success": { "$value": "#059669" },
+    "warning": { "$value": "#D97706" },
+    "error": { "$value": "#DC2626" },
+    "bg-layout": { "$value": "#F5F5F5" },
+    "bg-container": { "$value": "#FFFFFF" },
+    "bg-elevated": { "$value": "#FFFFFF" },
+    "border": { "$value": "#E5E5E5" },
+    "border-secondary": { "$value": "#EDEDED" },
+    "text": { "$value": "#0A0A0F" },
+    "text-secondary": { "$value": "#666666" },
+    "text-tertiary": { "$value": "#737373", "$description": "Darker than #9B9B9B so small labels stay readable (4.7:1)" },
+    "fill-secondary": { "$value": "#F5F5F5" },
+    "selection": { "$value": "#DBEAFE" }
+  },
+  "shadow": {
+    "$type": "shadow",
+    "card": { "$value": "0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.08)" },
+    "float": { "$value": "0 1px 2px rgba(0, 0, 0, 0.04), 0 24px 48px -16px rgba(15, 23, 42, 0.18)" }
+  }
+}

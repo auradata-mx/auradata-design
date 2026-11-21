@@ -1,0 +1,37 @@
+{
+  "brand": {
+    "$type": "color",
+    "blue": { "$value": "#2563EB", "$description": "Azul Aura, the primary color" },
+    "violet": { "$value": "#7C3AED" },
+    "green": { "$value": "#10B981" },
+    "night": { "$value": "#0A0A0F", "$description": "The dark background of the brand" },
+    "night-border": { "$value": "#26262F" }
+  },
+  "chart": {
+    "$type": "color",
+    "$description": "The AuraData categorical palette, in order",
+    "1": { "$value": "#2563EB" },
+    "2": { "$value": "#7C3AED" },
+    "3": { "$value": "#10B981" },
+    "4": { "$value": "#F59E0B" },
+    "5": { "$value": "#EC4899" },
+    "6": { "$value": "#06B6D4" },
+    "7": { "$value": "#F97316" },
+    "8": { "$value": "#64748B" }
+  },
+  "font": {
+    "$type": "fontFamily",
+    "sans": { "$value": "Outfit, -apple-system, 'Segoe UI', sans-serif" },
+    "mono": { "$value": "'Geist Mono', ui-monospace, SFMono-Regular, monospace" }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": { "$value": "6px" },
+    "md": { "$value": "8px" },
+    "lg": { "$value": "14px" },
+    "card": { "$value": "16px" }
+  },
+  "ease": {
+    "fluid": { "$type": "cubicBezier", "$value": "cubic-bezier(0.32, 0.72, 0, 1)", "$description": "Quick start, long soft landing" }
+  }
+}
