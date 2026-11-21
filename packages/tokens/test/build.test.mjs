@@ -184,3 +184,39 @@ test('the shadcn sidebar is the container color and its accent stands out from i
     expect(theme[mode]['sidebar-accent']).not.toBe(theme[mode].sidebar);
   }
 });
+
+// AuraData BI draws its charts with ECharts: echarts.registerTheme('auradata', theme.light).
+test('echarts.json themes ECharts in light and dark from the tokens', () => {
+  const { light, dark } = JSON.parse(read('echarts.json'));
+  for (const theme of [light, dark]) {
+    expect(theme.color).toHaveLength(8);
+    expect(theme.color[0]).toBe('#2563EB');
+    expect(theme.color[7]).toBe('#64748B');
+    expect(theme.backgroundColor).toBe('transparent');
+    expect(theme.textStyle.fontFamily).toBe("Outfit, -apple-system, 'Segoe UI', sans-serif");
+  }
+  const shadcn = JSON.parse(read('shadcn-theme.json'));
+  expect(light.color).toEqual([1, 2, 3, 4, 5, 6, 7, 8].map((n) => shadcn.light[`chart-${n}`]));
+
+  expect(light.title.textStyle.color).toBe('#0A0A0F');
+  expect(light.title.subtextStyle.color).toBe('#666666');
+  expect(light.legend.textStyle.color).toBe('#666666');
+  expect(light.tooltip).toMatchObject({ backgroundColor: '#FFFFFF', borderColor: '#E5E5E5', textStyle: { color: '#0A0A0F' } });
+  for (const axis of ['categoryAxis', 'valueAxis', 'timeAxis', 'logAxis']) {
+    expect(light[axis]).toMatchObject({
+      axisLine: { lineStyle: { color: '#E5E5E5' } },
+      axisTick: { lineStyle: { color: '#E5E5E5' } },
+      axisLabel: { color: '#666666' },
+      splitLine: { lineStyle: { color: ['#EDEDED'] } },
+    });
+  }
+
+  expect(dark.title.textStyle.color).toBe('#F5F5F7');
+  expect(dark.legend.textStyle.color).toBe('#A3A3AD');
+  expect(dark.tooltip).toMatchObject({ backgroundColor: '#191921', borderColor: '#26262F', textStyle: { color: '#F5F5F7' } });
+  expect(dark.valueAxis).toMatchObject({
+    axisLine: { lineStyle: { color: '#26262F' } },
+    axisLabel: { color: '#A3A3AD' },
+  });
+  expect(dark.valueAxis.splitLine.lineStyle.color[0]).not.toBe(light.valueAxis.splitLine.lineStyle.color[0]);
+});

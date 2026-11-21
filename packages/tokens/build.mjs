@@ -10,6 +10,7 @@
  *   tailwind.css  a Tailwind 4 @theme with the brand
  *   infima.css    Docusaurus (Infima) variables, light and [data-theme='dark']
  *   antd.json     antd theme tokens, light and dark (AuraData BI reads them)
+ *   echarts.json  ECharts themes, light and dark (the charts of AuraData BI)
  *
  * Usage: node build.mjs [--out <dir>]
  */
@@ -226,6 +227,35 @@ function antdTheme(tokens, algorithm) {
   };
 }
 
+/** An ECharts theme, the object echarts.registerTheme(name, theme) takes. */
+function echartsTheme(tokens) {
+  const text = tokens['color-text'];
+  const secondary = tokens['color-text-secondary'];
+  const line = (color) => ({ lineStyle: { color } });
+  const axis = {
+    axisLine: line(tokens['color-border']),
+    axisTick: line(tokens['color-border']),
+    axisLabel: { color: secondary },
+    splitLine: line([tokens['color-border-secondary']]),
+  };
+  return {
+    color: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => tokens[`chart-${n}`]),
+    backgroundColor: 'transparent',
+    textStyle: { fontFamily: tokens['font-sans'] },
+    title: { textStyle: { color: text }, subtextStyle: { color: secondary } },
+    legend: { textStyle: { color: secondary } },
+    tooltip: {
+      backgroundColor: tokens['color-bg-elevated'],
+      borderColor: tokens['color-border'],
+      textStyle: { color: text },
+    },
+    categoryAxis: axis,
+    valueAxis: axis,
+    timeAxis: axis,
+    logAxis: axis,
+  };
+}
+
 const light = await resolveTheme('light');
 const dark = await resolveTheme('dark');
 
@@ -237,6 +267,7 @@ const files = {
   'tailwind.css': tailwindCss(light),
   'infima.css': infimaCss(light, dark),
   'antd.json': JSON.stringify({ light: antdTheme(light, 'default'), dark: antdTheme(dark, 'dark') }, null, 2) + '\n',
+  'echarts.json': JSON.stringify({ light: echartsTheme(light), dark: echartsTheme(dark) }, null, 2) + '\n',
 };
 for (const [name, content] of Object.entries(files)) {
   writeFileSync(join(outDir, name), content);
