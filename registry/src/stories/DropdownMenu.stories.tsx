@@ -24,7 +24,7 @@ export const Default: Story = {
   render: (args) => (
     <DropdownMenu {...args}>
       <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="w-52">
         <DropdownMenuGroup>
           <DropdownMenuLabel>Informe</DropdownMenuLabel>
           <DropdownMenuItem>
@@ -39,3 +39,6 @@ export const Default: Story = {
     </DropdownMenu>
   ),
 }
+
+/** Open, for the visual tests and to see the overlay. */
+export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }

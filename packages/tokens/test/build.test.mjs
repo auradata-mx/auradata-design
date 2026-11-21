@@ -175,3 +175,12 @@ test('shadcn gets the whole chart palette and the brand gradient', () => {
   expect(theme.light['gradient-brand']).toBe('linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%)');
   expect(theme.theme).toMatchObject({ 'color-chart-6': 'var(--chart-6)', 'color-chart-8': 'var(--chart-8)' });
 });
+
+// As the AuraData BI sidebar: white, a gray hover and active item. Same color for both hid the active item.
+test('the shadcn sidebar is the container color and its accent stands out from it', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  for (const mode of ['light', 'dark']) {
+    expect(theme[mode].sidebar).toBe(theme[mode].background);
+    expect(theme[mode]['sidebar-accent']).not.toBe(theme[mode].sidebar);
+  }
+});

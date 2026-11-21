@@ -85,7 +85,7 @@ const SHADCN = {
   'chart-8': 'chart-8',
   'gradient-brand': 'gradient-brand',
   radius: 'radius-md',
-  sidebar: 'color-bg-layout',
+  sidebar: 'color-bg-container',
   'sidebar-foreground': 'color-text',
   'sidebar-primary': 'color-primary',
   'sidebar-primary-foreground': 'color-primary-foreground',

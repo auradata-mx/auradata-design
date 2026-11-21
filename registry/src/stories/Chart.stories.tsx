@@ -30,7 +30,8 @@ export const Bars: Story = {
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" tickLine={false} axisLine={false} />
         <ChartTooltip content={<ChartTooltipContent />} />
-        <ChartLegend content={<ChartLegendContent />} />
+        {/* Keep the series order: Recharts sorts the legend by name otherwise. */}
+        <ChartLegend content={<ChartLegendContent />} itemSorter={null} />
         {Object.keys(config).map((key) => (
           <Bar key={key} dataKey={key} fill={`var(--color-${key})`} radius={4} />
         ))}

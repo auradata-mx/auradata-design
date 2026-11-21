@@ -29,24 +29,29 @@ function Logo({
   ...props
 }: LogoProps) {
   const { width, height, file } = SIZES[layout]
-  const src = (name: Exclude<Variant, "auto">) => `${basePath}/${file}-${name}.svg`
-  const image = (name: Exclude<Variant, "auto">, extra?: string) => (
+  const image = (name: Exclude<Variant, "auto">, imageClassName: string) => (
     <img
-      data-slot="logo"
-      src={src(name)}
+      src={`${basePath}/${file}-${name}.svg`}
       width={width}
       height={height}
       alt={alt}
-      className={cn("h-8 w-auto", extra, className)}
+      className={imageClassName}
       {...props}
     />
   )
-  if (variant !== "auto") return image(variant)
+  // One element carries the className, so callers can size, show or hide the logo
+  // without fighting the light/dark switch of "auto".
   return (
-    <>
-      {image("color", "dark:hidden")}
-      {image("blanco", "hidden dark:block")}
-    </>
+    <span data-slot="logo" className={cn("inline-flex h-8 shrink-0", className)}>
+      {variant === "auto" ? (
+        <>
+          {image("color", "h-full w-auto dark:hidden")}
+          {image("blanco", "hidden h-full w-auto dark:block")}
+        </>
+      ) : (
+        image(variant, "h-full w-auto")
+      )}
+    </span>
   )
 }
 

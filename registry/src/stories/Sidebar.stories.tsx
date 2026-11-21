@@ -16,6 +16,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
+import { Logo, ProductTag } from '@/components/ui/logo'
 
 const ITEMS = [
   { title: 'Informes', icon: LayoutDashboardIcon, active: true },
@@ -26,7 +27,8 @@ const ITEMS = [
 const meta = {
   title: 'Components/Sidebar',
   component: SidebarProvider,
-  parameters: { layout: 'fullscreen' },
+  // The sidebar is the whole page: no padding around it.
+  parameters: { layout: 'fullscreen', themeFrame: { padded: false } },
 } satisfies Meta<typeof SidebarProvider>
 
 export default meta
@@ -36,7 +38,11 @@ export const Default: Story = {
   render: (args) => (
     <SidebarProvider className="min-h-96" {...args}>
       <Sidebar collapsible="icon">
-        <SidebarHeader className="px-4 py-3 font-semibold">AuraData</SidebarHeader>
+        <SidebarHeader className="flex-row items-center gap-3 px-4 py-4 group-data-[collapsible=icon]:px-2">
+          <Logo className="h-6 group-data-[collapsible=icon]:hidden" />
+          <Logo layout="mark" className="hidden h-5 group-data-[collapsible=icon]:block" />
+          <ProductTag className="group-data-[collapsible=icon]:hidden">BI</ProductTag>
+        </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Explorar</SidebarGroupLabel>
