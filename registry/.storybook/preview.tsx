@@ -3,6 +3,7 @@ import type { ViewportMap } from 'storybook/viewport'
 import { useEffect, type ReactNode } from 'react'
 
 import '../src/index.css'
+import './docs.css'
 import { auradata } from './theme'
 
 /** Puts the .dark class on the document, as the apps do. */
@@ -53,7 +54,7 @@ const preview: Preview = {
     // The brand first, then what apps install, then the stock shadcn components.
     options: {
       storySort: {
-        order: ['Brand', ['01 Identidad', '02 Logotipo', '03 Tipografía', '04 Color', '05 Voz', 'Tokens'], 'Guides', 'AuraData', 'Blocks', 'Components'],
+        order: ['Brand', ['01 Identidad', '02 Logotipo', '03 Tipografía', '04 Color', '05 Voz', '06 Iconografía', '07 Espaciado, radios, sombras y movimiento', '08 Layout y grilla', '09 Estados y accesibilidad', '10 Visualización de datos', '11 Patrones', 'Tokens'], 'Guides', 'AuraData', 'Blocks', 'Components'],
       },
     },
     controls: {

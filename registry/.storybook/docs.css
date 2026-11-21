@@ -1,0 +1,9 @@
+/* Tailwind's preflight removes list markers; MDX docs pages need them back. */
+.sbdocs-content ol {
+  list-style: decimal;
+  padding-inline-start: 1.5rem;
+}
+
+.sbdocs-content ol > li {
+  padding-inline-start: 0.25rem;
+}
