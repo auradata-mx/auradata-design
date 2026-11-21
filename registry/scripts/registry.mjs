@@ -1,5 +1,7 @@
 /**
- * Writes registry.json from the source, so the registry never drifts from it:
+ * Writes the registry.json at the root of the repository from the source, so the registry never
+ * drifts from it. The shadcn CLI reads it straight from GitHub (`npx shadcn add
+ * cristianruben-dev/auradata-design/<item>`), so every path is relative to the repository root:
  *
  *   - one registry:theme item, `auradata-theme`, with the cssVars that @auradata/tokens builds;
  *   - one item per AuraData file of src/components/ui (registry:ui), src/components/blocks
@@ -9,9 +11,10 @@
  *
  * An AuraData file says so on a line of its own: `// registry: auradata (<why>)`. The other files are
  * stock shadcn, kept for Storybook: apps install them from shadcn, and items that import them name
- * them bare ("card"), which the shadcn CLI resolves to its own registry.
+ * them bare ("card"), which the shadcn CLI resolves to its own registry. Items that import an AuraData
+ * item name it by its GitHub address: a bare name would mean the shadcn one.
  *
- * `shadcn build` then turns registry.json into public/r/*.json.
+ * `shadcn build` then turns it into registry/public/r/*.json, for installs from a local file.
  */
 import { readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -19,6 +22,9 @@ import { basename, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const root = join(import.meta.dirname, '..');
+const repoRoot = join(root, '..');
+/** The GitHub address of this registry: owner/repo. */
+export const GITHUB = 'cristianruben-dev/auradata-design';
 const uiDir = join(root, 'src/components/ui');
 const hooksDir = join(root, 'src/hooks');
 const libDir = join(root, 'src/lib');
@@ -30,7 +36,7 @@ const EXTRA_FILES = {
     .filter((file) => file.endsWith('.svg'))
     .sort()
     .map((file) => ({
-      path: `../packages/tokens/assets/continua/${file}`,
+      path: `packages/tokens/assets/continua/${file}`,
       type: 'registry:file',
       // "~/" is the project root: a bare path lands under src/ in a Vite app.
       target: `~/public/brand/continua/${file}`,
@@ -74,7 +80,7 @@ function registryDependenciesOf(source) {
     .filter(([, folder, name]) => !(folder === 'lib' && name === 'utils'))
     .map(([, folder, name]) => {
       const { dir, extension } = FOLDERS[folder];
-      return isAuraData(readFileSync(join(dir, name + extension), 'utf8')) ? `@auradata/${name}` : name;
+      return isAuraData(readFileSync(join(dir, name + extension), 'utf8')) ? `${GITHUB}/${name}` : name;
     });
   return [...new Set(names)].sort();
 }
@@ -99,7 +105,7 @@ function itemsOf(folder) {
         title: titleOf(name),
         dependencies: dependenciesOf(source),
         ...(registryDependencies.length ? { registryDependencies } : {}),
-        files: [{ path: `src/${folder}/${file}`, type }, ...(EXTRA_FILES[name] ?? [])],
+        files: [{ path: `registry/src/${folder}/${file}`, type }, ...(EXTRA_FILES[name] ?? [])],
       };
     });
 }
@@ -124,7 +130,7 @@ export function buildRegistry() {
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const registry = buildRegistry();
-  writeFileSync(join(root, 'registry.json'), JSON.stringify(registry, null, 2) + '\n');
+  writeFileSync(join(repoRoot, 'registry.json'), JSON.stringify(registry, null, 2) + '\n');
   // shadcn build only adds files: drop the items that left the registry.
   rmSync(join(root, 'public/r'), { recursive: true, force: true });
   console.log(`registry.json: ${registry.items.length} items`);

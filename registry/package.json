@@ -10,7 +10,7 @@
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "registry": "node scripts/registry.mjs && shadcn build",
+    "registry": "node scripts/registry.mjs && shadcn build registry.json --cwd .. --output registry/public/r",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test:stories": "vitest run --project=storybook",

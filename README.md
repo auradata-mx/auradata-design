@@ -28,7 +28,7 @@ The logo SVGs embed the mark as a PNG and draw the name with Outfit outlines: fi
 ```bash
 npm install
 npm test                                # tokens tests
-npm run build                           # tokens, registry app and registry items (registry/public/r)
+npm run build                           # tokens, registry app and registry items (/registry.json, registry/public/r)
 npm run storybook -w registry           # catalog on http://localhost:6006
 ```
 
@@ -52,7 +52,7 @@ A file is published when it says so on a line of its own: `// registry: auradata
 ```bash
 cd registry
 npx shadcn add <component>              # from shadcn, on Base UI: a story shows it with the brand
-npm run registry                        # regenerates registry.json and public/r
+npm run registry                        # regenerates /registry.json and registry/public/r
 ```
 
 Add a story in `registry/src/stories/`. To publish a new or changed component, add the `// registry: auradata` line:
@@ -73,12 +73,19 @@ Screenshot baselines live in `registry/tests/__screenshots__` and are Linux only
 
 ## Installing from an app
 
-Once the repository is on GitHub (private), add the registry to the app's `components.json` and install:
+The repository is the registry: the shadcn CLI reads the `registry.json` at its root straight from GitHub. It is
+private, so the CLI needs read access to `cristianruben-dev/auradata-design`:
+
+- locally, `gh` logged in with an account that can read it. When the active `gh` account is another one, pass its token:
+  `GH_TOKEN=$(gh auth token --user cristianruben-dev) npx shadcn add ...`;
+- in CI, `GH_TOKEN` with a fine-grained token of this repository, **Contents: Read-only**.
 
 ```bash
-npx shadcn add @auradata/auradata-theme @auradata/button
-npx shadcn add dialog select tabs        # straight from shadcn: the theme gives them the brand
-npx shadcn add @auradata/logo           # also copies the Continua SVGs into public/brand/continua
+npx shadcn init -b base                                          # Base UI, as this registry
+npx shadcn add cristianruben-dev/auradata-design/auradata-theme  # the brand
+npx shadcn add dialog select tabs                                 # straight from shadcn: the theme gives them the brand
+npx shadcn add cristianruben-dev/auradata-design/kpi-card        # an AuraData component
+npx shadcn add cristianruben-dev/auradata-design/logo            # also copies the Continua SVGs into public/brand/continua
 ```
 
-The shadcn CLI reads private GitHub registries with `gh` or `GITHUB_TOKEN`.
+Pin a release with `#<tag or commit>`: `cristianruben-dev/auradata-design/kpi-card#v0.1.0`.

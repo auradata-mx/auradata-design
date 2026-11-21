@@ -126,7 +126,7 @@
       ],
       "files": [
         {
-          "path": "src/components/ui/badge.tsx",
+          "path": "registry/src/components/ui/badge.tsx",
           "type": "registry:ui"
         }
       ]
@@ -142,7 +142,7 @@
       ],
       "files": [
         {
-          "path": "src/components/ui/button.tsx",
+          "path": "registry/src/components/ui/button.tsx",
           "type": "registry:ui"
         }
       ]
@@ -160,7 +160,7 @@
       ],
       "files": [
         {
-          "path": "src/components/ui/kpi-card.tsx",
+          "path": "registry/src/components/ui/kpi-card.tsx",
           "type": "registry:ui"
         }
       ]
@@ -174,61 +174,61 @@
       ],
       "files": [
         {
-          "path": "src/components/ui/logo.tsx",
+          "path": "registry/src/components/ui/logo.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "../packages/tokens/assets/continua/horizontal-blanco.svg",
+          "path": "packages/tokens/assets/continua/horizontal-blanco.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/horizontal-blanco.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/horizontal-color.svg",
+          "path": "packages/tokens/assets/continua/horizontal-color.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/horizontal-color.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/horizontal-negro.svg",
+          "path": "packages/tokens/assets/continua/horizontal-negro.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/horizontal-negro.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/horizontal-texto-degradado.svg",
+          "path": "packages/tokens/assets/continua/horizontal-texto-degradado.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/horizontal-texto-degradado.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/isotipo-blanco.svg",
+          "path": "packages/tokens/assets/continua/isotipo-blanco.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/isotipo-blanco.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/isotipo-color.svg",
+          "path": "packages/tokens/assets/continua/isotipo-color.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/isotipo-color.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/isotipo-negro.svg",
+          "path": "packages/tokens/assets/continua/isotipo-negro.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/isotipo-negro.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/vertical-blanco.svg",
+          "path": "packages/tokens/assets/continua/vertical-blanco.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/vertical-blanco.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/vertical-color.svg",
+          "path": "packages/tokens/assets/continua/vertical-color.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/vertical-color.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/vertical-negro.svg",
+          "path": "packages/tokens/assets/continua/vertical-negro.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/vertical-negro.svg"
         },
         {
-          "path": "../packages/tokens/assets/continua/vertical-texto-degradado.svg",
+          "path": "packages/tokens/assets/continua/vertical-texto-degradado.svg",
           "type": "registry:file",
           "target": "~/public/brand/continua/vertical-texto-degradado.svg"
         }
@@ -243,7 +243,7 @@
       ],
       "files": [
         {
-          "path": "src/components/ui/page-header.tsx",
+          "path": "registry/src/components/ui/page-header.tsx",
           "type": "registry:ui"
         }
       ]
@@ -256,16 +256,16 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@auradata/logo",
         "avatar",
         "breadcrumb",
+        "cristianruben-dev/auradata-design/logo",
         "dropdown-menu",
         "separator",
         "sidebar"
       ],
       "files": [
         {
-          "path": "src/components/blocks/app-shell.tsx",
+          "path": "registry/src/components/blocks/app-shell.tsx",
           "type": "registry:block"
         }
       ]
@@ -276,15 +276,15 @@
       "title": "Login",
       "dependencies": [],
       "registryDependencies": [
-        "@auradata/button",
-        "@auradata/logo",
         "card",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/logo",
         "field",
         "input"
       ],
       "files": [
         {
-          "path": "src/components/blocks/login.tsx",
+          "path": "registry/src/components/blocks/login.tsx",
           "type": "registry:block"
         }
       ]
@@ -295,8 +295,8 @@
       "title": "Settings",
       "dependencies": [],
       "registryDependencies": [
-        "@auradata/button",
-        "@auradata/page-header",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/page-header",
         "field",
         "input",
         "select",
@@ -305,7 +305,7 @@
       ],
       "files": [
         {
-          "path": "src/components/blocks/settings.tsx",
+          "path": "registry/src/components/blocks/settings.tsx",
           "type": "registry:block"
         }
       ]
@@ -317,7 +317,7 @@
       "dependencies": [],
       "files": [
         {
-          "path": "src/hooks/use-mobile.ts",
+          "path": "registry/src/hooks/use-mobile.ts",
           "type": "registry:hook"
         }
       ]
@@ -332,7 +332,7 @@
       ],
       "files": [
         {
-          "path": "src/lib/chart-palette.ts",
+          "path": "registry/src/lib/chart-palette.ts",
           "type": "registry:lib"
         }
       ]

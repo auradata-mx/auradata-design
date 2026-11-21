@@ -19,7 +19,14 @@ test('leaves the stock shadcn components to shadcn', () => {
   }
 })
 
-test('points at shadcn for stock dependencies and at @auradata for ours', () => {
+// shadcn reads a GitHub registry from the registry.json at the root of the repository.
+test('lists files from the repository root, as a GitHub registry needs', () => {
+  expect(item('kpi-card').files[0].path).toBe('registry/src/components/ui/kpi-card.tsx')
+  expect(item('logo').files[1].path).toMatch(/^packages\/tokens\/assets\/continua\//)
+})
+
+test('points at shadcn for stock dependencies and at this GitHub repository for ours', () => {
+  expect(item('login').registryDependencies).toContain('cristianruben-dev/auradata-design/button')
   expect(item('kpi-card').registryDependencies).toEqual(['card'])
   expect(item('chart-palette').registryDependencies).toEqual(['chart'])
 })
@@ -34,6 +41,10 @@ test('publishes the blocks with their components', () => {
   for (const name of ['login', 'app-shell', 'settings']) {
     expect(item(name)?.type).toBe('registry:block')
   }
-  expect(item('login').registryDependencies).toEqual(expect.arrayContaining(['@auradata/button', '@auradata/logo', 'card', 'field', 'input']))
-  expect(item('app-shell').registryDependencies).toEqual(expect.arrayContaining(['@auradata/logo', 'sidebar', 'avatar']))
+  expect(item('login').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/logo', 'card', 'field', 'input']),
+  )
+  expect(item('app-shell').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/logo', 'sidebar', 'avatar']),
+  )
 })
