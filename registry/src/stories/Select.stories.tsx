@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -40,3 +41,12 @@ export const Default: Story = {
 
 /** Open, for the visual tests and to see the overlay. */
 export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }
+
+/** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
+export const Focus: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    await userEvent.tab()
+    await expect(document.activeElement).toBe(within(canvasElement).getByRole('combobox', { name: 'Periodo' }))
+  },
+}

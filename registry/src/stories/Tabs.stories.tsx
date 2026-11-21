@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -24,4 +25,13 @@ export const Default: Story = {
       <TabsContent value="products">Tres productos suman el 70 %.</TabsContent>
     </Tabs>
   ),
+}
+
+/** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
+export const Focus: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    await userEvent.tab()
+    await expect(document.activeElement).toBe(within(canvasElement).getByRole('tab', { name: 'Resumen' }))
+  },
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect } from 'storybook/test'
+import { expect, userEvent, within } from 'storybook/test'
 
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -64,3 +64,11 @@ export const Default: Story = {
 }
 export const Checked: Story = { args: { defaultChecked: true } }
 export const Disabled: Story = { args: { disabled: true } }
+
+/** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
+export const Focus: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.tab()
+    await expect(document.activeElement).toBe(within(canvasElement).getByRole('switch', { name: 'Actualizar cada hora' }))
+  },
+}

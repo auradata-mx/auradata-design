@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, userEvent, within } from 'storybook/test'
 import { ChartColumnIcon, DatabaseIcon, LayoutDashboardIcon, SettingsIcon } from 'lucide-react'
 
 import {
@@ -76,4 +77,13 @@ export const Default: Story = {
       </SidebarInset>
     </SidebarProvider>
   ),
+}
+
+/** Reached with the keyboard (Tab): the first menu button shows the sidebar focus ring. */
+export const Focus: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    await userEvent.tab()
+    await expect(document.activeElement).toBe(within(canvasElement).getByRole('button', { name: 'Informes' }))
+  },
 }
