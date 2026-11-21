@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { ChartColumnIcon, DatabaseIcon, LayoutDashboardIcon, SettingsIcon } from 'lucide-react'
 
 import {
@@ -14,6 +14,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSkeleton,
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
@@ -86,4 +87,59 @@ export const Focus: Story = {
     await userEvent.tab()
     await expect(document.activeElement).toBe(within(canvasElement).getByRole('button', { name: 'Informes' }))
   },
+}
+
+/** Collapsed to its icons (`defaultOpen={false}` with `collapsible="icon"`): each button keeps its name. */
+export const Collapsed: Story = {
+  ...Default,
+  args: { defaultOpen: false },
+  play: async ({ canvasElement }) => {
+    const sidebar = canvasElement.querySelector('[data-slot="sidebar"]')!
+    await expect(sidebar).toHaveAttribute('data-state', 'collapsed')
+    await expect(within(canvasElement).getByRole('button', { name: 'Informes' })).toBeInTheDocument()
+  },
+}
+
+/**
+ * On a phone (under 768 px) the sidebar is a sheet: the play opens it with the trigger, as the `mobile`
+ * Playwright project shows at 390×844. On a wide screen it stays the normal sidebar.
+ */
+export const Mobile: Story = {
+  ...Default,
+  tags: ['mobile'],
+  play: async ({ canvasElement }) => {
+    if (!window.matchMedia('(max-width: 767px)').matches) return
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Toggle Sidebar' }))
+    const body = within(canvasElement.ownerDocument.body)
+    const sheet = await body.findByRole('dialog')
+    await waitFor(() => expect(within(sheet).getByRole('button', { name: 'Informes' })).toBeVisible())
+    // Base UI focuses the sheet on open; keep the first item unfocused so the screenshot is steady.
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** While the menu loads: skeleton rows with an icon. Their random width is fixed here, so screenshots stay steady. */
+export const MenuSkeleton: Story = {
+  name: 'Menu skeleton',
+  render: (args) => (
+    <SidebarProvider className="min-h-96" {...args}>
+      <Sidebar collapsible="none" className="border-r">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Explorar</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu aria-busy="true" aria-label="Cargando el menú">
+                {[0, 1, 2, 3].map((row) => (
+                  <SidebarMenuItem key={row}>
+                    {/* The stock skeleton picks a random 50–90 % width on every render. */}
+                    <SidebarMenuSkeleton showIcon className="[&_[data-sidebar=menu-skeleton-text]]:max-w-3/4" />
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </SidebarProvider>
+  ),
 }

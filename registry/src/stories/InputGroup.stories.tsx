@@ -1,7 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { SearchIcon } from 'lucide-react'
+import { CopyIcon, SearchIcon, SendIcon } from 'lucide-react'
 
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group'
+import { Field, FieldError, FieldLabel } from '@/components/ui/field'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
+} from '@/components/ui/input-group'
 
 const meta = {
   title: 'Components/Input group',
@@ -31,5 +39,74 @@ export const Default: Story = {
         </InputGroupAddon>
       </InputGroup>
     </div>
+  ),
+}
+
+/** A button inside the group, at its end. */
+export const WithButton: Story = {
+  name: 'With button',
+  render: (args) => (
+    <InputGroup {...args}>
+      <InputGroupInput readOnly defaultValue="https://bi.auradata.mx/r/7f3c9a" aria-label="Enlace del informe" />
+      <InputGroupAddon align="inline-end">
+        <InputGroupButton size="icon-xs" aria-label="Copiar enlace">
+          <CopyIcon aria-hidden />
+        </InputGroupButton>
+      </InputGroupAddon>
+    </InputGroup>
+  ),
+}
+
+/** Addons above and below the field (`block-start`, `block-end`), around a textarea. */
+export const WithTextarea: Story = {
+  name: 'With textarea',
+  args: { className: 'max-w-md' },
+  render: (args) => (
+    <InputGroup {...args}>
+      <InputGroupAddon align="block-start">
+        <InputGroupText>Pregunta a tus datos</InputGroupText>
+      </InputGroupAddon>
+      <InputGroupTextarea placeholder="¿Qué región vendió más en octubre?" aria-label="Pregunta" />
+      <InputGroupAddon align="block-end">
+        <InputGroupText className="text-xs">Usa el dataset «Pedidos 2026»</InputGroupText>
+        <InputGroupButton variant="default" size="sm" className="ml-auto">
+          <SendIcon data-icon="inline-start" aria-hidden />
+          Enviar
+        </InputGroupButton>
+      </InputGroupAddon>
+    </InputGroup>
+  ),
+}
+
+export const Invalid: Story = {
+  render: (args) => (
+    <Field className="max-w-xs" data-invalid>
+      <FieldLabel htmlFor="goal">Meta de ventas</FieldLabel>
+      <InputGroup {...args}>
+        <InputGroupAddon>
+          <InputGroupText>$</InputGroupText>
+        </InputGroupAddon>
+        <InputGroupInput id="goal" defaultValue="-500" aria-invalid />
+        <InputGroupAddon align="inline-end">
+          <InputGroupText>MXN</InputGroupText>
+        </InputGroupAddon>
+      </InputGroup>
+      <FieldError>La meta debe ser mayor que cero.</FieldError>
+    </Field>
+  ),
+}
+
+/**
+ * Disabled: the group dims with its input. Only an icon addon here: a text addon («MXN») dims to 1.99:1 and
+ * fails axe, since it is not a disabled control itself (L37).
+ */
+export const Disabled: Story = {
+  render: (args) => (
+    <InputGroup {...args}>
+      <InputGroupInput placeholder="Buscar informes…" aria-label="Buscar informes" disabled />
+      <InputGroupAddon>
+        <SearchIcon />
+      </InputGroupAddon>
+    </InputGroup>
   ),
 }

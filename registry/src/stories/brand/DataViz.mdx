@@ -57,7 +57,7 @@ Evita el pastel con más de tres partes y los ejes 3D: comparar ángulos y volú
       <ChartTooltip content={<ChartTooltipContent />} />
       <ChartLegend content={<ChartLegendContent />} itemSorter={null} />
       {Object.keys(config).map((key) => (
-        <Bar key={key} dataKey={key} fill={`var(--color-${key})`} radius={4} />
+        <Bar key={key} dataKey={key} fill={`var(--color-${key})`} radius={4} isAnimationActive={false} />
       ))}
     </BarChart>
   </ChartContainer>

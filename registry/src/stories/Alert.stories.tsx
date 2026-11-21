@@ -66,3 +66,26 @@ export const WithAction: Story = {
     </Alert>
   ),
 }
+
+/**
+ * A long title and description wrap inside the box; the action keeps its top corner. The alert reserves
+ * `pr-18` (72 px) for it, so keep its label short: «Revisar la conexión» ran over the title (L37).
+ */
+export const LongText: Story = {
+  name: 'Long text',
+  render: (args) => (
+    <Alert {...args} variant="warning">
+      <TriangleAlertIcon />
+      <AlertTitle>
+        El dataset «Rentabilidad por sucursal y línea de producto, Bajío y Occidente» tiene 3 días sin actualizarse
+      </AlertTitle>
+      <AlertDescription>
+        La última carga terminó el 18 de noviembre a las 9:00. Las gráficas de los informes que lo usan muestran
+        datos de ese día hasta que la conexión con el almacén de datos vuelva a responder.
+      </AlertDescription>
+      <AlertAction>
+        <Button size="sm" variant="outline">Revisar</Button>
+      </AlertAction>
+    </Alert>
+  ),
+}

@@ -28,3 +28,44 @@ export const Default: Story = {
     </Empty>
   ),
 }
+
+/** `EmptyMedia` in its default variant: the content as is, here the Continua isotipo, no tile behind it. */
+export const DefaultMedia: Story = {
+  name: 'Default media',
+  render: () => (
+    <Empty className="border">
+      <EmptyHeader>
+        <EmptyMedia>
+          <img src="/brand/continua/isotipo-color.svg" alt="" className="size-12" />
+        </EmptyMedia>
+        <EmptyTitle>Conecta tu primera fuente de datos</EmptyTitle>
+        <EmptyDescription>Con una conexión puedes crear datasets e informes.</EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button>Conectar</Button>
+      </EmptyContent>
+    </Empty>
+  ),
+}
+
+/** A long title and description wrap inside the empty state's narrow column. */
+export const LongText: Story = {
+  name: 'Long text',
+  render: () => (
+    <Empty className="border">
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <LayoutDashboardIcon />
+        </EmptyMedia>
+        <EmptyTitle>Ningún informe del espacio Operaciones Norte coincide con los filtros de región, periodo y dueño</EmptyTitle>
+        <EmptyDescription>
+          Quita alguno de los filtros o cambia el periodo. Los informes archivados no aparecen aquí: búscalos en el
+          historial del espacio, donde se guardan 12 meses.
+        </EmptyDescription>
+      </EmptyHeader>
+      <EmptyContent>
+        <Button variant="outline">Quitar filtros</Button>
+      </EmptyContent>
+    </Empty>
+  ),
+}

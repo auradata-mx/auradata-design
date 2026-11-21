@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
 
 import { Checkbox } from '@/components/ui/checkbox'
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSet, FieldLegend } from '@/components/ui/field'
 import { Label } from '@/components/ui/label'
 
 /** The sRGB of any CSS color (oklab, color-mix, alpha…) painted over a background, read back from a canvas. */
@@ -71,4 +72,43 @@ export const Focus: Story = {
     await userEvent.tab()
     await expect(document.activeElement).toBe(within(canvasElement).getByRole('checkbox', { name: 'Compartir con el equipo' }))
   },
+}
+
+/**
+ * Some of the regions picked: the parent box is `indeterminate` (`aria-checked="mixed"`). The stock indicator
+ * draws the same check as checked, on an unfilled box, not a dash (L37).
+ */
+export const Indeterminate: Story = {
+  render: () => (
+    <FieldSet>
+      <FieldLegend variant="label">Regiones del informe</FieldLegend>
+      <FieldGroup className="gap-3">
+        <Field orientation="horizontal">
+          <Checkbox id="all-regions" indeterminate />
+          <FieldLabel htmlFor="all-regions">Todas las regiones</FieldLabel>
+        </Field>
+        {['Norte', 'Centro', 'Sur'].map((region, index) => (
+          <Field key={region} orientation="horizontal" className="pl-6">
+            <Checkbox id={`region-${region}`} defaultChecked={index < 2} />
+            <FieldLabel htmlFor={`region-${region}`}>{region}</FieldLabel>
+          </Field>
+        ))}
+      </FieldGroup>
+    </FieldSet>
+  ),
+  play: async ({ canvasElement }) => {
+    const parent = within(canvasElement).getByRole('checkbox', { name: 'Todas las regiones' })
+    await expect(parent).toHaveAttribute('aria-checked', 'mixed')
+  },
+}
+
+/** A required box left unchecked: `aria-invalid` paints the border, the error says what to do. */
+export const Invalid: Story = {
+  render: () => (
+    <Field orientation="horizontal" data-invalid className="max-w-sm flex-wrap">
+      <Checkbox id="terms" aria-invalid aria-describedby="terms-error" />
+      <FieldLabel htmlFor="terms">Acepto los términos de uso</FieldLabel>
+      <FieldError id="terms-error" className="basis-full">Acepta los términos para crear tu cuenta.</FieldError>
+    </Field>
+  ),
 }

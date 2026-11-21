@@ -48,3 +48,41 @@ export const Default: Story = {
     </Table>
   ),
 }
+
+/**
+ * A long cell wraps inside its column (`whitespace-normal`); a long name with no spaces is cut with an
+ * ellipsis and keeps its full text in `title`. Without either, the stock cell does not wrap and the table
+ * scrolls sideways.
+ */
+export const LongCell: Story = {
+  name: 'Long cell',
+  render: () => (
+    <div className="max-w-xl">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Informe</TableHead>
+            <TableHead>Dataset</TableHead>
+            <TableHead className="text-right">Ventas</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className="whitespace-normal">
+              Rentabilidad por sucursal y línea de producto en el Bajío y Occidente, contra el presupuesto anual
+            </TableCell>
+            <TableCell className="max-w-40 truncate" title="ventas_rentabilidad_sucursal_linea_producto_2026">
+              ventas_rentabilidad_sucursal_linea_producto_2026
+            </TableCell>
+            <TableCell className="text-right font-mono">{money.format(2_031_900)}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="whitespace-normal">Ventas por región</TableCell>
+            <TableCell className="max-w-40 truncate">pedidos_2026</TableCell>
+            <TableCell className="text-right font-mono">{money.format(1_284_500)}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>
+  ),
+}

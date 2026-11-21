@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -10,6 +10,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
@@ -51,4 +54,54 @@ export const Focus: Story = {
     await userEvent.tab()
     await expect(document.activeElement).toBe(within(canvasElement).getByRole('button', { name: 'Acciones' }))
   },
+}
+
+/** «Exportar» opens a submenu to its side; the destructive item stays last. */
+export const Submenu: Story = {
+  args: { defaultOpen: true },
+  render: (args) => (
+    <div className="min-h-64">
+      <DropdownMenu {...args}>
+        <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
+        <DropdownMenuContent className="w-52">
+          <DropdownMenuItem>Editar</DropdownMenuItem>
+          <DropdownMenuItem>Duplicar</DropdownMenuItem>
+          <DropdownMenuSub defaultOpen>
+            <DropdownMenuSubTrigger>Exportar</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="w-44">
+              <DropdownMenuItem>Como PDF</DropdownMenuItem>
+              <DropdownMenuItem>Como Excel</DropdownMenuItem>
+              <DropdownMenuItem>Como imagen</DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive">Eliminar</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    await waitFor(() => expect(body.getByRole('menuitem', { name: 'Como Excel' })).toBeVisible())
+  },
+}
+
+/** Items that do not apply are disabled: dimmed, skipped by the arrow keys. */
+export const DisabledItems: Story = {
+  name: 'Disabled items',
+  args: { defaultOpen: true },
+  render: (args) => (
+    <DropdownMenu {...args}>
+      <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
+      <DropdownMenuContent className="w-52">
+        <DropdownMenuItem>Editar</DropdownMenuItem>
+        <DropdownMenuItem disabled>Publicar</DropdownMenuItem>
+        <DropdownMenuItem disabled>Programar envío</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive" disabled>
+          Eliminar
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  ),
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { RefreshCwIcon } from 'lucide-react'
+import { DownloadIcon, PlusIcon, RefreshCwIcon } from 'lucide-react'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -33,6 +33,66 @@ export const Variants: Story = {
 }
 
 export const Disabled: Story = { args: { disabled: true } }
+
+/** The text sizes, from the smallest to the largest. */
+export const Sizes: Story = {
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button {...args} size="xs">Extra chico</Button>
+      <Button {...args} size="sm">Chico</Button>
+      <Button {...args} size="default">Normal</Button>
+      <Button {...args} size="lg">Grande</Button>
+    </div>
+  ),
+}
+
+/** Icon-only sizes: each one has an accessible name, the icon is hidden from assistive tech. */
+export const IconSizes: Story = {
+  name: 'Icon sizes',
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button {...args} size="icon-xs" variant="outline" aria-label="Actualizar">
+        <RefreshCwIcon aria-hidden />
+      </Button>
+      <Button {...args} size="icon-sm" variant="outline" aria-label="Descargar">
+        <DownloadIcon aria-hidden />
+      </Button>
+      <Button {...args} size="icon" variant="outline" aria-label="Nuevo informe">
+        <PlusIcon aria-hidden />
+      </Button>
+      <Button {...args} size="icon-lg" variant="outline" aria-label="Actualizar datos">
+        <RefreshCwIcon aria-hidden />
+      </Button>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    for (const name of ['Actualizar', 'Descargar', 'Nuevo informe', 'Actualizar datos']) {
+      await expect(canvas.getByRole('button', { name })).toBeVisible()
+    }
+  },
+}
+
+/** A leading icon before the label, in every text size. */
+export const WithIcon: Story = {
+  name: 'With icon',
+  render: (args) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <Button {...args} size="sm">
+        <DownloadIcon data-icon="inline-start" aria-hidden />
+        Descargar
+      </Button>
+      <Button {...args}>
+        <PlusIcon data-icon="inline-start" aria-hidden />
+        Nuevo informe
+      </Button>
+      <Button {...args} size="lg" variant="outline">
+        <RefreshCwIcon data-icon="inline-start" aria-hidden />
+        Actualizar datos
+      </Button>
+    </div>
+  ),
+}
 
 /** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
 export const Focus: Story = {

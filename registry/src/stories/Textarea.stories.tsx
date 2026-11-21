@@ -14,6 +14,9 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 export const Disabled: Story = { args: { disabled: true } }
+export const Invalid: Story = {
+  args: { 'aria-invalid': true, 'aria-label': 'Descripción del informe', defaultValue: 'Ventas' },
+}
 
 /** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
 export const Focus: Story = {

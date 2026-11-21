@@ -25,3 +25,13 @@ export const Range: Story = {
     selected: { from: new Date(2026, 9, 25), to: new Date(2026, 10, 7) },
   },
 }
+
+/** Days that cannot be picked: weekends and anything after today (21 nov) are dimmed and skipped. */
+export const DisabledDays: Story = {
+  name: 'Disabled days',
+  args: {
+    mode: 'single',
+    selected: new Date(2026, 10, 18),
+    disabled: [{ dayOfWeek: [0, 6] }, { after: new Date(2026, 10, 21) }],
+  },
+}
