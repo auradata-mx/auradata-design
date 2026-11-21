@@ -18,7 +18,10 @@
           "color-warning": "var(--warning)",
           "color-warning-foreground": "var(--warning-foreground)",
           "color-info": "var(--info)",
-          "color-info-foreground": "var(--info-foreground)"
+          "color-info-foreground": "var(--info-foreground)",
+          "color-chart-6": "var(--chart-6)",
+          "color-chart-7": "var(--chart-7)",
+          "color-chart-8": "var(--chart-8)"
         },
         "light": {
           "background": "#FFFFFF",
@@ -51,6 +54,10 @@
           "chart-3": "#10B981",
           "chart-4": "#F59E0B",
           "chart-5": "#EC4899",
+          "chart-6": "#06B6D4",
+          "chart-7": "#F97316",
+          "chart-8": "#64748B",
+          "gradient-brand": "linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%)",
           "radius": "8px",
           "sidebar": "#F5F5F5",
           "sidebar-foreground": "#0A0A0F",
@@ -92,6 +99,10 @@
           "chart-3": "#10B981",
           "chart-4": "#F59E0B",
           "chart-5": "#EC4899",
+          "chart-6": "#06B6D4",
+          "chart-7": "#F97316",
+          "chart-8": "#64748B",
+          "gradient-brand": "linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%)",
           "radius": "8px",
           "sidebar": "#0A0A0F",
           "sidebar-foreground": "#F5F5F7",
@@ -151,6 +162,21 @@
       ]
     },
     {
+      "name": "chart",
+      "type": "registry:ui",
+      "title": "Chart",
+      "dependencies": [
+        "cn",
+        "recharts"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/chart.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
@@ -202,6 +228,21 @@
       ]
     },
     {
+      "name": "empty",
+      "type": "registry:ui",
+      "title": "Empty",
+      "dependencies": [
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/empty.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "field",
       "type": "registry:ui",
       "title": "Field",
@@ -236,6 +277,24 @@
       ]
     },
     {
+      "name": "kpi-card",
+      "type": "registry:ui",
+      "title": "Kpi card",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@auradata/card"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/kpi-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "label",
       "type": "registry:ui",
       "title": "Label",
@@ -245,6 +304,89 @@
       "files": [
         {
           "path": "src/components/ui/label.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "logo",
+      "type": "registry:ui",
+      "title": "Logo",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/logo.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/horizontal-blanco.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/horizontal-blanco.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/horizontal-color.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/horizontal-color.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/horizontal-negro.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/horizontal-negro.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/horizontal-texto-degradado.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/horizontal-texto-degradado.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/isotipo-blanco.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/isotipo-blanco.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/isotipo-color.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/isotipo-color.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/isotipo-negro.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/isotipo-negro.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/vertical-blanco.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/vertical-blanco.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/vertical-color.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/vertical-color.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/vertical-negro.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/vertical-negro.svg"
+        },
+        {
+          "path": "../packages/tokens/assets/continua/vertical-texto-degradado.svg",
+          "type": "registry:file",
+          "target": "public/brand/continua/vertical-texto-degradado.svg"
+        }
+      ]
+    },
+    {
+      "name": "page-header",
+      "type": "registry:ui",
+      "title": "Page header",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "src/components/ui/page-header.tsx",
           "type": "registry:ui"
         }
       ]
@@ -438,6 +580,21 @@
         {
           "path": "src/hooks/use-mobile.ts",
           "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "chart-palette",
+      "type": "registry:lib",
+      "title": "Chart palette",
+      "dependencies": [],
+      "registryDependencies": [
+        "@auradata/chart"
+      ],
+      "files": [
+        {
+          "path": "src/lib/chart-palette.ts",
+          "type": "registry:lib"
         }
       ]
     }

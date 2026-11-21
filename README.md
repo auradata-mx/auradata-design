@@ -54,6 +54,7 @@ Once the repository is on GitHub (private), add the registry to the app's `compo
 
 ```bash
 npx shadcn add @auradata/auradata-theme @auradata/button
+npx shadcn add @auradata/logo           # also copies the Continua SVGs into public/brand/continua
 ```
 
 The shadcn CLI reads private GitHub registries with `gh` or `GITHUB_TOKEN`.

@@ -80,6 +80,10 @@ const SHADCN = {
   'chart-3': 'chart-3',
   'chart-4': 'chart-4',
   'chart-5': 'chart-5',
+  'chart-6': 'chart-6',
+  'chart-7': 'chart-7',
+  'chart-8': 'chart-8',
+  'gradient-brand': 'gradient-brand',
   radius: 'radius-md',
   sidebar: 'color-bg-layout',
   'sidebar-foreground': 'color-text',
@@ -97,7 +101,18 @@ function shadcnCss() {
 }
 
 /** shadcn variables a stock shadcn theme lacks: the registry theme item maps them into Tailwind. */
-const SHADCN_EXTRA = ['destructive-foreground', 'success', 'success-foreground', 'warning', 'warning-foreground', 'info', 'info-foreground'];
+const SHADCN_EXTRA = [
+  'destructive-foreground',
+  'success',
+  'success-foreground',
+  'warning',
+  'warning-foreground',
+  'info',
+  'info-foreground',
+  'chart-6',
+  'chart-7',
+  'chart-8',
+];
 
 /** The shadcn mapping with resolved values: the cssVars of a registry:theme item. */
 function shadcnTheme(light, dark) {

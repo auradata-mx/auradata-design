@@ -165,3 +165,13 @@ test('tokens.css carries the brand gradient for headline accents', () => {
     '--aura-gradient-brand: linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%);',
   );
 });
+
+test('shadcn gets the whole chart palette and the brand gradient', () => {
+  const css = read('shadcn.css');
+  expect(css).toContain('--chart-8: var(--aura-chart-8);');
+  expect(css).toContain('--gradient-brand: var(--aura-gradient-brand);');
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.light).toMatchObject({ 'chart-6': '#06B6D4', 'chart-8': '#64748B' });
+  expect(theme.light['gradient-brand']).toBe('linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%)');
+  expect(theme.theme).toMatchObject({ 'color-chart-6': 'var(--chart-6)', 'color-chart-8': 'var(--chart-8)' });
+});
