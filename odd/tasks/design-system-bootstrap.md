@@ -1,7 +1,7 @@
-# AuraData design system bootstrap
+# AuraData design system
 
-Objective: one private repo with the AuraData brand tokens, a shadcn registry on Base UI and a Storybook catalog.
-Branch: main (new repo). Delivery: ask-on-risk. Test runner: vitest (tokens), `shadcn build` and `tsc` (registry), `storybook build`.
+Objective: one private repo with the AuraData brand (tokens), a shadcn registry on Base UI and a Storybook catalog, adopted by every AuraData product.
+Branch: main, then one branch per phase. Delivery: ask-on-risk. Test runner: vitest (tokens), `shadcn build` and `tsc -b` (registry), `storybook build`.
 
 ## Specs
 
@@ -10,21 +10,41 @@ Branch: main (new repo). Delivery: ask-on-risk. Test runner: vitest (tokens), `s
 - S3: A shadcn registry with the latest stack: shadcn CLI v4 with `--base base` (Base UI), Tailwind 4, themed by `@auradata/tokens`, served from a private GitHub repo ("Private GitHub Registries", shadcn changelog Aug 2026).
 - S4: Storybook as the workshop and catalog of the registry components.
 - S5: UI SDK (vercel-labs/ui) stays out while it is in beta.
+- S6 (user, 2026-11-20): "hay que hacer un plan completito de todo lo que tenemos que hacer": the plan below covers publishing, completing the tokens, adopting them in each product, growing the registry, quality and brand docs.
 
 ## Tasks
 
-| ID | Specs | Route | Status | Evidence |
-| --- | --- | --- | --- | --- |
-| T1 | S1 | inline | done | repo created, `shadcn init -t vite -b base -p nova` |
-| T2 | S2 | inline | done | RED (no build.mjs) → GREEN 6/6 vitest; values copied from auradata_config.py |
-| T3 | S3 | inline | done | `shadcn build` 5 items; fresh `shadcn init -b base` app installed theme + button, `--primary: #2563EB`, build OK |
-| T4 | S4 | inline | done | `storybook build` OK, lint and `tsc -b` clean |
-| T5 | S3 | human | pending | create the private GitHub repo and push (needs the user's go-ahead) |
+| ID | Phase | Specs | Route | Status | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| T1 | 0 Bootstrap | S1 | inline | done | repo created, `shadcn init -t vite -b base -p nova` |
+| T2 | 0 Bootstrap | S2 | inline | done | RED (no build.mjs) → GREEN 6/6 vitest; commit afb1e1b |
+| T3 | 0 Bootstrap | S3 | inline | done | `shadcn build` 5 items; fresh app installed theme + button, `--primary: #2563EB`, build OK |
+| T4 | 0 Bootstrap | S4 | inline | done | `storybook build` OK, lint and `tsc -b` clean |
+| T5 | 1 Publish | S3 | inline | blocked: user decision | Private GitHub repo and push. Decide the account (`cristianruben-dev`, where superset and seseq live, or `cristianruben-softoil`, the active `gh` account) |
+| T6 | 1 Publish | S3 | inline | pending | Prove a private GitHub registry install from a fresh app (`components.json` `registries`, `GH_TOKEN`); decide whether `registry/public/r` must be committed |
+| T7 | 1 Publish | S2 | inline | pending | Distribute `@auradata/tokens`: GitHub Packages (npm) or a git dependency; Changesets for versions and changelog |
+| T8 | 1 Publish | S2-S4 | inline | pending | CI on GitHub Actions: `npm test`, `npm run build`, lint, `build-storybook`; registry and tokens outputs built in CI |
+| T9 | 1 Publish | S4 | inline | pending | Host Storybook privately (decide: Chromatic, Vercel with protection, or none) |
+| T10 | 2 Tokens | S2 | inline | pending | Complete the scale: spacing, type sizes and weights, z-index, focus ring, success/warning/info foregrounds for shadcn (it has only destructive) |
+| T11 | 2 Tokens | S2 | inline | pending | Contrast test: every text/background pair passes WCAG AA in light and dark |
+| T12 | 2 Tokens | S2 | inline | pending | Brand assets: logos (Continua, dark variant), icons and the "BI" `ProductTag`, from `superset-frontend/src/assets/images/auradata/` |
+| T13 | 3 Adoption | S2 | inline | pending | auradata-mx: replace its hand-written `@theme` with `@auradata/tokens/tailwind.css`, rename `--color-accent`… to the token names, compare screenshots before/after |
+| T14 | 3 Adoption | S2 | inline | pending | docs/site (Superset repo): import `infima.css`, drop its own brand variables |
+| T15 | 3 Adoption | S2 | inline | pending | AuraData BI: `auradata_config.py` builds `THEME_DEFAULT`/`THEME_DARK` from a vendored `antd.json`, with a test that fails when it drifts from the package |
+| T16 | 4 Registry | S3 | inline | pending | Components for the first new app: dialog, dropdown-menu, select, tabs, table, tooltip, sonner (toast), sidebar, field/label/textarea/checkbox/switch, skeleton |
+| T17 | 4 Registry | S3 | inline | pending | AuraData components: Logo + ProductTag, KPI card, chart (palette from tokens), empty state, page header |
+| T18 | 4 Registry | S3 | inline | pending | Blocks: login, app shell (sidebar + top bar), settings page; shadcn AI Elements (Oct 2026) for chat UIs |
+| T19 | 5 Quality | S4 | inline | pending | Storybook: a11y addon, interaction tests with the Vitest addon, run in CI |
+| T20 | 5 Quality | S4 | inline | pending | Visual regression of stories (Chromatic or Playwright screenshots) |
+| T21 | 5 Quality | S1 | inline | pending | Renovate/Dependabot; watch shadcn, Base UI and UI SDK (S5) releases |
+| T22 | 6 Docs | S4 | inline | pending | Brand guide in Storybook: logo use, the 100° gradient only as a headline accent, voice (Spanish first, "tú", «»), how to add a component |
 
 ## Log
 
 - L1 (2026-11-20, user): "¿Y cómo haríamos el kit? ¿Sería un nuevo proyecto? ¿Sería simplemente un proyecto de React?" … "me gustaría que checaras por favor en Chat CN porque ya lo bueno ya no es Radix, ya es base UI … hay que utilizar lo más actual posible." … "Ok, perfecto, entonces hacemos una carpeta fuera de este superset, ¿verdad?" … "si empecemos"
 - L2: Verified shadcn 4.23.0 `init --base <base|radix|aria>`; Base UI default since July 2026. Versions: style-dictionary 5.8.0, storybook 10.6.8, @base-ui/react 1.9.0, tailwindcss 4.3.5.
 - L3: Tokens build emits tokens.css, shadcn.css, shadcn-theme.json, tailwind.css, infima.css, antd.json. Registry items come from `registry/scripts/registry.mjs` (theme from tokens, one item per `src/components/ui/*.tsx`).
-- L4: Open for T5: check whether a private GitHub registry reads `registry.json` from the repo or needs the built `public/r` committed (ignored for now).
-- Next: T5 (GitHub repo, user's go-ahead); then adopt the tokens in auradata-mx, docs/site and auradata_config.py, one product at a time.
+- L4: Open for T6: whether a private GitHub registry reads `registry.json` from the repo or needs the built `public/r` committed (ignored for now).
+- L5 (2026-11-20, user): "podemos hacer que este chat se vaya como al proyecto de Aura Data Design … hay que hacer un plan completito de todo lo que tenemos que hacer". Registered the T3 Code project `auradata-design`; a thread cannot change its workspace, so work continues from a thread of that project.
+- L6: The personal repos (superset, seseq-administration) live on `cristianruben-dev` (`github-personal` SSH host), while `gh` is logged in as `cristianruben-softoil`: T5 waits on which account owns the repo.
+- Next: T5 once the account is decided, then T6-T8.
