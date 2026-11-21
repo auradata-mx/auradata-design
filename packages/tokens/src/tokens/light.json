@@ -15,7 +15,7 @@
     "border-secondary": { "$value": "#EDEDED" },
     "text": { "$value": "#0A0A0F" },
     "text-secondary": { "$value": "#666666" },
-    "text-tertiary": { "$value": "#737373", "$description": "Darker than #9B9B9B so small labels stay readable (4.7:1)" },
+    "text-tertiary": { "$value": "#6E6E6E", "$description": "Darker than #9B9B9B so small labels stay readable: 5.1:1 on white, 4.7:1 on #F5F5F5" },
     "fill-secondary": { "$value": "#F5F5F5" },
     "selection": { "$value": "#DBEAFE" },
     "focus-ring": { "$value": "#181818", "$description": "The focus outline of auradata.mx" },

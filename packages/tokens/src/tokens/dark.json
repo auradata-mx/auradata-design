@@ -2,7 +2,7 @@
   "color": {
     "$type": "color",
     "primary": { "$value": "#3B82F6", "$description": "A lighter Azul Aura that reads on the night background (5.4:1)" },
-    "primary-foreground": { "$value": "#FFFFFF" },
+    "primary-foreground": { "$value": "#0A0A0F", "$description": "White reads 3.7:1 on #3B82F6; night reads 5.4:1" },
     "link": { "$value": "#60A5FA" },
     "info": { "$value": "#3B82F6" },
     "success": { "$value": "#34D399" },

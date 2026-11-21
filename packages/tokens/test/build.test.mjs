@@ -35,7 +35,8 @@ test('antd.json carries the colors of the AuraData BI themes', () => {
     colorBorderSecondary: '#EDEDED',
     colorText: '#0A0A0F',
     colorTextSecondary: '#666666',
-    colorTextTertiary: '#737373',
+    // #737373 in AuraData BI until T15: it read 4.35:1 on #F5F5F5, below WCAG AA.
+    colorTextTertiary: '#6E6E6E',
     colorFillSecondary: '#F5F5F5',
     fontFamily: "Outfit, -apple-system, 'Segoe UI', sans-serif",
     fontFamilyCode: "'Geist Mono', ui-monospace, SFMono-Regular, monospace",
