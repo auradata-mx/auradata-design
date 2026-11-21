@@ -23,6 +23,7 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run lint -w registry
+      - run: npm run test:unit -w registry
       - run: npm run build-storybook -w registry
       - uses: actions/upload-artifact@v5
         with:

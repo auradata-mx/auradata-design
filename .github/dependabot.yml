@@ -1,0 +1,30 @@
+# Weekly dependency updates, grouped so each PR is one decision.
+# Dependabot needs no app on GitHub, unlike Renovate.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    groups:
+      # The stack the brand sits on: read their changelogs before merging (S5: UI SDK stays out while in beta).
+      ui-stack:
+        patterns: ["shadcn", "@base-ui/*", "tailwindcss", "@tailwindcss/*", "tw-animate-css", "lucide-react", "recharts", "sonner"]
+      storybook:
+        patterns: ["storybook", "@storybook/*", "eslint-plugin-storybook"]
+      # A Playwright bump also needs the image in .github/workflows/ci.yml and test:visual:docker, and new baselines.
+      testing:
+        patterns: ["vitest", "@vitest/*", "playwright", "@playwright/test", "@axe-core/*"]
+      tokens:
+        patterns: ["style-dictionary"]
+      react:
+        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
+      tooling:
+        patterns: ["eslint", "@eslint/*", "typescript", "typescript-eslint", "prettier", "prettier-plugin-*", "vite", "@vitejs/*", "globals", "eslint-plugin-*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
