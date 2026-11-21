@@ -5,8 +5,9 @@
  * below turns the resolved tokens into the shape one consumer reads:
  *
  *   tokens.css    --aura-* variables, light on :root and dark on .dark
- *   shadcn.css    the shadcn semantic variables, pointing at --aura-*
- *   shadcn-theme.json  the same mapping with raw values, for a shadcn registry theme item
+ *   shadcn.css    the shadcn semantic variables, pointing at --aura-*, and the brand focus ring
+ *   shadcn-theme.json  the same mapping with raw values and the focus ring (`css`), for a shadcn
+ *                 registry theme item
  *   tailwind.css  a Tailwind 4 @theme with the brand
  *   infima.css    Docusaurus (Infima) variables, light and [data-theme='dark']
  *   antd.json     antd theme tokens, light and dark (AuraData BI reads them)
@@ -96,9 +97,65 @@ const SHADCN = {
   'sidebar-ring': 'color-focus-ring',
 };
 
-function shadcnCss() {
+/**
+ * The focus outline of auradata.mx on every component: focus-width of --ring, focus-offset away from
+ * the element, only for the keyboard (:focus-visible). Rules as a registry item's `css` takes them.
+ *
+ *   - @layer base: plain elements (links, native controls) get it instead of the browser's outline.
+ *   - Unlayered: stock shadcn components hide the outline (`outline-none`, a utility, which beats any
+ *     base rule) and draw a 3px box-shadow ring at 50% through `focus-visible:ring-*`. Those classes
+ *     are the signal: where shadcn draws a focus ring, the brand outline replaces it and the ring
+ *     shadow goes. Popups, menu items and inner inputs take focus too, but without a ring class, so
+ *     they keep their stock look. The ring of a field group lands on the group, as shadcn's does:
+ *     `focus-within:ring-*`, an input group, a code block, a choice card (field label around a
+ *     field, whose control then drops its own), and a control whose focus lands on a native input
+ *     inside it (the slider thumb). `:where()` keeps the specificity at one pseudo-class, so an
+ *     app's own rule can still win.
+ *   - Scrolling viewports clip what lies outside them: their outline goes inside.
+ *
+ * Forced colors: the outline takes the system color, where the stock box-shadow ring vanished.
+ */
+function focusCss(tokens) {
+  const width = tokens['focus-width'];
+  const offset = tokens['focus-offset'];
+  const outline = { outline: `${width} solid var(--ring)`, 'outline-offset': offset };
+  const card = '[data-slot="field-label"]:has(> [data-slot="field"])';
+  const rings = [
+    `:where([class*="focus-visible:ring-"]:not([class~="focus-visible:ring-0"], ${card} *)):focus-visible`,
+    ':where([class*="focus-visible:ring-"]):has(> input:focus-visible)',
+    ':where([class*="focus-within:ring-"]:not([class*="focus-within:ring-0"])):has(:focus-visible)',
+    ':where([data-slot="input-group"]:not([data-slot="combobox-content"] *)):has([data-slot="input-group-control"]:focus-visible)',
+    ':where([data-slot="code-block"]):has(> [data-slot="code-block-content"]:focus-visible)',
+    `:where(${card}):has(:focus-visible)`,
+  ];
+  return {
+    '@layer base': { ':focus-visible': outline },
+    [rings.join(',\n')]: { ...outline, '--tw-ring-shadow': '0 0 #0000' },
+    ':where([data-slot$="viewport"]):focus-visible': { 'outline-offset': `-${width}` },
+  };
+}
+
+/** CSS text of rules in the shape of a registry item's `css`: selectors and at-rules nest. */
+function cssOf(rules, indent = '') {
+  return Object.entries(rules)
+    .map(([selector, body]) => {
+      const inner = Object.entries(body).map(([key, value]) =>
+        typeof value === 'object' ? cssOf({ [key]: value }, indent + '  ') : `${indent}  ${key}: ${value};\n`,
+      );
+      return `${indent}${selector.replaceAll('\n', `\n${indent}`)} {\n${inner.join('')}${indent}}\n`;
+    })
+    .join('');
+}
+
+function shadcnCss(light) {
   const entries = Object.entries(SHADCN).map(([name, aura]) => [`--${name}`, `var(--aura-${aura})`]);
-  return HEADER + "/* Import after tokens.css and shadcn's own theme, so these win. */\n" + block(':root, .dark', entries);
+  return (
+    HEADER +
+    "/* Import after tokens.css and shadcn's own theme, so these win. */\n" +
+    block(':root, .dark', entries) +
+    '\n/* The brand focus ring on every component. */\n' +
+    cssOf(focusCss(light))
+  );
 }
 
 /** shadcn variables a stock shadcn theme lacks: the registry theme item maps them into Tailwind. */
@@ -115,7 +172,7 @@ const SHADCN_EXTRA = [
   'chart-8',
 ];
 
-/** The shadcn mapping with resolved values: the cssVars of a registry:theme item. */
+/** The shadcn mapping with resolved values (the cssVars of a registry:theme item) and its `css`. */
 function shadcnTheme(light, dark) {
   const resolved = (tokens) =>
     Object.fromEntries(Object.entries(SHADCN).map(([name, aura]) => [name, tokens[aura]]));
@@ -127,6 +184,7 @@ function shadcnTheme(light, dark) {
     },
     light: resolved(light),
     dark: resolved(dark),
+    css: focusCss(light),
   };
 }
 
@@ -262,7 +320,7 @@ const dark = await resolveTheme('dark');
 mkdirSync(outDir, { recursive: true });
 const files = {
   'tokens.css': tokensCss(light, dark),
-  'shadcn.css': shadcnCss(),
+  'shadcn.css': shadcnCss(light),
   'shadcn-theme.json': JSON.stringify(shadcnTheme(light, dark), null, 2) + '\n',
   'tailwind.css': tailwindCss(light),
   'infima.css': infimaCss(light, dark),

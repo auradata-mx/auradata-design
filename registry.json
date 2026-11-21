@@ -7,7 +7,7 @@
       "name": "auradata-theme",
       "type": "registry:theme",
       "title": "AuraData theme",
-      "description": "The AuraData brand: Azul Aura, Outfit and Geist Mono, light and dark.",
+      "description": "The AuraData brand: Azul Aura, Outfit and Geist Mono, light and dark, and its focus ring.",
       "cssVars": {
         "theme": {
           "font-sans": "Outfit, -apple-system, 'Segoe UI', sans-serif",
@@ -112,6 +112,22 @@
           "sidebar-accent-foreground": "#F5F5F7",
           "sidebar-border": "#26262F",
           "sidebar-ring": "#F5F5F7"
+        }
+      },
+      "css": {
+        "@layer base": {
+          ":focus-visible": {
+            "outline": "2px solid var(--ring)",
+            "outline-offset": "2px"
+          }
+        },
+        ":where([class*=\"focus-visible:ring-\"]:not([class~=\"focus-visible:ring-0\"], [data-slot=\"field-label\"]:has(> [data-slot=\"field\"]) *)):focus-visible,\n:where([class*=\"focus-visible:ring-\"]):has(> input:focus-visible),\n:where([class*=\"focus-within:ring-\"]:not([class*=\"focus-within:ring-0\"])):has(:focus-visible),\n:where([data-slot=\"input-group\"]:not([data-slot=\"combobox-content\"] *)):has([data-slot=\"input-group-control\"]:focus-visible),\n:where([data-slot=\"code-block\"]):has(> [data-slot=\"code-block-content\"]:focus-visible),\n:where([data-slot=\"field-label\"]:has(> [data-slot=\"field\"])):has(:focus-visible)": {
+          "outline": "2px solid var(--ring)",
+          "outline-offset": "2px",
+          "--tw-ring-shadow": "0 0 #0000"
+        },
+        ":where([data-slot$=\"viewport\"]):focus-visible": {
+          "outline-offset": "-2px"
         }
       }
     },

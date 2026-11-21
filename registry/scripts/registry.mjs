@@ -3,7 +3,8 @@
  * drifts from it. The shadcn CLI reads it straight from GitHub (`npx shadcn add
  * cristianruben-dev/auradata-design/<item>`), so every path is relative to the repository root:
  *
- *   - one registry:theme item, `auradata-theme`, with the cssVars that @auradata/tokens builds;
+ *   - one registry:theme item, `auradata-theme`, with the cssVars and the css (the brand focus ring)
+ *     that @auradata/tokens builds;
  *   - one item per AuraData file of src/components/ui (registry:ui), src/components/blocks
  *     (registry:block), src/hooks (registry:hook) and src/lib (registry:lib), with the npm packages
  *     and the registry items it imports;
@@ -47,7 +48,7 @@ const EXTRA_FILES = {
 const MARKER = /^\/\/ registry: auradata\b/m;
 const isAuraData = (source) => MARKER.test(source);
 const require = createRequire(import.meta.url);
-const theme = require('@auradata/tokens/shadcn-theme.json');
+const { css: themeCss, ...themeVars } = require('@auradata/tokens/shadcn-theme.json');
 
 /** Packages a consumer already has, or that are aliases of this project. */
 const PROVIDED = new Set(['react', 'react-dom']);
@@ -120,8 +121,9 @@ export function buildRegistry() {
         name: 'auradata-theme',
         type: 'registry:theme',
         title: 'AuraData theme',
-        description: 'The AuraData brand: Azul Aura, Outfit and Geist Mono, light and dark.',
-        cssVars: theme,
+        description: 'The AuraData brand: Azul Aura, Outfit and Geist Mono, light and dark, and its focus ring.',
+        cssVars: themeVars,
+        css: themeCss,
       },
       ...Object.keys(FOLDERS).flatMap(itemsOf),
     ],
