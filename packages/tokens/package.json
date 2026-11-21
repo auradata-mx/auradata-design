@@ -5,14 +5,15 @@
   "license": "UNLICENSED",
   "description": "AuraData brand tokens for every product: CSS variables, Tailwind 4, shadcn, Docusaurus and antd.",
   "type": "module",
-  "files": ["dist"],
+  "files": ["dist", "assets"],
   "exports": {
     "./tokens.css": "./dist/tokens.css",
     "./shadcn.css": "./dist/shadcn.css",
     "./shadcn-theme.json": "./dist/shadcn-theme.json",
     "./tailwind.css": "./dist/tailwind.css",
     "./infima.css": "./dist/infima.css",
-    "./antd.json": "./dist/antd.json"
+    "./antd.json": "./dist/antd.json",
+    "./assets/*": "./assets/*"
   },
   "scripts": {
     "build": "node build.mjs",

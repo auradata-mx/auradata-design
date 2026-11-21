@@ -17,6 +17,11 @@ The AuraData brand for every product, in one private repository.
 | Tailwind 4 sites | `tailwind.css` (`@theme` with `--color-aura-*`, fonts, radii, ease) |
 | Docusaurus | `infima.css` (light and `[data-theme='dark']`) |
 | AuraData BI (antd) | `antd.json` (`light` and `dark`, the shape of `THEME_DEFAULT` and `THEME_DARK`) |
+| Logos and icons | `assets/continua/`: `{horizontal,vertical}-{color,negro,blanco,texto-degradado}.svg`, `isotipo-{color,negro,blanco}.svg`, `favicon-{16,32,48,180,192,512}.png`. `blanco` goes on dark backgrounds |
+
+The brand gradient, `--aura-gradient-brand`, is only a headline accent: the product tag ("BI") or one word of a title.
+
+The logo SVGs embed the mark as a PNG and draw the name with Outfit outlines: fine for screens, not a vector master for print.
 
 ## Commands
 

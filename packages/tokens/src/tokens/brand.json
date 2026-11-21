@@ -31,6 +31,9 @@
     "lg": { "$value": "14px" },
     "card": { "$value": "16px" }
   },
+  "gradient": {
+    "brand": { "$value": "linear-gradient(100deg, {brand.blue} 0%, {brand.violet} 55%, {brand.green} 100%)", "$description": "Only as a headline accent: the product tag, one word of a title" }
+  },
   "ease": {
     "fluid": { "$type": "cubicBezier", "$value": "cubic-bezier(0.32, 0.72, 0, 1)", "$description": "Quick start, long soft landing" }
   },

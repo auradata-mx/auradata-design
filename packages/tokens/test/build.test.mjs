@@ -159,3 +159,9 @@ test('antd.json carries the type scale and the popup z-index', () => {
   expect(light.token).toMatchObject(scale);
   expect(dark.token).toMatchObject(scale);
 });
+
+test('tokens.css carries the brand gradient for headline accents', () => {
+  expect(read('tokens.css')).toContain(
+    '--aura-gradient-brand: linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%);',
+  );
+});
