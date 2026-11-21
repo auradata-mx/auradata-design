@@ -17,8 +17,12 @@ export default defineConfig({
   test: {
     projects: [
       {
-        // The scripts that build the registry and the plain helpers of src/lib.
-        test: { name: "unit", include: ["scripts/**/*.test.mjs", "src/**/*.test.ts"], environment: "node" },
+        // The scripts that build the registry, the sign-in server and the plain helpers of src/lib.
+        test: {
+          name: "unit",
+          include: ["scripts/**/*.test.mjs", "server/**/*.test.mjs", "src/**/*.test.ts"],
+          environment: "node",
+        },
       },
       {
         // Every story is a test: it must render, pass its play function and pass axe (a11y).

@@ -6,3 +6,4 @@ registry/public/r
 registry/test-results
 registry/playwright-report
 .atl
+registry/login-dist

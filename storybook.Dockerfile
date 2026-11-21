@@ -1,13 +1,25 @@
-# The Storybook catalog and brand guide as a static site (Coolify: design.auradata.mx).
+# The Storybook catalog and brand guide behind the AuraData sign-in page (Coolify: design.auradata.mx).
+# Set SITE_PASSWORD (the team password) and SESSION_SECRET (32+ characters) in Coolify.
 FROM node:26-slim AS build
 WORKDIR /app
 COPY . .
 RUN npm ci --no-audit --no-fund \
   && npm run build -w @cristianruben-dev/auradata-tokens \
-  && npm run build-storybook -w registry
+  && npm run build-storybook -w registry \
+  && npm run build:login -w registry
 
-FROM nginx:1-alpine
-COPY --from=build /app/registry/storybook-static /usr/share/nginx/html
-# Private catalog: keep it out of search engines even behind basic auth.
-RUN printf 'User-agent: *\nDisallow: /\n' > /usr/share/nginx/html/robots.txt
+FROM node:26-slim
+WORKDIR /app
+ENV NODE_ENV=production \
+  PORT=80 \
+  STATIC_DIR=/app/storybook-static \
+  LOGIN_DIR=/app/login-dist
+COPY --from=build /app/registry/server/index.mjs /app/registry/server/index.mjs
+COPY --from=build /app/registry/storybook-static /app/storybook-static
+COPY --from=build /app/registry/login-dist /app/login-dist
+# Private catalog: keep it out of search engines (the server also answers /robots.txt itself).
+RUN printf 'User-agent: *\nDisallow: /\n' > /app/storybook-static/robots.txt
 EXPOSE 80
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD ["node", "-e", "fetch('http://127.0.0.1:' + (process.env.PORT || 80) + '/healthz').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+CMD ["node", "registry/server/index.mjs"]

@@ -1,6 +1,7 @@
 node_modules/
 dist/
 storybook-static/
+registry/login-dist/
 registry/public/r/
 .DS_Store
 *.log

@@ -59,6 +59,28 @@ npm run build                           # tokens, registry app and registry item
 npm run storybook -w registry           # catalog on http://localhost:6006
 ```
 
+## The hosted Storybook
+
+The catalog and brand guide live at https://design.auradata.mx, deployed by Coolify from `storybook.Dockerfile`. They are
+private: open the URL, type the team password on the AuraData sign-in page and press «Entrar». The session lasts 30 days
+in that browser. Ask whoever administers AuraData for the password; it is never written in the repository.
+
+The image runs `registry/server/index.mjs` (Node, no dependencies): it serves the built Storybook only with a signed
+session cookie, and without it only the sign-in page (`registry/login`), `/robots.txt` and `/healthz`. Ten wrong
+passwords from one address lock it out for 15 minutes. Set two variables in Coolify:
+
+| Variable | What it is |
+| --- | --- |
+| `SITE_PASSWORD` | The team password. Changing it does not sign anyone out. |
+| `SESSION_SECRET` | 32 or more random characters (`openssl rand -base64 48`) that sign the cookie. Changing it signs everyone out. |
+
+To revoke access after rotating the password, change `SESSION_SECRET` too. Try it locally:
+
+```bash
+npm run build-storybook -w registry && npm run build:login -w registry
+SITE_PASSWORD=<a test password> SESSION_SECRET=$(openssl rand -base64 48) PORT=6006 npm run serve:storybook -w registry
+```
+
 ## Changing the brand
 
 Edit `packages/tokens/src/tokens` (`brand.json`, `light.json`, `dark.json`) and rebuild. Never write a color in a component
@@ -96,7 +118,7 @@ items they import, so `registry.json` is never edited by hand.
 
 ```bash
 npm test                                # tokens: values, contrast, assets
-npm run test:unit -w registry           # the registry generator
+npm run test:unit -w registry           # the registry generator and the sign-in server
 npm run test:stories -w registry        # every story renders and passes axe (light)
 npm run build-storybook -w registry && npm run test:visual:docker -w registry   # screenshots and axe (dark), as CI
 ```
