@@ -1,13 +1,15 @@
-// registry: auradata (a KPI card of the brand)
+// registry: auradata (a KPI card of the brand, with loading and no-data states)
 import { ArrowDownRightIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { formatPercent } from "@/lib/format"
 
 type KpiCardProps = Omit<React.ComponentProps<typeof Card>, "children"> & {
   label: React.ReactNode
-  value: React.ReactNode
+  /** The number, already formatted. `null` or `undefined` when the period has no data: a dash and «Sin datos». */
+  value?: React.ReactNode
   /** The change against the previous period, as a fraction: 0.12 is +12 %. */
   change?: number
   /** What the change compares with, such as "vs. septiembre". */
@@ -17,6 +19,8 @@ type KpiCardProps = Omit<React.ComponentProps<typeof Card>, "children"> & {
   locale?: string
   /** The recent values, oldest first: a sparkline beside the value, colored like the change. */
   trend?: number[]
+  /** The number is loading: skeletons in its shape, as tall as the loaded card, and `aria-busy`. */
+  loading?: boolean
 }
 
 const WIDTH = 96
@@ -69,13 +73,46 @@ function KpiCard({
   goodDirection = "up",
   locale = "es-MX",
   trend,
+  loading = false,
   className,
   ...props
 }: KpiCardProps) {
+  if (loading) {
+    return (
+      <Card data-slot="kpi-card" aria-busy="true" className={cn("gap-2", className)} {...props}>
+        <CardHeader>
+          <CardDescription>{label}</CardDescription>
+        </CardHeader>
+        <CardContent aria-hidden className="grid gap-1">
+          <div className="flex items-center justify-between gap-4">
+            <Skeleton className="h-9 w-32" />
+            {trend && <Skeleton className="h-8 w-24 shrink-0" />}
+          </div>
+          <Skeleton className="h-5 w-40" />
+        </CardContent>
+      </Card>
+    )
+  }
+  if (value === null || value === undefined) {
+    return (
+      <Card data-slot="kpi-card" className={cn("gap-2", className)} {...props}>
+        <CardHeader>
+          <CardDescription>{label}</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-1">
+          <div aria-hidden className="text-3xl font-semibold tracking-tight text-muted-foreground">
+            —
+          </div>
+          <div className="text-sm text-muted-foreground">Sin datos</div>
+        </CardContent>
+      </Card>
+    )
+  }
   const direction = change === undefined || change === 0 ? "flat" : change > 0 ? "up" : "down"
   const tone = direction === "flat" ? "flat" : direction === goodDirection ? "good" : "bad"
   const Icon = { up: ArrowUpRightIcon, down: ArrowDownRightIcon, flat: ArrowRightIcon }[direction]
-  const number = <div className="text-3xl font-semibold tracking-tight tabular-nums">{value}</div>
+  // A value too long for the card wraps instead of spilling out of it.
+  const number = <div className="min-w-0 text-3xl font-semibold tracking-tight tabular-nums wrap-anywhere">{value}</div>
   return (
     <Card data-slot="kpi-card" className={cn("gap-2", className)} {...props}>
       <CardHeader>
@@ -83,7 +120,7 @@ function KpiCard({
       </CardHeader>
       <CardContent className="grid gap-1">
         {trend && trend.length > 1 ? (
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
             {number}
             <Sparkline values={trend} tone={change === undefined ? "none" : tone} />
           </div>

@@ -27,7 +27,7 @@ test('lists files from the repository root, as a GitHub registry needs', () => {
 
 test('points at shadcn for stock dependencies and at this GitHub repository for ours', () => {
   expect(item('login').registryDependencies).toContain('cristianruben-dev/auradata-design/button')
-  expect(item('kpi-card').registryDependencies).toEqual(['card', 'cristianruben-dev/auradata-design/format'])
+  expect(item('kpi-card').registryDependencies).toEqual(['card', 'cristianruben-dev/auradata-design/format', 'skeleton'])
   expect(item('chart-palette').registryDependencies).toEqual(['chart'])
 })
 

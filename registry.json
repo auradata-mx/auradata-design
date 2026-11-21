@@ -283,7 +283,8 @@
       ],
       "registryDependencies": [
         "card",
-        "cristianruben-dev/auradata-design/format"
+        "cristianruben-dev/auradata-design/format",
+        "skeleton"
       ],
       "files": [
         {
