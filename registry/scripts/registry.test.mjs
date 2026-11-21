@@ -58,3 +58,19 @@ test('installs the workspace switcher and the theme toggle with the app shell', 
   )
   expect(item('workspace-switcher').registryDependencies).toContain('cristianruben-dev/auradata-design/initials')
 })
+
+test('publishes the marketing blocks with the eyebrow, the gradient heading and the aura', () => {
+  for (const name of ['hero', 'cta-band', 'benefits-grid', 'faq', 'site-footer']) {
+    expect(item(name)?.type).toBe('registry:block')
+  }
+  expect(item('hero').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/aura-background',
+      'cristianruben-dev/auradata-design/eyebrow',
+      'cristianruben-dev/auradata-design/gradient-heading',
+    ]),
+  )
+  // The FAQ takes the stock accordion from shadcn.
+  expect(item('faq').registryDependencies).toEqual(['accordion', 'cristianruben-dev/auradata-design/section-header'])
+  expect(item('site-footer').registryDependencies).toEqual(['cristianruben-dev/auradata-design/logo'])
+})

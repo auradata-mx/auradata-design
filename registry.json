@@ -131,6 +131,20 @@
       ]
     },
     {
+      "name": "aura-background",
+      "type": "registry:ui",
+      "title": "Aura background",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/aura-background.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
@@ -223,6 +237,35 @@
       "files": [
         {
           "path": "registry/src/components/ui/error-state.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "eyebrow",
+      "type": "registry:ui",
+      "title": "Eyebrow",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/eyebrow.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "gradient-heading",
+      "type": "registry:ui",
+      "title": "Gradient heading",
+      "dependencies": [
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/gradient-heading.tsx",
           "type": "registry:ui"
         }
       ]
@@ -350,6 +393,24 @@
       ]
     },
     {
+      "name": "section-header",
+      "type": "registry:ui",
+      "title": "Section header",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/eyebrow",
+        "cristianruben-dev/auradata-design/gradient-heading"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/section-header.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
@@ -428,6 +489,81 @@
       ]
     },
     {
+      "name": "benefits-grid",
+      "type": "registry:block",
+      "title": "Benefits grid",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "card",
+        "cristianruben-dev/auradata-design/section-header"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/benefits-grid.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "cta-band",
+      "type": "registry:block",
+      "title": "Cta band",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/aura-background",
+        "cristianruben-dev/auradata-design/eyebrow",
+        "cristianruben-dev/auradata-design/gradient-heading"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/cta-band.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "faq",
+      "type": "registry:block",
+      "title": "Faq",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "accordion",
+        "cristianruben-dev/auradata-design/section-header"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/faq.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "hero",
+      "type": "registry:block",
+      "title": "Hero",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/aura-background",
+        "cristianruben-dev/auradata-design/eyebrow",
+        "cristianruben-dev/auradata-design/gradient-heading"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/hero.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
       "name": "login",
       "type": "registry:block",
       "title": "Login",
@@ -479,6 +615,23 @@
       "files": [
         {
           "path": "registry/src/components/blocks/settings.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "site-footer",
+      "type": "registry:block",
+      "title": "Site footer",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/logo"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/site-footer.tsx",
           "type": "registry:block"
         }
       ]
