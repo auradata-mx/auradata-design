@@ -22,7 +22,7 @@ const NAV: NavGroup[] = [
 const USER = { name: 'Ana López', email: 'ana@empresa.mx' }
 
 const meta = {
-  title: 'Blocks',
+  title: 'Blocks/App',
   // Blocks are whole pages: no padding around them.
   parameters: { layout: 'fullscreen', themeFrame: { padded: false } },
 } satisfies Meta
