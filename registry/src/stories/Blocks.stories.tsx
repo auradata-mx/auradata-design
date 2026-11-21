@@ -97,9 +97,17 @@ export default meta
 type Story = StoryObj<typeof meta>
 type ChatStory = StoryObj<typeof Chat>
 
-export const SignIn: Story = { render: () => <Login product="BI" /> }
+/**
+ * Pages that must hold on a phone: stories tagged `mobile` open at 390×844 and the `mobile` Playwright
+ * project checks them there. The tag stays literal on each story: Storybook's indexer reads it statically.
+ */
+const ON_PHONE = { viewport: { value: 'mobile', isRotated: false } }
+
+export const SignIn: Story = { tags: ['mobile'], globals: ON_PHONE, render: () => <Login product="BI" /> }
 
 export const Shell: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
   render: () => (
     <AppShell
       product="BI"
@@ -123,6 +131,8 @@ export const Shell: Story = {
 }
 
 export const SettingsPage: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
   name: 'Settings',
   render: () => (
     <AppShell product="BI" nav={NAV} user={USER} workspaces={WORKSPACES} theme={THEME} breadcrumbs={['Ajustes']}>
@@ -131,7 +141,7 @@ export const SettingsPage: Story = {
   ),
 }
 
-export const NotFoundPage: Story = { name: 'Not found', render: () => <NotFound /> }
+export const NotFoundPage: Story = { tags: ['mobile'], globals: ON_PHONE, name: 'Not found', render: () => <NotFound /> }
 
 /** No messages yet: what to ask, with suggestions that send themselves. */
 export const ChatEmpty: ChatStory = {
@@ -150,6 +160,8 @@ export const ChatEmpty: ChatStory = {
 
 /** Answers can carry a KPI card or a small chart. Enter sends; the box clears. */
 export const ChatConversation: ChatStory = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
   name: 'Chat conversation',
   render: (args) => <ChatFrame {...args} />,
   args: { messages: CONVERSATION, suggestions: SUGGESTIONS, onSend: fn() },

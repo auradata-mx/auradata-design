@@ -60,7 +60,8 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 /** 25 informes, 10 per page: sort by any header, filter by any text. */
-export const Default: Story = {}
+/** Also checked on a phone (390×844) by the `mobile` Playwright project. */
+export const Default: Story = { tags: ['mobile'] }
 
 /** No data yet, or a filter with no match. */
 export const Empty: Story = { args: { data: [], emptyMessage: 'Aún no hay informes en este espacio.' } }

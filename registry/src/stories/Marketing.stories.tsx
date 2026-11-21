@@ -146,12 +146,20 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const HeroSection: Story = { name: 'Hero', render: () => hero }
+/**
+ * Pages that must hold on a phone: stories tagged `mobile` open at 390×844 and the `mobile` Playwright
+ * project checks them there. The tag stays literal on each story: Storybook's indexer reads it statically.
+ */
+const ON_PHONE = { viewport: { value: 'mobile', isRotated: false } }
 
-export const Benefits: Story = { render: () => benefits }
+export const HeroSection: Story = { tags: ['mobile'], globals: ON_PHONE, name: 'Hero', render: () => hero }
+
+export const Benefits: Story = { tags: ['mobile'], globals: ON_PHONE, render: () => benefits }
 
 /** The first question starts open; a click opens another. */
 export const FaqSection: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
   name: 'FAQ',
   render: () => faq,
   play: async ({ canvasElement }) => {
@@ -169,12 +177,14 @@ export const FaqSection: Story = {
   },
 }
 
-export const Cta: Story = { name: 'CTA band', render: () => cta }
+export const Cta: Story = { tags: ['mobile'], globals: ON_PHONE, name: 'CTA band', render: () => cta }
 
-export const Footer: Story = { render: () => footer }
+export const Footer: Story = { tags: ['mobile'], globals: ON_PHONE, render: () => footer }
 
 /** A whole page of auradata.mx: hero, benefits, FAQ, call to action and footer. */
 export const Landing: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
   render: () => (
     <>
       <main>

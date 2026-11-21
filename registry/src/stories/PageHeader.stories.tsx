@@ -21,5 +21,6 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {}
+/** Also checked on a phone (390×844) by the `mobile` Playwright project. */
+export const Default: Story = { tags: ['mobile'] }
 export const TitleOnly: Story = { args: { description: undefined, actions: undefined } }

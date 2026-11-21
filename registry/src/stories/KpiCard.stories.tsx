@@ -20,7 +20,9 @@ export const CostsRising: Story = {
   args: { label: 'Costo de adquisición', value: '$812', change: 0.14, goodDirection: 'down' },
 }
 
+/** On a phone the row stacks: the `mobile` Playwright project checks it at 390×844. */
 export const Row: Story = {
+  tags: ['mobile'],
   render: () => (
     <div className="grid gap-4 sm:grid-cols-3">
       <KpiCard label="Ventas del mes" value="$4.16 M" change={0.062} comparison="vs. septiembre" />

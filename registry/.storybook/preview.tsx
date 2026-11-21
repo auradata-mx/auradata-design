@@ -1,4 +1,5 @@
 import type { Decorator, Preview } from '@storybook/react-vite'
+import type { ViewportMap } from 'storybook/viewport'
 import { useEffect, type ReactNode } from 'react'
 
 import '../src/index.css'
@@ -17,6 +18,16 @@ const withTheme: Decorator = (Story, context) => (
     <Story />
   </ThemeFrame>
 )
+
+/**
+ * The toolbar's viewports. `mobile` is the size of the Playwright `mobile` project:
+ * stories tagged `mobile` set it as their default (`globals: { viewport: { value: 'mobile' } }`).
+ */
+const VIEWPORTS: ViewportMap = {
+  mobile: { name: 'Mobile', styles: { width: '390px', height: '844px' }, type: 'mobile' },
+  tablet: { name: 'Tablet', styles: { width: '768px', height: '1024px' }, type: 'tablet' },
+  desktop: { name: 'Desktop', styles: { width: '1280px', height: '800px' }, type: 'desktop' },
+}
 
 const preview: Preview = {
   globalTypes: {
@@ -38,6 +49,7 @@ const preview: Preview = {
   parameters: {
     layout: 'fullscreen',
     docs: { theme: auradata },
+    viewport: { options: VIEWPORTS },
     // The brand first, then what apps install, then the stock shadcn components.
     options: {
       storySort: {
