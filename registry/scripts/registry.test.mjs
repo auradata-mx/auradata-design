@@ -11,6 +11,8 @@ test('publishes the theme, the AuraData components and the shadcn ones AuraData 
     'auradata-theme', 'logo', 'kpi-card', 'page-header', 'chart-palette', 'button', 'badge', 'use-mobile',
     // T52: shadcn components whose states AuraData fixed.
     'checkbox', 'accordion', 'select', 'input-group',
+    // T54-T56: shadcn components whose states, spacing, copy or contrast AuraData polished.
+    'dialog', 'sidebar', 'chart', 'empty', 'input', 'textarea', 'field', 'tabs', 'sonner', 'navigation-menu',
   ]) {
     expect(names).toContain(name)
   }
@@ -18,7 +20,7 @@ test('publishes the theme, the AuraData components and the shadcn ones AuraData 
 
 test('leaves the stock shadcn components to shadcn', () => {
   const names = registry.items.map((entry) => entry.name)
-  for (const name of ['card', 'dialog', 'sidebar', 'chart', 'empty', 'input']) {
+  for (const name of ['card', 'popover', 'separator', 'skeleton', 'table', 'spinner', 'message']) {
     expect(names).not.toContain(name)
   }
 })
@@ -32,7 +34,7 @@ test('lists files from the repository root, as a GitHub registry needs', () => {
 test('points at shadcn for stock dependencies and at this GitHub repository for ours', () => {
   expect(item('login').registryDependencies).toContain('cristianruben-dev/auradata-design/button')
   expect(item('kpi-card').registryDependencies).toEqual(['card', 'cristianruben-dev/auradata-design/format', 'skeleton'])
-  expect(item('chart-palette').registryDependencies).toEqual(['chart'])
+  expect(item('chart-palette').registryDependencies).toEqual(['cristianruben-dev/auradata-design/chart'])
 })
 
 test('installs the Continua SVGs with the logo', () => {
@@ -46,10 +48,19 @@ test('publishes the blocks with their components', () => {
     expect(item(name)?.type).toBe('registry:block')
   }
   expect(item('login').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/logo', 'card', 'field', 'input']),
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/logo',
+      'card',
+      'cristianruben-dev/auradata-design/field',
+      'cristianruben-dev/auradata-design/input',
+    ]),
   )
   expect(item('app-shell').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/logo', 'sidebar', 'avatar']),
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/logo',
+      'cristianruben-dev/auradata-design/sidebar',
+      'cristianruben-dev/auradata-design/avatar',
+    ]),
   )
 })
 
@@ -89,22 +100,24 @@ test('publishes the chat block with the KPI card and the chart palette', () => {
       'cristianruben-dev/auradata-design/kpi-card',
       'cristianruben-dev/auradata-design/chart-palette',
       'cristianruben-dev/auradata-design/logo',
-      'chart',
-      'textarea',
+      'cristianruben-dev/auradata-design/chart',
+      'cristianruben-dev/auradata-design/textarea',
     ]),
   )
   expect(item('chat').dependencies).toContain('recharts')
 })
 
-test("builds the chat block on shadcn's chat primitives, installed bare from shadcn", () => {
+test("builds the chat block on shadcn's chat primitives", () => {
+  // `message` stays stock; the others carry AuraData's Spanish copy, alignment and focus fixes (T55).
   expect(item('chat').registryDependencies).toEqual(
-    expect.arrayContaining(['message', 'bubble', 'message-scroller', 'code-block', 'trace']),
+    expect.arrayContaining([
+      'message',
+      'cristianruben-dev/auradata-design/bubble',
+      'cristianruben-dev/auradata-design/message-scroller',
+      'cristianruben-dev/auradata-design/code-block',
+      'cristianruben-dev/auradata-design/trace',
+    ]),
   )
-  // Stock primitives: shadcn installs them (and @shadcn/react with the scroller); this registry does not.
-  const names = registry.items.map((entry) => entry.name)
-  for (const primitive of ['message', 'bubble', 'message-scroller', 'code-block', 'trace']) {
-    expect(names).not.toContain(primitive)
-  }
 })
 
 test('installs the stock spinner with the button, for its loading state', () => {

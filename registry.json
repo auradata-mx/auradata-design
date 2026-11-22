@@ -153,6 +153,24 @@
       ]
     },
     {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert dialog",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/alert-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "alert",
       "type": "registry:ui",
       "title": "Alert",
@@ -163,6 +181,25 @@
       "files": [
         {
           "path": "registry/src/components/ui/alert.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "attachment",
+      "type": "registry:ui",
+      "title": "Attachment",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/attachment.tsx",
           "type": "registry:ui"
         }
       ]
@@ -182,6 +219,21 @@
       ]
     },
     {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/avatar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
@@ -193,6 +245,57 @@
       "files": [
         {
           "path": "registry/src/components/ui/badge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "breadcrumb",
+      "type": "registry:ui",
+      "title": "Breadcrumb",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/breadcrumb.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "bubble",
+      "type": "registry:ui",
+      "title": "Bubble",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/bubble.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "button-group",
+      "type": "registry:ui",
+      "title": "Button group",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/button-group.tsx",
           "type": "registry:ui"
         }
       ]
@@ -217,6 +320,25 @@
       ]
     },
     {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "dependencies": [
+        "cn",
+        "lucide-react",
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/calendar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "carousel",
       "type": "registry:ui",
       "title": "Carousel",
@@ -236,6 +358,21 @@
       ]
     },
     {
+      "name": "chart",
+      "type": "registry:ui",
+      "title": "Chart",
+      "dependencies": [
+        "cn",
+        "recharts"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/chart.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
@@ -247,6 +384,25 @@
       "files": [
         {
           "path": "registry/src/components/ui/checkbox.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "Code block",
+      "dependencies": [
+        "class-variance-authority",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/code-block.tsx",
           "type": "registry:ui"
         }
       ]
@@ -272,6 +428,42 @@
       ]
     },
     {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "dependencies": [
+        "cmdk",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/dialog",
+        "cristianruben-dev/auradata-design/input-group"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/command.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context menu",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/context-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data table",
@@ -282,9 +474,9 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/dropdown-menu",
+        "cristianruben-dev/auradata-design/input",
         "cristianruben-dev/auradata-design/select",
-        "dropdown-menu",
-        "input",
         "skeleton",
         "table"
       ],
@@ -306,14 +498,80 @@
         "react-day-picker"
       ],
       "registryDependencies": [
-        "calendar",
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/calendar",
         "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/use-mobile",
         "popover"
       ],
       "files": [
         {
           "path": "registry/src/components/ui/date-range-filter.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "title": "Drawer",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/drawer.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown menu",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/dropdown-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "empty",
+      "type": "registry:ui",
+      "title": "Empty",
+      "dependencies": [
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/empty.tsx",
           "type": "registry:ui"
         }
       ]
@@ -328,7 +586,7 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
-        "empty"
+        "cristianruben-dev/auradata-design/empty"
       ],
       "files": [
         {
@@ -352,6 +610,25 @@
       ]
     },
     {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "dependencies": [
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/label",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/field.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "gradient-heading",
       "type": "registry:ui",
       "title": "Gradient heading",
@@ -367,6 +644,21 @@
       ]
     },
     {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover card",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/hover-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "input-group",
       "type": "registry:ui",
       "title": "Input group",
@@ -376,12 +668,60 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
-        "input",
-        "textarea"
+        "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/textarea"
       ],
       "files": [
         {
           "path": "registry/src/components/ui/input-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/input.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "title": "Item",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/item.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "kbd",
+      "type": "registry:ui",
+      "title": "Kbd",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/kbd.tsx",
           "type": "registry:ui"
         }
       ]
@@ -402,6 +742,20 @@
       "files": [
         {
           "path": "registry/src/components/ui/kpi-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/label.tsx",
           "type": "registry:ui"
         }
       ]
@@ -476,6 +830,57 @@
       ]
     },
     {
+      "name": "message-scroller",
+      "type": "registry:ui",
+      "title": "Message scroller",
+      "dependencies": [
+        "@shadcn/react",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/message-scroller.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "native-select",
+      "type": "registry:ui",
+      "title": "Native select",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/native-select.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "navigation-menu",
+      "type": "registry:ui",
+      "title": "Navigation menu",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/navigation-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "page-header",
       "type": "registry:ui",
       "title": "Page header",
@@ -490,6 +895,84 @@
       ]
     },
     {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/pagination.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/progress.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio group",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/radio-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "dependencies": [
+        "cn",
+        "react-resizable-panels"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/resizable.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "Scroll area",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/scroll-area.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "search-command",
       "type": "registry:ui",
       "title": "Search command",
@@ -499,8 +982,9 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "command",
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/command",
+        "cristianruben-dev/auradata-design/kbd",
         "spinner"
       ],
       "files": [
@@ -545,6 +1029,86 @@
       ]
     },
     {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "dependencies": [
+        "@base-ui/react",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/sheet.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:ui",
+      "title": "Sidebar",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/sheet",
+        "cristianruben-dev/auradata-design/tooltip",
+        "cristianruben-dev/auradata-design/use-mobile",
+        "separator",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/sidebar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/slider.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "sonner",
+      "type": "registry:ui",
+      "title": "Sonner",
+      "dependencies": [
+        "cn",
+        "lucide-react",
+        "next-themes",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/sonner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
@@ -560,6 +1124,36 @@
       ]
     },
     {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/textarea.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "theme-toggle",
       "type": "registry:ui",
       "title": "Theme toggle",
@@ -568,7 +1162,7 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
-        "dropdown-menu"
+        "cristianruben-dev/auradata-design/dropdown-menu"
       ],
       "files": [
         {
@@ -578,17 +1172,86 @@
       ]
     },
     {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle group",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/toggle"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/toggle-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "dependencies": [
+        "@base-ui/react",
+        "class-variance-authority",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/toggle.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "dependencies": [
+        "@base-ui/react",
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/tooltip.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "trace",
+      "type": "registry:ui",
+      "title": "Trace",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "collapsible"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/trace.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "workspace-switcher",
       "type": "registry:ui",
       "title": "Workspace switcher",
       "dependencies": [
+        "cn",
         "lucide-react"
       ],
       "registryDependencies": [
-        "avatar",
+        "cristianruben-dev/auradata-design/avatar",
+        "cristianruben-dev/auradata-design/dropdown-menu",
         "cristianruben-dev/auradata-design/initials",
-        "dropdown-menu",
-        "sidebar"
+        "cristianruben-dev/auradata-design/sidebar"
       ],
       "files": [
         {
@@ -602,18 +1265,19 @@
       "type": "registry:block",
       "title": "App shell",
       "dependencies": [
+        "cn",
         "lucide-react"
       ],
       "registryDependencies": [
-        "avatar",
-        "breadcrumb",
+        "cristianruben-dev/auradata-design/avatar",
+        "cristianruben-dev/auradata-design/breadcrumb",
+        "cristianruben-dev/auradata-design/dropdown-menu",
         "cristianruben-dev/auradata-design/initials",
         "cristianruben-dev/auradata-design/logo",
+        "cristianruben-dev/auradata-design/sidebar",
         "cristianruben-dev/auradata-design/theme-toggle",
         "cristianruben-dev/auradata-design/workspace-switcher",
-        "dropdown-menu",
-        "separator",
-        "sidebar"
+        "separator"
       ],
       "files": [
         {
@@ -651,18 +1315,18 @@
         "recharts"
       ],
       "registryDependencies": [
-        "bubble",
         "card",
-        "chart",
-        "code-block",
+        "cristianruben-dev/auradata-design/bubble",
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/chart",
         "cristianruben-dev/auradata-design/chart-palette",
+        "cristianruben-dev/auradata-design/code-block",
         "cristianruben-dev/auradata-design/kpi-card",
         "cristianruben-dev/auradata-design/logo",
-        "message",
-        "message-scroller",
-        "textarea",
-        "trace"
+        "cristianruben-dev/auradata-design/message-scroller",
+        "cristianruben-dev/auradata-design/textarea",
+        "cristianruben-dev/auradata-design/trace",
+        "message"
       ],
       "files": [
         {
@@ -738,9 +1402,9 @@
         "card",
         "cristianruben-dev/auradata-design/alert",
         "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/logo",
-        "field",
-        "input"
+        "cristianruben-dev/auradata-design/field",
+        "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/logo"
       ],
       "files": [
         {
@@ -772,12 +1436,12 @@
       "dependencies": [],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/field",
+        "cristianruben-dev/auradata-design/input",
         "cristianruben-dev/auradata-design/page-header",
         "cristianruben-dev/auradata-design/select",
         "cristianruben-dev/auradata-design/switch",
-        "field",
-        "input",
-        "tabs"
+        "cristianruben-dev/auradata-design/tabs"
       ],
       "files": [
         {
@@ -821,7 +1485,7 @@
       "title": "Chart palette",
       "dependencies": [],
       "registryDependencies": [
-        "chart"
+        "cristianruben-dev/auradata-design/chart"
       ],
       "files": [
         {

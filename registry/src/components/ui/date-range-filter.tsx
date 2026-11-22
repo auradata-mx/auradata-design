@@ -1,12 +1,14 @@
 // registry: auradata (a date range filter with the periods AuraData reports use, in Spanish)
 import * as React from "react"
 import {
+  addMonths,
   isSameDay,
   startOfDay,
   startOfMonth,
   startOfQuarter,
   startOfYear,
   subDays,
+  subMonths,
 } from "date-fns"
 import { es } from "date-fns/locale/es"
 import { CalendarIcon } from "lucide-react"
@@ -16,6 +18,7 @@ import { cn } from "cn"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { formatDate } from "@/lib/format"
 
 type DateRangePreset = "today" | "last-7-days" | "this-month" | "this-quarter" | "this-year"
@@ -79,6 +82,8 @@ function DateRangeFilter({
   const [uncontrolled, setUncontrolled] = React.useState(defaultValue)
   const range = value ?? uncontrolled
   const [month, setMonth] = React.useState(() => startOfMonth(subDays(range?.to ?? today, 31)))
+  // `month` is the first of the two months shown side by side; a phone shows only the second, where the range ends.
+  const isMobile = useIsMobile()
   const active = presetOf(range, today)
   const presetsRef = React.useRef<HTMLDivElement>(null)
 
@@ -146,11 +151,12 @@ function DateRangeFilter({
         <Calendar
           mode="range"
           locale={es}
-          numberOfMonths={2}
-          // Two months side by side: a day of the next month in the first grid reads as a second end.
+          // One month on a phone, so the popover fits the screen; two side by side from 768px.
+          numberOfMonths={isMobile ? 1 : 2}
+          // A day of the next month in the first grid would read as a second end of the range.
           showOutsideDays={false}
-          month={month}
-          onMonthChange={setMonth}
+          month={isMobile ? addMonths(month, 1) : month}
+          onMonthChange={(shown) => setMonth(isMobile ? subMonths(shown, 1) : shown)}
           selected={range}
           onSelect={change}
           disabled={{ after: today }}
