@@ -328,3 +328,12 @@ test('publishes the cartesian charts on the chart, its palette and the formats',
   ])
   expect(item('cartesian-chart').dependencies).toEqual(['cn', 'recharts'])
 })
+
+test('publishes the donut and the funnel on the palette and the formats', () => {
+  expect(item('donut-chart').registryDependencies).toEqual([
+    'cristianruben-dev/auradata-design/chart',
+    'cristianruben-dev/auradata-design/chart-palette',
+    'cristianruben-dev/auradata-design/format',
+  ])
+  expect(item('funnel-chart').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
+})
