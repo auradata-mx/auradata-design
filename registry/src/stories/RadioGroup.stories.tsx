@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect } from 'storybook/test'
+import { expect, within } from 'storybook/test'
 
 import { Field, FieldDescription, FieldError, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -79,7 +79,16 @@ export const Default: Story = {
   },
 }
 
-export const Disabled: Story = { ...Default, args: { ...Default.args, disabled: true }, play: undefined }
+export const Disabled: Story = {
+  ...Default,
+  args: { ...Default.args, disabled: true },
+  play: async ({ canvasElement }) => {
+    // Base UI renders a span with `data-disabled`: the circles dim like the labels.
+    for (const radio of within(canvasElement).getAllByRole('radio')) {
+      await expect(getComputedStyle(radio).opacity).toBe('0.5')
+    }
+  },
+}
 
 export const Invalid: Story = {
   args: { defaultValue: undefined },

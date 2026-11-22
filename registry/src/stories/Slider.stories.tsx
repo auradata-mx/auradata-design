@@ -17,8 +17,9 @@ type Story = StoryObj<typeof meta>
 function MinimumSales({ disabled }: { disabled?: boolean }) {
   const [value, setValue] = useState(250_000)
   return (
-    <div className="grid max-w-sm gap-3">
-      <div className="flex items-center justify-between gap-4">
+    // A disabled filter dims as a whole; `aria-disabled` tells assistive tech (and contrast checks) why.
+    <div role="group" aria-labelledby="ventas-minimas" aria-disabled={disabled || undefined} className="grid max-w-sm gap-3">
+      <div className="flex items-center justify-between gap-4 in-aria-disabled:opacity-50">
         <Label id="ventas-minimas">Ventas mínimas por sucursal</Label>
         <span className="text-sm text-muted-foreground tabular-nums">{formatCurrency(value)}</span>
       </div>

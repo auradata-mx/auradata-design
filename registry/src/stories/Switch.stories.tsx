@@ -62,7 +62,20 @@ export const Default: Story = {
     track.style.transition = ''
   },
 }
-export const Checked: Story = { args: { defaultChecked: true } }
+/** Checked: in dark the thumb is white on the blue track (the near-black thumb read as a hole). */
+export const Checked: Story = {
+  args: { defaultChecked: true },
+  play: async ({ canvasElement }) => {
+    const thumb = canvasElement.querySelector<HTMLElement>('[data-slot="switch-thumb"]')!
+    const root = document.documentElement
+    const wasDark = root.classList.contains('dark')
+    thumb.style.transition = 'none'
+    root.classList.add('dark')
+    await expect(getComputedStyle(thumb).backgroundColor).toBe('rgb(255, 255, 255)')
+    root.classList.toggle('dark', wasDark)
+    thumb.style.transition = ''
+  },
+}
 export const Disabled: Story = { args: { disabled: true } }
 
 /** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */

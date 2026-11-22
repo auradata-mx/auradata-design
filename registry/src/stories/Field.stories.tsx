@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, within } from 'storybook/test'
 
 import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -40,6 +41,14 @@ export const Invalid: Story = {
       <FieldError>Escribe un correo completo, como ana@empresa.mx.</FieldError>
     </Field>
   ),
+  play: async ({ canvasElement }) => {
+    // The label and the error turn red; the value the person typed stays in the text color.
+    const probe = document.createElement('span')
+    probe.className = 'text-foreground'
+    canvasElement.append(probe)
+    await expect(getComputedStyle(within(canvasElement).getByRole('textbox')).color).toBe(getComputedStyle(probe).color)
+    probe.remove()
+  },
 }
 
 /** Label and control on one row (`orientation="horizontal"`), as for a switch with its description. */

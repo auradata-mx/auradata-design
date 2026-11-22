@@ -64,7 +64,14 @@ export const Default: Story = {
   },
 }
 export const Checked: Story = { args: { defaultChecked: true } }
-export const Disabled: Story = { args: { disabled: true } }
+/** Dimmed with its label: Base UI marks the root `data-disabled` (a span, so `:disabled` never matches). */
+export const Disabled: Story = {
+  args: { disabled: true },
+  play: async ({ canvasElement }) => {
+    await expect(getComputedStyle(within(canvasElement).getByRole('checkbox')).opacity).toBe('0.5')
+    await expect(getComputedStyle(within(canvasElement).getByText('Compartir con el equipo')).opacity).toBe('0.5')
+  },
+}
 
 /** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
 export const Focus: Story = {
@@ -118,7 +125,7 @@ export const Invalid: Story = {
     <Field orientation="horizontal" data-invalid className="max-w-sm flex-wrap">
       <Checkbox id="terms" aria-invalid aria-describedby="terms-error" />
       <FieldLabel htmlFor="terms">Acepto los términos de uso</FieldLabel>
-      <FieldError id="terms-error" className="basis-full">Acepta los términos para crear tu cuenta.</FieldError>
+      <FieldError id="terms-error" className="basis-full pl-6">Acepta los términos para crear tu cuenta.</FieldError>
     </Field>
   ),
 }
