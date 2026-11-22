@@ -225,6 +225,10 @@ test('installs the data table with its own parts (T61)', () => {
   )
   expect(item('filter-conditions').type).toBe('registry:lib')
   expect(item('table-export').dependencies).toEqual(['fflate'])
+  expect(item('use-saved-views').type).toBe('registry:hook')
+  expect(item('data-table').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/data-table-views', 'cristianruben-dev/auradata-design/use-saved-views'])
+  )
   expect(item('use-data-table-url-state').type).toBe('registry:hook')
   expect(item('use-data-table-url-state').registryDependencies).toEqual(['cristianruben-dev/auradata-design/data-table'])
   expect(item('data-table').registryDependencies).toContain('cristianruben-dev/auradata-design/table-export')

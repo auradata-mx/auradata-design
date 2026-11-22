@@ -949,3 +949,77 @@ export const UrlState: Story = {
     }
   },
 }
+
+/** The views of these stories live in memory, not in the browser's storage. */
+function memoryStorage() {
+  const data = new Map<string, string>()
+  return { getItem: (key: string) => data.get(key) ?? null, setItem: (key: string, value: string) => void data.set(key, value) }
+}
+
+/**
+ * «Vistas» saves how the table looks (sort, filters, columns, page size) under a name and brings it back later;
+ * the same name replaces it. Views live in `localStorage` unless a `storage` is given.
+ */
+export const SavedViews: Story = {
+  render: (args) => {
+    const [storage] = React.useState(memoryStorage)
+    return <DataTable {...args} columns={FILTER_COLUMNS} savedViews={{ key: 'informes', storage }} />
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(document.body)
+    const nombre = () => canvas.getByRole('columnheader', { name: /Nombre/ })
+    await userEvent.click(within(nombre()).getByRole('button', { name: /Nombre/ }))
+    await expect(nombre()).toHaveAttribute('aria-sort', 'ascending')
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Vistas' }))
+    await expect(await page.findByText('Aún no hay vistas guardadas.')).toBeInTheDocument()
+    await userEvent.click(page.getByRole('menuitem', { name: 'Guardar vista actual…' }))
+    const dialog = await page.findByRole('dialog', { name: 'Guardar vista' })
+    await userEvent.type(within(dialog).getByRole('textbox', { name: 'Nombre de la vista' }), 'Por nombre')
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Guardar' }))
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull())
+    await expect(canvas.getByRole('button', { name: 'Vista: Por nombre' })).toBeInTheDocument()
+
+    // Change the look, then bring the view back.
+    await userEvent.click(within(nombre()).getByRole('button', { name: /Nombre/ }))
+    await expect(nombre()).toHaveAttribute('aria-sort', 'descending')
+    await userEvent.click(canvas.getByRole('button', { name: 'Vistas' }))
+    await userEvent.click(await page.findByRole('menuitemradio', { name: 'Por nombre' }))
+    await waitFor(() => expect(nombre()).toHaveAttribute('aria-sort', 'ascending'))
+    await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Vista: Por nombre' }))
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Eliminar «Por nombre»' }))
+    await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
+    await expect(canvas.getByRole('button', { name: 'Vistas' })).toBeInTheDocument()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** The menu open with two saved views, the second one applied, for the visual tests. */
+export const SavedViewsOpen: Story = {
+  tags: ['mobile'],
+  render: (args) => {
+    const [storage] = React.useState(() => {
+      const memory = memoryStorage()
+      memory.setItem(
+        'auradata:views:informes',
+        JSON.stringify([
+          { id: 'v1', name: 'Borradores', value: JSON.stringify([['columnFilters', [{ id: 'estado', value: ['Borrador'] }]]]) },
+          { id: 'v2', name: 'Recientes primero', value: JSON.stringify([['sorting', [{ id: 'actualizado', desc: true }]]]) },
+        ])
+      )
+      return memory
+    })
+    return <DataTable {...args} columns={FILTER_COLUMNS} savedViews={{ key: 'informes', storage }} />
+  },
+  play: async ({ canvasElement }) => {
+    const page = within(document.body)
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Vistas' }))
+    await userEvent.click(await page.findByRole('menuitemradio', { name: 'Recientes primero' }))
+    await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Vista: Recientes primero' }))
+    await page.findByRole('menu')
+  },
+}

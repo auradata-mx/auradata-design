@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, export to CSV and Excel, a virtualized body for thousands of rows, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, export to CSV and Excel, a virtualized body for thousands of rows, saved views, and a view state to control or share)
 import * as React from "react"
 import {
   columnFacetingFeature,
@@ -66,6 +66,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableSelectionBar } from "@/components/ui/data-table-selection-bar"
+import { DataTableViews } from "@/components/ui/data-table-views"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -88,6 +89,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Toggle } from "@/components/ui/toggle"
+import { useSavedViews, type ViewStorage } from "@/hooks/use-saved-views"
 import { countConditions, matchesFilter, type FilterField, type FilterGroup } from "@/lib/filter-conditions"
 import { formatDate, formatNumber } from "@/lib/format"
 import { downloadFile, MIME, toCsv, toXlsx, type ExportColumn } from "@/lib/table-export"
@@ -227,6 +229,11 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
    */
   exportable?: boolean | { fileName?: string; sheetName?: string }
   /**
+   * A «Vistas» menu: save how the table looks (sort, search, filters, columns, page size, density) under a name and
+   * apply it later. Kept in `localStorage` under the key, or in the `storage` given.
+   */
+  savedViews?: string | { key: string; storage?: ViewStorage }
+  /**
    * Thousands of rows: the body scrolls in a box of `height` (480 px by default) and draws only the rows in view,
    * the header stays on top, and the footer counts the rows instead of paging them.
    */
@@ -281,6 +288,72 @@ type DataTableView = {
   advancedFilter?: FilterGroup
 }
 
+/** A table with nothing changed: every slice at its start. */
+function freshView(pageSize: number): DataTableView {
+  return {
+    sorting: [],
+    globalFilter: "",
+    columnFilters: [],
+    columnVisibility: {},
+    columnOrder: [],
+    columnPinning: { start: [], end: [] },
+    columnSizing: {},
+    pagination: { pageIndex: 0, pageSize },
+    density: "normal",
+    advancedFilter: undefined,
+  }
+}
+
+const VIEW_KEYS = Object.keys(freshView(10)) as (keyof DataTableView)[]
+const ISO_TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/
+
+/** A view as text, in a fixed order and without its page (a saved view opens on the first page). */
+function encodeView(view: DataTableView) {
+  return JSON.stringify(
+    VIEW_KEYS.map((key) => [key, key === "pagination" ? { ...view.pagination, pageIndex: 0 } : (view[key] ?? null)])
+  )
+}
+
+/** A saved view back, over a fresh table: what it did not save starts over; the days of a period are dates again. */
+function decodeView(text: string, pageSize: number): DataTableView {
+  try {
+    const entries = JSON.parse(text, (_, value) => (typeof value === "string" && ISO_TIME.test(value) ? new Date(value) : value))
+    return { ...freshView(pageSize), ...Object.fromEntries((entries as [string, unknown][]).filter(([, value]) => value !== null)) }
+  } catch {
+    return freshView(pageSize)
+  }
+}
+
+/** The «Vistas» menu of a table: its views kept by `useSavedViews`; the applied one is the one that matches the screen. */
+function TableSavedViews({
+  config,
+  view,
+  pageSize,
+  onApply,
+}: {
+  config: string | { key: string; storage?: ViewStorage }
+  view: DataTableView
+  pageSize: number
+  onApply: (view: DataTableView) => void
+}) {
+  const { key, storage } = typeof config === "string" ? { key: config, storage: undefined } : config
+  const { views, save, remove } = useSavedViews<string>(key, { storage })
+  const current = encodeView(view)
+  const active = views.find((saved) => encodeView(decodeView(saved.value, pageSize)) === current)
+  return (
+    <DataTableViews
+      views={views}
+      activeId={active?.id}
+      onApply={(id) => {
+        const saved = views.find((candidate) => candidate.id === id)
+        if (saved) onApply(decodeView(saved.value, pageSize))
+      }}
+      onSave={(name) => save(name, current)}
+      onDelete={remove}
+    />
+  )
+}
+
 const FILTER_SLICES: (keyof DataTableView)[] = ["globalFilter", "columnFilters", "advancedFilter"]
 
 /**
@@ -310,7 +383,13 @@ function useView(value: Partial<DataTableView> | undefined, initial: DataTableVi
       onChange?.(next)
     }
   }
-  return [current, setSlice] as const
+  /** Replaces the whole view at once: a saved view applied. */
+  const replace = (next: DataTableView) => {
+    latest.current = next
+    setLocal(next)
+    onChange?.(next)
+  }
+  return [current, setSlice, replace] as const
 }
 
 /** A value its parent may control: the prop when given, else local state; either way `onChange` hears it. */
@@ -691,6 +770,7 @@ function DataTable<TData extends RowData>({
   exportable = false,
   onExport,
   virtualize = false,
+  savedViews,
   filters,
   actions,
   densityToggle = false,
@@ -705,22 +785,7 @@ function DataTable<TData extends RowData>({
 }: DataTableProps<TData>) {
   const pageSizeLabel = React.useId()
   const [regionRef, more] = useMoreColumns()
-  const [view, setView] = useView(
-    viewProp,
-    {
-      sorting: [],
-      globalFilter: "",
-      columnFilters: [],
-      columnVisibility: {},
-      columnOrder: [],
-      columnPinning: { start: [], end: [] },
-      columnSizing: {},
-      pagination: { pageIndex: 0, pageSize },
-      density: "normal",
-      ...defaultView,
-    },
-    onViewChange
-  )
+  const [view, setView, replaceView] = useView(viewProp, { ...freshView(pageSize), ...defaultView }, onViewChange)
   const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
   const [expanded, setExpanded] = React.useState<ExpandedState>(defaultExpanded ?? {})
   const [editing, setEditing] = React.useState<string | null>(null)
@@ -1110,6 +1175,9 @@ function DataTable<TData extends RowData>({
             >
               <Rows4Icon aria-hidden />
             </Toggle>
+          )}
+          {savedViews && (
+            <TableSavedViews config={savedViews} view={view} pageSize={pageSize} onApply={replaceView} />
           )}
           {exportable && (
             <DropdownMenu>
