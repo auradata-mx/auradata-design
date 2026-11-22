@@ -1,19 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { ChartColumnIcon, LightbulbIcon, LayersIcon, WorkflowIcon } from 'lucide-react'
-import { expect, fn, userEvent, within } from 'storybook/test'
+import { BellIcon, ChartColumnIcon, LightbulbIcon, LayersIcon, ShieldCheckIcon, SparklesIcon, WorkflowIcon } from 'lucide-react'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { BenefitsGrid, type Benefit } from '@/components/blocks/benefits-grid'
+import { Changelog } from '@/components/blocks/changelog'
 import { CtaBand } from '@/components/blocks/cta-band'
 import { Faq, type FaqItem } from '@/components/blocks/faq'
+import { FeatureTabs, type Feature } from '@/components/blocks/feature-tabs'
 import { Hero } from '@/components/blocks/hero'
 import { LogoCloud } from '@/components/blocks/logo-cloud'
 import { PlanComparison } from '@/components/blocks/plan-comparison'
 import { Pricing, type PricingPlan } from '@/components/blocks/pricing'
 import { SiteFooter, type FooterColumn } from '@/components/blocks/site-footer'
 import { Testimonials } from '@/components/blocks/testimonials'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { KpiCard } from '@/components/ui/kpi-card'
 import { formatPercent } from '@/lib/format'
-import { CLIENTS, ClientMark, COMPARISON, PLANS, TESTIMONIALS } from './marketing-data'
+import { CLIENTS, ClientMark, COMPARISON, PLANS, RELEASES, TESTIMONIALS } from './marketing-data'
 
 const BENEFITS: Benefit[] = [
   {
@@ -202,6 +207,91 @@ const logoCloud = (variant: 'grid' | 'marquee') => (
   />
 )
 
+/** A framed stand-in for a product screenshot, built from our own components. */
+const Screen = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex flex-col gap-3 rounded-(--aura-radius-card) border bg-muted/40 p-4 sm:p-6">{children}</div>
+)
+
+const FEATURES: Feature[] = [
+  {
+    value: 'tableros',
+    label: 'Tableros',
+    icon: ChartColumnIcon,
+    title: 'Tus números clave, siempre al día',
+    description: 'Conecta tus fuentes una vez y cada tablero se actualiza solo.',
+    points: ['Ventas, inventario y finanzas en una vista', 'Compara contra el mes o el año anterior'],
+    visual: (
+      <Screen>
+        <KpiCard label="Ventas del mes" value="$4.16 M" change={0.062} comparison="vs. octubre" trend={[3.1, 3.4, 3.2, 3.6, 3.5, 3.8, 3.7, 3.9, 4.0, 3.8, 3.92, 4.16]} />
+        <KpiCard label="Clientes activos" value="1,284" change={-0.021} comparison="vs. octubre" />
+      </Screen>
+    ),
+  },
+  {
+    value: 'ia',
+    label: 'Pregúntale',
+    icon: SparklesIcon,
+    title: 'Pregunta en español, responde con datos',
+    description: 'Escribe la pregunta como se la harías a tu analista.',
+    points: ['Respuestas con su gráfica', 'La consulta que usó, para revisarla'],
+    visual: (
+      <Screen>
+        <p className="self-end rounded-2xl rounded-br-sm bg-primary px-4 py-2 text-sm text-primary-foreground">¿Qué región vendió más en octubre?</p>
+        <KpiCard label="Bajío, octubre" value="$1.28 M" change={0.114} comparison="vs. septiembre" />
+      </Screen>
+    ),
+  },
+  {
+    value: 'alertas',
+    label: 'Alertas',
+    icon: BellIcon,
+    title: 'Entérate antes de que sea un problema',
+    description: 'Define un umbral y te avisamos por correo cuando se cruza.',
+    visual: (
+      <Screen>
+        <Alert variant="warning">
+          <AlertTitle>Inventario bajo en Monterrey</AlertTitle>
+          <AlertDescription>Quedan 3 días de existencia de tornillería.</AlertDescription>
+        </Alert>
+        <Alert variant="success">
+          <AlertTitle>Meta de ventas cumplida</AlertTitle>
+          <AlertDescription>El Bajío llegó al 104 % de su meta mensual.</AlertDescription>
+        </Alert>
+      </Screen>
+    ),
+  },
+  {
+    value: 'seguridad',
+    label: 'Seguridad',
+    icon: ShieldCheckIcon,
+    title: 'Cada quien ve solo lo que le toca',
+    description: 'Permisos por espacio de trabajo y por fila, con bitácora de accesos.',
+    visual: (
+      <Screen>
+        {['Dirección: todo', 'Ventas Bajío: su región', 'Finanzas: estados financieros'].map((role) => (
+          <div key={role} className="flex items-center justify-between rounded-lg border bg-card px-4 py-3 text-sm">
+            {role}
+            <Badge variant="secondary">Activo</Badge>
+          </div>
+        ))}
+      </Screen>
+    ),
+  },
+]
+
+const featureTabs = (
+  <FeatureTabs
+    eyebrow="Producto"
+    title="Todo tu negocio,"
+    highlight="en un solo lugar"
+    features={FEATURES}
+  />
+)
+
+const changelog = (
+  <Changelog eyebrow="Novedades" title="Lo nuevo en AuraData BI" entries={RELEASES} />
+)
+
 const meta = {
   title: 'Blocks/Marketing',
   // Blocks are whole sections: no padding around them.
@@ -383,6 +473,51 @@ export const LogoCloudMarquee: Story = {
     await expect(canvas.getByRole('list', { name: 'Clientes' })).toBeInTheDocument()
     const copies = canvasElement.querySelectorAll('[data-slot=marquee-track][aria-hidden=true]')
     await expect(copies.length).toBeGreaterThan(0)
+  },
+}
+
+/** One feature at a time: tabs above, the explanation beside its screenshot. Arrow keys move between tabs. */
+export const FeatureTabsSection: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Feature tabs',
+  render: () => featureTabs,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const list = canvas.getByRole('tablist', { name: 'Funciones' })
+    await expect(within(list).getAllByRole('tab')).toHaveLength(FEATURES.length)
+    await expect(canvas.getByRole('tab', { name: 'Tableros' })).toHaveAttribute('aria-selected', 'true')
+    await expect(canvas.getByRole('tabpanel', { name: 'Tableros' })).toHaveTextContent('Tus números clave, siempre al día')
+
+    await userEvent.click(canvas.getByRole('tab', { name: 'Alertas' }))
+    await expect(canvas.getByRole('tabpanel', { name: 'Alertas' })).toHaveTextContent('Entérate antes de que sea un problema')
+    await waitFor(() => expect(canvas.queryByRole('tabpanel', { name: 'Tableros' })).toBeNull())
+    await userEvent.keyboard('{ArrowRight}{Enter}')
+    await expect(canvas.getByRole('tab', { name: 'Seguridad' })).toHaveAttribute('aria-selected', 'true')
+
+    // Back to the first, without a focus ring, for the screenshot.
+    await userEvent.click(canvas.getByRole('tab', { name: 'Tableros' }))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Releases, newest first: the date and version beside what changed, tagged new, improved or fixed. */
+export const ChangelogSection: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Changelog',
+  render: () => changelog,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const entries = [...canvas.getByRole('list', { name: 'Versiones' }).children] as HTMLElement[]
+    await expect(entries).toHaveLength(RELEASES.length)
+    const time = entries[0].querySelector('time')!
+    await expect(time).toHaveAttribute('datetime', '2026-11-18')
+    await expect(time).toHaveTextContent('18 nov 2026')
+    await expect(entries[0]).toHaveTextContent('Nuevo')
+    await expect(entries[1]).toHaveTextContent('Mejora')
+    await expect(entries[2]).toHaveTextContent('Corrección')
+    await expect(within(entries[0]).getByRole('heading', { level: 3 })).toHaveTextContent('Pregúntale a tus datos, ahora con gráficas')
   },
 }
 

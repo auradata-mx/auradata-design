@@ -126,3 +126,29 @@ export const TESTIMONIALS = [
     company: 'Agrícola Sonora',
   },
 ]
+
+/** The latest releases of AuraData BI, newest first. */
+export const RELEASES = [
+  {
+    date: '2026-11-18',
+    version: '3.4',
+    type: 'new' as const,
+    title: 'Pregúntale a tus datos, ahora con gráficas',
+    description: 'Escribe tu pregunta y la respuesta llega con la gráfica que mejor la explica.',
+    items: ['Barras, líneas y KPI según la pregunta', 'La consulta SQL a un clic'],
+  },
+  {
+    date: '2026-11-04',
+    version: '3.3',
+    type: 'improved' as const,
+    title: 'Tablas de datos más rápidas',
+    description: 'Ordenar y filtrar tablas de 100,000 filas ya no se siente.',
+  },
+  {
+    date: '2026-10-21',
+    version: '3.2.1',
+    type: 'fixed' as const,
+    title: 'Fechas en la zona horaria correcta',
+    description: 'Los filtros de «Hoy» y «Este mes» respetan la zona horaria de tu espacio de trabajo.',
+  },
+]
