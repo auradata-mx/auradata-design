@@ -34,14 +34,14 @@ Las pantallas de BI con muchas cifras pueden ir más apretadas. Pon `data-densit
 
 No es otro componente: el tema escala el paso de Tailwind (`--spacing`, del que salen `h-8`, `p-2` y `gap-2`) con `--aura-density-compact` (0.875). Funciona con cualquier componente de shadcn, también los que no son de AuraData.
 
-```tsx
-// Toda la app
+```html
+<!-- Toda la app -->
 <html data-density="compact">
 
-// Solo un tablero
+<!-- Solo un tablero -->
 <section data-density="compact">
 
-// Normal otra vez, dentro de una sección compacta
+<!-- Normal otra vez, dentro de una sección compacta -->
 <div data-density="normal">
 ```
 
