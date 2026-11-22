@@ -23,13 +23,14 @@ const STATEMENT =
 export const Default: Story = {
   args: { children: STATEMENT },
   render: (args) => (
-    <div data-testid="page" tabIndex={0} aria-label="Página" className="h-[28rem] overflow-y-auto px-6">
-      <p className="flex h-[24rem] items-end pb-6 text-sm text-muted-foreground">Desplázate para leer</p>
+    <div className="px-6">
+      {/* Taller than any viewport: at rest the whole sentence waits below the fold, however many lines. */}
+      <p className="flex h-[110vh] items-end pb-6 text-sm text-muted-foreground">Desplázate para leer</p>
       <TextReveal {...args} className="max-w-2xl font-heading text-3xl font-semibold tracking-tight sm:text-4xl" />
-      <div className="h-[24rem]" />
+      <div className="h-[60vh]" />
     </div>
   ),
-  play: async ({ canvas, canvasElement }) => {
+  play: async ({ canvasElement }) => {
     const reveal = canvasElement.querySelector('[data-slot=text-reveal]')!
     // Screen readers and search read one plain sentence.
     await expect(reveal).toHaveTextContent(STATEMENT)
@@ -41,12 +42,13 @@ export const Default: Story = {
     // Below the fold the words wait in the muted color, never transparent; scrolled into view they
     // take the paragraph's color.
     const final = getComputedStyle(reveal).color
-    await expect(getComputedStyle(last).color).not.toBe(final)
-    await expect(getComputedStyle(last).opacity).toBe('1')
-    const page = canvas.getByTestId('page')
-    page.scrollTop = page.scrollHeight
+    for (const word of [words[0], last]) {
+      await expect(getComputedStyle(word).color).not.toBe(final)
+      await expect(getComputedStyle(word).opacity).toBe('1')
+    }
+    window.scrollTo(0, document.documentElement.scrollHeight)
     await waitFor(() => expect(getComputedStyle(last).color).toBe(final))
-    page.scrollTop = 0
+    window.scrollTo(0, 0)
   },
 }
 
