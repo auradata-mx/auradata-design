@@ -18,11 +18,11 @@ Diseña primero para móvil y agrega columnas al crecer.
 
 | Prefijo | Desde | Qué cambia en los bloques |
 | --- | --- | --- |
-| (ninguno) | 0 px | Una columna, márgenes de `px-6` |
-| `sm` | 640 px | Dos columnas en el footer |
-| `md` | 768 px | El sidebar deja de ser un panel lateral (`Sheet`); márgenes de `px-10`, secciones con `py-24`, la grilla de beneficios |
-| `lg` | 1024 px | La fila de KPI en tres columnas, dos gráficas por fila |
-| `xl` | 1280 px | Solo más aire: el contenido no crece más allá de su contenedor |
+| (ninguno) | 0 px | Una columna, márgenes de `px-6` |
+| `sm` | 640 px | Dos columnas en el footer |
+| `md` | 768 px | El sidebar deja de ser un panel lateral (`Sheet`); márgenes de `px-10`, secciones con `py-24`, la grilla de beneficios |
+| `lg` | 1024 px | La fila de KPI en tres columnas, dos gráficas por fila |
+| `xl` | 1280 px | Solo más aire: el contenido no crece más allá de su contenedor |
 
 ## Contenedores
 
@@ -30,10 +30,10 @@ El ancho máximo lo decide el tipo de contenido, no la pantalla. Todos se centra
 
 | Clase | Ancho | Dónde |
 | --- | --- | --- |
-| `max-w-6xl` | 1152 px | Secciones de marketing: hero, beneficios, CTA, FAQ, footer |
-| `max-w-3xl` | 768 px | Ajustes y la conversación del chat |
-| `max-w-md` | 448 px | La página 404 |
-| `max-w-sm` | 384 px | El inicio de sesión |
+| `max-w-6xl` | 1152 px | Secciones de marketing: hero, beneficios, CTA, FAQ, footer |
+| `max-w-3xl` | 768 px | Ajustes y la conversación del chat |
+| `max-w-md` | 448 px | La página 404 |
+| `max-w-sm` | 384 px | El inicio de sesión |
 | Sin límite | Todo el ancho | Las páginas de AuraData BI: el informe usa el espacio |
 
 Los textos largos no pasan de unos 70 caracteres: el hero y los encabezados de sección limitan su párrafo con `max-w-140`.
@@ -56,7 +56,7 @@ Los textos largos no pasan de unos 70 caracteres: el hero y los encabezados de s
 
 | Parte | Componente | Regla |
 | --- | --- | --- |
-| Shell | [`AppShell`](?path=/story/blocks-app--shell) | Sidebar colapsable a íconos, barra de 56 px, contenido con `p-6` |
+| Shell | [`AppShell`](?path=/story/blocks-app--shell) | Sidebar colapsable a íconos, barra de 56 px, contenido con `p-6` |
 | Encabezado | [`PageHeader`](?path=/story/auradata-page-header--default) | Un solo título por página; las acciones a la derecha |
 | Filtros | [`DateRangeFilter`](?path=/story/auradata-date-range-filter--default) | Arriba, antes de cualquier número que filtran |
 | KPI | [`KpiCard`](?path=/story/auradata-kpi-card--row) | De 3 a 4 en una fila, `gap-4` |

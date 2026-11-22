@@ -18,6 +18,30 @@
   overflow-wrap: anywhere;
 }
 
+/* Storybook's color palette heading is in English («Name», «Swatches»): the same heading, in Spanish. */
+.sbdocs-content .docblock-colorpalette > :first-child > :is(:first-child, :nth-child(2)) {
+  font-size: 0;
+}
+
+.sbdocs-content .docblock-colorpalette > :first-child > :is(:first-child, :nth-child(2))::after {
+  font-size: 0.875rem;
+  line-height: 20px;
+}
+
+.sbdocs-content .docblock-colorpalette > :first-child > :first-child::after {
+  content: "Nombre";
+}
+
+.sbdocs-content .docblock-colorpalette > :first-child > :nth-child(2)::after {
+  content: "Muestras";
+}
+
+/* Code blocks carry an English «Copy» button with no setting to translate it: hidden (it floats over the block,
+   so no gap is left); the code can still be selected and copied. */
+.sbdocs-content .docblock-source > div:has(> button):not(:has(pre)) {
+  display: none;
+}
+
 /* On a phone a wide table scrolls inside itself instead of widening the page; wider screens keep a plain table. */
 @media (max-width: 640px) {
   .sbdocs-content table {
@@ -26,8 +50,41 @@
     overflow-x: auto;
   }
 
-  /* Storybook keeps inline code on one line; in running text on a phone a long path has to break. */
-  .sbdocs-content :is(p, li) > code {
+  /* Cells keep 6 px at their sides instead of 13: three columns of names, components and rules fit 390 px. */
+  /* Doubled class: Storybook's own `table tr td` rule is injected after this file. */
+  .sbdocs-content.sbdocs-content table tr > :is(th, td) {
+    padding-inline: 6px;
+  }
+
+  /* A color item stacks on a phone: its name over swatches as wide as the page, so four labels fit under
+     four swatches. The «Nombre / Muestras» heading no longer matches two columns, so it goes. */
+  .sbdocs-content .docblock-colorpalette > :first-child {
+    display: none;
+  }
+
+  .sbdocs-content .docblock-colorpalette > :not(:first-child) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .sbdocs-content .docblock-colorpalette > :not(:first-child) > * {
+    flex: none;
+  }
+
+  /* Storybook keeps inline code on one line; in running text and table cells on a phone a long path has to break. */
+  .sbdocs-content :is(p, li, td, td > a) > code {
     white-space: normal;
+  }
+
+  /* In a table cell code breaks at its spaces, and inside a word only when the word alone is wider than the
+     column (never down to one letter). The first column names the row (`max-w-6xl`): it stays whole. */
+  .sbdocs-content :is(td, td > a) > code {
+    overflow-wrap: break-word;
+    font-size: 12px;
+  }
+
+  .sbdocs-content td:first-child > code {
+    white-space: nowrap;
   }
 }

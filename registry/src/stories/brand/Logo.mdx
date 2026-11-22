@@ -61,7 +61,7 @@ Cada producto lleva su nombre junto al logo con [`ProductTag`](?path=/story/aura
 
 ## Favicons e iconos de aplicación
 
-Revisa siempre el tamaño real: a 16 px los pequeños cortes de la órbita pierden detalle.
+Revisa siempre el tamaño real: a 16 px los pequeños cortes de la órbita pierden detalle.
 
 <div className="sb-unstyled my-6 grid grid-cols-3 gap-4 md:grid-cols-6">
   {[16, 32, 48, 180, 192, 512].map((size) => (
@@ -69,7 +69,7 @@ Revisa siempre el tamaño real: a 16 px los pequeños cortes de la órbita pierd
       <div className="flex h-16 items-center">
         <img src={`/brand/continua/favicon-${size}.png`} width={Math.min(size, 64)} height={Math.min(size, 64)} alt={`Favicon de ${size} px`} />
       </div>
-      <span className="font-mono text-xs text-muted-foreground">{size} px</span>
+      <span className="font-mono text-xs text-muted-foreground">{size} px</span>
     </div>
   ))}
 </div>

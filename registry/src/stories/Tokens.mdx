@@ -15,7 +15,7 @@ Cada valor de esta página sale de `@auradata/tokens`. Cambia `packages/tokens/s
 
 <ColorPalette>
   {pairs('light').map(([name, value]) => (
-    <ColorItem key={name} title={name} subtitle={`--${name}`} colors={{ [name]: value }} />
+    <ColorItem key={name} title={`--${name}`} colors={{ [name]: value }} />
   ))}
 </ColorPalette>
 
@@ -23,7 +23,7 @@ Cada valor de esta página sale de `@auradata/tokens`. Cambia `packages/tokens/s
 
 <ColorPalette>
   {pairs('dark').map(([name, value]) => (
-    <ColorItem key={name} title={name} subtitle={`--${name}`} colors={{ [name]: value }} />
+    <ColorItem key={name} title={`--${name}`} colors={{ [name]: value }} />
   ))}
 </ColorPalette>
 

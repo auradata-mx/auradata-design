@@ -15,7 +15,7 @@ export function TypeScale({
       {sizes.map((size) => (
         <div key={size} className="flex items-baseline gap-6">
           <span className="w-12 shrink-0 font-mono text-xs text-muted-foreground">
-            {size} px
+            {size}&nbsp;px
           </span>
           <span
             className={font === "mono" ? "font-mono" : "font-sans"}

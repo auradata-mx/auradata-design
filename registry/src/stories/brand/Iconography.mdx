@@ -2,6 +2,7 @@ import { Meta } from '@storybook/addon-docs/blocks'
 import { ChartColumnIcon, CircleAlertIcon, CircleCheckIcon, DatabaseIcon, DownloadIcon, LayoutDashboardIcon, PencilIcon, SearchIcon, Trash2Icon, TriangleAlertIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 
 <Meta title="Brand/06 Iconografía" />
 
@@ -13,30 +14,30 @@ AuraData usa [Lucide](https://lucide.dev) (`lucide-react`), el mismo set de shad
 
 | Tamaño | Clase | Dónde |
 | --- | --- | --- |
-| 16 px | `size-4` | UI densa: botones, menús, campos, tablas, el sidebar |
-| 20 px | `size-5` | Por defecto, un ícono suelto: encabezados de tarjeta, listas |
-| 24 px | `size-6` | Estados vacíos y de error, junto a un título |
+| 16 px | <span>`size-4`</span> | UI densa: botones, menús, campos, tablas, el sidebar |
+| 20 px | <span>`size-5`</span> | Por defecto, un ícono suelto: encabezados de tarjeta, listas |
+| 24 px | <span>`size-6`</span> | Estados vacíos y de error, junto a un título |
 
 <div className="sb-unstyled my-6 flex items-end gap-10">
   <div className="grid justify-items-center gap-2">
     <LayoutDashboardIcon aria-hidden className="size-4 text-foreground" />
-    <span className="font-mono text-xs text-muted-foreground">16 px</span>
+    <span className="font-mono text-xs text-muted-foreground">16 px</span>
   </div>
   <div className="grid justify-items-center gap-2">
     <LayoutDashboardIcon aria-hidden className="size-5 text-foreground" />
-    <span className="font-mono text-xs text-muted-foreground">20 px</span>
+    <span className="font-mono text-xs text-muted-foreground">20 px</span>
   </div>
   <div className="grid justify-items-center gap-2">
     <LayoutDashboardIcon aria-hidden className="size-6 text-foreground" />
-    <span className="font-mono text-xs text-muted-foreground">24 px</span>
+    <span className="font-mono text-xs text-muted-foreground">24 px</span>
   </div>
 </div>
 
-Dentro de un `Button` no pongas tamaño: el botón ya le da 16 px a su ícono.
+Dentro de un `Button` no pongas tamaño: el botón ya le da 16 px a su ícono.
 
 ## Trazo y color
 
-- **Trazo de 2 px**, el de Lucide. No lo cambies: todos los íconos se ven del mismo peso.
+- **Trazo de 2 px**, el de Lucide. No lo cambies: todos los íconos se ven del mismo peso.
 - **El color viene del texto:** el ícono hereda `currentColor`. Usa `text-foreground` o `text-muted-foreground`, nunca un hex.
 - **Colores de estado solo en íconos de estado:** `text-success`, `text-warning`, `text-destructive`, y siempre con una palabra al lado.
 
@@ -55,7 +56,7 @@ Dentro de un `Button` no pongas tamaño: el botón ya le da 16 px a su ícono.
 | Ícono junto a un texto | Decorativo: `aria-hidden` | <Button variant="outline"><DownloadIcon data-icon="inline-start" aria-hidden />Descargar</Button> |
 | Botón solo con ícono | Necesita un nombre: `aria-label` | <span className="inline-flex gap-2"><Button size="icon" variant="ghost" aria-label="Editar informe"><PencilIcon aria-hidden /></Button><Button size="icon" variant="ghost" aria-label="Eliminar informe"><Trash2Icon aria-hidden /></Button></span> |
 | Ícono de estado | Siempre con una palabra: el color no basta | <span className="sb-unstyled"><Badge variant="outline"><CircleCheckIcon aria-hidden className="text-success" />Publicado</Badge></span> |
-| Campo de búsqueda | El ícono es decorativo; el campo lleva su etiqueta | <span className="inline-flex items-center gap-2 text-sm text-muted-foreground"><SearchIcon aria-hidden className="size-4" />Buscar informes</span> |
+| Campo de búsqueda | El ícono es decorativo; el campo lleva su etiqueta | <span className="sb-unstyled block min-w-24"><InputGroup><InputGroupInput placeholder="Buscar…" aria-label="Buscar informes" /><InputGroupAddon><SearchIcon aria-hidden /></InputGroupAddon></InputGroup></span> |
 
 Un botón solo con ícono también lleva un `Tooltip` con el mismo texto que su `aria-label`, para quien usa el mouse.
 

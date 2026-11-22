@@ -29,7 +29,7 @@ Un componente no está terminado hasta que cubre sus estados: cargando, vacío, 
 
 ## Foco visible
 
-El foco se ve solo al usar el teclado (`focus-visible`), nunca se quita. El token `--aura-color-focus-ring` es el contorno de auradata.mx: `--aura-focus-width` de 2 px a `--aura-focus-offset` de 2 px. El tema de AuraData (`shadcn.css` o `auradata-theme`) se lo da a todos los componentes en lugar del anillo de shadcn, sin copiar ninguno: los campos oscurecen además su borde, en un grupo el contorno rodea al grupo y en un área con scroll queda por dentro.
+El foco se ve solo al usar el teclado (`focus-visible`), nunca se quita. El token `--aura-color-focus-ring` es el contorno de auradata.mx: `--aura-focus-width` de 2 px a `--aura-focus-offset` de 2 px. El tema de AuraData (`shadcn.css` o `auradata-theme`) se lo da a todos los componentes en lugar del anillo de shadcn, sin copiar ninguno: los campos oscurecen además su borde, en un grupo el contorno rodea al grupo y en un área con scroll queda por dentro.
 
 <div className="sb-unstyled my-6 flex flex-wrap items-center gap-6">
   <button type="button" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground" style={{ outline: 'var(--aura-focus-width) solid var(--aura-color-focus-ring)', outlineOffset: 'var(--aura-focus-offset)' }}>
