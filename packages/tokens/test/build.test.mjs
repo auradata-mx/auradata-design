@@ -328,3 +328,16 @@ test('shadcn gets the status scales as variables and Tailwind colors, destructiv
   expect(theme.light).toMatchObject({ 'success-700': '#047857', 'warning-50': '#FFFBEB', 'destructive-200': '#FECACA' });
   expect(theme.dark).toMatchObject({ 'success-700': '#34D399', 'info-900': '#BFDBFE' });
 });
+
+// Compact density for BI: every shadcn size comes from Tailwind's --spacing (h-8 is calc(var(--spacing) * 8)), so
+// one variable on an ancestor shrinks controls, table rows and menu items without copying a component.
+test('the theme gives data-density="compact" a smaller Tailwind spacing', () => {
+  const css = read('tokens.css');
+  expect(css).toContain('--aura-density-compact: 0.875;');
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.css['@layer base']['[data-density="compact"]']).toEqual({ '--spacing': '0.21875rem' });
+  // A normal section inside a compact one gets the stock step back.
+  expect(theme.css['@layer base']['[data-density="normal"]']).toEqual({ '--spacing': '0.25rem' });
+  expect(read('shadcn.css')).toMatch(/@layer base \{[^@]*\[data-density="compact"\] \{\s*--spacing: 0\.21875rem;/s);
+});
+

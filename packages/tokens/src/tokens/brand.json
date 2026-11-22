@@ -92,5 +92,10 @@
     "$description": "The focus outline of auradata.mx: 2px, 2px away from the element",
     "width": { "$value": "2px" },
     "offset": { "$value": "2px" }
+  },
+  "density": {
+    "$type": "number",
+    "$description": "Scales Tailwind's spacing step under data-density=\"compact\": controls, table rows and menu items 12.5 % smaller, type unchanged",
+    "compact": { "$value": 0.875 }
   }
 }

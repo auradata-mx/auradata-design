@@ -5,7 +5,7 @@
  * below turns the resolved tokens into the shape one consumer reads:
  *
  *   tokens.css    --aura-* variables, light on :root and dark on .dark
- *   shadcn.css    the shadcn semantic variables, pointing at --aura-*, and the brand focus ring
+ *   shadcn.css    the shadcn semantic variables, pointing at --aura-*, the brand focus ring and compact density
  *   shadcn-theme.json  the same mapping with raw values and the focus ring (`css`), for a shadcn
  *                 registry theme item
  *   tailwind.css  a Tailwind 4 @theme with the brand
@@ -160,6 +160,37 @@ function focusCss(tokens) {
   };
 }
 
+/** Tailwind's stock spacing step, in rem: every size and gap of a shadcn component is a multiple of it (h-8). */
+const SPACING_REM = 0.25;
+
+/**
+ * Compact density for BI screens: `data-density="compact"` on <html> or on a section scales Tailwind's --spacing by
+ * density-compact, so the controls, table rows and menu items under it shrink (h-8 32px → 28px) while the type stays.
+ * `data-density="normal"` gives a section inside a compact one the stock step back. In @layer base, after
+ * Tailwind's theme layer, so an app's own rule still wins. Menus and dialogs open in a portal under <body>: they
+ * follow <html>'s density, not their trigger's section.
+ */
+function densityCss(tokens) {
+  const compact = Number(tokens['density-compact']);
+  return {
+    '@layer base': {
+      '[data-density="compact"]': { '--spacing': `${SPACING_REM * compact}rem` },
+      '[data-density="normal"]': { '--spacing': `${SPACING_REM}rem` },
+    },
+  };
+}
+
+/** Every rule the theme adds besides its variables, merged so each at-rule appears once. */
+function themeCss(tokens) {
+  const merged = {};
+  for (const rules of [focusCss(tokens), densityCss(tokens)]) {
+    for (const [selector, body] of Object.entries(rules)) {
+      merged[selector] = selector.startsWith('@') ? { ...merged[selector], ...body } : body;
+    }
+  }
+  return merged;
+}
+
 /** CSS text of rules in the shape of a registry item's `css`: selectors and at-rules nest. */
 function cssOf(rules, indent = '') {
   return Object.entries(rules)
@@ -178,8 +209,8 @@ function shadcnCss(light) {
     HEADER +
     "/* Import after tokens.css and shadcn's own theme, so these win. */\n" +
     block(':root, .dark', entries) +
-    '\n/* The brand focus ring on every component. */\n' +
-    cssOf(focusCss(light))
+    '\n/* The brand focus ring on every component, and the compact density. */\n' +
+    cssOf(themeCss(light))
   );
 }
 
@@ -211,7 +242,7 @@ function shadcnTheme(light, dark) {
     },
     light: resolved(light),
     dark: resolved(dark),
-    css: focusCss(light),
+    css: themeCss(light),
   };
 }
 
