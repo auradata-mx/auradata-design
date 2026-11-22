@@ -192,3 +192,10 @@ test('publishes the master-detail view', () => {
     expect.arrayContaining(['cristianruben-dev/auradata-design/button']),
   )
 })
+
+test('publishes the onboarding checklist with its progress bar', () => {
+  expect(item('onboarding-checklist')?.type).toBe('registry:ui')
+  expect(item('onboarding-checklist').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/progress', 'card']),
+  )
+})
