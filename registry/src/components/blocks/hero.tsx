@@ -42,7 +42,8 @@ function Hero({
     >
       <AuraBackground grid />
       <div className={cn("mx-auto max-w-6xl", visual && "grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14")}>
-        <div className="flex flex-col items-start">
+        {/* With no visual beside it, the text is centered from md: else it fills the left third of a wide page. */}
+        <div className={cn("flex flex-col items-start", !visual && "md:items-center md:text-center")}>
           {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
           <GradientHeading
             id={headingId}
@@ -56,7 +57,9 @@ function Hero({
           {description && (
             <p className="mt-6 max-w-140 text-lg text-pretty text-muted-foreground sm:text-xl">{description}</p>
           )}
-          {actions && <div className="mt-10 flex flex-wrap items-center gap-3">{actions}</div>}
+          {actions && (
+            <div className={cn("mt-10 flex flex-wrap items-center gap-3", !visual && "md:justify-center")}>{actions}</div>
+          )}
         </div>
         {visual}
       </div>

@@ -24,8 +24,9 @@ function SiteFooter({ tagline, columns, copyright, legal = [], homeHref = "/", c
   const baseId = useId()
   return (
     <footer data-slot="site-footer" className={cn("border-t border-border bg-background", className)} {...props}>
-      <div className="mx-auto grid max-w-6xl gap-12 px-6 pt-16 pb-12 sm:grid-cols-2 md:px-10 lg:grid-cols-[1.3fr_repeat(3,1fr)]">
-        <div className="sm:col-span-2 lg:col-span-1">
+      {/* Two columns of links on a phone, under the logo; four columns with the logo on wide screens. */}
+      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-10 px-6 pt-16 pb-12 sm:gap-12 md:px-10 lg:grid-cols-[1.3fr_repeat(3,1fr)]">
+        <div className="col-span-2 lg:col-span-1">
           <a href={homeHref} aria-label="AuraData, inicio" className="inline-block rounded-md">
             <Logo className="h-8" />
           </a>
@@ -38,12 +39,13 @@ function SiteFooter({ tagline, columns, copyright, legal = [], homeHref = "/", c
               <h2 id={id} className="text-sm font-semibold">
                 {column.title}
               </h2>
-              <ul className="mt-4 flex flex-col gap-2">
+              <ul className="mt-2 flex flex-col sm:mt-3">
                 {column.links.map((link) => (
                   <li key={link.href}>
+                    {/* A 40px row to tap on a phone; 28px apart on wider screens, as text. */}
                     <a
                       href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                      className="inline-block py-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground sm:py-1"
                     >
                       {link.label}
                     </a>

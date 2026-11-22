@@ -40,12 +40,14 @@ function Faq({ eyebrow, title, highlight, description, items, openFirst = true, 
             <AccordionItem
               key={index}
               value={index}
-              className="rounded-(--aura-radius-card) border border-border bg-card px-6 text-card-foreground shadow-(--aura-shadow-card) transition-shadow duration-500 ease-(--aura-ease-fluid) data-open:shadow-(--aura-shadow-float)"
+              className="rounded-(--aura-radius-card) border border-border bg-card text-card-foreground shadow-(--aura-shadow-card) transition-shadow duration-500 ease-(--aura-ease-fluid) data-open:shadow-(--aura-shadow-float)"
             >
-              <AccordionTrigger className="items-center gap-4 py-5 text-base font-semibold hover:no-underline">
+              {/* The padding lives in the trigger, so its focus ring frames the whole row inside the card; the
+                  chevron sits on the first line of a question that wraps. */}
+              <AccordionTrigger className="gap-4 rounded-(--aura-radius-card) px-6 py-5 text-base font-semibold hover:no-underline focus-visible:border-transparent focus-visible:-outline-offset-2! **:data-[slot=accordion-trigger-icon]:mt-1">
                 <span className="text-pretty">{item.question}</span>
               </AccordionTrigger>
-              <AccordionContent className="max-w-160 pb-6 text-base leading-relaxed text-pretty text-muted-foreground">
+              <AccordionContent className="max-w-172 px-6 pb-6 text-base leading-relaxed text-pretty text-muted-foreground">
                 {item.answer}
               </AccordionContent>
             </AccordionItem>

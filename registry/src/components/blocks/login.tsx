@@ -23,7 +23,7 @@ type LoginProps = {
 export function Login({ product, onSubmit, error, pending = false }: LoginProps) {
   const invalid = error ? true : undefined
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-sidebar p-6 md:p-10">
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-(--aura-color-bg-layout) p-6 md:p-10">
       <a href="/" className="flex items-center gap-3">
         <Logo className="h-8" />
         {product && <ProductTag>{product}</ProductTag>}
@@ -58,7 +58,7 @@ export function Login({ product, onSubmit, error, pending = false }: LoginProps)
               <Field>
                 <div className="flex items-center justify-between">
                   <FieldLabel htmlFor="password">Contraseña</FieldLabel>
-                  <a href="#" className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+                  <a href="#" className="inline-flex min-h-6 items-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
                     ¿La olvidaste?
                   </a>
                 </div>

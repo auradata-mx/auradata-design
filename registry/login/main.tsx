@@ -16,7 +16,7 @@ const LOGO_PATH = "/login/continua"
 
 function SignIn({ next, error }: { next: string; error: boolean }) {
   return (
-    <main className="flex min-h-svh flex-col items-center justify-center gap-6 bg-sidebar p-6 md:p-10">
+    <main className="flex min-h-svh flex-col items-center justify-center gap-6 bg-(--aura-color-bg-layout) p-6 md:p-10">
       <div className="flex items-center gap-3">
         <Logo className="h-8" basePath={LOGO_PATH} />
         <ProductTag>Design</ProductTag>

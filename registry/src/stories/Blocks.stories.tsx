@@ -44,12 +44,12 @@ const CONVERSATION: ChatMessage[] = [
   {
     id: '2',
     role: 'assistant',
-    text: 'En noviembre llevas $4.16 M en ventas, 6.2 % más que en octubre. El Centro aporta casi la mitad.',
+    text: 'En noviembre llevas $4.16\u00a0M en ventas, 6.2\u00a0% más que en octubre. El Centro aporta casi la mitad.',
     embeds: [
       {
         type: 'kpi',
         label: 'Ventas del mes',
-        value: '$4.16 M',
+        value: '$4.16\u00a0M',
         change: 0.062,
         comparison: 'vs. octubre',
         trend: [3.2, 3.4, 3.3, 3.6, 3.8, 3.9, 4.16],
@@ -81,7 +81,7 @@ const CONVERSATION: ChatMessage[] = [
 /** The chat fills its parent: here, a panel as tall as a laptop screen. */
 function ChatFrame(props: React.ComponentProps<typeof Chat>) {
   return (
-    <div className="h-[720px]">
+    <div className="h-[min(720px,100svh)]">
       <Chat {...props} />
     </div>
   )
@@ -241,7 +241,7 @@ export const ChatWithSql: ChatStory = {
       {
         id: '2',
         role: 'assistant',
-        text: 'El Centro, con $2.10 M; le siguen el Norte ($1.39 M) y el Sur ($0.88 M).',
+        text: 'El Centro, con $2.10\u00a0M; le siguen el Norte ($1.39\u00a0M) y el Sur ($0.88\u00a0M).',
         sql: SQL,
       },
     ],
@@ -332,7 +332,7 @@ export const SettingsErrors: SettingsStory = {
   },
 }
 
-/** Saving: «Guardando…» with a spinner, disabled and `aria-busy`. */
+/** Saving: «Guardando…» with a spinner, disabled and `aria-busy`; the fields wait too. */
 export const SettingsSaving: SettingsStory = {
   name: 'Settings saving',
   render: (args) => (
@@ -345,5 +345,7 @@ export const SettingsSaving: SettingsStory = {
     const save = within(canvasElement).getByRole('button', { name: 'Guardando…' })
     await expect(save).toBeDisabled()
     await expect(save).toHaveAttribute('aria-busy', 'true')
+    await expect(within(canvasElement).getByLabelText('Nombre')).toBeDisabled()
+    await expect(within(canvasElement).getByLabelText('Correo')).toBeDisabled()
   },
 }

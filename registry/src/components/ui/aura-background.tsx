@@ -23,7 +23,13 @@ function AuraBackground({ grid = false, variant = "hero", className, ...props }:
     <div
       data-slot="aura-background"
       aria-hidden="true"
-      className={cn("pointer-events-none absolute inset-0 -z-10 overflow-hidden", className)}
+      className={cn(
+        "pointer-events-none absolute inset-0 -z-10 overflow-hidden",
+        // The hero aura is taller than its section: fade it out toward the bottom, so the section's edge
+        // does not cut it into a hard line above the next one.
+        variant === "hero" && "mask-[linear-gradient(to_bottom,#000_55%,transparent)]",
+        className
+      )}
       {...props}
     >
       {/* The keyframes travel with the component: React 19 hoists this once into the head. */}

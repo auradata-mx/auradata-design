@@ -32,7 +32,12 @@ function CtaBand({ eyebrow, title, highlight, description, actions, className, .
           {title}
         </GradientHeading>
         {description && <p className="mt-5 max-w-140 text-lg text-pretty text-muted-foreground">{description}</p>}
-        {actions && <div className="mt-10 flex flex-wrap items-center justify-center gap-3">{actions}</div>}
+        {/* On a phone the buttons stack at full width, the main one on top; from sm they sit in a row. */}
+        {actions && (
+          <div className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
+            {actions}
+          </div>
+        )}
       </div>
     </section>
   )

@@ -174,12 +174,25 @@ export const FaqSection: Story = {
     // Put it back, so the screenshot shows the first answer.
     await userEvent.click(second)
     await expect(second).toHaveAttribute('aria-expanded', 'false')
+    // And leave no focus ring on it.
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
 
 export const Cta: Story = { tags: ['mobile'], globals: ON_PHONE, name: 'CTA band', render: () => cta }
 
-export const Footer: Story = { tags: ['mobile'], globals: ON_PHONE, render: () => footer }
+/** On a phone every link is a 40px tall row, easy to tap; the columns sit two by two under the logo. */
+export const Footer: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  render: () => footer,
+  play: async ({ canvasElement }) => {
+    if (window.innerWidth >= 640) return
+    const links = canvasElement.querySelectorAll<HTMLElement>('nav a')
+    await expect(links.length).toBeGreaterThan(0)
+    for (const link of links) await expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(40)
+  },
+}
 
 /** A whole page of auradata.mx: hero, benefits, FAQ, call to action and footer. */
 export const Landing: Story = {

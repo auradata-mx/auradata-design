@@ -93,7 +93,8 @@ function Embed({ embed }: { embed: ChatEmbed }) {
   }
   const config = chartConfig(embed.series)
   return (
-    <Card className="max-w-lg" size="sm">
+    // The same padding as the KPI card above it in the conversation.
+    <Card className="max-w-lg">
       <CardHeader>
         <CardTitle>{embed.title}</CardTitle>
       </CardHeader>
@@ -196,7 +197,7 @@ function Thinking() {
   return (
     <div className="flex gap-3">
       <AssistantAvatar />
-      <div role="status" className="flex items-center gap-1 pt-1">
+      <div role="status" className="flex items-center gap-1">
         <span className="sr-only">Pensando…</span>
         {[0, 150, 300].map((delay) => (
           <span
@@ -256,7 +257,7 @@ function Chat({
               <h2 id={titleId} className="font-heading text-2xl font-semibold tracking-tight">
                 {title}
               </h2>
-              <p className="text-sm text-pretty text-muted-foreground">{description}</p>
+              <p className="text-sm text-balance text-muted-foreground">{description}</p>
             </div>
             {suggestions.length > 0 && (
               <ul aria-label="Sugerencias" className="flex flex-wrap justify-center gap-2">
@@ -277,7 +278,11 @@ function Chat({
           <MessageScroller className="min-h-0 flex-1">
             {/* Visible from the first frame, as before: the stock viewport hides the messages until its
                 first scroll, and a reader (or a test) arriving then would find nothing. */}
-            <MessageScrollerViewport aria-label="Mensajes" className="data-pending-scroll:visible">
+            {/* A gutter on both edges: one on the right only pushed the messages left of the composer. */}
+            <MessageScrollerViewport
+              aria-label="Mensajes"
+              className="[scrollbar-gutter:stable_both-edges]! data-pending-scroll:visible"
+            >
               <h2 id={titleId} className="sr-only">
                 {title}
               </h2>
@@ -306,7 +311,7 @@ function Chat({
           send(text)
         }}
       >
-        <div className="relative rounded-xl border border-input bg-card shadow-(--aura-shadow-card) focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+        <div className="relative rounded-xl border border-input bg-card shadow-(--aura-shadow-card) focus-within:ring-3 focus-within:ring-ring/50">
           <label htmlFor={inputId} className="sr-only">
             Mensaje
           </label>

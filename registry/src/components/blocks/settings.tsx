@@ -34,8 +34,10 @@ export function Settings({ errors = {}, saving = false }: SettingsProps = {}) {
         </TabsList>
         <TabsContent value="profile" className="pt-4">
           <form className="grid gap-6">
-            <FieldSet>
-              <FieldLegend>Perfil</FieldLegend>
+            {/* While saving, the fields wait too: a disabled fieldset disables every control in it. The tab
+                already says «Perfil», so the legend names the group for screen readers only. */}
+            <FieldSet disabled={saving}>
+              <FieldLegend className="sr-only">Perfil</FieldLegend>
               <FieldGroup>
                 <Field data-invalid={errors.name ? true : undefined}>
                   <FieldLabel htmlFor="name">Nombre</FieldLabel>
@@ -57,7 +59,7 @@ export function Settings({ errors = {}, saving = false }: SettingsProps = {}) {
                 <Field data-invalid={errors.language ? true : undefined}>
                   <FieldLabel htmlFor="language">Idioma</FieldLabel>
                   <Select items={LANGUAGES} defaultValue="es">
-                    <SelectTrigger id="language" className="w-48" aria-invalid={errors.language ? true : undefined}>
+                    <SelectTrigger id="language" className="sm:max-w-48" aria-invalid={errors.language ? true : undefined}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
