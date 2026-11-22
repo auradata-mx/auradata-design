@@ -213,6 +213,10 @@ test('installs the data table with its own parts (T61)', () => {
   for (const filter of ['faceted-filter', 'range-filter', 'filter-chips'])
     expect(item(filter).registryDependencies).not.toContain('cristianruben-dev/auradata-design/data-table')
   expect(item('range-filter').registryDependencies).toContain('cristianruben-dev/auradata-design/slider')
+  expect(item('filter-builder').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/filter-conditions', 'cristianruben-dev/auradata-design/native-select'])
+  )
+  expect(item('filter-conditions').type).toBe('registry:lib')
   expect(item('faceted-filter').registryDependencies).toEqual(
     expect.arrayContaining(['cristianruben-dev/auradata-design/command', 'popover', 'cristianruben-dev/auradata-design/badge'])
   )
