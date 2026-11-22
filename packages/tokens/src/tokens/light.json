@@ -18,6 +18,7 @@
     "text-secondary": { "$value": "#666666" },
     "text-tertiary": { "$value": "#6E6E6E", "$description": "Darker than #9B9B9B so small labels stay readable: 5.1:1 on white, 4.7:1 on #F5F5F5" },
     "fill-secondary": { "$value": "#F5F5F5" },
+    "fill-accent": { "$value": "#EFEFF2", "$description": "The highlighted row of a menu, list or command palette (shadcn --accent): stands out from the white popover, unlike fill-secondary; text reads 17.2:1, text-secondary 5.0:1" },
     "selection": { "$value": "#DBEAFE" },
     "focus-ring": { "$value": "#181818", "$description": "The focus outline of auradata.mx" },
     "info-foreground": { "$value": "#FFFFFF" },

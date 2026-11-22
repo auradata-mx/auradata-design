@@ -185,6 +185,19 @@ test('the shadcn sidebar is the container color and its accent stands out from i
   }
 });
 
+// Menus, lists and the command palette highlight a row with --accent on --popover. Both at fill-secondary left the
+// row invisible in dark (#1C1C24 on #191921) and faint in light (#F5F5F5 on #FFFFFF).
+test('the highlighted row of a menu stands out from the popover and from muted fills', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.light.accent).toBe('#EFEFF2');
+  expect(theme.dark.accent).toBe('#26262F');
+  for (const mode of ['light', 'dark']) {
+    expect(theme[mode].accent).not.toBe(theme[mode].popover);
+    expect(theme[mode].accent).not.toBe(theme[mode].muted);
+  }
+  expect(read('shadcn.css')).toContain('--accent: var(--aura-color-fill-accent);');
+});
+
 // AuraData BI draws its charts with ECharts: echarts.registerTheme('auradata', theme.light).
 test('echarts.json themes ECharts in light and dark from the tokens', () => {
   const { light, dark } = JSON.parse(read('echarts.json'));

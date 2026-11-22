@@ -18,6 +18,7 @@
     "text-secondary": { "$value": "#A3A3AD" },
     "text-tertiary": { "$value": "#8B8B96" },
     "fill-secondary": { "$value": "#1C1C24" },
+    "fill-accent": { "$value": "#26262F", "$description": "The highlighted row of a menu: stands out from the #191921 popover, where fill-secondary (#1C1C24) vanished; text reads 13.8:1, text-secondary 6.0:1" },
     "selection": { "$value": "#1E3A8A" },
     "focus-ring": { "$value": "#F5F5F7" },
     "info-foreground": { "$value": "#0A0A0F" },

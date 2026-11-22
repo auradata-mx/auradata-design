@@ -50,6 +50,9 @@ const FILLS = ['primary', 'info', 'success', 'warning', 'error'];
 
 const pairs = [
   ...TEXTS.flatMap((text) => SURFACES.map((surface) => [text, surface])),
+  // A highlighted menu row: its label (accent-foreground) and its shortcut or description (muted-foreground).
+  ['text', 'fill-accent'],
+  ['text-secondary', 'fill-accent'],
   ...FILLS.map((fill) => [`${fill}-foreground`, fill]),
 ];
 

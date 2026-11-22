@@ -64,7 +64,7 @@ const SHADCN = {
   'secondary-foreground': 'color-text',
   muted: 'color-fill-secondary',
   'muted-foreground': 'color-text-secondary',
-  accent: 'color-fill-secondary',
+  accent: 'color-fill-accent',
   'accent-foreground': 'color-text',
   destructive: 'color-error',
   'destructive-foreground': 'color-error-foreground',
