@@ -40,7 +40,16 @@ export const Default: Story = {
 }
 
 /** Open, for the visual tests and to see the overlay. */
-export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }
+export const Open: Story = {
+  ...Default,
+  args: { ...Default.args, defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    const close = (await body.findByRole('button', { name: 'Cerrar' })).getBoundingClientRect()
+    const title = body.getByRole('heading', { name: '¿Eliminar «Ventas 2026»?' }).getBoundingClientRect()
+    await expect(Math.abs(close.top + close.height / 2 - (title.top + title.height / 2))).toBeLessThanOrEqual(1)
+  },
+}
 
 /** The trigger opens the dialog, Escape closes it and the focus goes back to the trigger. */
 export const EscapeCloses: Story = {

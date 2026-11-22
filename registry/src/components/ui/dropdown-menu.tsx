@@ -1,3 +1,4 @@
+// registry: auradata (shadcn dropdown menu whose submenu stays beside its trigger on a phone, its first item level with the trigger)
 import * as React from "react"
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { cn } from "cn"
@@ -20,12 +21,13 @@ function DropdownMenuContent({
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  collisionAvoidance,
   className,
   ...props
 }: MenuPrimitive.Popup.Props &
   Pick<
     MenuPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset"
+    "align" | "alignOffset" | "side" | "sideOffset" | "collisionAvoidance"
   >) {
   return (
     <MenuPrimitive.Portal>
@@ -35,6 +37,8 @@ function DropdownMenuContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
+        collisionAvoidance={collisionAvoidance}
+        collisionPadding={8}
       >
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
@@ -123,9 +127,13 @@ function DropdownMenuSubTrigger({
 
 function DropdownMenuSubContent({
   align = "start",
-  alignOffset = -3,
+  // AuraData: -4 lines the first item up with the trigger row (the popup's 4 px padding).
+  alignOffset = -4,
   side = "right",
   sideOffset = 0,
+  // AuraData: on a narrow screen the submenu stays beside its trigger, shifted over the menu, instead of
+  // dropping below it and covering the next items.
+  collisionAvoidance = { side: "shift", align: "shift", fallbackAxisSide: "none" },
   className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuContent>) {
@@ -137,6 +145,7 @@ function DropdownMenuSubContent({
       alignOffset={alignOffset}
       side={side}
       sideOffset={sideOffset}
+      collisionAvoidance={collisionAvoidance}
       {...props}
     />
   )

@@ -1,3 +1,4 @@
+// registry: auradata (shadcn context menu whose submenu stays beside its trigger on a phone, its first item level with the trigger)
 "use client"
 
 import * as React from "react"
@@ -34,11 +35,12 @@ function ContextMenuContent({
   alignOffset = 4,
   side = "right",
   sideOffset = 0,
+  collisionAvoidance,
   ...props
 }: ContextMenuPrimitive.Popup.Props &
   Pick<
     ContextMenuPrimitive.Positioner.Props,
-    "align" | "alignOffset" | "side" | "sideOffset"
+    "align" | "alignOffset" | "side" | "sideOffset" | "collisionAvoidance"
   >) {
   return (
     <ContextMenuPrimitive.Portal>
@@ -48,6 +50,8 @@ function ContextMenuContent({
         alignOffset={alignOffset}
         side={side}
         sideOffset={sideOffset}
+        collisionAvoidance={collisionAvoidance}
+        collisionPadding={8}
       >
         <ContextMenuPrimitive.Popup
           data-slot="context-menu-content"
@@ -146,6 +150,9 @@ function ContextMenuSubContent({
       data-slot="context-menu-sub-content"
       className="shadow-lg"
       side="right"
+      // AuraData: the first item level with the trigger row; on a phone it stays beside the trigger.
+      alignOffset={-4}
+      collisionAvoidance={{ side: "shift", align: "shift", fallbackAxisSide: "none" }}
       {...props}
     />
   )

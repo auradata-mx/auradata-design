@@ -56,5 +56,10 @@ export const Visible: Story = {
     const body = within(canvasElement.ownerDocument.body)
     await waitFor(() => expect(body.getByText('PDF listo para descargar')).toBeVisible())
     await waitFor(() => expect(body.getByRole('button', { name: 'Reintentar' })).toBeVisible())
+    const toastBox = canvasElement.ownerDocument.querySelector('[data-sonner-toast]')!
+    await expect(getComputedStyle(toastBox).fontFamily).toMatch(/^Outfit/)
+    const action = body.getByRole('button', { name: 'Reintentar' })
+    // The brand's small button (28 px), not sonner's 24 px pill.
+    await expect(action.getBoundingClientRect().height).toBe(28)
   },
 }

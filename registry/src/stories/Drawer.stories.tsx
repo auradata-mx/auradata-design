@@ -33,7 +33,7 @@ export const Default: Story = {
             <DrawerTitle>Filtrar informe</DrawerTitle>
             <DrawerDescription>Elige el periodo de «Ventas 2026».</DrawerDescription>
           </DrawerHeader>
-          <RadioGroup defaultValue="trimestre" className="gap-3 px-4 py-2" aria-label="Periodo">
+          <RadioGroup defaultValue="trimestre" className="gap-3 px-4 py-4" aria-label="Periodo">
             {[
               ['mes', 'Este mes'],
               ['trimestre', 'Este trimestre'],

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from '@/components/ui/sheet'
@@ -26,7 +27,18 @@ export const Default: Story = {
 }
 
 /** Open, for the visual tests and to see the overlay. */
-export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }
+export const Open: Story = {
+  ...Default,
+  args: { ...Default.args, defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    const close = (await body.findByRole('button', { name: 'Cerrar' })).getBoundingClientRect()
+    const title = body.getByRole('heading').getBoundingClientRect()
+    await expect(Math.abs(close.top + close.height / 2 - (title.top + title.height / 2))).toBeLessThanOrEqual(1)
+    const header = canvasElement.ownerDocument.querySelector('[data-slot="sheet-header"]')!
+    await expect(header.getBoundingClientRect().right - parseFloat(getComputedStyle(header).paddingRight)).toBeLessThanOrEqual(close.left)
+  },
+}
 
 function Side({ side, defaultOpen }: { side: 'top' | 'bottom' | 'left'; defaultOpen?: boolean }) {
   return (

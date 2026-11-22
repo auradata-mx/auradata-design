@@ -28,19 +28,20 @@ export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: t
 /** Each side, all open at once around their buttons. One provider each: a shared provider shows one tooltip at a time. */
 export const Sides: Story = {
   render: () => (
-    <div className="grid min-h-72 place-content-center">
-      <div className="grid grid-cols-2 gap-x-48 gap-y-20">
+    <div className="grid min-h-72 place-content-center py-12 max-sm:place-content-stretch">
+      {/* On a phone the column is narrow: the left and right ones move aside to have room for their tooltip. */}
+      <div className="grid grid-cols-1 justify-items-center gap-x-48 gap-y-20 sm:grid-cols-2">
         {(
           [
-            ['top', 'Arriba'],
-            ['bottom', 'Abajo'],
-            ['left', 'Izquierda'],
-            ['right', 'Derecha'],
+            ['top', 'Arriba', ''],
+            ['bottom', 'Abajo', ''],
+            ['left', 'Izquierda', 'max-sm:justify-self-end'],
+            ['right', 'Derecha', 'max-sm:justify-self-start'],
           ] as const
-        ).map(([side, label]) => (
+        ).map(([side, label, place]) => (
           <TooltipProvider key={side}>
             <Tooltip defaultOpen>
-              <TooltipTrigger render={<Button variant="outline" />}>{label}</TooltipTrigger>
+              <TooltipTrigger render={<Button variant="outline" className={place} />}>{label}</TooltipTrigger>
               <TooltipContent side={side}>Vuelve a leer los datos</TooltipContent>
             </Tooltip>
           </TooltipProvider>

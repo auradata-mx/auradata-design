@@ -22,8 +22,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: (args) => (
     <ContextMenu {...args}>
-      <ContextMenuTrigger className="flex h-48 w-80 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">
-        Haz clic derecho en la gráfica
+      <ContextMenuTrigger className="flex h-48 w-full max-w-80 items-center justify-center rounded-lg border border-dashed px-6 text-center text-sm text-balance text-muted-foreground">
+        Haz clic derecho o mantén presionada la gráfica
       </ContextMenuTrigger>
       <ContextMenuContent className="w-56">
         <ContextMenuGroup>
@@ -44,6 +44,7 @@ export const Default: Story = {
 export const Open: Story = {
   ...Default,
   args: { ...Default.args, defaultOpen: true },
-  // Opened without a click, the menu sits at the page's corner: move the area aside so both show.
-  decorators: [(Story) => <div className="pl-64"><Story /></div>],
+  // Opened without a click, the menu sits at the page's corner: move the area aside (below it on a phone) so
+  // both show.
+  decorators: [(Story) => <div className="pt-48 sm:pt-0 sm:pl-64"><Story /></div>],
 }

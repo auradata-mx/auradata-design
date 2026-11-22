@@ -27,7 +27,7 @@ export const Default: Story = {
             </span>
             <div className="grid gap-1">
               <p className="font-medium">Pedidos 2026</p>
-              <p className="text-muted-foreground">PostgreSQL · ventas.pedidos · 1.2 M filas</p>
+              <p className="text-muted-foreground">PostgreSQL · ventas.pedidos · 1.2&nbsp;M filas</p>
               <p className="text-xs text-muted-foreground">Se actualizó hoy a las 9:00</p>
             </div>
           </div>
