@@ -193,7 +193,7 @@ function DataTable<TData extends RowData>({
         data-slot="data-table-region"
         data-more={more}
         aria-busy={loading || undefined}
-        className="relative overflow-hidden rounded-lg border"
+        className="@container relative overflow-hidden rounded-lg border"
       >
         <div
           aria-hidden
@@ -209,7 +209,8 @@ function DataTable<TData extends RowData>({
             more === "end" || more === "both" ? "opacity-100" : "opacity-0"
           )}
         />
-        <Table>
+        {/* The first and last columns sit 16px inside the rounded border, not 8px. */}
+        <Table className="[&_td:first-child]:pl-4 [&_td:last-child]:pr-4 [&_th:first-child]:pl-4 [&_th:last-child]:pr-4">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -225,11 +226,13 @@ function DataTable<TData extends RowData>({
                         canSort ? (sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none") : undefined
                       }
                     >
+                      {/* The label in the cells' size, its text on the cells' text: the negative margin takes
+                          back the button's padding and 1px border. */}
                       {canSort && !header.isPlaceholder ? (
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="-ml-2.5"
+                          className="-ml-2.75 text-sm"
                           onClick={header.column.getToggleSortingHandler()}
                         >
                           {content}
@@ -270,12 +273,13 @@ function DataTable<TData extends RowData>({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={table.getVisibleLeafColumns().length || 1}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  {emptyMessage}
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={table.getVisibleLeafColumns().length || 1} className="p-0">
+                  {/* As wide as the visible table and stuck to its left edge: on a phone the headers scroll
+                      sideways, but the message stays centered in view instead of across every column. */}
+                  <div className="sticky left-0 flex min-h-24 w-[100cqw] items-center justify-center px-4 py-6 text-center text-balance whitespace-normal text-muted-foreground">
+                    {emptyMessage}
+                  </div>
                 </TableCell>
               </TableRow>
             )}
@@ -283,7 +287,7 @@ function DataTable<TData extends RowData>({
         </Table>
       </div>
 
-      <div className="flex flex-wrap items-center justify-end gap-x-6 gap-y-2 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm sm:justify-end">
         <div className="flex items-center gap-2">
           <span id={pageSizeLabel} className="text-muted-foreground">
             Filas por página
@@ -306,7 +310,7 @@ function DataTable<TData extends RowData>({
             </SelectContent>
           </Select>
         </div>
-        <span className="tabular-nums" aria-live="polite">
+        <span className={cn("tabular-nums", loading && "text-muted-foreground")} aria-live="polite">
           Página {pagination.pageIndex + 1} de {pageCount}
         </span>
         <div className="flex items-center gap-2">

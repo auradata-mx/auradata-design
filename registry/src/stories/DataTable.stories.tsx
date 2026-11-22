@@ -64,8 +64,27 @@ type Story = StoryObj<typeof meta>
 /** Also checked on a phone (390×844) by the `mobile` Playwright project. */
 export const Default: Story = { tags: ['mobile'] }
 
-/** No data yet, or a filter with no match. */
-export const Empty: Story = { args: { data: [], emptyMessage: 'Aún no hay informes en este espacio.' } }
+/**
+ * No data yet, or a filter with no match. On a phone the headers scroll sideways, but the message stays in
+ * view: it is as wide as the visible table, not centered across every column.
+ */
+export const Empty: Story = {
+  args: { data: [], emptyMessage: 'Aún no hay informes en este espacio.' },
+  render: (args) => (
+    <div className="max-w-[22rem]">
+      <DataTable {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const region = canvasElement.querySelector<HTMLElement>('[data-slot="data-table-region"]')!.getBoundingClientRect()
+    const message = within(canvasElement).getByText('Aún no hay informes en este espacio.')
+    const range = document.createRange()
+    range.selectNodeContents(message)
+    const text = range.getBoundingClientRect()
+    await expect(text.left).toBeGreaterThanOrEqual(region.left + 16)
+    await expect(text.right).toBeLessThanOrEqual(region.right - 16)
+  },
+}
 
 /** The column menu open, for the visual tests and to see the overlay. */
 export const Open: Story = { args: { defaultColumnsOpen: true } }
