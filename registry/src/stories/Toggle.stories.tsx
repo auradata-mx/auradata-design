@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { BoldIcon, StarIcon } from 'lucide-react'
+import { expect, within } from 'storybook/test'
 
 import { Toggle } from '@/components/ui/toggle'
 
@@ -13,7 +14,21 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
-export const Pressed: Story = { args: { defaultPressed: true } }
+/** Pressed reads apart from a hover (`--muted`): it takes the stronger `--accent`. */
+export const Pressed: Story = {
+  args: { defaultPressed: true },
+  play: async ({ canvasElement }) => {
+    const toggle = within(canvasElement).getByRole('button', { name: 'Favorito' })
+    const probe = document.createElement('span')
+    probe.className = 'bg-muted'
+    canvasElement.append(probe)
+    await expect(getComputedStyle(toggle).backgroundColor).not.toBe(getComputedStyle(probe).backgroundColor)
+    probe.remove()
+    // An icon with a label is not squared as an icon-only toggle is.
+    const box = toggle.getBoundingClientRect()
+    await expect(box.width).toBeGreaterThan(box.height)
+  },
+}
 export const Outline: Story = { args: { variant: 'outline' } }
 export const Disabled: Story = { args: { disabled: true } }
 
@@ -29,4 +44,9 @@ export const Sizes: Story = {
       </Toggle>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const box = within(canvasElement).getByRole('button', { name: 'Negritas' }).getBoundingClientRect()
+    // An icon-only toggle is a square, as an icon button is.
+    await expect(box.width).toBe(box.height)
+  },
 }

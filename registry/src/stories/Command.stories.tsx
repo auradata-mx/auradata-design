@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect, within } from 'storybook/test'
 
 import {
   Command,
@@ -37,4 +38,9 @@ export const Default: Story = {
       </CommandList>
     </Command>
   ),
+  play: async ({ canvasElement }) => {
+    // The whole search box takes the tap, not a 20px line inside it.
+    const input = within(canvasElement).getByRole('combobox')
+    await expect(input.getBoundingClientRect().height).toBeGreaterThanOrEqual(28)
+  },
 }

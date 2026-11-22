@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { AreaChartIcon, ChartColumnIcon, ChartLineIcon } from 'lucide-react'
+import { expect, within } from 'storybook/test'
 
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
@@ -27,6 +28,13 @@ export const Default: Story = {
       </ToggleGroupItem>
     </ToggleGroup>
   ),
+  play: async ({ canvasElement }) => {
+    // Icon-only items are squares, as icon buttons are.
+    for (const item of within(canvasElement).getAllByRole('button')) {
+      const box = item.getBoundingClientRect()
+      await expect(box.width).toBe(box.height)
+    }
+  },
 }
 
 /** Outline items joined in one bar (`spacing={0}`), with text. */

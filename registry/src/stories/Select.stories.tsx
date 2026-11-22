@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -41,7 +41,19 @@ export const Default: Story = {
 }
 
 /** Open, for the visual tests and to see the overlay. */
-export const Open: Story = { ...Default, args: { ...Default.args, defaultOpen: true } }
+export const Open: Story = {
+  ...Default,
+  args: { ...Default.args, defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('combobox', { name: 'Periodo' })
+    const list = await within(document.body).findByRole('listbox')
+    const popup = list.closest<HTMLElement>('[data-slot="select-content"]')!
+    // A short list opens below the trigger (no scroll arrow over the selected row), with room around its rows.
+    // waitFor: the popup zooms in from 95%.
+    await waitFor(() => expect(popup.getBoundingClientRect().top).toBeGreaterThanOrEqual(trigger.getBoundingClientRect().bottom))
+    await expect(getComputedStyle(list).paddingTop).toBe('4px')
+  },
+}
 
 /** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
 export const Focus: Story = {

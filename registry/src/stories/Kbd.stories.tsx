@@ -27,8 +27,7 @@ export const Group: Story = {
       <KbdGroup>
         <Kbd>⌘</Kbd>
         <Kbd>Enter</Kbd>
-      </KbdGroup>
-      .
+      </KbdGroup>.
     </p>
   ),
 }
