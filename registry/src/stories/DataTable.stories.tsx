@@ -464,3 +464,56 @@ export const InCompactSection: Story = {
     await expect(canvas.getByRole('button', { name: 'Columnas' }).getBoundingClientRect().height).toBe(28)
   },
 }
+
+/** «Espacio» and «Estado» declare `meta.filter`: the toolbar gets a filter for each, with the counts. */
+const FILTER_COLUMNS: DataTableColumn<Informe, string>[] = COLUMNS.map((column) =>
+  column.header === 'Espacio' || column.header === 'Estado' ? { ...column, meta: { filter: { type: 'select' } } } : column
+)
+
+/**
+ * Filters per column: each counts its values among the rows the other filters leave; the chips under the toolbar
+ * say what is filtered and «Limpiar todo» undoes it.
+ */
+export const ColumnFilters: Story = {
+  args: { columns: FILTER_COLUMNS },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(document.body)
+    const rows = () => canvasElement.querySelectorAll('tbody tr')
+    const toolbar = within(canvasElement.querySelector<HTMLElement>('[data-slot="data-table-toolbar"]')!)
+    await userEvent.click(toolbar.getByRole('button', { name: 'Estado' }))
+    let dialog = await page.findByRole('dialog', { name: 'Estado' })
+    await expect(within(dialog).getByRole('option', { name: /Publicado/ })).toHaveTextContent('15')
+    await userEvent.click(within(dialog).getByRole('option', { name: /Borrador/ }))
+    await waitFor(() => expect(rows()).toHaveLength(4))
+    await expect(canvas.getByText('Página 1 de 1')).toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull())
+
+    const chips = canvas.getByRole('group', { name: 'Filtros activos' })
+    await expect(chips).toHaveTextContent('Estado: Borrador')
+    // «Espacio» now counts only the drafts.
+    await userEvent.click(toolbar.getByRole('button', { name: /^Espacio/ }))
+    dialog = await page.findByRole('dialog', { name: 'Espacio' })
+    await expect(within(dialog).getByRole('option', { name: /Finanzas/ })).toHaveTextContent('Finanzas1')
+    await userEvent.click(within(dialog).getByRole('option', { name: /Ventas/ }))
+    await waitFor(() => expect(rows()).toHaveLength(1))
+    await expect(canvas.getByText('Sin resultados')).toBeInTheDocument()
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull())
+
+    await userEvent.click(within(chips).getByRole('button', { name: 'Limpiar todo' }))
+    await waitFor(() => expect(rows()).toHaveLength(10))
+    await expect(canvas.queryByRole('group', { name: 'Filtros activos' })).toBeNull()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Two filters on, for the visual tests: the buttons name the values, the chips sit under the toolbar. */
+export const ColumnFiltersActive: Story = {
+  tags: ['mobile'],
+  args: {
+    columns: FILTER_COLUMNS,
+    defaultView: { columnFilters: [{ id: 'estado', value: ['Publicado', 'Desactualizado'] }, { id: 'espacio', value: ['Ventas'] }] },
+  },
+}

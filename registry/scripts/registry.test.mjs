@@ -197,10 +197,20 @@ test('installs the progress bar and the formatter with sonner, for progress toas
 
 test('installs the data table with its own parts (T61)', () => {
   expect(item('data-table').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/checkbox', 'cristianruben-dev/auradata-design/data-table-selection-bar'])
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/checkbox',
+      'cristianruben-dev/auradata-design/data-table-selection-bar',
+      'cristianruben-dev/auradata-design/faceted-filter',
+      'cristianruben-dev/auradata-design/filter-chips',
+    ])
   )
   expect(item('data-table-selection-bar').registryDependencies).toEqual(
     expect.arrayContaining(['cristianruben-dev/auradata-design/button', 'cristianruben-dev/auradata-design/format', 'separator'])
+  )
+  // The filter system stands alone: a dashboard installs a filter without the table.
+  expect(item('faceted-filter').registryDependencies).not.toContain('cristianruben-dev/auradata-design/data-table')
+  expect(item('faceted-filter').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/command', 'popover', 'cristianruben-dev/auradata-design/badge'])
   )
 })
 

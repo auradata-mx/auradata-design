@@ -1,12 +1,15 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column with their counts and chips, and a view state to control or share)
 import * as React from "react"
 import {
+  columnFacetingFeature,
   columnFilteringFeature,
   columnOrderingFeature,
   columnPinningFeature,
   columnResizingFeature,
   columnSizingFeature,
   columnVisibilityFeature,
+  createFacetedRowModel,
+  createFacetedUniqueValues,
   createFilteredRowModel,
   createPaginatedRowModel,
   createSortedRowModel,
@@ -19,12 +22,15 @@ import {
   sortFns,
   tableFeatures,
   useTable,
+  type CellData,
   type Column,
   type ColumnDef,
+  type ColumnFiltersState,
   type ColumnOrderState,
   type ColumnPinningState,
   type ColumnSizingState,
   type ColumnVisibilityState,
+  type FilterFn,
   type Header,
   type Table as TanStackTable,
   type OnChangeFn,
@@ -32,6 +38,7 @@ import {
   type RowData,
   type RowSelectionState,
   type SortingState,
+  type TableFeatures,
 } from "@tanstack/react-table"
 import {
   ArrowDownIcon,
@@ -62,14 +69,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { FacetedFilter, type FacetedFilterOption } from "@/components/ui/faceted-filter"
+import { FilterChips } from "@/components/ui/filter-chips"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Toggle } from "@/components/ui/toggle"
 
+/** Keeps the rows whose value is one of the chosen ones (a `select` filter); no choice keeps every row. */
+// A filter function serves any table, as the stock ones (`CreatedFilterFn<any, any>`).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const filterFn_inSet: FilterFn<any, any> = (row, columnId, chosen: string[]) =>
+  chosen.includes(String(row.getValue(columnId)))
+filterFn_inSet.autoRemove = (chosen?: string[]) => !chosen?.length
+
 /** What every data table does in the browser: sort, filter, size, pin, order and hide columns, select rows and paginate. */
 const dataTableFeatures = tableFeatures({
+  columnFacetingFeature,
   columnFilteringFeature,
   columnOrderingFeature,
   columnPinningFeature,
@@ -80,12 +97,33 @@ const dataTableFeatures = tableFeatures({
   rowPaginationFeature,
   rowSelectionFeature,
   rowSortingFeature,
+  facetedRowModel: createFacetedRowModel(),
+  facetedUniqueValues: createFacetedUniqueValues(),
   filteredRowModel: createFilteredRowModel(),
   sortedRowModel: createSortedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
-  filterFns: { includesString: filterFn_includesString },
+  filterFns: { includesString: filterFn_includesString, inSet: filterFn_inSet },
   sortFns,
 })
+
+/**
+ * A filter a column offers in the toolbar. `select`: a `FacetedFilter` with the column's values and their counts
+ * (or the `options` given, to name them or keep values with no rows in the list).
+ */
+type DataTableColumnFilter = { type: "select"; title?: string; options?: FacetedFilterOption[] }
+
+declare module "@tanstack/table-core" {
+  // The data table reads `meta.filter` from a column; the type parameters must match TanStack's declaration.
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  interface ColumnMeta<
+    in out TFeatures extends TableFeatures,
+    in out TData extends RowData,
+    TValue extends CellData = CellData,
+  > {
+    filter?: DataTableColumnFilter
+  }
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+}
 
 /** A column of a `DataTable`: a TanStack v9 `ColumnDef` with the data table features. */
 // TanStack types each column's value separately; a table mixes them.
@@ -143,6 +181,8 @@ type DataTableDensity = "normal" | "compact"
 type DataTableView = {
   sorting: SortingState
   globalFilter: string
+  /** The filters of the columns with `meta.filter`: `{ id, value }`, a `select` value being the chosen values. */
+  columnFilters: ColumnFiltersState
   columnVisibility: ColumnVisibilityState
   /** Column ids in display order; empty keeps the order of `columns`. */
   columnOrder: ColumnOrderState
@@ -463,6 +503,7 @@ function DataTable<TData extends RowData>({
     {
       sorting: [],
       globalFilter: "",
+      columnFilters: [],
       columnVisibility: {},
       columnOrder: [],
       columnPinning: { start: [], end: [] },
@@ -475,6 +516,14 @@ function DataTable<TData extends RowData>({
   )
   const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
 
+  // A `select` filter needs its filter function; a column's own `filterFn` wins.
+  const withFilterFns = React.useMemo(
+    () =>
+      columns.map((column) =>
+        column.meta?.filter?.type === "select" && !column.filterFn ? { ...column, filterFn: "inSet" as const } : column
+      ),
+    [columns]
+  )
   const allColumns = React.useMemo<DataTableColumn<TData>[]>(
     () =>
       selectable
@@ -503,10 +552,10 @@ function DataTable<TData extends RowData>({
                 />
               ),
             },
-            ...columns,
+            ...withFilterFns,
           ]
-        : columns,
-    [columns, selectable, rowLabel]
+        : withFilterFns,
+    [withFilterFns, selectable, rowLabel]
   )
 
   // With columns pinned to the start, the checkbox column sticks with them, first.
@@ -527,6 +576,7 @@ function DataTable<TData extends RowData>({
     state: {
       sorting: view.sorting,
       globalFilter: view.globalFilter,
+      columnFilters: view.columnFilters,
       columnVisibility: view.columnVisibility,
       columnOrder: view.columnOrder,
       columnPinning,
@@ -537,6 +587,7 @@ function DataTable<TData extends RowData>({
     onRowSelectionChange: setRowSelection,
     onSortingChange: setView("sorting"),
     onGlobalFilterChange: setView("globalFilter"),
+    onColumnFiltersChange: setView("columnFilters"),
     onColumnVisibilityChange: setView("columnVisibility"),
     onColumnOrderChange: setView("columnOrder"),
     onColumnPinningChange: setView("columnPinning"),
@@ -555,6 +606,27 @@ function DataTable<TData extends RowData>({
   const visibleColumns = table.getVisibleLeafColumns()
   const pageCount = Math.max(table.getPageCount(), 1)
   const hideable = table.getAllLeafColumns().filter((column) => column.getCanHide())
+  const filterable = table.getAllLeafColumns().filter((column) => column.columnDef.meta?.filter)
+  const optionsOf = (column: (typeof filterable)[number]): FacetedFilterOption[] => {
+    // Keyed by text, as the filter compares values: a number column counts under "12".
+    const counts = new Map([...column.getFacetedUniqueValues()].map(([value, count]) => [String(value), count]))
+    const given = column.columnDef.meta?.filter?.options
+    if (given) return given.map((option) => ({ ...option, count: option.count ?? counts.get(option.value) ?? 0 }))
+    // Every value of the column stays listed, with 0 when the other filters leave none, so the list never jumps.
+    const values = new Set(table.getCoreRowModel().rows.map((row) => String(row.getValue(column.id))))
+    return [...values]
+      .sort((a, b) => a.localeCompare(b, "es"))
+      .map((value) => ({ value, count: counts.get(value) ?? 0 }))
+  }
+  const titleOf = (column: (typeof filterable)[number]) =>
+    column.columnDef.meta?.filter?.title ?? columnLabel(column.columnDef.header, column.id)
+  const chips = view.columnFilters.flatMap(({ id, value }) => {
+    const column = table.getColumn(id)
+    if (!column || !Array.isArray(value) || value.length === 0) return []
+    const options = optionsOf(column)
+    const label = (v: string) => options.find((option) => option.value === v)?.label ?? v
+    return [{ id, label: titleOf(column), value: value.map((v: string) => label(v)).join(", ") }]
+  })
   const selectedRows = bulkActions ? table.getSelectedRowModel().rows.map((row) => row.original) : []
   const clearSelection = () => {
     // The bar is about to go: when it has the focus, the header checkbox takes it, so the keyboard stays in the table.
@@ -584,7 +656,21 @@ function DataTable<TData extends RowData>({
             />
           </div>
         )}
-        {filters}
+        {/* On a phone the filters take their own line under the search and the buttons; beside them from `sm`. */}
+        {(filterable.length > 0 || filters) && (
+          <div className="order-last flex basis-full flex-wrap items-center gap-2 sm:order-none sm:basis-auto">
+            {filterable.map((column) => (
+              <FacetedFilter
+                key={column.id}
+                title={titleOf(column)}
+                options={optionsOf(column)}
+                value={(column.getFilterValue() as string[] | undefined) ?? []}
+                onValueChange={(chosen) => column.setFilterValue(chosen.length ? chosen : undefined)}
+              />
+            ))}
+            {filters}
+          </div>
+        )}
         <div className="ml-auto flex items-center gap-2">
           {densityToggle && (
             <Toggle
@@ -622,6 +708,12 @@ function DataTable<TData extends RowData>({
           {actions}
         </div>
       </div>
+
+      <FilterChips
+        chips={chips}
+        onRemove={(id) => table.getColumn(id)?.setFilterValue(undefined)}
+        onClearAll={() => table.resetColumnFilters(true)}
+      />
 
       {/* On a narrow screen the table scrolls sideways inside its border; a fade marks the side with more columns. */}
       <div
