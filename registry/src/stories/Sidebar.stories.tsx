@@ -122,7 +122,7 @@ export const Mobile: Story = {
 export const MenuSkeleton: Story = {
   name: 'Menu skeleton',
   render: (args) => (
-    <SidebarProvider className="min-h-96" {...args}>
+    <SidebarProvider className="h-96 min-h-0" {...args}>
       <Sidebar collapsible="none" className="border-r">
         <SidebarContent>
           <SidebarGroup>

@@ -32,7 +32,8 @@ const meta = {
   component: Switch,
   argTypes: { size: { control: 'select', options: ['sm', 'default'] } },
   render: (args) => (
-    <div className="flex items-center gap-2">
+    // 12 px: the 2 px focus outline and its 2 px offset still leave room before the label.
+    <div className="flex items-center gap-3">
       <Switch id="refresh" {...args} />
       <Label htmlFor="refresh">Actualizar cada hora</Label>
     </div>

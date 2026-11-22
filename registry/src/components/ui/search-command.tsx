@@ -155,11 +155,12 @@ function SearchCommand({
           )}
           <Results>
             {groups.map((group) => (
-              // A border, not a CommandSeparator: a listbox may not hold role=separator (axe).
+              // A hairline, not a CommandSeparator: a listbox may not hold role=separator (axe). Inset 4px,
+              // as wide as the rows.
               <CommandGroup
                 key={group.heading}
                 heading={group.heading}
-                className="not-first:border-t"
+                className="relative not-first:before:absolute not-first:before:inset-x-1 not-first:before:top-0 not-first:before:h-px not-first:before:bg-border"
               >
                 {group.items.map((item) => (
                   <CommandItem
@@ -174,7 +175,7 @@ function SearchCommand({
                     {item.icon}
                     {item.label}
                     {item.shortcut && (
-                      <CommandShortcut>{item.shortcut}</CommandShortcut>
+                      <CommandShortcut className="tracking-normal max-sm:hidden">{item.shortcut}</CommandShortcut>
                     )}
                   </CommandItem>
                 ))}

@@ -60,7 +60,7 @@ export const LongContent: Story = {
         <Tooltip defaultOpen>
           <TooltipTrigger render={<Button variant="outline" />}>Actualizar</TooltipTrigger>
           <TooltipContent>
-            Vuelve a leer los datos de la fuente. Con «Pedidos 2026» puede tardar hasta dos minutos; mientras tanto ves la última carga.
+            Vuelve a leer los datos de la fuente. Con «Pedidos&nbsp;2026» puede tardar hasta dos minutos; mientras tanto ves la última carga.
           </TooltipContent>
         </Tooltip>
       </div>

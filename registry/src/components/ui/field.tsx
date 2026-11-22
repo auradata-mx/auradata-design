@@ -1,4 +1,4 @@
-// registry: auradata (shadcn field: the legend keeps the rhythm of the fields below it; descriptions wrap without orphans; no border change on a focused choice card)
+// registry: auradata (shadcn field: the legend keeps the rhythm of the fields below it; descriptions wrap without orphans; no border change on a focused choice card; the legend of an invalid field set turns destructive like a field label)
 import { useMemo } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
@@ -29,7 +29,7 @@ function FieldLegend({
       data-slot="field-legend"
       data-variant={variant}
       className={cn(
-        "font-medium data-[variant=label]:mb-3 data-[variant=label]:text-sm data-[variant=legend]:mb-4 data-[variant=legend]:text-base",
+        "font-medium in-data-[invalid=true]:text-destructive data-[variant=label]:mb-3 data-[variant=label]:text-sm data-[variant=legend]:mb-4 data-[variant=legend]:text-base",
         className
       )}
       {...props}

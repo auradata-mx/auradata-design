@@ -28,6 +28,8 @@ function AuraBackground({ grid = false, variant = "hero", className, ...props }:
         // The hero aura is taller than its section: fade it out toward the bottom, so the section's edge
         // does not cut it into a hard line above the next one.
         variant === "hero" && "mask-[linear-gradient(to_bottom,#000_55%,transparent)]",
+        // The band's glow can be as tall as a short section (a phone): fade both its edges the same way.
+        variant === "band" && "mask-[linear-gradient(to_bottom,transparent,#000_25%,#000_75%,transparent)]",
         className
       )}
       {...props}

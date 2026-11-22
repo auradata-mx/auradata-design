@@ -93,7 +93,7 @@ function WorkspaceSwitcher({ workspaces, current, onSelect, onCreate, defaultOpe
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onCreate} className="gap-2 p-2">
-                  <span className="flex size-7 items-center justify-center rounded-md border text-muted-foreground">
+                  <span className="flex size-7 items-center justify-center rounded-md border bg-muted text-muted-foreground">
                     <PlusIcon className="size-4" />
                   </span>
                   Nuevo espacio

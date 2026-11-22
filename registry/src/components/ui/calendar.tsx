@@ -1,4 +1,4 @@
-// registry: auradata (shadcn calendar: 36 px days on a phone, a capitalized caption, a range painted only in its own month, and only the brand focus outline)
+// registry: auradata (shadcn calendar: 36 px days on a phone, a capitalized caption, a range painted only in its own month, today marked by a ring instead of the range's fill, and only the brand focus outline)
 import * as React from "react"
 import { cn } from "cn"
 import {
@@ -120,8 +120,10 @@ function Calendar({
           "relative isolate z-0 rounded-r-(--cell-radius) bg-muted after:absolute after:inset-y-0 after:left-0 after:w-4 after:bg-muted",
           defaultClassNames.range_end
         ),
+        // AuraData: today is a thin inset ring and a semibold number, never the range's muted fill (it would
+        // read as picked); inside a range or picked, the fill already marks it.
         today: cn(
-          "rounded-(--cell-radius) bg-muted text-foreground data-[selected=true]:rounded-none",
+          "rounded-(--cell-radius) text-foreground ring-1 ring-foreground/25 ring-inset [&_button]:font-semibold data-[selected=true]:rounded-none data-[selected=true]:ring-0",
           defaultClassNames.today
         ),
         // AuraData: a range is painted once, in its own month; the other month's grid shows those days

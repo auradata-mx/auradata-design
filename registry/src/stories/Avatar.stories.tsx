@@ -63,7 +63,7 @@ export const Image: Story = {
   render: () => (
     <div className="flex items-center gap-3">
       <Avatar size="lg">
-        <AvatarImage src="/brand/continua/isotipo-color.svg" alt="Continua" />
+        <AvatarImage src="/brand/continua/isotipo-color.svg" alt="Continua" className="bg-muted object-contain p-1" />
         <AvatarFallback>CO</AvatarFallback>
       </Avatar>
       <Avatar size="lg">

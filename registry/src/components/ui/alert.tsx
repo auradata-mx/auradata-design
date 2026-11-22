@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
 const alertVariants = cva(
-  "group/alert @container/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2.5 text-left text-sm [--alert-text-col:1] has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 has-[>svg]:[--alert-text-col:2] has-data-[slot=alert-action]:grid-cols-[1fr] has-data-[slot=alert-action]:gap-x-3 has-[>svg]:has-data-[slot=alert-action]:grid-cols-[auto_1fr] *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg:not([class*='size-'])]:size-4",
+  "group/alert @container/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2.5 text-left text-sm [--alert-text-col:1] has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 has-[>svg]:[--alert-text-col:2] has-data-[slot=alert-action]:grid-cols-[1fr] has-data-[slot=alert-action]:gap-x-2 has-[>svg]:has-data-[slot=alert-action]:grid-cols-[auto_1fr] *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -77,9 +77,10 @@ function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="alert-action"
       // AuraData: its own grid column, at its natural width, so a long label never covers the title (stock
       // positioned it absolutely in 72 px of padding). In an alert narrower than 24rem (a phone) it drops under
-      // the text, aligned with it, so the text keeps the full width.
+      // the text, aligned with it, so the text keeps the full width. The column gap stays the icon's 8 px (so
+      // the text of every alert starts at the same x); the action keeps 4 px more of its own beside the text.
       className={cn(
-        "col-start-[calc(var(--alert-text-col)+1)] row-span-2 row-start-1 self-start @max-sm/alert:col-start-(--alert-text-col) @max-sm/alert:row-span-1 @max-sm/alert:row-start-auto @max-sm/alert:mt-2 @max-sm/alert:justify-self-start",
+        "ml-1 col-start-[calc(var(--alert-text-col)+1)] row-span-2 row-start-1 self-start @max-sm/alert:col-start-(--alert-text-col) @max-sm/alert:row-span-1 @max-sm/alert:row-start-auto @max-sm/alert:mt-2 @max-sm/alert:ml-0 @max-sm/alert:justify-self-start",
         className
       )}
       {...props}

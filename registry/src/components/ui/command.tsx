@@ -1,4 +1,4 @@
-// registry: auradata (shadcn command: the highlighted item takes --accent, apart from the popover; the whole search box takes the tap; the empty message is muted)
+// registry: auradata (shadcn command: the highlighted item takes --accent, apart from the popover; the whole search box takes the tap; the empty message is muted; a separator as wide as the rows)
 import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { cn } from "cn"
@@ -140,7 +140,7 @@ function CommandSeparator({
   return (
     <CommandPrimitive.Separator
       data-slot="command-separator"
-      className={cn("-mx-1 h-px bg-border", className)}
+      className={cn("mx-1 h-px bg-border", className)}
       {...props}
     />
   )

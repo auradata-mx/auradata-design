@@ -30,7 +30,7 @@ function Regions(props: React.ComponentProps<typeof NativeSelect>) {
 /** The browser's own select: the best on phones. */
 export const Default: Story = {
   render: () => (
-    <Field className="max-w-xs">
+    <Field className="sm:max-w-xs">
       <FieldLabel htmlFor="region">Región</FieldLabel>
       <Regions id="region" defaultValue="bajio" />
     </Field>
@@ -39,7 +39,7 @@ export const Default: Story = {
 
 export const Small: Story = {
   render: () => (
-    <Field className="max-w-xs">
+    <Field className="sm:max-w-xs">
       <FieldLabel htmlFor="region-sm">Región</FieldLabel>
       <Regions id="region-sm" size="sm" />
     </Field>
@@ -48,7 +48,7 @@ export const Small: Story = {
 
 export const Disabled: Story = {
   render: () => (
-    <Field className="max-w-xs" data-disabled>
+    <Field className="sm:max-w-xs" data-disabled>
       <FieldLabel htmlFor="region-disabled">Región</FieldLabel>
       <Regions id="region-disabled" disabled />
     </Field>
@@ -57,7 +57,7 @@ export const Disabled: Story = {
 
 export const Invalid: Story = {
   render: () => (
-    <Field className="max-w-xs" data-invalid>
+    <Field className="sm:max-w-xs" data-invalid>
       <FieldLabel htmlFor="region-invalid">Región</FieldLabel>
       <Regions id="region-invalid" aria-invalid />
       <FieldError>Elige la región del informe.</FieldError>

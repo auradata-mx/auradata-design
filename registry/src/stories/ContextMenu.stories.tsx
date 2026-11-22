@@ -9,6 +9,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
+import { shortcutLabel } from '@/components/ui/search-command'
 
 const meta = {
   title: 'Components/Context menu',
@@ -28,7 +29,7 @@ export const Default: Story = {
       <ContextMenuContent className="w-56">
         <ContextMenuGroup>
           <ContextMenuItem>
-            Editar gráfica <ContextMenuShortcut>⌘E</ContextMenuShortcut>
+            Editar gráfica <ContextMenuShortcut>{shortcutLabel('e')}</ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuItem>Ver como tabla</ContextMenuItem>
           <ContextMenuItem>Descargar CSV</ContextMenuItem>

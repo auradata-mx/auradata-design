@@ -10,6 +10,7 @@ import {
   CommandList,
   CommandShortcut,
 } from '@/components/ui/command'
+import { shortcutLabel } from '@/components/ui/search-command'
 
 const meta = {
   title: 'Components/Command',
@@ -30,9 +31,13 @@ export const Default: Story = {
           <CommandItem>Ventas por región</CommandItem>
           <CommandItem>Margen por producto</CommandItem>
         </CommandGroup>
-        <CommandGroup heading="Acciones" className="border-t">
+        {/* A hairline as wide as the rows: a CommandSeparator may not sit in the listbox (axe). */}
+        <CommandGroup
+          heading="Acciones"
+          className="relative before:absolute before:inset-x-1 before:top-0 before:h-px before:bg-border"
+        >
           <CommandItem>
-            Crear informe <CommandShortcut>⌘N</CommandShortcut>
+            Crear informe <CommandShortcut>{shortcutLabel('n')}</CommandShortcut>
           </CommandItem>
         </CommandGroup>
       </CommandList>

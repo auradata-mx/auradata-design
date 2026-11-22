@@ -27,7 +27,8 @@ function SiteFooter({ tagline, columns, copyright, legal = [], homeHref = "/", c
       {/* Two columns of links on a phone, under the logo; four columns with the logo on wide screens. */}
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-10 px-6 pt-16 pb-12 sm:gap-12 md:px-10 lg:grid-cols-[1.3fr_repeat(3,1fr)]">
         <div className="col-span-2 lg:col-span-1">
-          <a href={homeHref} aria-label="AuraData, inicio" className="inline-block rounded-md">
+          <a href={homeHref} aria-label="AuraData, inicio" className="flex w-fit rounded-md">
+            {/* A flex box: no inline line box (and its descender gap) under the logo. */}
             <Logo className="h-8" />
           </a>
           {tagline && <p className="mt-4 max-w-xs text-sm text-pretty text-muted-foreground">{tagline}</p>}

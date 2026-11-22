@@ -20,7 +20,7 @@ export const Default: Story = {
     <Collapsible className="grid max-w-sm gap-2" {...args}>
       <div className="flex items-center justify-between gap-4">
         <h3 className="text-sm font-medium">3 filtros activos</h3>
-        <CollapsibleTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Ver todos los filtros" />}>
+        <CollapsibleTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Ver todos los filtros" className="-mr-1.5" />}>
           <ChevronsUpDownIcon aria-hidden />
         </CollapsibleTrigger>
       </div>

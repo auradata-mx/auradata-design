@@ -1,4 +1,4 @@
-// registry: auradata (a KPI card of the brand, with loading and no-data states)
+// registry: auradata (a KPI card of the brand, with loading and no-data states, and its sparkline beside the value and change)
 import { ArrowDownRightIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react"
 import { cn } from "cn"
 
@@ -44,8 +44,7 @@ function Sparkline({ values, tone }: { values: number[]; tone: "good" | "bad" | 
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       preserveAspectRatio="none"
       className={cn(
-        // ml-auto: when the row wraps, the sparkline stays on the right instead of jumping under the value.
-        "ml-auto h-8 w-24 shrink-0 overflow-visible",
+        "h-8 w-24 shrink-0 overflow-visible",
         tone === "good" && "text-success",
         tone === "bad" && "text-destructive",
         tone === "flat" && "text-muted-foreground",
@@ -119,29 +118,28 @@ function KpiCard({
       <CardHeader>
         <CardDescription>{label}</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-1">
-        {trend && trend.length > 1 ? (
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+      <CardContent>
+        {/* The sparkline sits beside the value and its change, never wrapped between them. */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="grid min-w-0 gap-1">
             {number}
-            <Sparkline values={trend} tone={change === undefined ? "none" : tone} />
+            {change !== undefined && (
+              <div data-tone={tone} className="flex items-center gap-1 text-sm text-muted-foreground">
+                <Icon
+                  aria-hidden
+                  className={cn(
+                    "size-4",
+                    tone === "good" && "text-success",
+                    tone === "bad" && "text-destructive"
+                  )}
+                />
+                <span className="font-medium text-foreground tabular-nums">{formatPercent(change, { locale, signDisplay: "exceptZero" })}</span>
+                {comparison && <span>{comparison}</span>}
+              </div>
+            )}
           </div>
-        ) : (
-          number
-        )}
-        {change !== undefined && (
-          <div data-tone={tone} className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Icon
-              aria-hidden
-              className={cn(
-                "size-4",
-                tone === "good" && "text-success",
-                tone === "bad" && "text-destructive"
-              )}
-            />
-            <span className="font-medium text-foreground tabular-nums">{formatPercent(change, { locale, signDisplay: "exceptZero" })}</span>
-            {comparison && <span>{comparison}</span>}
-          </div>
-        )}
+          {trend && trend.length > 1 && <Sparkline values={trend} tone={change === undefined ? "none" : tone} />}
+        </div>
       </CardContent>
     </Card>
   )

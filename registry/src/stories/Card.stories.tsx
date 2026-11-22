@@ -35,7 +35,7 @@ export const Report: Story = {
 /** The small size (`size="sm"`): tighter spacing and a smaller title, for dense grids. */
 export const Small: Story = {
   render: () => (
-    <Card size="sm" className="max-w-xs">
+    <Card size="sm" className="sm:max-w-xs">
       <CardHeader>
         <CardTitle>Pedidos del mes</CardTitle>
         <CardDescription>Actualizado hace 5 minutos</CardDescription>

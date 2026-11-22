@@ -2,6 +2,7 @@
 import * as React from "react"
 import {
   columnFilteringFeature,
+  columnSizingFeature,
   columnVisibilityFeature,
   createFilteredRowModel,
   createPaginatedRowModel,
@@ -37,9 +38,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-/** What every data table does in the browser: sort, filter (global), hide columns and paginate. */
+/** What every data table does in the browser: sort, filter (global), size and hide columns, and paginate. */
 const dataTableFeatures = tableFeatures({
   columnFilteringFeature,
+  columnSizingFeature,
   columnVisibilityFeature,
   globalFilteringFeature,
   rowPaginationFeature,
@@ -108,7 +110,9 @@ function columnLabel(header: unknown, id: string) {
 
 /**
  * A table of records with sortable headers, a text filter over every column, a column menu and pages.
- * Columns are TanStack `ColumnDef`s; give each a string `header` so the column menu can name it.
+ * Columns are TanStack `ColumnDef`s; give each a string `header` so the column menu can name it. Give the
+ * columns a `size` (px) and they keep their widths across pages, sorting, loading and the empty state (a
+ * column without one takes 150 px); the table then scrolls sideways when they add up to more than its box.
  */
 function DataTable<TData extends RowData>({
   columns,
@@ -141,6 +145,8 @@ function DataTable<TData extends RowData>({
   })
 
   const rows = table.getRowModel().rows
+  // Sized columns: a fixed layout, so the widths come from the sizes and never from the page's content.
+  const sized = columns.some((column) => column.size !== undefined)
   const pageCount = Math.max(table.getPageCount(), 1)
   const hideable = table.getAllLeafColumns().filter((column) => column.getCanHide())
 
@@ -209,8 +215,14 @@ function DataTable<TData extends RowData>({
             more === "end" || more === "both" ? "opacity-100" : "opacity-0"
           )}
         />
-        {/* The first and last columns sit 16px inside the rounded border, not 8px. */}
-        <Table className="[&_td:first-child]:pl-4 [&_td:last-child]:pr-4 [&_th:first-child]:pl-4 [&_th:last-child]:pr-4">
+        {/* The first and last columns sit 16px inside the rounded border, not 8px; the empty message's
+            single spanning cell keeps no padding, so it centers in the visible table. */}
+        <Table
+          className={cn(
+            "[&_td:first-child:not([colspan])]:pl-4 [&_td:last-child:not([colspan])]:pr-4 [&_th:first-child]:pl-4 [&_th:last-child]:pr-4",
+            sized && "table-fixed [&_td]:truncate"
+          )}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -222,6 +234,7 @@ function DataTable<TData extends RowData>({
                   return (
                     <TableHead
                       key={header.id}
+                      style={sized ? { width: header.getSize() } : undefined}
                       aria-sort={
                         canSort ? (sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none") : undefined
                       }

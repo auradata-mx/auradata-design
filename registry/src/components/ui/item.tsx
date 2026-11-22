@@ -1,4 +1,4 @@
-// registry: auradata (shadcn item whose image or avatar centers like its actions, and only the brand focus outline shows)
+// registry: auradata (shadcn item whose image or avatar centers like its actions, a muted tile that shows, and only the brand focus outline shows)
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -42,7 +42,8 @@ const itemVariants = cva(
       variant: {
         default: "border-transparent",
         outline: "border-border",
-        muted: "border-transparent bg-muted/50",
+        // AuraData: the full muted fill (at 50% it barely showed); a muted link highlights to the accent.
+        muted: "border-transparent bg-muted [a]:hover:bg-accent",
       },
       size: {
         default: "gap-2.5 px-3 py-2.5",

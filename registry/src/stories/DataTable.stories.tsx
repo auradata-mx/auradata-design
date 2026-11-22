@@ -36,17 +36,19 @@ const INFORMES: Informe[] = NOMBRES.map((nombre, index) => ({
 }))
 
 const COLUMNS: DataTableColumn<Informe, string>[] = [
-  { accessorKey: 'nombre', header: 'Nombre', cell: ({ getValue }) => <span className="font-medium">{getValue()}</span> },
-  { accessorKey: 'espacio', header: 'Espacio' },
+  { accessorKey: 'nombre', header: 'Nombre', size: 240, cell: ({ getValue }) => <span className="font-medium">{getValue()}</span> },
+  { accessorKey: 'espacio', header: 'Espacio', size: 140 },
   {
     accessorKey: 'actualizado',
     header: 'Actualizado',
+    size: 140,
     cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue())}</span>,
   },
-  { accessorKey: 'dueno', header: 'Dueño' },
+  { accessorKey: 'dueno', header: 'Dueño', size: 160 },
   {
     accessorKey: 'estado',
     header: 'Estado',
+    size: 160,
     cell: ({ getValue }) => <Badge variant={ESTADO_VARIANT[getValue() as Estado]}>{getValue()}</Badge>,
   },
 ]
@@ -83,6 +85,9 @@ export const Empty: Story = {
     const text = range.getBoundingClientRect()
     await expect(text.left).toBeGreaterThanOrEqual(region.left + 16)
     await expect(text.right).toBeLessThanOrEqual(region.right - 16)
+    // Centered in the visible table, within 2 px.
+    const center = (text.left + text.right) / 2
+    await expect(Math.abs(center - (region.left + region.right) / 2)).toBeLessThanOrEqual(2)
   },
 }
 
@@ -161,8 +166,12 @@ export const Paging: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
     await expect(canvas.getByText('Página 1 de 3')).toBeInTheDocument()
+    const widths = () => [...canvasElement.querySelectorAll('th')].map((th) => Math.round(th.getBoundingClientRect().width))
+    const before = widths()
     await userEvent.click(canvas.getByRole('button', { name: 'Siguiente' }))
     await expect(canvas.getByText('Página 2 de 3')).toBeInTheDocument()
+    // Sized columns keep their widths from page to page.
+    await expect(widths()).toEqual(before)
     await expect(canvas.getByRole('button', { name: 'Anterior' })).toBeEnabled()
     ;(document.activeElement as HTMLElement | null)?.blur()
   },

@@ -112,19 +112,20 @@ function DateRangeFilter({
         <CalendarIcon data-icon="inline-start" aria-hidden />
         {label ?? placeholder}
       </PopoverTrigger>
-      {/* On a phone the presets wrap in a row above the calendar, as wide as it; from sm they are a column beside it. */}
+      {/* Below 768px (one month) the presets are a two-column grid above the calendar, as wide as it; from 768px
+          (two months) they are a column beside it. One breakpoint for both, as `useIsMobile`. */}
       <PopoverContent
         align="start"
         aria-label="Periodo"
         // The pressed preset takes the first focus, not the first one in the list.
         initialFocus={() => presetsRef.current?.querySelector<HTMLElement>('[aria-pressed="true"]') ?? true}
-        className="w-min gap-0 p-0 sm:w-auto sm:flex-row"
+        className="w-min gap-0 p-0 md:w-auto md:flex-row"
       >
         <div
           ref={presetsRef}
           role="group"
           aria-label="Periodos"
-          className="flex flex-row flex-wrap gap-0.5 border-b p-2 sm:w-40 sm:flex-col sm:border-r sm:border-b-0"
+          className="grid grid-cols-2 gap-0.5 border-b p-2 md:flex md:w-40 md:flex-col md:border-r md:border-b-0"
         >
           {PRESETS.map((preset) => (
             <Button
@@ -161,8 +162,8 @@ function DateRangeFilter({
           onSelect={change}
           disabled={{ after: today }}
           today={today}
-          // Bigger days on a phone, where a finger picks them.
-          className="p-3 max-sm:[--cell-size:--spacing(9)]"
+          // Bigger days below 768px, where a finger picks them.
+          className="p-3 max-md:[--cell-size:--spacing(9)]"
         />
       </PopoverContent>
     </Popover>

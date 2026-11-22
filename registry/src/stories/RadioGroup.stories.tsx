@@ -97,7 +97,7 @@ export const Invalid: Story = {
       <FieldLegend variant="label">Enviar el informe</FieldLegend>
       <RadioGroup {...args} aria-invalid>
         {FREQUENCIES.map((frequency) => (
-          <Field key={frequency.value} orientation="horizontal" data-invalid>
+          <Field key={frequency.value} orientation="horizontal">
             <RadioGroupItem id={`invalido-${frequency.value}`} value={frequency.value} aria-invalid />
             <FieldLabel htmlFor={`invalido-${frequency.value}`}>{frequency.label}</FieldLabel>
           </Field>

@@ -1,4 +1,4 @@
-// registry: auradata (shadcn empty state whose title reads above its description)
+// registry: auradata (shadcn empty state whose title reads above its description, and a dashed outline that shows in dark)
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
@@ -7,7 +7,7 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty"
       className={cn(
-        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed p-6 text-center text-balance",
+        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-xl border-dashed border-foreground/15 p-6 text-center text-balance dark:border-foreground/20",
         className
       )}
       {...props}

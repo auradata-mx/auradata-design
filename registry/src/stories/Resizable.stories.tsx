@@ -62,7 +62,7 @@ export const Horizontal: Story = {
       <ResizablePanel defaultSize="30%" minSize="20%">
         <div className="p-4 text-sm">Consultas guardadas</div>
       </ResizablePanel>
-      <ResizableHandle aria-label="Cambiar el tamaño de la lista" />
+      <ResizableHandle withHandle aria-label="Cambiar el tamaño de la lista" />
       <ResizablePanel defaultSize="70%">
         <div className="p-4 font-mono text-sm">SELECT * FROM clientes;</div>
       </ResizablePanel>

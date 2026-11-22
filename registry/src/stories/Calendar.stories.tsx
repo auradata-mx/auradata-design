@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { es } from 'date-fns/locale/es'
+import { expect } from 'storybook/test'
 
 import { Calendar } from '@/components/ui/calendar'
 
@@ -24,6 +25,15 @@ export const Range: Story = {
     numberOfMonths: 2,
     defaultMonth: new Date(2026, 9, 1),
     selected: { from: new Date(2026, 9, 25), to: new Date(2026, 10, 7) },
+  },
+  play: async ({ canvasElement }) => {
+    // Today (21 nov, outside the range) has its own marker, never the range's fill: it must not look picked.
+    const today = canvasElement.querySelector<HTMLElement>('[data-today]')!
+    const middle = canvasElement.querySelector<HTMLElement>('[data-range-middle=true]')!
+    const fill = getComputedStyle(middle).backgroundColor
+    await expect(getComputedStyle(today).backgroundColor).not.toBe(fill)
+    await expect(getComputedStyle(today.querySelector('button')!).backgroundColor).not.toBe(fill)
+    await expect(getComputedStyle(today).boxShadow).not.toBe('none')
   },
 }
 

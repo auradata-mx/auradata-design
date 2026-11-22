@@ -15,7 +15,7 @@ import {
 const meta = {
   title: 'Components/Input group',
   component: InputGroup,
-  args: { className: 'max-w-xs' },
+  args: { className: 'sm:max-w-xs' },
 } satisfies Meta<typeof InputGroup>
 
 export default meta
@@ -81,7 +81,7 @@ export const WithTextarea: Story = {
 
 export const Invalid: Story = {
   render: (args) => (
-    <Field className="max-w-xs" data-invalid>
+    <Field className="sm:max-w-xs" data-invalid>
       <FieldLabel htmlFor="goal">Meta de ventas</FieldLabel>
       <InputGroup {...args}>
         <InputGroupAddon>

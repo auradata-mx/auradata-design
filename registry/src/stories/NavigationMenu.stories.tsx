@@ -75,7 +75,7 @@ export const Default: Story = {
           Entrar
         </Button>
         <Button>Agenda una demo</Button>
-        <Button variant="ghost" size="icon" className="md:hidden" aria-label="Menú">
+        <Button variant="ghost" size="icon" className="-mr-2 md:hidden" aria-label="Menú">
           <MenuIcon aria-hidden />
         </Button>
       </div>
