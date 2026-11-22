@@ -15,6 +15,7 @@ import {
   CommandList,
   CommandShortcut,
 } from "@/components/ui/command"
+import { Kbd } from "@/components/ui/kbd"
 import { Spinner } from "@/components/ui/spinner"
 
 type SearchCommandItem = {
@@ -51,7 +52,7 @@ type SearchCommandProps = Omit<
   loadingText?: React.ReactNode
 }
 
-/** "⌘K" on Apple devices, "Ctrl K" elsewhere. */
+/** "⌘K" on Apple devices, "Ctrl K" elsewhere: also for the shortcuts of the items. */
 function shortcutLabel(hotkey: string) {
   const apple =
     typeof navigator !== "undefined" &&
@@ -66,7 +67,8 @@ function shortcutLabel(hotkey: string) {
 function Results({ children }: { children: React.ReactNode }) {
   const matches = useCommandState((state) => state.filtered.count)
   return (
-    <CommandList hidden={matches === 0} className="max-h-[min(26rem,60vh)]">
+    // Under half the screen: on a phone the keyboard takes the other half.
+    <CommandList hidden={matches === 0} className="max-h-[min(26rem,45dvh)]">
       {children}
     </CommandList>
   )
@@ -126,9 +128,8 @@ function SearchCommand({
         <SearchIcon data-icon="inline-start" aria-hidden />
         {children}
         {hotkey && (
-          <kbd className="ml-auto rounded border bg-muted px-1.5 font-mono text-xs text-muted-foreground">
-            {shortcutLabel(hotkey)}
-          </kbd>
+          // Phones have no keyboard shortcut to show.
+          <Kbd className="ml-auto max-sm:hidden">{shortcutLabel(hotkey)}</Kbd>
         )}
       </Button>
       <CommandDialog
@@ -136,6 +137,8 @@ function SearchCommand({
         onOpenChange={setOpen}
         title="Buscar"
         description={placeholder}
+        // Near the top on a phone, so the results stay above the keyboard; wider on a desktop.
+        className="top-3 sm:top-1/3 sm:max-w-lg"
       >
         <Command>
           <CommandInput placeholder={placeholder} />
@@ -186,6 +189,7 @@ function SearchCommand({
 
 export {
   SearchCommand,
+  shortcutLabel,
   type SearchCommandGroup,
   type SearchCommandItem,
   type SearchCommandProps,

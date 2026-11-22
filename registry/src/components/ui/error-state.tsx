@@ -1,5 +1,5 @@
 // registry: auradata (an error state on the shadcn empty state, with a retry and the technical detail)
-import { CircleAlertIcon, RotateCwIcon } from "lucide-react"
+import { ChevronRightIcon, CircleAlertIcon, RotateCwIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
@@ -45,8 +45,13 @@ function ErrorState({
           )}
           {children}
           {detail && (
-            <details className="w-full text-left text-xs text-muted-foreground">
-              <summary className="cursor-pointer rounded-sm text-center outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50">
+            <details className="group/detail w-full text-left text-xs text-muted-foreground">
+              {/* Our chevron instead of the browser's triangle: it turns when the detail opens. */}
+              <summary className="mx-auto flex w-fit cursor-pointer list-none items-center gap-1 rounded-sm outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden">
+                <ChevronRightIcon
+                  aria-hidden
+                  className="size-3.5 transition-transform group-open/detail:rotate-90 motion-reduce:transition-none"
+                />
                 Detalle técnico
               </summary>
               <pre className="mt-2 max-h-40 overflow-auto rounded-md bg-muted p-3 font-mono whitespace-pre-wrap text-foreground">

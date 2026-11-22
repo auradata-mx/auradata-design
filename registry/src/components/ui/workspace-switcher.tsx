@@ -1,5 +1,6 @@
 // registry: auradata (the workspace picker at the top of the AuraData sidebar)
 import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from "lucide-react"
+import { cn } from "cn"
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
@@ -51,7 +52,7 @@ function WorkspaceSwitcher({ workspaces, current, onSelect, onCreate, defaultOpe
       <SidebarMenuItem>
         <DropdownMenu defaultOpen={defaultOpen}>
           <DropdownMenuTrigger
-            render={<SidebarMenuButton size="lg" className="data-popup-open:bg-sidebar-accent" />}
+            render={<SidebarMenuButton size="lg" title={active.name} className="data-popup-open:bg-sidebar-accent" />}
           >
             <WorkspaceAvatar name={active.name} />
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -66,13 +67,24 @@ function WorkspaceSwitcher({ workspaces, current, onSelect, onCreate, defaultOpe
             <DropdownMenuGroup>
               <DropdownMenuLabel>Espacios de trabajo</DropdownMenuLabel>
               {workspaces.map((workspace) => (
-                <DropdownMenuItem key={workspace.id} onClick={() => onSelect?.(workspace.id)} className="gap-2 p-2">
-                  <Avatar className="size-6 rounded-md after:rounded-md">
-                    <AvatarFallback className="rounded-md text-[0.625rem] font-medium">
+                <DropdownMenuItem
+                  key={workspace.id}
+                  onClick={() => onSelect?.(workspace.id)}
+                  title={workspace.name}
+                  className="gap-2 p-2"
+                >
+                  {/* The current workspace's tile looks as in the trigger: primary; the others muted. */}
+                  <Avatar className="size-7 rounded-md after:rounded-md">
+                    <AvatarFallback
+                      className={cn(
+                        "rounded-md text-[0.6875rem] font-medium",
+                        workspace.id === active.id && "bg-primary text-primary-foreground"
+                      )}
+                    >
                       {initials(workspace.name)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="truncate">{workspace.name}</span>
+                  <span className="min-w-0 truncate">{workspace.name}</span>
                   {workspace.id === active.id && <CheckIcon aria-label="Actual" className="ml-auto" />}
                 </DropdownMenuItem>
               ))}
@@ -81,7 +93,7 @@ function WorkspaceSwitcher({ workspaces, current, onSelect, onCreate, defaultOpe
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onCreate} className="gap-2 p-2">
-                  <span className="flex size-6 items-center justify-center rounded-md border bg-background">
+                  <span className="flex size-7 items-center justify-center rounded-md border text-muted-foreground">
                     <PlusIcon className="size-4" />
                   </span>
                   Nuevo espacio

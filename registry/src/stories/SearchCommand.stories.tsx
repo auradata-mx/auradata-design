@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChartColumnIcon, DatabaseIcon, FilePlusIcon, SettingsIcon, UserPlusIcon } from 'lucide-react'
 import { expect, screen, userEvent, waitFor } from 'storybook/test'
 
-import { SearchCommand, type SearchCommandGroup } from '@/components/ui/search-command'
+import { SearchCommand, shortcutLabel, type SearchCommandGroup } from '@/components/ui/search-command'
 
 const GROUPS: SearchCommandGroup[] = [
   {
@@ -23,9 +23,9 @@ const GROUPS: SearchCommandGroup[] = [
   {
     heading: 'Acciones',
     items: [
-      { id: 'nuevo-informe', label: 'Crear informe', icon: <FilePlusIcon />, shortcut: '⌘N' },
+      { id: 'nuevo-informe', label: 'Crear informe', icon: <FilePlusIcon />, shortcut: shortcutLabel('n') },
       { id: 'invitar', label: 'Invitar a tu equipo', icon: <UserPlusIcon /> },
-      { id: 'configuracion', label: 'Abrir configuración', icon: <SettingsIcon />, shortcut: '⌘,' },
+      { id: 'configuracion', label: 'Abrir configuración', icon: <SettingsIcon />, shortcut: shortcutLabel(',') },
     ],
   },
 ]

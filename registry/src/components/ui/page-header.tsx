@@ -22,7 +22,7 @@ function PageHeader({ title, description, actions, className, children, ...props
       {/* The title takes the room left by the actions and wraps; a single long word breaks instead of overflowing. */}
       <div className="grid min-w-0 flex-1 gap-1">
         <h1 className="text-2xl font-semibold tracking-tight text-balance wrap-break-word">{title}</h1>
-        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+        {description && <p className="text-sm text-pretty text-muted-foreground">{description}</p>}
         {children}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
