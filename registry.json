@@ -897,19 +897,44 @@
       ]
     },
     {
+      "name": "data-table-views",
+      "type": "registry:ui",
+      "title": "Data table views",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/dialog",
+        "cristianruben-dev/auradata-design/dropdown-menu",
+        "cristianruben-dev/auradata-design/field",
+        "cristianruben-dev/auradata-design/input"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/data-table-views.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data table",
       "dependencies": [
         "@tanstack/react-table",
+        "@tanstack/react-virtual",
         "cn",
         "lucide-react"
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/badge",
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/chart-palette",
         "cristianruben-dev/auradata-design/checkbox",
         "cristianruben-dev/auradata-design/data-table-selection-bar",
+        "cristianruben-dev/auradata-design/data-table-views",
         "cristianruben-dev/auradata-design/date-range-filter",
         "cristianruben-dev/auradata-design/dropdown-menu",
         "cristianruben-dev/auradata-design/faceted-filter",
@@ -918,9 +943,12 @@
         "cristianruben-dev/auradata-design/filter-conditions",
         "cristianruben-dev/auradata-design/format",
         "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/native-select",
         "cristianruben-dev/auradata-design/range-filter",
         "cristianruben-dev/auradata-design/select",
+        "cristianruben-dev/auradata-design/table-export",
         "cristianruben-dev/auradata-design/toggle",
+        "cristianruben-dev/auradata-design/use-saved-views",
         "popover",
         "skeleton",
         "table"
@@ -2554,6 +2582,21 @@
       ]
     },
     {
+      "name": "use-data-table-url-state",
+      "type": "registry:hook",
+      "title": "Use data table url state",
+      "dependencies": [],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/data-table"
+      ],
+      "files": [
+        {
+          "path": "registry/src/hooks/use-data-table-url-state.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
       "name": "use-mobile",
       "type": "registry:hook",
       "title": "Use mobile",
@@ -2561,6 +2604,18 @@
       "files": [
         {
           "path": "registry/src/hooks/use-mobile.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-saved-views",
+      "type": "registry:hook",
+      "title": "Use saved views",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/src/hooks/use-saved-views.ts",
           "type": "registry:hook"
         }
       ]
@@ -2624,6 +2679,20 @@
       "files": [
         {
           "path": "registry/src/lib/initials.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "table-export",
+      "type": "registry:lib",
+      "title": "Table export",
+      "dependencies": [
+        "fflate"
+      ],
+      "files": [
+        {
+          "path": "registry/src/lib/table-export.ts",
           "type": "registry:lib"
         }
       ]
