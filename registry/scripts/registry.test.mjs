@@ -132,3 +132,18 @@ test('gives the theme the brand focus ring as css, apart from its variables', ()
   expect(Object.values(theme.css).some((rule) => rule['--tw-ring-shadow'] === '0 0 #0000')).toBe(true)
   expect(Object.keys(theme.cssVars).sort()).toEqual(['dark', 'light', 'theme'])
 })
+
+// Apps that install the theme get the data palettes, the status scales, compact density and print styles (T59).
+// No @page: the shadcn CLI cannot write declarations inside it ("Unknown word 16mm").
+test('gives the theme the data palettes, status scales, compact density and print styles', () => {
+  const theme = item('auradata-theme')
+  for (const mode of ['light', 'dark']) {
+    expect(theme.cssVars[mode]).toHaveProperty('sequential-9')
+    expect(theme.cssVars[mode]).toHaveProperty('diverging-5')
+    expect(theme.cssVars[mode]).toHaveProperty('destructive-700')
+  }
+  expect(theme.cssVars.theme['color-success-50']).toBe('var(--success-50)')
+  expect(theme.css['@layer base']['[data-density="compact"]']).toEqual({ '--spacing': '0.21875rem' })
+  expect(theme.css['@media print'][':root:root, .dark.dark']['--background']).toBe('#FFFFFF')
+  expect(Object.keys(theme.css)).not.toContain('@page')
+})
