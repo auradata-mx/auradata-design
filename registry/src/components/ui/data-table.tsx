@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, and a view state to control or share)
 import * as React from "react"
 import {
   columnFacetingFeature,
@@ -16,6 +16,7 @@ import {
   filterFn_includesString,
   FlexRender,
   globalFilteringFeature,
+  rowExpandingFeature,
   rowPaginationFeature,
   rowSelectionFeature,
   rowSortingFeature,
@@ -30,6 +31,7 @@ import {
   type ColumnPinningState,
   type ColumnSizingState,
   type ColumnVisibilityState,
+  type ExpandedState,
   type FilterFn,
   type Header,
   type Table as TanStackTable,
@@ -46,6 +48,7 @@ import {
   ArrowRightIcon,
   ArrowUpDownIcon,
   ArrowUpIcon,
+  ChevronRightIcon,
   Columns3Icon,
   EllipsisIcon,
   EyeOffIcon,
@@ -76,6 +79,7 @@ import { FacetedFilter, type FacetedFilterOption } from "@/components/ui/faceted
 import { FilterBuilder } from "@/components/ui/filter-builder"
 import { FilterChips } from "@/components/ui/filter-chips"
 import { Input } from "@/components/ui/input"
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RangeFilter, type NumberRange } from "@/components/ui/range-filter"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -127,6 +131,7 @@ const dataTableFeatures = tableFeatures({
   columnSizingFeature,
   columnVisibilityFeature,
   globalFilteringFeature,
+  rowExpandingFeature,
   rowPaginationFeature,
   rowSelectionFeature,
   rowSortingFeature,
@@ -155,6 +160,9 @@ type DataTableColumnFilter =
   | { type: "range"; title?: string; min?: number; max?: number; step?: number; format?: (value: number) => string }
   | { type: "date"; title?: string; today?: Date }
 
+/** How a cell edits in place (`meta.editable`, with `onCellEdit`): a text, a number or one of the `options`. */
+type DataTableCellEditor = { type: "text" | "number" | "select"; options?: { value: string; label?: string }[] }
+
 const FILTER_FNS = { select: "inSet", range: "inRange", date: "inPeriod" } as const
 
 declare module "@tanstack/table-core" {
@@ -166,6 +174,7 @@ declare module "@tanstack/table-core" {
     TValue extends CellData = CellData,
   > {
     filter?: DataTableColumnFilter
+    editable?: DataTableCellEditor
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }
@@ -200,6 +209,15 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   onRowSelectionChange?: (selection: RowSelectionState) => void
   /** The actions of the floating bar while rows are selected; `clear` empties the selection. */
   bulkActions?: (selected: TData[], clear: () => void) => React.ReactNode
+  /** A row's detail: a chevron at the start of each row opens it under the row. */
+  renderDetail?: (row: TData) => React.ReactNode
+  /** The rows open from the start, by row id. */
+  defaultExpanded?: Record<string, boolean>
+  /**
+   * Saves a cell edited in place: the columns with `meta.editable` turn editable when it is given. The table does
+   * not change `data`: update it here and pass it back.
+   */
+  onCellEdit?: (row: TData, columnId: string, value: string | number) => void
   /** Filters beside the search, in the toolbar: a `DateRangeFilter`, the filter system's popovers. */
   filters?: React.ReactNode
   /** The page's own actions at the end of the toolbar («Nuevo informe»). */
@@ -513,6 +531,113 @@ function DataTableHead<TData extends RowData>({
 }
 
 /**
+ * A cell that edits in place. At rest a button with the cell's content (named «…, editar «Nombre»»); while editing,
+ * an input or a select. Enter or leaving the field saves, Escape cancels; either way the focus goes back to the cell.
+ */
+function EditableCell({
+  cellKey,
+  editor,
+  label,
+  value,
+  editing,
+  onEditingChange,
+  onCommit,
+  children,
+}: {
+  cellKey: string
+  editor: DataTableCellEditor
+  label: string
+  value: unknown
+  editing: boolean
+  onEditingChange: (editing: boolean) => void
+  onCommit: (value: string | number) => void
+  children: React.ReactNode
+}) {
+  const [draft, setDraft] = React.useState("")
+  const done = React.useRef(false)
+  const finish = (save: boolean, text = draft) => {
+    if (done.current) return
+    done.current = true
+    // Where the cell is, in case the save changes its row's id (a row keyed by the edited value).
+    const cell = document.querySelector(`[data-editing-cell="${CSS.escape(cellKey)}"]`)?.closest("td")
+    const body = cell?.closest("tbody")
+    const at = cell ? [(cell.parentElement as HTMLTableRowElement).sectionRowIndex, cell.cellIndex] : null
+    if (save && text !== String(value ?? "")) {
+      const number = Number(text)
+      onCommit(editor.type === "number" ? (text.trim() === "" || Number.isNaN(number) ? text : number) : text)
+    }
+    onEditingChange(false)
+    // The button is back on the next frame; the keyboard keeps its place in the table.
+    requestAnimationFrame(() => {
+      const same = document.querySelector<HTMLElement>(`[data-edit-cell="${CSS.escape(cellKey)}"]`)
+      const there = at && body?.rows[at[0]]?.cells[at[1]]?.querySelector<HTMLElement>("[data-edit-cell]")
+      ;(same ?? there)?.focus()
+    })
+  }
+  const keys = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter") {
+      event.preventDefault()
+      finish(true)
+    } else if (event.key === "Escape") {
+      event.preventDefault()
+      event.stopPropagation()
+      finish(false)
+    }
+  }
+
+  if (!editing)
+    return (
+      <button
+        type="button"
+        data-edit-cell={cellKey}
+        onClick={() => {
+          done.current = false
+          setDraft(String(value ?? ""))
+          onEditingChange(true)
+        }}
+        className="-mx-1.5 -my-0.5 block w-[calc(100%+0.75rem)] cursor-text truncate rounded-md px-1.5 py-0.5 text-left hover:bg-muted"
+      >
+        {children}
+        <span className="sr-only">{`, editar «${label}»`}</span>
+      </button>
+    )
+  if (editor.type === "select")
+    return (
+      <NativeSelect
+        size="sm"
+        autoFocus
+        data-editing-cell={cellKey}
+        aria-label={`Editar «${label}»`}
+        className="w-full"
+        value={draft}
+        onChange={(event) => finish(true, event.target.value)}
+        onBlur={() => finish(false)}
+        onKeyDown={keys}
+      >
+        {editor.options?.map((option) => (
+          <NativeSelectOption key={option.value} value={option.value}>
+            {option.label ?? option.value}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
+    )
+  return (
+    <Input
+      autoFocus
+      data-editing-cell={cellKey}
+      aria-label={`Editar «${label}»`}
+      type={editor.type === "number" ? "number" : "text"}
+      inputMode={editor.type === "number" ? "decimal" : undefined}
+      value={draft}
+      onChange={(event) => setDraft(event.target.value)}
+      onBlur={() => finish(true)}
+      onKeyDown={keys}
+      className="-mx-1.5 h-7 w-[calc(100%+0.75rem)] px-1.5"
+    />
+  )
+}
+
+/**
  * A table of records with sortable headers, a text filter over every column, a column menu and pages.
  * Columns are TanStack `ColumnDef`s; give each a string `header` so the column menu can name it. Give the
  * columns a `size` (px) and they keep their widths across pages, sorting, loading and the empty state (a
@@ -537,6 +662,9 @@ function DataTable<TData extends RowData>({
   defaultRowSelection = {},
   onRowSelectionChange,
   bulkActions,
+  renderDetail,
+  defaultExpanded,
+  onCellEdit,
   filters,
   actions,
   densityToggle = false,
@@ -568,6 +696,9 @@ function DataTable<TData extends RowData>({
     onViewChange
   )
   const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
+  const [expanded, setExpanded] = React.useState<ExpandedState>(defaultExpanded ?? {})
+  const [editing, setEditing] = React.useState<string | null>(null)
+  const detailId = React.useId()
 
   // A column filter needs its filter function; a column's own `filterFn` wins.
   const withFilterFns = React.useMemo(
@@ -577,10 +708,42 @@ function DataTable<TData extends RowData>({
       ),
     [columns]
   )
-  const allColumns = React.useMemo<DataTableColumn<TData>[]>(
+  const expandColumn = React.useMemo<DataTableColumn<TData> | null>(
     () =>
-      selectable
-        ? [
+      renderDetail
+        ? {
+            id: "expand",
+            size: 44,
+            enableSorting: false,
+            enableHiding: false,
+            enableResizing: false,
+            header: () => <span className="sr-only">Detalle</span>,
+            cell: ({ row }) => {
+              const name = rowLabel ? ` de «${rowLabel(row.original)}»` : ""
+              const open = row.getIsExpanded()
+              return (
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  className="-ml-1 text-muted-foreground"
+                  aria-expanded={open}
+                  aria-controls={`${detailId}-${row.index}`}
+                  aria-label={`${open ? "Ocultar" : "Mostrar"} el detalle${name}`}
+                  onClick={() => row.toggleExpanded()}
+                >
+                  <ChevronRightIcon aria-hidden className={cn("transition-transform motion-reduce:transition-none", open && "rotate-90")} />
+                </Button>
+              )
+            },
+          }
+        : null,
+    [renderDetail, rowLabel, detailId]
+  )
+  const allColumns = React.useMemo<DataTableColumn<TData>[]>(
+    () => [
+      ...(expandColumn ? [expandColumn] : []),
+      ...(selectable
+        ? ([
             {
               id: "select",
               size: 44,
@@ -606,9 +769,10 @@ function DataTable<TData extends RowData>({
               ),
             },
             ...withFilterFns,
-          ]
-        : withFilterFns,
-    [withFilterFns, selectable, rowLabel]
+          ] satisfies DataTableColumn<TData>[])
+        : withFilterFns),
+    ],
+    [withFilterFns, selectable, rowLabel, expandColumn]
   )
 
   // With columns pinned to the start, the checkbox column sticks with them, first.
@@ -632,6 +796,7 @@ function DataTable<TData extends RowData>({
     columns: allColumns,
     getRowId,
     enableRowSelection: selectable,
+    getRowCanExpand: () => Boolean(renderDetail),
     enableColumnResizing: resizableColumns,
     columnResizeMode: "onChange",
     state: {
@@ -644,7 +809,9 @@ function DataTable<TData extends RowData>({
       columnSizing: view.columnSizing,
       pagination: view.pagination,
       rowSelection,
+      expanded,
     },
+    onExpandedChange: setExpanded,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setView("sorting"),
     onGlobalFilterChange: setView("globalFilter"),
@@ -938,17 +1105,48 @@ function DataTable<TData extends RowData>({
               ))
             ) : rows.length ? (
               rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() ? "selected" : undefined}>
-                  {row.getVisibleCells().map((cell) => {
-                    const { className: pinnedClassName, ...pinned } = pinnedProps(cell.column)
-                    return (
-                      <TableCell key={cell.id} {...pinned} className={pinnedClassName}>
-                        <FlexRender cell={cell} />
+                <React.Fragment key={row.id}>
+                  <TableRow data-state={row.getIsSelected() ? "selected" : undefined}>
+                    {row.getVisibleCells().map((cell) => {
+                      const { className: pinnedClassName, ...pinned } = pinnedProps(cell.column)
+                      const editor = onCellEdit && cell.column.columnDef.meta?.editable
+                      const key = `${row.id}:${cell.column.id}`
+                      return (
+                        <TableCell key={cell.id} {...pinned} className={pinnedClassName}>
+                          {editor ? (
+                            <EditableCell
+                              cellKey={key}
+                              editor={editor}
+                              label={columnLabel(cell.column.columnDef.header, cell.column.id)}
+                              value={cell.getValue()}
+                              editing={editing === key}
+                              onEditingChange={(on) => setEditing(on ? key : null)}
+                              onCommit={(value) => onCellEdit(row.original, cell.column.id, value)}
+                            >
+                              <FlexRender cell={cell} />
+                            </EditableCell>
+                          ) : (
+                            <FlexRender cell={cell} />
+                          )}
+                        </TableCell>
+                      )
+                    })}
+                    {filler && <TableCell aria-hidden className="p-0" />}
+                  </TableRow>
+                  {renderDetail && row.getIsExpanded() && (
+                    <TableRow data-slot="data-table-detail" className="bg-muted/30 hover:bg-muted/30">
+                      <TableCell colSpan={visibleColumns.length + (filler ? 1 : 0)} className="p-0">
+                        {/* As wide as the visible table and stuck to its left edge, as the empty message. */}
+                        <div
+                          id={`${detailId}-${row.index}`}
+                          className="sticky left-0 w-[100cqw] px-4 py-3 whitespace-normal"
+                        >
+                          {renderDetail(row.original)}
+                        </div>
                       </TableCell>
-                    )
-                  })}
-                  {filler && <TableCell aria-hidden className="p-0" />}
-                </TableRow>
+                    </TableRow>
+                  )}
+                </React.Fragment>
               ))
             ) : (
               <TableRow className="hover:bg-transparent">

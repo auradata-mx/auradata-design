@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { FolderInputIcon, PlusIcon, Trash2Icon } from 'lucide-react'
-import type * as React from 'react'
+import * as React from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { Badge } from '@/components/ui/badge'
@@ -678,5 +678,118 @@ export const AdvancedFilterOpen: Story = {
     const toolbar = within(canvasElement.querySelector<HTMLElement>('[data-slot="data-table-toolbar"]')!)
     await userEvent.click(toolbar.getByRole('button', { name: /Filtros/ }))
     await within(document.body).findByRole('dialog', { name: 'Filtros avanzados' })
+  },
+}
+
+/** The detail of an informe, under its row. */
+const informeDetail = (informe: Informe) => (
+  <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+    <dt className="text-muted-foreground">Espacio</dt>
+    <dd>{informe.espacio}</dd>
+    <dt className="text-muted-foreground">Dueño</dt>
+    <dd>{informe.dueno}</dd>
+    <dt className="text-muted-foreground">Actualizado</dt>
+    <dd>{formatDate(informe.actualizado, { month: 'long' })}</dd>
+  </dl>
+)
+
+/** A chevron opens a row's detail under it; on a phone the detail stays in view while the columns scroll. */
+export const ExpandableRows: Story = {
+  args: { renderDetail: informeDetail, rowLabel: (informe: Informe) => informe.nombre },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const toggle = canvas.getByRole('button', { name: 'Mostrar el detalle de «Margen por producto»' })
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    await userEvent.click(toggle)
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    const detail = document.getElementById(toggle.getAttribute('aria-controls')!)!
+    await expect(detail).toHaveTextContent('Luis Méndez')
+    // The detail row sits right under its row.
+    await expect(toggle.closest('tr')!.nextElementSibling).toContainElement(detail)
+    await userEvent.click(toggle)
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(document.getElementById(toggle.getAttribute('aria-controls')!)).toBeNull()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** One row open from the start, for the visual tests, on a phone too. */
+export const ExpandedRow: Story = {
+  tags: ['mobile'],
+  args: {
+    renderDetail: informeDetail,
+    rowLabel: (informe: Informe) => informe.nombre,
+    getRowId: (informe: Informe) => informe.nombre,
+    defaultExpanded: { 'Margen por producto': true },
+  },
+}
+
+const onCellEdit = fn()
+
+/** «Nombre» and «Estado» edit in place: the data lives in the story, as it would in an app. */
+function EditableTable() {
+  const [data, setData] = React.useState(INFORMES)
+  const columns = React.useMemo<DataTableColumn<Informe, string>[]>(
+    () =>
+      COLUMNS.map((column) =>
+        column.header === 'Nombre'
+          ? { ...column, meta: { editable: { type: 'text' } } }
+          : column.header === 'Estado'
+            ? {
+                ...column,
+                meta: {
+                  editable: {
+                    type: 'select',
+                    options: (['Publicado', 'Borrador', 'Desactualizado', 'Con errores'] as Estado[]).map((value) => ({ value })),
+                  },
+                },
+              }
+            : column
+      ),
+    []
+  )
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      filterPlaceholder="Buscar informes…"
+      getRowId={(informe) => informe.nombre}
+      onCellEdit={(informe, columnId, value) => {
+        onCellEdit(informe.nombre, columnId, value)
+        setData((rows) => rows.map((row) => (row === informe ? { ...row, [columnId]: value } : row)))
+      }}
+    />
+  )
+}
+
+/**
+ * Click a cell (or Enter on it) to edit; Enter or leaving the field saves, Escape cancels. A screen reader hears
+ * the cell and «editar «Nombre»».
+ */
+export const InlineEdit: Story = {
+  render: () => <EditableTable />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const cell = canvas.getByRole('button', { name: /^Ticket promedio\b.*editar «Nombre»$/ })
+    await userEvent.click(cell)
+    const input = canvas.getByRole('textbox', { name: 'Editar «Nombre»' })
+    await expect(input).toHaveFocus()
+    await expect(input).toHaveValue('Ticket promedio')
+    await userEvent.clear(input)
+    await userEvent.type(input, 'Ticket medio{Enter}')
+    await expect(onCellEdit).toHaveBeenLastCalledWith('Ticket promedio', 'nombre', 'Ticket medio')
+    const saved = canvas.getByRole('button', { name: /^Ticket medio\b.*editar «Nombre»$/ })
+    await waitFor(() => expect(saved).toHaveFocus())
+
+    // Escape leaves the value as it was.
+    await userEvent.keyboard('{Enter}')
+    await userEvent.type(canvas.getByRole('textbox', { name: 'Editar «Nombre»' }), ' anual{Escape}')
+    await expect(canvas.getByRole('button', { name: /^Ticket medio\b.*editar «Nombre»$/ })).toBeInTheDocument()
+    await expect(onCellEdit).toHaveBeenCalledTimes(1)
+
+    await userEvent.click(canvas.getAllByRole('button', { name: /^Borrador\b.*editar «Estado»$/ })[0])
+    await userEvent.selectOptions(canvas.getByRole('combobox', { name: 'Editar «Estado»' }), 'Publicado')
+    await expect(onCellEdit).toHaveBeenLastCalledWith('Pedidos del mes', 'estado', 'Publicado')
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
