@@ -264,3 +264,37 @@ test('the theme gives checkboxes and radios a border that reads 3:1', () => {
   expect(read('shadcn.css')).toContain('--control-border: var(--aura-color-border-control);');
   expect(read('shadcn.css')).toMatch(/:where\(\[data-slot="checkbox"\], \[data-slot="radio-group-item"\]\) \{\s*--input: var\(--control-border\);/);
 });
+
+// Heatmaps and conditional cells: a one-hue sequential ramp and a two-arm diverging one, themed light and dark,
+// beside the categorical chart-1..8 (which stay as they are).
+const NINE = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+test('tokens.css carries the sequential and diverging palettes in light and dark', () => {
+  const css = read('tokens.css');
+  for (const palette of ['sequential', 'diverging']) {
+    for (const n of NINE) {
+      expect(css).toMatch(new RegExp(`:root \\{[^}]*--aura-color-${palette}-${n}: #[0-9A-F]{6};`, 's'));
+      expect(css).toMatch(new RegExp(`\\.dark \\{[^}]*--aura-color-${palette}-${n}: #[0-9A-F]{6};`, 's'));
+    }
+  }
+  expect(css).toMatch(/:root \{[^}]*--aura-color-sequential-1: #DBEAFE;[^}]*--aura-color-sequential-9: #1E3A8A;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-sequential-1: #172554;[^}]*--aura-color-sequential-9: #BFDBFE;/s);
+  expect(css).toMatch(/:root \{[^}]*--aura-color-diverging-5: #E5E5E5;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-diverging-5: #2E2E38;/s);
+});
+
+test('shadcn gets the sequential and diverging palettes as variables and Tailwind colors', () => {
+  const css = read('shadcn.css');
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  for (const palette of ['sequential', 'diverging']) {
+    for (const n of NINE) {
+      expect(css).toContain(`--${palette}-${n}: var(--aura-color-${palette}-${n});`);
+      expect(theme.theme[`color-${palette}-${n}`]).toBe(`var(--${palette}-${n})`);
+    }
+  }
+  expect(theme.light).toMatchObject({ 'sequential-1': '#DBEAFE', 'diverging-1': '#991B1B', 'diverging-9': '#1E40AF' });
+  expect(theme.dark).toMatchObject({ 'sequential-1': '#172554', 'diverging-1': '#FCA5A5', 'diverging-9': '#93C5FD' });
+  // The categorical palette is unchanged.
+  expect(theme.light['chart-1']).toBe('#2563EB');
+  expect(Object.keys(theme.light).filter((name) => /^chart-\d$/.test(name))).toHaveLength(8);
+});

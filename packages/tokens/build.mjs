@@ -50,6 +50,13 @@ function tokensCss(light, dark) {
   return HEADER + block(':root', [...aura(brand), ...aura(themed(light))]) + '\n' + block('.dark', aura(themed(dark)));
 }
 
+const NINE = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+/** The sequential and diverging data palettes, under the same names in shadcn: --sequential-1 … --diverging-9. */
+const DATA_PALETTES = Object.fromEntries(
+  ['sequential', 'diverging'].flatMap((palette) => NINE.map((n) => [`${palette}-${n}`, `color-${palette}-${n}`])),
+);
+
 /** shadcn names → AuraData names. One block: the --aura-* variables already switch with .dark. */
 const SHADCN = {
   background: 'color-bg-container',
@@ -96,6 +103,7 @@ const SHADCN = {
   'sidebar-accent-foreground': 'color-text',
   'sidebar-border': 'color-border',
   'sidebar-ring': 'color-focus-ring',
+  ...DATA_PALETTES,
 };
 
 /**
@@ -176,6 +184,7 @@ const SHADCN_EXTRA = [
   'chart-6',
   'chart-7',
   'chart-8',
+  ...Object.keys(DATA_PALETTES),
 ];
 
 /** The shadcn mapping with resolved values (the cssVars of a registry:theme item) and its `css`. */

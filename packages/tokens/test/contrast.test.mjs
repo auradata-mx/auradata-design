@@ -82,3 +82,42 @@ describe.each(['light', 'dark'])('%s theme controls', (name) => {
     expect(ratio, `${theme['border-control']} on ${theme[surface]} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(NON_TEXT);
   });
 });
+
+const ramp = (theme, palette) => [1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => theme[`${palette}-${n}`]);
+
+/**
+ * The label on a heatmap cell: steps 1-5 of the sequential palette take the text color (foreground), 6-9 the
+ * page color (background); on the diverging palette, the middle steps 3-7 take the text, the ends 1, 2, 8, 9 the
+ * page. lib/chart-palette picks it the same way.
+ */
+const ON_SEQUENTIAL = (n) => (n <= 5 ? 'text' : 'bg-container');
+const ON_DIVERGING = (n) => (n >= 3 && n <= 7 ? 'text' : 'bg-container');
+
+describe.each(['light', 'dark'])('%s theme data palettes', (name) => {
+  test('the sequential palette moves away from the page step by step', () => {
+    const theme = themes[name];
+    const steps = ramp(theme, 'sequential').map((color) => contrast(color, theme['bg-container']));
+    for (let n = 1; n < steps.length; n++) expect(steps[n], `sequential-${n + 1}`).toBeGreaterThan(steps[n - 1]);
+  });
+
+  test('the diverging palette is nearest the page at its neutral middle and moves away on both arms', () => {
+    const theme = themes[name];
+    const steps = ramp(theme, 'diverging').map((color) => contrast(color, theme['bg-container']));
+    for (let n = 0; n < 4; n++) {
+      expect(steps[n], `diverging-${n + 1}`).toBeGreaterThan(steps[n + 1]);
+      expect(steps[8 - n], `diverging-${9 - n}`).toBeGreaterThan(steps[7 - n]);
+      // Equal steps per arm: the same distance from neutral reads about the same on both sides.
+      expect(Math.abs(Math.log(steps[n] / steps[8 - n])), `diverging-${n + 1} vs ${9 - n}`).toBeLessThan(0.15);
+    }
+  });
+
+  test.each([1, 2, 3, 4, 5, 6, 7, 8, 9])('a label on step %i of each data palette passes WCAG AA', (n) => {
+    const theme = themes[name];
+    for (const [palette, on] of [['sequential', ON_SEQUENTIAL], ['diverging', ON_DIVERGING]]) {
+      const [fill, text] = [theme[`${palette}-${n}`], theme[on(n)]];
+      expect(fill, `--aura-color-${palette}-${n}`).toBeDefined();
+      const ratio = contrast(text, fill);
+      expect(ratio, `${text} on ${palette}-${n} ${fill} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+    }
+  });
+});
