@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, export to CSV and Excel, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, export to CSV and Excel, a virtualized body for thousands of rows, and a view state to control or share)
 import * as React from "react"
 import {
   columnFacetingFeature,
@@ -59,6 +59,7 @@ import {
   SearchIcon,
   SlidersHorizontalIcon,
 } from "lucide-react"
+import { useVirtualizer } from "@tanstack/react-virtual"
 import { cn } from "cn"
 
 import { Badge } from "@/components/ui/badge"
@@ -225,6 +226,11 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
    * selected rows when there are any, with the visible columns and their raw values. `fileName` without extension.
    */
   exportable?: boolean | { fileName?: string; sheetName?: string }
+  /**
+   * Thousands of rows: the body scrolls in a box of `height` (480 px by default) and draws only the rows in view,
+   * the header stays on top, and the footer counts the rows instead of paging them.
+   */
+  virtualize?: boolean | { height?: number | string }
   /** Receives the exported file instead of downloading it (to send it to a server, or in a test). */
   onExport?: (file: DataTableExport) => void
   /** Filters beside the search, in the toolbar: a `DateRangeFilter`, the filter system's popovers. */
@@ -679,6 +685,7 @@ function DataTable<TData extends RowData>({
   onCellEdit,
   exportable = false,
   onExport,
+  virtualize = false,
   filters,
   actions,
   densityToggle = false,
@@ -838,7 +845,26 @@ function DataTable<TData extends RowData>({
   })
 
   const density = view.density
-  const rows = table.getRowModel().rows
+  // Virtualized, every row of the filtered and sorted model scrolls in one box; otherwise one page of them.
+  const rows = virtualize ? table.getPrePaginatedRowModel().rows : table.getRowModel().rows
+  // The React Compiler would skip this component for it; the table does not count on the compiler.
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    count: virtualize ? rows.length : 0,
+    getScrollElement: () => regionRef.current?.querySelector<HTMLElement>("[data-slot=table-container]") ?? null,
+    estimateSize: () => (density === "compact" ? 29 : 37),
+    overscan: 8,
+    // A row with its detail open measures both rows.
+    measureElement: (element) => {
+      const next = element.nextElementSibling as HTMLElement | null
+      const detail = next?.dataset.slot === "data-table-detail" ? next.getBoundingClientRect().height : 0
+      return element.getBoundingClientRect().height + detail
+    },
+  })
+  const virtualRows = virtualize ? virtualizer.getVirtualItems() : []
+  const spaceBefore = virtualRows[0]?.start ?? 0
+  const spaceAfter = virtualRows.length ? virtualizer.getTotalSize() - virtualRows[virtualRows.length - 1].end : 0
+  const height = typeof virtualize === "object" && virtualize.height !== undefined ? virtualize.height : 480
   // Sized columns: a fixed layout, so the widths come from the sizes and never from the page's content. Pinned
   // columns stick at offsets that add up those sizes, and a resized column needs one too.
   const pinnedAny = pinnedStart.length > 0 || pinnedEnd.length > 0
@@ -971,6 +997,55 @@ function DataTable<TData extends RowData>({
     table.resetRowSelection(true)
   }
 
+  const renderRow = (row: (typeof rows)[number], index?: number) => (
+                <React.Fragment key={row.id}>
+                  <TableRow
+                    data-state={row.getIsSelected() ? "selected" : undefined}
+                    data-index={index}
+                    ref={index === undefined ? undefined : virtualizer.measureElement}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      const { className: pinnedClassName, ...pinned } = pinnedProps(cell.column)
+                      const editor = onCellEdit && cell.column.columnDef.meta?.editable
+                      const key = `${row.id}:${cell.column.id}`
+                      return (
+                        <TableCell key={cell.id} {...pinned} className={pinnedClassName}>
+                          {editor ? (
+                            <EditableCell
+                              cellKey={key}
+                              editor={editor}
+                              label={columnLabel(cell.column.columnDef.header, cell.column.id)}
+                              value={cell.getValue()}
+                              editing={editing === key}
+                              onEditingChange={(on) => setEditing(on ? key : null)}
+                              onCommit={(value) => onCellEdit(row.original, cell.column.id, value)}
+                            >
+                              <FlexRender cell={cell} />
+                            </EditableCell>
+                          ) : (
+                            <FlexRender cell={cell} />
+                          )}
+                        </TableCell>
+                      )
+                    })}
+                    {filler && <TableCell aria-hidden className="p-0" />}
+                  </TableRow>
+                  {renderDetail && row.getIsExpanded() && (
+                    <TableRow data-slot="data-table-detail" className="bg-muted/30 hover:bg-muted/30">
+                      <TableCell colSpan={visibleColumns.length + (filler ? 1 : 0)} className="p-0">
+                        {/* As wide as the visible table and stuck to its left edge, as the empty message. */}
+                        <div
+                          id={`${detailId}-${row.index}`}
+                          className="sticky left-0 w-[100cqw] px-4 py-3 whitespace-normal"
+                        >
+                          {renderDetail(row.original)}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </React.Fragment>
+  )
+
   return (
     <div data-slot="data-table" data-row-density={density} className={cn("grid gap-3", className)} {...props}>
       {/* The search shrinks first (down to 160 px), then the filters and buttons wrap onto a second line. */}
@@ -1090,7 +1165,13 @@ function DataTable<TData extends RowData>({
         data-slot="data-table-region"
         data-more={more}
         aria-busy={loading || undefined}
-        className="@container relative overflow-hidden rounded-lg border"
+        style={virtualize ? ({ "--data-table-height": typeof height === "number" ? `${height}px` : height } as React.CSSProperties) : undefined}
+        className={cn(
+          "@container relative overflow-hidden rounded-lg border",
+          // Virtualized, the table's own container scrolls both ways, under a header that stays on top.
+          virtualize &&
+            "[&_[data-slot=table-container]]:max-h-(--data-table-height) [&_[data-slot=table-container]]:overflow-y-auto [&_thead]:sticky [&_thead]:top-0 [&_thead]:z-[3] [&_thead]:bg-background"
+        )}
       >
         {/* The fades sit beside the pinned columns, over the ones that scroll. */}
         <div
@@ -1151,50 +1232,23 @@ function DataTable<TData extends RowData>({
                 </TableRow>
               ))
             ) : rows.length ? (
-              rows.map((row) => (
-                <React.Fragment key={row.id}>
-                  <TableRow data-state={row.getIsSelected() ? "selected" : undefined}>
-                    {row.getVisibleCells().map((cell) => {
-                      const { className: pinnedClassName, ...pinned } = pinnedProps(cell.column)
-                      const editor = onCellEdit && cell.column.columnDef.meta?.editable
-                      const key = `${row.id}:${cell.column.id}`
-                      return (
-                        <TableCell key={cell.id} {...pinned} className={pinnedClassName}>
-                          {editor ? (
-                            <EditableCell
-                              cellKey={key}
-                              editor={editor}
-                              label={columnLabel(cell.column.columnDef.header, cell.column.id)}
-                              value={cell.getValue()}
-                              editing={editing === key}
-                              onEditingChange={(on) => setEditing(on ? key : null)}
-                              onCommit={(value) => onCellEdit(row.original, cell.column.id, value)}
-                            >
-                              <FlexRender cell={cell} />
-                            </EditableCell>
-                          ) : (
-                            <FlexRender cell={cell} />
-                          )}
-                        </TableCell>
-                      )
-                    })}
-                    {filler && <TableCell aria-hidden className="p-0" />}
-                  </TableRow>
-                  {renderDetail && row.getIsExpanded() && (
-                    <TableRow data-slot="data-table-detail" className="bg-muted/30 hover:bg-muted/30">
-                      <TableCell colSpan={visibleColumns.length + (filler ? 1 : 0)} className="p-0">
-                        {/* As wide as the visible table and stuck to its left edge, as the empty message. */}
-                        <div
-                          id={`${detailId}-${row.index}`}
-                          className="sticky left-0 w-[100cqw] px-4 py-3 whitespace-normal"
-                        >
-                          {renderDetail(row.original)}
-                        </div>
-                      </TableCell>
-                    </TableRow>
+              virtualize ? (
+                <>
+                  {spaceBefore > 0 && (
+                    <tr aria-hidden style={{ height: spaceBefore }}>
+                      <td colSpan={visibleColumns.length + (filler ? 1 : 0)} className="p-0" />
+                    </tr>
                   )}
-                </React.Fragment>
-              ))
+                  {virtualRows.map((item) => renderRow(rows[item.index], item.index))}
+                  {spaceAfter > 0 && (
+                    <tr aria-hidden style={{ height: spaceAfter }}>
+                      <td colSpan={visibleColumns.length + (filler ? 1 : 0)} className="p-0" />
+                    </tr>
+                  )}
+                </>
+              ) : (
+                rows.map((row) => renderRow(row))
+              )
             ) : (
               <TableRow className="hover:bg-transparent">
                 <TableCell colSpan={visibleColumns.length + (filler ? 1 : 0) || 1} className="p-0">
@@ -1210,6 +1264,11 @@ function DataTable<TData extends RowData>({
         </Table>
       </div>
 
+      {virtualize ? (
+        <p className="text-right text-sm text-muted-foreground tabular-nums" aria-live="polite">
+          {`${formatNumber(rows.length)} ${rows.length === 1 ? "fila" : "filas"}`}
+        </p>
+      ) : (
       <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm sm:justify-end">
         <div className="flex items-center gap-2">
           <span id={pageSizeLabel} className="text-muted-foreground">
@@ -1251,6 +1310,7 @@ function DataTable<TData extends RowData>({
           </Button>
         </div>
       </div>
+      )}
 
       {bulkActions && (
         <DataTableSelectionBar count={selectedRows.length} onClear={clearSelection}>

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { DateRangeFilter } from '@/components/ui/date-range-filter'
 import type { FilterField } from '@/lib/filter-conditions'
-import { formatCurrency, formatDate } from '@/lib/format'
+import { formatCurrency, formatDate, formatNumber } from '@/lib/format'
 
 type Estado = 'Publicado' | 'Borrador' | 'Desactualizado' | 'Con errores'
 
@@ -850,6 +850,44 @@ export const ExportSelection: Story = {
     ])
     await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
     await userEvent.click(canvas.getByRole('button', { name: 'Quitar selección' }))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** 5,000 informes: the table only draws the rows in view. */
+const MANY: Informe[] = Array.from({ length: 5000 }, (_, index) => ({
+  ...INFORMES[index % INFORMES.length],
+  nombre: `${INFORMES[index % INFORMES.length].nombre} ${formatNumber(index + 1)}`,
+}))
+
+/**
+ * Thousands of rows in a box of their own height: the table draws only the rows in view (and a few more), the
+ * header stays on top while the body scrolls, and the footer counts the rows instead of paging them.
+ */
+export const Virtualized: Story = {
+  tags: ['mobile'],
+  args: { data: MANY, virtualize: { height: 420 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const scroller = canvasElement.querySelector<HTMLElement>('[data-slot="table-container"]')!
+    const drawn = () => canvasElement.querySelectorAll('tbody tr[data-index]').length
+    await expect(canvas.getByText('5,000 filas')).toBeInTheDocument()
+    await expect(canvas.queryByRole('button', { name: 'Siguiente' })).toBeNull()
+    await waitFor(() => expect(drawn()).toBeGreaterThan(5))
+    await expect(drawn()).toBeLessThan(40)
+    const header = canvasElement.querySelector('thead')!.getBoundingClientRect().top
+    scroller.scrollTop = scroller.scrollHeight
+    await waitFor(() => expect(canvas.getByText('Tráfico del sitio 5,000')).toBeInTheDocument())
+    await expect(drawn()).toBeLessThan(40)
+    // The header stays where it was.
+    await expect(canvasElement.querySelector('thead')!.getBoundingClientRect().top).toBe(header)
+    // A search narrows the 5,000 and the count follows.
+    await userEvent.type(canvas.getByRole('searchbox', { name: 'Buscar informes…' }), 'nómina mensual 4,')
+    await waitFor(() => expect(canvas.getByText('40 filas')).toBeInTheDocument())
+    // Back to the start, for the screenshot.
+    await userEvent.clear(canvas.getByRole('searchbox', { name: 'Buscar informes…' }))
+    scroller.scrollTop = 0
+    await waitFor(() => expect(canvas.getByText('Ventas por región 1')).toBeInTheDocument())
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
