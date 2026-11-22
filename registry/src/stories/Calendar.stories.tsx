@@ -1,21 +1,29 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { es } from 'date-fns/locale/es'
-import { expect } from 'storybook/test'
+import { expect, within } from 'storybook/test'
 
 import { Calendar } from '@/components/ui/calendar'
 
 const meta = {
   title: 'Components/Calendar',
   component: Calendar,
-  // `today` is fixed so the marker does not move with the clock.
-  args: { locale: es, today: new Date(2026, 10, 21), defaultMonth: new Date(2026, 10, 1), className: 'rounded-lg border' },
+  // `today` is fixed so the marker does not move with the clock. Spanish is the calendar's default.
+  args: { today: new Date(2026, 10, 21), defaultMonth: new Date(2026, 10, 1), className: 'rounded-lg border' },
 } satisfies Meta<typeof Calendar>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
+/** Spanish for screen readers too: the buttons and days are named in Spanish, not only the caption. */
 export const Default: Story = {
   args: { mode: 'single', selected: new Date(2026, 10, 21) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('button', { name: 'Ir al mes anterior' })).toBeInTheDocument()
+    await expect(canvas.getByRole('button', { name: 'Ir al mes siguiente' })).toBeInTheDocument()
+    await expect(
+      canvas.getByRole('button', { name: /^Hoy, sábado, 21 de noviembre de 2026, seleccionado$/ })
+    ).toBeInTheDocument()
+  },
 }
 
 /** A range over two months, as the date range filter shows it. */

@@ -1,4 +1,4 @@
-// registry: auradata (shadcn calendar: 36 px days on a phone, a capitalized caption, a range painted only in its own month, today marked by a ring instead of the range's fill, and only the brand focus outline)
+// registry: auradata (shadcn calendar: 36 px days on a phone, a capitalized caption, a range painted only in its own month, today marked by a ring instead of the range's fill, and only the brand focus outline; Spanish by default, labels for screen readers included (react-day-picker's `es`, not date-fns', which only names the days); the arrow keys move the focus between days (the day button lacked its ref))
 import * as React from "react"
 import { cn } from "cn"
 import {
@@ -7,6 +7,7 @@ import {
   type DayButton,
   type Locale,
 } from "react-day-picker"
+import { es } from "react-day-picker/locale"
 
 import { Button, buttonVariants } from "@/components/ui/button"
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from "lucide-react"
@@ -17,7 +18,8 @@ function Calendar({
   showOutsideDays = true,
   captionLayout = "label",
   buttonVariant = "ghost",
-  locale,
+  // AuraData writes in Spanish: the days, the months and the names screen readers hear («Ir al mes anterior»).
+  locale = es,
   formatters,
   components,
   ...props
@@ -202,6 +204,8 @@ function CalendarDayButton({
 
   return (
     <Button
+      // The arrow keys move the calendar's focused day; this ref moves the browser's focus with it.
+      ref={ref}
       variant="ghost"
       size="icon"
       data-day={day.date.toLocaleDateString(locale?.code)}

@@ -1,4 +1,4 @@
-// registry: auradata (a date range filter with the periods AuraData reports use, in Spanish)
+// registry: auradata (a date range filter with the periods AuraData reports use, in Spanish, screen-reader labels included)
 import * as React from "react"
 import {
   addMonths,
@@ -10,7 +10,6 @@ import {
   subDays,
   subMonths,
 } from "date-fns"
-import { es } from "date-fns/locale/es"
 import { CalendarIcon } from "lucide-react"
 import type { DateRange } from "react-day-picker"
 import { cn } from "cn"
@@ -151,7 +150,6 @@ function DateRangeFilter({
         </div>
         <Calendar
           mode="range"
-          locale={es}
           // One month on a phone, so the popover fits the screen; two side by side from 768px.
           numberOfMonths={isMobile ? 1 : 2}
           // A day of the next month in the first grid would read as a second end of the range.
