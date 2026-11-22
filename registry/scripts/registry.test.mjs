@@ -33,7 +33,12 @@ test('lists files from the repository root, as a GitHub registry needs', () => {
 
 test('points at shadcn for stock dependencies and at this GitHub repository for ours', () => {
   expect(item('login').registryDependencies).toContain('cristianruben-dev/auradata-design/button')
-  expect(item('kpi-card').registryDependencies).toEqual(['card', 'cristianruben-dev/auradata-design/delta', 'skeleton'])
+  expect(item('kpi-card').registryDependencies).toEqual([
+    'card',
+    'cristianruben-dev/auradata-design/delta',
+    'cristianruben-dev/auradata-design/sparkline',
+    'skeleton',
+  ])
   expect(item('chart-palette').registryDependencies).toEqual(['cristianruben-dev/auradata-design/chart'])
 })
 
@@ -336,4 +341,10 @@ test('publishes the donut and the funnel on the palette and the formats', () => 
     'cristianruben-dev/auradata-design/format',
   ])
   expect(item('funnel-chart').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
+})
+
+test('publishes the sparkline on its own and the gauge with the formats', () => {
+  expect(item('sparkline').dependencies).toEqual(['cn'])
+  expect(item('sparkline').registryDependencies).toBeUndefined()
+  expect(item('gauge').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
 })

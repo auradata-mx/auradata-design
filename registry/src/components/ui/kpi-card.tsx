@@ -1,9 +1,10 @@
-// registry: auradata (a KPI card of the brand, with loading and no-data states, its sparkline beside the value and change, and the shared delta)
+// registry: auradata (a KPI card of the brand, with loading and no-data states, the shared sparkline beside the value and change, and the shared delta)
 import { cn } from "cn"
 
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Delta, deltaTone } from "@/components/ui/delta"
+import { Sparkline } from "@/components/ui/sparkline"
 
 type KpiCardProps = Omit<React.ComponentProps<typeof Card>, "children"> & {
   label: React.ReactNode
@@ -20,47 +21,6 @@ type KpiCardProps = Omit<React.ComponentProps<typeof Card>, "children"> & {
   trend?: number[]
   /** The number is loading: skeletons in its shape, as tall as the loaded card, and `aria-busy`. */
   loading?: boolean
-}
-
-const WIDTH = 96
-const HEIGHT = 32
-
-/** The trend as one line, scaled to fill the box; flat when every value is the same. */
-function sparklinePoints(values: number[]) {
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  const step = WIDTH / (values.length - 1)
-  // 2 px inside the box, so the stroke is not clipped at the top and the bottom.
-  const y = (value: number) => (max === min ? HEIGHT / 2 : 2 + ((max - value) / (max - min)) * (HEIGHT - 4))
-  return values.map((value, index) => `${(index * step).toFixed(1)},${y(value).toFixed(1)}`).join(" ")
-}
-
-function Sparkline({ values, tone }: { values: number[]; tone: "good" | "bad" | "flat" | "none" }) {
-  return (
-    <svg
-      data-slot="kpi-sparkline"
-      aria-hidden
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      preserveAspectRatio="none"
-      className={cn(
-        "h-8 w-24 shrink-0 overflow-visible",
-        tone === "good" && "text-success",
-        tone === "bad" && "text-destructive",
-        tone === "flat" && "text-muted-foreground",
-        tone === "none" && "text-chart-1"
-      )}
-    >
-      <polyline
-        points={sparklinePoints(values)}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
-  )
 }
 
 /** One number that matters, with its change against the previous period. */
@@ -124,7 +84,9 @@ function KpiCard({
               <Delta change={change} comparison={comparison} goodDirection={goodDirection} locale={locale} />
             )}
           </div>
-          {trend && trend.length > 1 && <Sparkline values={trend} tone={change === undefined ? "none" : tone} />}
+          {trend && trend.length > 1 && (
+            <Sparkline data-slot="kpi-sparkline" values={trend} tone={change === undefined ? "none" : tone} />
+          )}
         </div>
       </CardContent>
     </Card>
