@@ -1,4 +1,4 @@
-// registry: auradata (shadcn attachment whose group fades at the cut edge on a phone and whose remove button sits evenly in the card)
+// registry: auradata (shadcn attachment whose group fades at the cut edge on a phone and whose remove button sits evenly in the card; an error description in the full destructive color, which reads AA on the card)
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -118,7 +118,7 @@ function AttachmentDescription({
     <span
       data-slot="attachment-description"
       className={cn(
-        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive/80",
+        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive",
         "max-w-full",
         className
       )}
