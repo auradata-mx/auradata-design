@@ -255,7 +255,6 @@ function printCss(light) {
       },
     },
     '@media screen': { '[data-print="only"]': { display: 'none' } },
-    '@page': { margin: '16mm 14mm' },
   };
 }
 
