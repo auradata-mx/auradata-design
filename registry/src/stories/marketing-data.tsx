@@ -22,3 +22,34 @@ export function ClientMark({ name, icon: Icon }: { name: string; icon: LucideIco
     </span>
   )
 }
+
+/** AuraData BI plans, in MXN before tax; `annual` is the monthly price when paid for a year. */
+export const PLANS = [
+  {
+    name: 'Inicial',
+    description: 'Para empezar a ver tus números en un solo lugar.',
+    price: { monthly: 1490, annual: 1190 },
+    features: ['Hasta 5 usuarios', '10 tableros', 'Excel y Google Sheets', 'Soporte por correo'],
+  },
+  {
+    name: 'Equipo',
+    description: 'Para áreas que comparten tableros todos los días.',
+    price: { monthly: 3990, annual: 3190 },
+    features: [
+      'Hasta 25 usuarios',
+      'Tableros ilimitados',
+      'Bases de datos y sistemas contables',
+      'Pregúntale a tus datos con IA',
+      'Soporte prioritario',
+    ],
+    featured: true,
+    badge: 'Más popular',
+  },
+  {
+    name: 'Empresa',
+    description: 'Para toda la organización, con implementación a la medida.',
+    price: null,
+    priceLabel: 'A la medida',
+    features: ['Usuarios ilimitados', 'Inicio de sesión único (SSO)', 'Implementación a la medida', 'Un consultor asignado'],
+  },
+]

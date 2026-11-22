@@ -1,13 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChartColumnIcon, LightbulbIcon, LayersIcon, WorkflowIcon } from 'lucide-react'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, fn, userEvent, within } from 'storybook/test'
 
 import { BenefitsGrid, type Benefit } from '@/components/blocks/benefits-grid'
 import { CtaBand } from '@/components/blocks/cta-band'
 import { Faq, type FaqItem } from '@/components/blocks/faq'
 import { Hero } from '@/components/blocks/hero'
+import { Pricing, type PricingPlan } from '@/components/blocks/pricing'
 import { SiteFooter, type FooterColumn } from '@/components/blocks/site-footer'
 import { Button } from '@/components/ui/button'
+import { formatPercent } from '@/lib/format'
+import { PLANS } from './marketing-data'
 
 const BENEFITS: Benefit[] = [
   {
@@ -137,6 +140,36 @@ const footer = (
   />
 )
 
+const PRICING_PLANS: PricingPlan[] = PLANS.map((plan) => ({
+  ...plan,
+  cta: (
+    <Button
+      size="lg"
+      variant={plan.featured ? 'default' : 'outline'}
+      className="w-full"
+      render={<a href={plan.price ? '#registro' : '#contacto'} />}
+      nativeButton={false}
+    >
+      {plan.price ? `Empezar con ${plan.name}` : 'Hablar con ventas'}
+    </Button>
+  ),
+}))
+
+const onBillingChange = fn()
+
+const pricing = (props: Partial<React.ComponentProps<typeof Pricing>> = {}) => (
+  <Pricing
+    id="precios"
+    eyebrow="Precios"
+    title="Un plan para cada"
+    highlight="etapa de tu equipo"
+    description="Precios en pesos mexicanos, más IVA. Cambia de plan o cancela cuando quieras."
+    plans={PRICING_PLANS}
+    annualNote={`Ahorra ${formatPercent(0.2)}`}
+    {...props}
+  />
+)
+
 const meta = {
   title: 'Blocks/Marketing',
   // Blocks are whole sections: no padding around them.
@@ -191,6 +224,52 @@ export const Footer: Story = {
     const links = canvasElement.querySelectorAll<HTMLElement>('nav a')
     await expect(links.length).toBeGreaterThan(0)
     for (const link of links) await expect(link.getBoundingClientRect().height).toBeGreaterThanOrEqual(40)
+  },
+}
+
+/**
+ * Plans in MXN with a monthly/annual switch: the annual price is per month, with the yearly total under
+ * it. The recommended plan carries the brand gradient border.
+ */
+export const PricingSection: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Pricing',
+  render: () => pricing({ onBillingChange }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const monthly = canvas.getByRole('button', { name: 'Mensual' })
+    const annual = canvas.getByRole('button', { name: /^Anual/ })
+    await expect(canvas.getByRole('group', { name: 'Periodo de facturación' })).toBeInTheDocument()
+    await expect(monthly).toHaveAttribute('aria-pressed', 'true')
+    const team = canvas.getByRole('article', { name: 'Equipo' })
+    await expect(within(team).getByText('$3,990')).toBeInTheDocument()
+    await expect(within(team).getByText('Facturado cada mes')).toBeInTheDocument()
+
+    await userEvent.click(annual)
+    await expect(annual).toHaveAttribute('aria-pressed', 'true')
+    await expect(monthly).toHaveAttribute('aria-pressed', 'false')
+    await expect(onBillingChange).toHaveBeenCalledWith('annual')
+    await expect(within(team).getByText('$3,190')).toBeInTheDocument()
+    await expect(within(team).getByText('$38,280 al año')).toBeInTheDocument()
+    // The plan without a price keeps its label either way.
+    await expect(within(canvas.getByRole('article', { name: 'Empresa' })).getByText('A la medida')).toBeInTheDocument()
+    // Clicking the pressed period again keeps it: one is always chosen.
+    await userEvent.click(annual)
+    await expect(annual).toHaveAttribute('aria-pressed', 'true')
+
+    // From md the cards share rows: every button and every heading lines up, whatever the text above.
+    if (window.innerWidth >= 768) {
+      const tops = (selector: string) =>
+        new Set([...canvasElement.querySelectorAll('article')].map((plan) => plan.querySelector(selector)!.getBoundingClientRect().top))
+      await expect(tops('h3').size).toBe(1)
+      await expect(tops('a').size).toBe(1)
+    }
+
+    // Back to monthly for the screenshot, without a focus ring.
+    await userEvent.click(monthly)
+    await expect(within(team).getByText('$3,990')).toBeInTheDocument()
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
 
