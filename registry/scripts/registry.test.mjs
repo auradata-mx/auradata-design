@@ -169,3 +169,12 @@ test('installs the progress bar and the formatter with sonner, for progress toas
     expect.arrayContaining(['cristianruben-dev/auradata-design/progress', 'cristianruben-dev/auradata-design/format']),
   )
 })
+
+test('installs the data table with its own parts (T61)', () => {
+  expect(item('data-table').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/checkbox', 'cristianruben-dev/auradata-design/data-table-selection-bar'])
+  )
+  expect(item('data-table-selection-bar').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/button', 'cristianruben-dev/auradata-design/format', 'separator'])
+  )
+})

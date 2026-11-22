@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state and a sideways scroll on narrow screens)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, and optional row selection with a floating bar of bulk actions)
 import * as React from "react"
 import {
   columnFilteringFeature,
@@ -11,20 +11,25 @@ import {
   FlexRender,
   globalFilteringFeature,
   rowPaginationFeature,
+  rowSelectionFeature,
   rowSortingFeature,
   sortFns,
   tableFeatures,
   useTable,
   type ColumnDef,
   type ColumnVisibilityState,
+  type OnChangeFn,
   type PaginationState,
   type RowData,
+  type RowSelectionState,
   type SortingState,
 } from "@tanstack/react-table"
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, Columns3Icon, SearchIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { DataTableSelectionBar } from "@/components/ui/data-table-selection-bar"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -38,13 +43,14 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-/** What every data table does in the browser: sort, filter (global), size and hide columns, and paginate. */
+/** What every data table does in the browser: sort, filter (global), size and hide columns, select rows and paginate. */
 const dataTableFeatures = tableFeatures({
   columnFilteringFeature,
   columnSizingFeature,
   columnVisibilityFeature,
   globalFilteringFeature,
   rowPaginationFeature,
+  rowSelectionFeature,
   rowSortingFeature,
   filteredRowModel: createFilteredRowModel(),
   sortedRowModel: createSortedRowModel(),
@@ -71,6 +77,30 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   defaultColumnsOpen?: boolean
   /** The rows are loading: skeleton rows for a full page, the table region `aria-busy`, the pager disabled. */
   loading?: boolean
+  /** A checkbox on each row and one in the header for the page. The selection outlives sorting, filtering and pages. */
+  selectable?: boolean
+  /** A stable id per row (its key in `rowSelection`); the index by default. */
+  getRowId?: (row: TData, index: number) => string
+  /** The row's name in its checkbox label: «Seleccionar «Ventas por región»». «Seleccionar fila» without it. */
+  rowLabel?: (row: TData) => string
+  /** The selected rows, controlled. Use `defaultRowSelection` to only start with some. */
+  rowSelection?: RowSelectionState
+  defaultRowSelection?: RowSelectionState
+  onRowSelectionChange?: (selection: RowSelectionState) => void
+  /** The actions of the floating bar while rows are selected; `clear` empties the selection. */
+  bulkActions?: (selected: TData[], clear: () => void) => React.ReactNode
+}
+
+/** A value its parent may control: the prop when given, else local state; either way `onChange` hears it. */
+function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (value: T) => void) {
+  const [local, setLocal] = React.useState(defaultValue)
+  const current = value === undefined ? local : value
+  const set: OnChangeFn<T> = (updater) => {
+    const next = typeof updater === "function" ? (updater as (old: T) => T)(current) : updater
+    if (value === undefined) setLocal(next)
+    onChange?.(next)
+  }
+  return [current, set] as const
 }
 
 type MoreColumns = "none" | "start" | "end" | "both"
@@ -123,6 +153,13 @@ function DataTable<TData extends RowData>({
   pageSizeOptions = [10, 20, 50],
   defaultColumnsOpen,
   loading = false,
+  selectable = false,
+  getRowId,
+  rowLabel,
+  rowSelection: rowSelectionProp,
+  defaultRowSelection = {},
+  onRowSelectionChange,
+  bulkActions,
   className,
   ...props
 }: DataTableProps<TData>) {
@@ -132,12 +169,49 @@ function DataTable<TData extends RowData>({
   const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize })
   const pageSizeLabel = React.useId()
   const [regionRef, more] = useMoreColumns()
+  const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
+
+  const allColumns = React.useMemo<DataTableColumn<TData>[]>(
+    () =>
+      selectable
+        ? [
+            {
+              id: "select",
+              size: 44,
+              enableSorting: false,
+              enableHiding: false,
+              header: ({ table }) => (
+                <Checkbox
+                  data-select-all=""
+                  checked={table.getIsAllPageRowsSelected()}
+                  indeterminate={table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()}
+                  onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked)}
+                  aria-label="Seleccionar todas las filas de la página"
+                />
+              ),
+              cell: ({ row }) => (
+                <Checkbox
+                  checked={row.getIsSelected()}
+                  disabled={!row.getCanSelect()}
+                  onCheckedChange={(checked) => row.toggleSelected(checked)}
+                  aria-label={rowLabel ? `Seleccionar «${rowLabel(row.original)}»` : "Seleccionar fila"}
+                />
+              ),
+            },
+            ...columns,
+          ]
+        : columns,
+    [columns, selectable, rowLabel]
+  )
 
   const table = useTable({
     features: dataTableFeatures,
     data,
-    columns,
-    state: { sorting, globalFilter, columnVisibility, pagination },
+    columns: allColumns,
+    getRowId,
+    enableRowSelection: selectable,
+    state: { sorting, globalFilter, columnVisibility, pagination, rowSelection },
+    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     onColumnVisibilityChange: setColumnVisibility,
@@ -149,6 +223,14 @@ function DataTable<TData extends RowData>({
   const sized = columns.some((column) => column.size !== undefined)
   const pageCount = Math.max(table.getPageCount(), 1)
   const hideable = table.getAllLeafColumns().filter((column) => column.getCanHide())
+  const selectedRows = bulkActions ? table.getSelectedRowModel().rows.map((row) => row.original) : []
+  const clearSelection = () => {
+    // The bar is about to go: when it has the focus, the header checkbox takes it, so the keyboard stays in the table.
+    const focused = document.activeElement
+    if (focused?.closest("[data-slot=data-table-selection-bar]"))
+      focused.closest("[data-slot=data-table]")?.querySelector<HTMLElement>("[data-select-all]")?.focus()
+    table.resetRowSelection(true)
+  }
 
   return (
     <div data-slot="data-table" className={cn("grid gap-3", className)} {...props}>
@@ -277,7 +359,7 @@ function DataTable<TData extends RowData>({
               ))
             ) : rows.length ? (
               rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} data-state={row.getIsSelected() ? "selected" : undefined}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       <FlexRender cell={cell} />
@@ -341,6 +423,12 @@ function DataTable<TData extends RowData>({
           </Button>
         </div>
       </div>
+
+      {bulkActions && (
+        <DataTableSelectionBar count={selectedRows.length} onClear={clearSelection}>
+          {bulkActions(selectedRows, clearSelection)}
+        </DataTableSelectionBar>
+      )}
     </div>
   )
 }

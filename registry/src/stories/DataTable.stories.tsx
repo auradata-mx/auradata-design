@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, waitFor, within } from 'storybook/test'
+import { FolderInputIcon, Trash2Icon } from 'lucide-react'
+import type * as React from 'react'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { formatDate } from '@/lib/format'
 
@@ -174,5 +177,103 @@ export const Paging: Story = {
     await expect(widths()).toEqual(before)
     await expect(canvas.getByRole('button', { name: 'Anterior' })).toBeEnabled()
     ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** The bulk actions of the selection stories: they only report what they were given. */
+const moveRows = fn()
+const deleteRows = fn()
+
+const selectionArgs = {
+  selectable: true,
+  getRowId: (informe: Informe) => informe.nombre,
+  rowLabel: (informe: Informe) => informe.nombre,
+  bulkActions: (selected: Informe[], clear: () => void) => (
+    <>
+      <Button variant="outline" size="sm" onClick={() => moveRows(selected.map((informe) => informe.nombre))}>
+        <FolderInputIcon data-icon="inline-start" aria-hidden />
+        Mover
+      </Button>
+      <Button
+        variant="destructive"
+        size="sm"
+        onClick={() => {
+          deleteRows(selected.map((informe) => informe.nombre))
+          clear()
+        }}
+      >
+        <Trash2Icon data-icon="inline-start" aria-hidden />
+        Eliminar
+      </Button>
+    </>
+  ),
+} satisfies Partial<React.ComponentProps<typeof DataTable<Informe>>>
+
+/**
+ * Rows with a checkbox: a click selects one, the header selects the page. A bar floats over the bottom of the
+ * screen with the count and the bulk actions, and «Quitar selección» clears it.
+ */
+export const Selection: Story = {
+  args: selectionArgs,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.queryByRole('toolbar', { name: 'Acciones de la selección' })).toBeNull()
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Seleccionar «Ventas por región»' }))
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Seleccionar «Pedidos del mes»' }))
+    const bar = await canvas.findByRole('toolbar', { name: 'Acciones de la selección' })
+    await expect(bar).toHaveTextContent('2 seleccionados')
+    const all = canvas.getByRole('checkbox', { name: 'Seleccionar todas las filas de la página' })
+    await expect(all).toHaveAttribute('aria-checked', 'mixed')
+    const row = canvas.getByRole('checkbox', { name: 'Seleccionar «Ventas por región»' }).closest('tr')!
+    await expect(row).toHaveAttribute('data-state', 'selected')
+
+    await userEvent.click(within(bar).getByRole('button', { name: 'Mover' }))
+    await expect(moveRows).toHaveBeenLastCalledWith(['Ventas por región', 'Pedidos del mes'])
+
+    await userEvent.click(all)
+    await expect(all).toHaveAttribute('aria-checked', 'true')
+    await expect(bar).toHaveTextContent('10 seleccionados')
+    // The selection outlives the page: the second page starts unselected, the first keeps its 10.
+    await userEvent.click(canvas.getByRole('button', { name: 'Siguiente' }))
+    await expect(all).toHaveAttribute('aria-checked', 'false')
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Seleccionar «Ventas por canal»' }))
+    await expect(bar).toHaveTextContent('11 seleccionados')
+
+    await userEvent.click(within(bar).getByRole('button', { name: 'Eliminar' }))
+    await expect(deleteRows).toHaveBeenLastCalledWith(expect.arrayContaining(['Ventas por canal', 'Ventas por región']))
+    await expect(deleteRows.mock.lastCall?.[0]).toHaveLength(11)
+    await waitFor(() => expect(canvas.queryByRole('toolbar', { name: 'Acciones de la selección' })).toBeNull())
+    await expect(all).toHaveAttribute('aria-checked', 'false')
+    // The bar had the focus: it goes back to the table, on the header checkbox.
+    await expect(all).toHaveFocus()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** One row selected: «1 seleccionado», and «Quitar selección» clears it. */
+export const SelectionClear: Story = {
+  args: selectionArgs,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Seleccionar «Margen por producto»' }))
+    const bar = await canvas.findByRole('toolbar', { name: 'Acciones de la selección' })
+    await expect(bar).toHaveTextContent('1 seleccionado')
+    await userEvent.click(within(bar).getByRole('button', { name: 'Quitar selección' }))
+    await waitFor(() => expect(canvas.queryByRole('toolbar', { name: 'Acciones de la selección' })).toBeNull())
+    await expect(canvas.getByRole('checkbox', { name: 'Seleccionar «Margen por producto»' })).toHaveAttribute(
+      'aria-checked',
+      'false'
+    )
+    await expect(canvas.getByRole('checkbox', { name: 'Seleccionar todas las filas de la página' })).toHaveFocus()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Three rows selected on mount, for the visual tests: the bar over the table, on a phone too. */
+export const SelectionBar: Story = {
+  tags: ['mobile'],
+  args: {
+    ...selectionArgs,
+    defaultRowSelection: { 'Ventas por región': true, 'Pedidos del mes': true, 'Ticket promedio': true },
   },
 }
