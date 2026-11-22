@@ -812,6 +812,26 @@
       ]
     },
     {
+      "name": "data-table-selection-bar",
+      "type": "registry:ui",
+      "title": "Data table selection bar",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/format",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/data-table-selection-bar.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data table",
@@ -822,9 +842,12 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/checkbox",
+        "cristianruben-dev/auradata-design/data-table-selection-bar",
         "cristianruben-dev/auradata-design/dropdown-menu",
         "cristianruben-dev/auradata-design/input",
         "cristianruben-dev/auradata-design/select",
+        "cristianruben-dev/auradata-design/toggle",
         "skeleton",
         "table"
       ],
