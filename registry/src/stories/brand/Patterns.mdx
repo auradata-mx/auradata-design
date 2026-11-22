@@ -106,3 +106,30 @@ De arriba abajo, siempre en este orden:
 | Estados por bloque | Cada gráfica carga, falla o queda vacía sola: un `ErrorState` no tumba la página |
 
 Ve el shell completo en [Blocks / App / Shell](?path=/story/blocks-app--shell) y las piezas en [Layout y grilla](?path=/docs/brand-08-layout-y-grilla--docs).
+
+## Patrones de app
+
+Las piezas que se repiten en la navegación de AuraData BI. Úsalas antes de armar una propia.
+
+| Componente | Para qué y cómo |
+| --- | --- |
+| `TabsCount` | Secciones de una página con su conteo. El número es parte del nombre de la pestaña («Míos 12»); más de `max` se lee «99+» |
+| `SegmentedControl` | Ver lo mismo de otra forma: una sola opción a la vez (Tabla \| Gráfica). Si cada opción muestra contenido distinto, son pestañas |
+| `MasterDetail` | Una lista y su detalle. En el teléfono el detalle reemplaza a la lista; «Volver» regresa a la fila que lo abrió |
+| `OnboardingChecklist` | Los primeros pasos. El siguiente lleva el botón principal; la guía se puede ocultar |
+| `Tour` | Presentar una pantalla nueva en tres a cinco pasos, cada uno en un elemento visible. Siempre se puede saltar y no vuelve a abrirse solo |
+| `ShortcutsDialog` | Los atajos. Se abre con «?» fuera de los campos de texto; las teclas van en `Kbd` |
+| `UserMenu` | La cuenta: espacio, tema, idioma, ayuda y «Cerrar sesión» al final |
+| `EmptyIllustration` | Nada que mostrar, dentro de `Empty`: qué falta y el primer paso. La ilustración es decorativa |
+
+## Chat con IA
+
+| Parte | Regla |
+| --- | --- |
+| Archivos | «Adjuntar archivo» con los tipos aceptados; cada archivo se puede quitar antes de enviar |
+| Respuesta en camino | Un cursor al final del texto; la respuesta lleva `aria-busy` y se anuncia completa. «Detener respuesta» en lugar de «Enviar» |
+| Fuentes | Los datasets e informes que usó, como enlaces bajo «Fuentes». Sin fuentes, no hay números |
+| Hallazgos | `InsightCard`: el hallazgo como frase, su métrica con el cambio y «Ver detalle» |
+| Opinión | 👍/👎 en cada respuesta terminada; el motivo después de 👎 es opcional |
+
+Ve el chat completo en [Blocks / App](?path=/story/blocks-app--chat-insights).
