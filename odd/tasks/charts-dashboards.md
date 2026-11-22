@@ -1,0 +1,34 @@
+# Charts and dashboards (T62)
+
+Objective: a chart catalog, chart card, interactive legend, richer tooltip, period comparison and a dashboard grid on shadcn's `chart` (Recharts 3.11), published by the AuraData registry, documented in Brand/10.
+Branch: `feat/charts-dashboards` (worktree from `origin/main`), merged to `main` by rebase. Delivery: ask-on-risk, one commit per task. Test runner: vitest (`test:unit`, `test:stories` with axe light), Playwright (`test:visual:docker`, axe dark + screenshots), `tsc -b`, lint.
+
+## Specs
+
+- S1 (catalog): «**Catálogo de gráficas** sobre el `chart` de shadcn (Recharts 3.11, ya publicado como nuestro): línea, área, barras apiladas y agrupadas, dona/pie, combinada barras+línea, mapa de calor (incluido el de calendario), embudo, gauge/anillo de progreso y sparkline suelto. Todas usan la paleta del tema, `lib/format` (es-MX) en ejes y tooltips, y se ven bien en claro, oscuro y móvil.»
+- S2 (chart card): «**Tarjeta de gráfica:** título, descripción, slot de filtro, menú («Exportar PNG», «Ver datos») y estados de carga (skeleton), vacío y error (reutiliza `empty` y `error-state`).»
+- S3 (legend, tooltip, comparison): «**Leyenda interactiva** (ocultar o mostrar series), **tooltip más rico** (valor, % y comparación) y **comparación contra el periodo anterior** (delta con flecha, como el KPI card).»
+- S4 (dashboard): «**Grid de dashboard:** un layout responsive para KPI, gráficas y tabla, con un bloque de ejemplo de dashboard completo.»
+- S5 (docs): «**Documentar** en Brand/10 Visualización de datos cuándo usar cada gráfica.»
+- S6 (palettes): «El mapa de calor y la divergente usarán la **paleta secuencial y divergente** que está haciendo el T59. Haz primero lo que no depende de eso; cuando el T59 esté en `main`, haz rebase y úsalas.»
+- S7 (ECharts): «AuraData BI usa ECharts (existe `echarts.json` en tokens). Si alguna gráfica necesita que su versión de ECharts quede igual, documéntalo, pero el registry es Recharts.»
+- S8 (quality, from the brief): tests first (RED → GREEN; «play tests de leyenda y menú»); every story passes axe light (`test:stories`) and dark with a screenshot (`test:visual:docker`), chart animations off in stories, every new or changed screenshot looked at, stories that change on a phone tagged `mobile` literally; UI copy in Spanish (tú, «», sentence case), code, comments and commits in English; only files with their own `// registry: auradata (<why>)` line publish; `registry.json` is generated.
+
+## Tasks
+
+| ID | Specs | Route | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| C1 | S3, S1 | inline | done (this commit) | `delta.tsx` (arrow, signed `formatPercent`, comparison; `deltaTone`, `previousChange`), rendered by `kpi-card` with the same DOM (KPI baselines unchanged); `chart.tsx`: tooltip values through `formatNumber` or `valueFormatter`, `showPercent` (share of the point or of `percentTotal`), `previousKey` + `comparison` + `goodDirection` (a `Delta` under the name), `data-slot=chart-tooltip`; legend `hiddenSeries` + `onSeriesToggle` (buttons with `aria-pressed`, 24 px targets, line keys for lines, a hidden series dimmed with its color) and `useChartSeries`; the bar cursor without Recharts' `#ccc` outline. RED: generator test (kpi-card → delta, chart → delta + format) and tsc (unknown `useChartSeries`, `valueFormatter`) → GREEN unit 66/66; plays Interactive legend (click and Space toggle, lines 3 → 2 → 3) and Rich tooltip (`$1,284,000`, `30.9 %`, `+6.1 %`, `−1.4 %` bad tone) GREEN; Chart, KPI, chat story tests 26/26; visual Chart 8/8 twice (Bars animation off, baseline re-taken) |
+| C2 | S2 | inline | pending | `chart-card.tsx` (title, description, filter slot, menu «Exportar PNG» / «Ver datos», loading, empty, error, refreshing) and `lib/chart-export` |
+| C3 | S1, S3 | inline | pending | `cartesian-chart.tsx`: `LineChart`, `AreaChart`, `BarChart` (stacked, grouped, horizontal), `ComboChart` (bars + line on one axis) |
+| C4 | S1 | inline | pending | `donut-chart.tsx`, `funnel-chart.tsx`, `gauge.tsx`, `sparkline.tsx` (shared with `kpi-card`) |
+| C5 | S1, S6 | inline | pending | `heatmap.tsx` (`Heatmap`, `CalendarHeatmap`) on the T59 sequential palette; diverging scale where it applies |
+| C6 | S4 | inline | pending | `dashboard-grid.tsx` and block `dashboard` (KPI row, charts, table), mobile |
+| C7 | S5, S7 | inline | pending | Brand/10: when to use each chart, ECharts equivalence |
+| C8 | S8 | inline | pending | Rebase on `main`, regenerate registry, refresh baselines, all checks, push to `main`, CI and Coolify |
+
+## Log
+
+- L1 (2026-11-21, coordinator thread, the user's request relayed): «vamos a hacer por favor todo eso … en chats separados», about the S11 list; this thread owns T62, «Gráficas y dashboards». Brief quoted in S1-S8.
+- L2 (decisions, C1-C7 plan): the charts ship as registry components with a small data-first API (`data`, `index`, `series` labels, `valueFormatter`), built on `chart.tsx`, so every product draws the same marks; shadcn's own chart examples are copy-paste compositions, which is what drifted before. Mark specs from the dataviz method: bars at most 24 px thick with a 4 px rounded data end, 2 px lines, ~10 % area wash, solid hairline grid, a 2 px surface gap between stacked segments, a legend for two or more series. The combo chart keeps one value axis (a dual axis misleads): bars and a line of the same unit (sales and target); two units get two charts. Hidden series keep their color (color follows the entity). Tooltip values lead and series names follow.
+- L3 (C1): Testing Library normalizes the no-break space before % to a plain space in the text but not in a string matcher, so plays match `30.9 %` with a plain space. Recharts 3 draws the bar tooltip cursor with `stroke="#ccc"` (a gray box in dark): `chart` now makes it transparent. Legend props are `hiddenSeries`/`onSeriesToggle`: `hidden` and `onToggle` clash with the div props.

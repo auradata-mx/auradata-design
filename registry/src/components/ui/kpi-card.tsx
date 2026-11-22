@@ -1,10 +1,9 @@
-// registry: auradata (a KPI card of the brand, with loading and no-data states, and its sparkline beside the value and change)
-import { ArrowDownRightIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react"
+// registry: auradata (a KPI card of the brand, with loading and no-data states, its sparkline beside the value and change, and the shared delta)
 import { cn } from "cn"
 
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { formatPercent } from "@/lib/format"
+import { Delta, deltaTone } from "@/components/ui/delta"
 
 type KpiCardProps = Omit<React.ComponentProps<typeof Card>, "children"> & {
   label: React.ReactNode
@@ -108,9 +107,7 @@ function KpiCard({
       </Card>
     )
   }
-  const direction = change === undefined || change === 0 ? "flat" : change > 0 ? "up" : "down"
-  const tone = direction === "flat" ? "flat" : direction === goodDirection ? "good" : "bad"
-  const Icon = { up: ArrowUpRightIcon, down: ArrowDownRightIcon, flat: ArrowRightIcon }[direction]
+  const tone = change === undefined ? "flat" : deltaTone(change, goodDirection)
   // A value too long for the card wraps instead of spilling out of it.
   const number = <div className="min-w-0 text-3xl font-semibold tracking-tight tabular-nums wrap-anywhere">{value}</div>
   return (
@@ -124,18 +121,7 @@ function KpiCard({
           <div className="grid min-w-0 gap-1">
             {number}
             {change !== undefined && (
-              <div data-tone={tone} className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Icon
-                  aria-hidden
-                  className={cn(
-                    "size-4",
-                    tone === "good" && "text-success",
-                    tone === "bad" && "text-destructive"
-                  )}
-                />
-                <span className="font-medium text-foreground tabular-nums">{formatPercent(change, { locale, signDisplay: "exceptZero" })}</span>
-                {comparison && <span>{comparison}</span>}
-              </div>
+              <Delta change={change} comparison={comparison} goodDirection={goodDirection} locale={locale} />
             )}
           </div>
           {trend && trend.length > 1 && <Sparkline values={trend} tone={change === undefined ? "none" : tone} />}

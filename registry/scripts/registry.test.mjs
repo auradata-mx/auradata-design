@@ -33,7 +33,7 @@ test('lists files from the repository root, as a GitHub registry needs', () => {
 
 test('points at shadcn for stock dependencies and at this GitHub repository for ours', () => {
   expect(item('login').registryDependencies).toContain('cristianruben-dev/auradata-design/button')
-  expect(item('kpi-card').registryDependencies).toEqual(['card', 'cristianruben-dev/auradata-design/format', 'skeleton'])
+  expect(item('kpi-card').registryDependencies).toEqual(['card', 'cristianruben-dev/auradata-design/delta', 'skeleton'])
   expect(item('chart-palette').registryDependencies).toEqual(['cristianruben-dev/auradata-design/chart'])
 })
 
@@ -293,4 +293,12 @@ test('publishes the insight card and installs it with the chat block', () => {
     expect.arrayContaining(['card', 'cristianruben-dev/auradata-design/format']),
   )
   expect(item('chat').registryDependencies).toContain('cristianruben-dev/auradata-design/insight-card')
+})
+
+test('publishes the chart pieces with the formats and the delta they share', () => {
+  expect(item('delta').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
+  expect(item('chart').registryDependencies).toEqual([
+    'cristianruben-dev/auradata-design/delta',
+    'cristianruben-dev/auradata-design/format',
+  ])
 })

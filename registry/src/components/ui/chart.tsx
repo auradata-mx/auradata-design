@@ -1,8 +1,13 @@
 // registry: auradata (axis labels take the muted text color: Recharts 3 names them .recharts-cartesian-axis-tick-value and paints them #666 inline, 3.3:1 on the dark card)
+// registry: auradata (the bar tooltip cursor drops the #ccc outline Recharts 3 draws around it)
+// registry: auradata (tooltip values in es-MX with their share and the change against the previous period; a legend that hides and shows series)
 import * as React from "react"
 import { cn } from "cn"
 import * as RechartsPrimitive from "recharts"
 import type { TooltipValueType } from "recharts"
+
+import { Delta, previousChange } from "@/components/ui/delta"
+import { formatNumber, formatPercent } from "@/lib/format"
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
@@ -63,7 +68,7 @@ function ChartContainer({
         data-slot="chart"
         data-chart={chartId}
         className={cn(
-          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick-value]:fill-muted-foreground! [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
+          "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick-value]:fill-muted-foreground! [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:stroke-transparent [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
           className
         )}
         {...props}
@@ -114,6 +119,13 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip
 
+/** The key of a payload item: its data key, or its name when the key is a function. */
+function payloadKey(item: { dataKey?: unknown; name?: unknown }) {
+  return typeof item.dataKey === "string" || typeof item.dataKey === "number"
+    ? String(item.dataKey)
+    : String(item.name ?? "value")
+}
+
 function ChartTooltipContent({
   active,
   payload,
@@ -128,6 +140,13 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
+  valueFormatter,
+  showPercent = false,
+  percentTotal,
+  previousKey,
+  comparison,
+  goodDirection = "up",
+  locale = "es-MX",
 }: React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
   React.ComponentProps<"div"> & {
     hideLabel?: boolean
@@ -135,6 +154,18 @@ function ChartTooltipContent({
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
     labelKey?: string
+    /** Writes each value, such as `formatCurrency`; plain es-MX numbers otherwise. */
+    valueFormatter?: (value: number, key: string) => React.ReactNode
+    /** Each value's share of the total beside it: of the values at this point, or of `percentTotal`. */
+    showPercent?: boolean
+    percentTotal?: number
+    /** The data key that holds each series' previous period (`(key) => \`${key}Anterior\``): its change, with the arrow. */
+    previousKey?: (key: string) => string
+    /** What the change compares with, such as "vs. 2025". */
+    comparison?: React.ReactNode
+    /** When a fall is the good news (costs, churn), set "down". */
+    goodDirection?: "up" | "down"
+    locale?: string
   } & Omit<
     RechartsPrimitive.DefaultTooltipContentProps<
       TooltipValueType,
@@ -185,9 +216,14 @@ function ChartTooltipContent({
   }
 
   const nestLabel = payload.length === 1 && indicator !== "dot"
+  const shown = payload.filter((item) => item.type !== "none")
+  const total =
+    percentTotal ??
+    shown.reduce((sum, item) => sum + (typeof item.value === "number" ? item.value : 0), 0)
 
   return (
     <div
+      data-slot="chart-tooltip"
       className={cn(
         "grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
         className
@@ -195,12 +231,16 @@ function ChartTooltipContent({
     >
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
-        {payload
-          .filter((item) => item.type !== "none")
-          .map((item, index) => {
+        {shown.map((item, index) => {
             const key = `${nameKey ?? item.name ?? item.dataKey ?? "value"}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
             const indicatorColor = color ?? item.payload?.fill ?? item.color
+            const dataKey = payloadKey(item)
+            const value = typeof item.value === "number" ? item.value : undefined
+            const share = showPercent && value !== undefined && total > 0 ? value / total : undefined
+            const previous = previousKey ? item.payload?.[previousKey(dataKey)] : undefined
+            const change =
+              value !== undefined && typeof previous === "number" ? previousChange(value, previous) : undefined
 
             return (
               <div
@@ -240,7 +280,7 @@ function ChartTooltipContent({
                     )}
                     <div
                       className={cn(
-                        "flex flex-1 justify-between leading-none",
+                        "flex flex-1 justify-between gap-4 leading-none",
                         nestLabel ? "items-end" : "items-center"
                       )}
                     >
@@ -251,13 +291,35 @@ function ChartTooltipContent({
                         </span>
                       </div>
                       {item.value != null && (
-                        <span className="font-mono font-medium text-foreground tabular-nums">
-                          {typeof item.value === "number"
-                            ? item.value.toLocaleString()
-                            : String(item.value)}
+                        <span className="flex items-baseline gap-1.5 whitespace-nowrap">
+                          <span className="font-mono font-medium text-foreground tabular-nums">
+                            {value === undefined
+                              ? String(item.value)
+                              : valueFormatter
+                                ? valueFormatter(value, dataKey)
+                                : formatNumber(value, { locale })}
+                          </span>
+                          {share !== undefined && (
+                            <span className="text-muted-foreground tabular-nums">
+                              {formatPercent(share, { locale })}
+                            </span>
+                          )}
                         </span>
                       )}
                     </div>
+                    {change !== undefined && (
+                      // Under the name, aligned with it: the indicator keeps its column.
+                      <Delta
+                        change={change}
+                        comparison={comparison}
+                        goodDirection={goodDirection}
+                        locale={locale}
+                        className={cn(
+                          "basis-full text-xs leading-none [&>svg]:size-3.5",
+                          !hideIndicator && !itemConfig?.icon && (indicator === "dot" ? "pl-4.5" : "pl-3")
+                        )}
+                      />
+                    )}
                   </>
                 )}
               </div>
@@ -270,15 +332,38 @@ function ChartTooltipContent({
 
 const ChartLegend = RechartsPrimitive.Legend
 
+/**
+ * Which series show. Give the legend `hiddenSeries={hidden}` and `onSeriesToggle={toggle}`, and each series `hide={isHidden(key)}`:
+ * the reader hides and shows them from the legend.
+ */
+function useChartSeries(initialHidden: string[] = []) {
+  const [hidden, setHidden] = React.useState(initialHidden)
+  const toggle = React.useCallback(
+    (key: string) =>
+      setHidden((current) =>
+        current.includes(key) ? current.filter((other) => other !== key) : [...current, key]
+      ),
+    []
+  )
+  const isHidden = React.useCallback((key: string) => hidden.includes(key), [hidden])
+  return { hidden, toggle, isHidden }
+}
+
 function ChartLegendContent({
   className,
   hideIcon = false,
   payload,
   verticalAlign = "bottom",
   nameKey,
+  hiddenSeries,
+  onSeriesToggle,
 }: React.ComponentProps<"div"> & {
   hideIcon?: boolean
   nameKey?: string
+  /** The keys of the hidden series: their names stay in the legend, dimmed, with an outlined swatch. */
+  hiddenSeries?: string[]
+  /** Makes each name a button that hides or shows its series (see `useChartSeries`). */
+  onSeriesToggle?: (key: string) => void
 } & RechartsPrimitive.DefaultLegendContentProps) {
   const { config } = useChart()
 
@@ -288,8 +373,11 @@ function ChartLegendContent({
 
   return (
     <div
+      data-slot="chart-legend"
+      role={onSeriesToggle ? "group" : undefined}
+      aria-label={onSeriesToggle ? "Mostrar u ocultar series" : undefined}
       className={cn(
-        "flex items-center justify-center gap-4",
+        "flex flex-wrap items-center justify-center gap-x-4 gap-y-1",
         verticalAlign === "top" ? "pb-3" : "pt-3",
         className
       )}
@@ -299,25 +387,51 @@ function ChartLegendContent({
         .map((item, index) => {
           const key = `${nameKey ?? item.dataKey ?? "value"}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
-
-          return (
-            <div
-              key={index}
-              className={cn(
-                "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
-              )}
-            >
+          const sector = item.payload as Record<string, unknown> | undefined
+          const seriesKey =
+            nameKey && typeof sector?.[nameKey] === "string"
+              ? (sector[nameKey] as string)
+              : String(item.dataKey ?? item.value)
+          const inactive = Boolean(item.inactive) || Boolean(hiddenSeries?.includes(seriesKey))
+          const content = (
+            <>
               {itemConfig?.icon && !hideIcon ? (
                 <itemConfig.icon />
               ) : (
                 <div
-                  className="h-2 w-2 shrink-0 rounded-[2px]"
-                  style={{
-                    backgroundColor: item.color,
-                  }}
+                  // Lines key with a stroke, bars and areas with a square; a hidden series keeps only the outline.
+                  className={cn(
+                    "shrink-0 border",
+                    item.type === "line" ? "h-0.5 w-3 rounded-full" : "h-2 w-2 rounded-[2px]",
+                    inactive && "bg-transparent! opacity-60"
+                  )}
+                  style={{ backgroundColor: item.color, borderColor: item.color }}
                 />
               )}
-              {itemConfig?.label}
+              {itemConfig?.label ?? item.value}
+            </>
+          )
+          const itemClass =
+            "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
+
+          return onSeriesToggle ? (
+            <button
+              key={index}
+              type="button"
+              aria-pressed={!inactive}
+              onClick={() => onSeriesToggle(seriesKey)}
+              className={cn(
+                itemClass,
+                // A 24 px target, without moving the names: the padding comes out of the gap.
+                "-mx-1 min-h-6 cursor-pointer rounded-sm px-1 outline-none select-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
+                inactive && "text-muted-foreground"
+              )}
+            >
+              {content}
+            </button>
+          ) : (
+            <div key={index} className={itemClass}>
+              {content}
             </div>
           )
         })}
@@ -368,4 +482,5 @@ export {
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  useChartSeries,
 }
