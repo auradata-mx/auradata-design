@@ -53,3 +53,31 @@ export const PLANS = [
     features: ['Usuarios ilimitados', 'Inicio de sesión único (SSO)', 'Implementación a la medida', 'Un consultor asignado'],
   },
 ]
+
+/** What each plan includes, row by row, for the comparison table: `true`/`false` or a short value. */
+export const COMPARISON = [
+  {
+    name: 'Datos',
+    rows: [
+      { feature: 'Usuarios', values: ['5', '25', 'Ilimitados'] },
+      { feature: 'Tableros', values: ['10', 'Ilimitados', 'Ilimitados'] },
+      { feature: 'Excel y Google Sheets', values: [true, true, true] },
+      { feature: 'Bases de datos y sistemas contables', values: [false, true, true] },
+    ],
+  },
+  {
+    name: 'Inteligencia',
+    rows: [
+      { feature: 'Pregúntale a tus datos con IA', values: [false, true, true] },
+      { feature: 'Alertas por correo', values: [true, true, true] },
+    ],
+  },
+  {
+    name: 'Seguridad y soporte',
+    rows: [
+      { feature: 'Inicio de sesión único (SSO)', values: [false, false, true] },
+      { feature: 'Bitácora de auditoría', values: [false, true, true] },
+      { feature: 'Soporte', values: ['Correo', 'Prioritario', 'Consultor asignado'] },
+    ],
+  },
+]

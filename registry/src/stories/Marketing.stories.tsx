@@ -6,11 +6,12 @@ import { BenefitsGrid, type Benefit } from '@/components/blocks/benefits-grid'
 import { CtaBand } from '@/components/blocks/cta-band'
 import { Faq, type FaqItem } from '@/components/blocks/faq'
 import { Hero } from '@/components/blocks/hero'
+import { PlanComparison } from '@/components/blocks/plan-comparison'
 import { Pricing, type PricingPlan } from '@/components/blocks/pricing'
 import { SiteFooter, type FooterColumn } from '@/components/blocks/site-footer'
 import { Button } from '@/components/ui/button'
 import { formatPercent } from '@/lib/format'
-import { PLANS } from './marketing-data'
+import { COMPARISON, PLANS } from './marketing-data'
 
 const BENEFITS: Benefit[] = [
   {
@@ -170,6 +171,15 @@ const pricing = (props: Partial<React.ComponentProps<typeof Pricing>> = {}) => (
   />
 )
 
+const comparison = (
+  <PlanComparison
+    eyebrow="Compara"
+    title="Todo lo que incluye cada plan"
+    plans={PLANS.map(({ name, featured }) => ({ name, featured }))}
+    groups={COMPARISON}
+  />
+)
+
 const meta = {
   title: 'Blocks/Marketing',
   // Blocks are whole sections: no padding around them.
@@ -270,6 +280,33 @@ export const PricingSection: Story = {
     await userEvent.click(monthly)
     await expect(within(team).getByText('$3,990')).toBeInTheDocument()
     ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/**
+ * Every plan side by side. On a phone the table scrolls sideways inside its frame while the feature
+ * names stay put; a check or a dash reads «Incluido» or «No incluido» to screen readers.
+ */
+export const Comparison: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Plan comparison',
+  render: () => comparison,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const table = canvas.getByRole('table', { name: 'Comparación de planes' })
+    const columns = within(table).getAllByRole('columnheader')
+    await expect(columns.map((header) => header.textContent)).toEqual(['Función', 'Inicial', 'RecomendadoEquipo', 'Empresa'])
+    // Each group heads its rows; each feature heads its row.
+    await expect(within(table).getByRole('rowheader', { name: 'Seguridad y soporte' })).toHaveAttribute('scope', 'rowgroup')
+    const sso = within(table).getByRole('rowheader', { name: 'Inicio de sesión único (SSO)' }).closest('tr')!
+    const cells = within(sso).getAllByRole('cell').map((cell) => cell.textContent)
+    await expect(cells).toEqual(['No incluido', 'No incluido', 'Incluido'])
+    // The recommended plan's column says so in words, not only with its tint.
+    await expect(within(table).getByRole('columnheader', { name: 'Recomendado Equipo' })).toBeInTheDocument()
+    // The frame scrolls with the keyboard too, and nothing in it widens the page.
+    await expect(canvas.getByRole('region', { name: 'Comparación de planes' })).toHaveAttribute('tabindex', '0')
+    await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth)
   },
 }
 
