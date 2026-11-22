@@ -348,3 +348,10 @@ test('publishes the sparkline on its own and the gauge with the formats', () => 
   expect(item('sparkline').registryDependencies).toBeUndefined()
   expect(item('gauge').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
 })
+
+test('publishes the heatmaps on the sequential and diverging palettes', () => {
+  expect(item('heatmap').registryDependencies).toEqual([
+    'cristianruben-dev/auradata-design/chart-palette',
+    'cristianruben-dev/auradata-design/format',
+  ])
+})
