@@ -1,7 +1,8 @@
 import { Meta } from '@storybook/addon-docs/blocks'
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import theme from '@auradata/tokens/shadcn-theme.json'
-import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { BarChart, LineChart } from '@/components/ui/cartesian-chart'
+import { DonutChart } from '@/components/ui/donut-chart'
+import { Gauge } from '@/components/ui/gauge'
 import { chartConfig } from '@/lib/chart-palette'
 import { DivergingExample, SequentialExample } from './PaletteExamples'
 import { Ramps, steps } from './TokenSwatches'
@@ -17,6 +18,21 @@ export const SALES = [
 ]
 
 export const config = chartConfig({ norte: 'Norte', centro: 'Centro', sur: 'Sur' })
+
+export const MONTHLY = [
+  { mes: 'Jun', ventas: 3820000, ventasAnterior: 3510000 },
+  { mes: 'Jul', ventas: 3890000, ventasAnterior: 3600000 },
+  { mes: 'Ago', ventas: 4010000, ventasAnterior: 3640000 },
+  { mes: 'Sep', ventas: 4030000, ventasAnterior: 3770000 },
+  { mes: 'Oct', ventas: 4161000, ventasAnterior: 3920000 },
+]
+
+export const CHANNELS = [
+  { canal: 'Distribuidores', ventas: 1840000 },
+  { canal: 'Tienda en línea', ventas: 1210000 },
+  { canal: 'Ventas directas', ventas: 760000 },
+  { canal: 'Marketplaces', ventas: 351000 },
+]
 
 # Gráficas que se leen a la primera
 
@@ -82,30 +98,111 @@ En Tailwind son clases como cualquier color: `bg-sequential-3`, `bg-diverging-8`
 
 ## Qué gráfica usar
 
-| Pregunta | Forma | Ejemplo |
+Empieza por la pregunta. La forma sale de ella, y a veces la respuesta no es una gráfica: es un número o una tabla.
+
+| Pregunta | Forma | Componente |
 | --- | --- | --- |
-| ¿Cuánto vale ahora y cómo va? | KPI (`KpiCard`) con cambio y sparkline | Ventas del mes, vs. el mes anterior |
-| ¿Cuál es más grande? | Barras, ordenadas de mayor a menor | Ventas por región |
-| ¿Cómo cambia en el tiempo? | Líneas | Ventas diarias de 90 días |
-| ¿Cómo se suma el total en el tiempo? | Área apilada | Ingresos por producto, mes a mes |
-| ¿Cuál es el detalle? | Tabla (`DataTable`) | Las ventas de cada cliente |
+| ¿Cuánto vale ahora y cómo va? | El número, su cambio y su tendencia | `KpiCard` con `trend` |
+| ¿Cuánto llevamos de la meta o del límite? | Anillo o medio gauge | `Gauge` (`thresholds` para un límite) |
+| ¿Cómo cambia en el tiempo? | Líneas; el periodo anterior, punteado | `LineChart` con `previousKey` |
+| ¿Cuánto se acumula en el tiempo? | Área; apilada para un total y sus partes | `AreaChart` (`stacked`) |
+| ¿Cuál es más grande? | Barras, de mayor a menor; horizontales si los nombres son largos | `BarChart` (`horizontal`) |
+| ¿Cómo se compara cada parte, periodo a periodo? | Barras agrupadas | `BarChart` |
+| ¿Cómo se forma el total? | Barras apiladas | `BarChart` (`stacked`) |
+| ¿Vamos contra la meta? | Barras y una línea de la misma unidad, en un solo eje | `ComboChart` |
+| ¿Qué parte del todo es cada una? | Dona con el total al centro, hasta seis partes; pastel con dos o tres | `DonutChart` |
+| ¿Dónde se pierde la gente? | Embudo con la conversión de cada paso | `FunnelChart` |
+| ¿Cuánto, en dos dimensiones? | Mapa de calor secuencial | `Heatmap` |
+| ¿De qué lado de la meta, en dos dimensiones? | Mapa de calor divergente | `Heatmap` divergente |
+| ¿Cómo se reparte en el año, día a día? | Calendario | `CalendarHeatmap` |
+| ¿Cómo va, en una fila o un texto? | Sparkline junto a su número | `Sparkline` |
+| ¿Cuál es el detalle? | Tabla | `DataTable` |
 
-Evita el pastel con más de tres partes y los ejes 3D: comparar ángulos y volúmenes es difícil.
+Todas toman la paleta en orden, escriben ejes y tooltips con `lib/format` y se ven en claro, oscuro y teléfono. Tú solo das los datos:
 
-<div className="sb-unstyled my-6">
-  <ChartContainer config={config} className="h-64 w-full max-w-xl">
-    <BarChart data={SALES} accessibilityLayer>
-      <CartesianGrid vertical={false} />
-      <XAxis dataKey="month" tickLine={false} axisLine={false} />
-      <YAxis tickLine={false} axisLine={false} width={48} tickFormatter={(value) => formatNumber(value)} />
-      <ChartTooltip content={<ChartTooltipContent />} />
-      <ChartLegend content={<ChartLegendContent />} itemSorter={null} />
-      {Object.keys(config).map((key) => (
-        <Bar key={key} dataKey={key} fill={`var(--color-${key})`} radius={4} isAnimationActive={false} />
-      ))}
-    </BarChart>
-  </ChartContainer>
+```tsx
+<LineChart data={ventas} index="mes" series={{ norte: 'Norte', sur: 'Sur' }} valueFormatter={formatCurrency} />
+```
+
+<div className="sb-unstyled my-6 grid gap-8 md:grid-cols-2">
+  <figure className="grid gap-2">
+    <LineChart
+      data={MONTHLY}
+      index="mes"
+      series={{ ventas: 'Ventas' }}
+      previousKey={(key) => `${key}Anterior`}
+      comparison="vs. 2025"
+      startAtZero={false}
+      valueFormatter={(value) => formatCurrency(value)}
+      axisFormatter={(value) => formatCompact(value, { currency: 'MXN' })}
+      animate={false}
+      className="h-56 [--chart-surface:var(--background)]"
+    />
+    <figcaption className="text-xs text-muted-foreground">Líneas: 2026 contra 2025, punteado.</figcaption>
+  </figure>
+  <figure className="grid gap-2">
+    <BarChart
+      data={SALES}
+      index="month"
+      series={{ norte: 'Norte', centro: 'Centro', sur: 'Sur' }}
+      stacked
+      animate={false}
+      className="h-56 [--chart-surface:var(--background)]"
+    />
+    <figcaption className="text-xs text-muted-foreground">Barras apiladas: el total y sus partes.</figcaption>
+  </figure>
+  <figure className="grid gap-2">
+    <DonutChart
+      data={CHANNELS}
+      index="canal"
+      value="ventas"
+      valueFormatter={(value) => formatCurrency(value)}
+      centerFormatter={(value) => formatCompact(value, { currency: 'MXN' })}
+      animate={false}
+      className="h-56 [--chart-surface:var(--background)]"
+    />
+    <figcaption className="text-xs text-muted-foreground">Dona: cuatro canales y el total al centro.</figcaption>
+  </figure>
+  <figure className="grid content-start justify-items-center gap-2">
+    <Gauge value={0.72} label="Meta del trimestre" />
+    <figcaption className="text-xs text-muted-foreground">Gauge: una sola cifra contra su total.</figcaption>
+  </figure>
 </div>
+
+### Reglas que no cambian
+
+- **Un solo eje de valores.** Dos medidas de distinta unidad van en dos gráficas: con dos ejes, cualquier cruce de las líneas es casualidad.
+- **Barras y áreas empiezan en cero**: su largo y su área son el valor. Una línea puede ajustar su eje a los datos (`startAtZero={false}`) cuando importa el cambio más que el tamaño.
+- **Seis partes como máximo** en una dona: el resto se junta en «Otros», al final. Con más partes, o para comparar unas con otras, usa barras.
+- **Una serie no lleva leyenda**: el título ya dice qué es. Con dos o más, la leyenda siempre está.
+- Nada de 3D ni de pasteles con más de tres partes: comparar ángulos y volúmenes es difícil.
+
+## Leyenda, tooltip y periodo anterior
+
+- **La leyenda oculta y muestra series.** Cada nombre es un botón; una serie oculta conserva su color y el eje se ajusta a lo que queda. `useChartSeries` lo resuelve en las gráficas que armes tú.
+- **El tooltip pone el valor primero** y el nombre después. Con `showPercent` suma el porcentaje del total; con `previousKey` y `comparison`, el cambio contra el periodo anterior con la flecha del KPI (`Delta`).
+- Lo que dice el tooltip también está sin el mouse: en «Ver datos» de la tarjeta, o en una tabla.
+
+## La tarjeta y el dashboard
+
+Cada gráfica va en una `ChartCard`:
+
+- **Título** que dice qué se ve («Ventas por canal») y **descripción** con la unidad y el periodo («Miles de pesos, julio a octubre»).
+- **Filtro** solo si cambia esa gráfica (su medida, su agrupación). Los filtros de toda la página van en **una fila arriba del grid**, con el rango de fechas primero.
+- **Menú** con «Exportar PNG» (título, gráfica y leyenda, al doble de resolución) y «Ver datos» (la tabla, en es-MX).
+- **Estados**: `loading` (skeleton con forma de barras), `refreshing` (la gráfica anterior atenuada mientras llegan datos nuevos: nada salta), `empty` y `error` con «Reintentar».
+
+`DashboardGrid` acomoda KPI, gráficas y tablas según el espacio que tiene, no según la pantalla: junto a una barra lateral se acomoda a lo que queda.
+
+| `span` | Teléfono | Desde 36rem | Desde 48rem |
+| --- | --- | --- | --- |
+| `kpi` | Toda la fila | La mitad | Un cuarto |
+| `third` | Toda la fila | Toda la fila | Un tercio |
+| `half` | Toda la fila | Toda la fila | La mitad |
+| `two-thirds` | Toda la fila | Toda la fila | Dos tercios |
+| `full` | Toda la fila | Toda la fila | Toda la fila |
+
+El bloque `dashboard` arma uno completo (KPI, tendencia, canales, productos, embudo y clientes): cópialo y cambia los datos.
 
 ## El color nunca es la única señal
 
@@ -165,3 +262,20 @@ const chart = echarts.init(element, 'auradata')
 ```
 
 No escribas colores en la configuración de una gráfica: el tema ya los tiene.
+
+Para que una gráfica de AuraData BI se vea como su equivalente del registry:
+
+| Registry | ECharts | Para que se vean igual |
+| --- | --- | --- |
+| `LineChart` | `type: 'line'` | `smooth: true`, `showSymbol: false`, `lineStyle.width: 2`; el periodo anterior con `lineStyle.type: 'dashed'` y `opacity: 0.6` |
+| `AreaChart` | `type: 'line'` con `areaStyle` | `areaStyle.opacity: 0.1`; apilada, `stack: 'total'` y `0.3` |
+| `BarChart` | `type: 'bar'` | `barMaxWidth: 24`, `itemStyle.borderRadius: [4, 4, 0, 0]` (horizontal, `[0, 4, 4, 0]`); apiladas, `stack: 'total'`, `borderColor` del fondo y `borderWidth: 2`, y el radio solo en la serie de arriba |
+| `ComboChart` | `bar` y `line` con el mismo `yAxisIndex: 0` | Nunca un segundo `yAxis` |
+| `DonutChart` | `type: 'pie'` | `radius: ['62%', '88%']`, `itemStyle.borderRadius: 4`, `borderColor` del fondo, `borderWidth: 2`; el total con `graphic` al centro |
+| `FunnelChart` | `type: 'funnel'` | `sort: 'none'`, `gap: 8`, y la conversión de cada paso en `label.formatter`; los trapecios no se comparan tan bien: si puedes, usa barras horizontales |
+| `Gauge` | `type: 'gauge'` | `progress.show: true`, `axisLine.lineStyle.width: 10`, sin `pointer`, `axisTick`, `splitLine` ni `axisLabel`; medio gauge con `startAngle: 180` y `endAngle: 0` |
+| `Heatmap` | `type: 'heatmap'` con `visualMap` | `visualMap.inRange.color` con los nueve `sequential-*` (o `diverging-*`) de `@auradata/tokens/shadcn-theme.json`; `label.show: true` |
+| `CalendarHeatmap` | `calendar` y `heatmap` | `dayLabel.firstDay: 1`, `dayLabel.nameMap` y `monthLabel.nameMap` en español, los mismos `visualMap` |
+| `Sparkline` | `type: 'line'` sin ejes | `grid` en 0, `xAxis.show` y `yAxis.show` en `false`, `lineStyle.width: 2` |
+
+Los números, con `tooltip.valueFormatter` y `axisLabel.formatter` que escriban como `lib/format` (`Intl.NumberFormat('es-MX', …)`).

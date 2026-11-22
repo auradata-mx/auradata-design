@@ -144,17 +144,21 @@ function DonutChart({
               position="center"
               content={({ viewBox }) => {
                 if (!viewBox || !("cx" in viewBox) || viewBox.cx === undefined || viewBox.cy === undefined) return null
+                // The total fits the hole: 24 px at most, smaller in a small donut.
+                const inner = "innerRadius" in viewBox && typeof viewBox.innerRadius === "number" ? viewBox.innerRadius : 60
+                const size = Math.min(24, Math.max(14, Math.round(inner * 0.36)))
                 return (
                   <text x={viewBox.cx} y={viewBox.cy} textAnchor="middle" dominantBaseline="middle">
                     <tspan
                       data-slot="donut-total"
                       x={viewBox.cx}
                       y={viewBox.cy}
-                      className="fill-foreground text-2xl font-semibold tabular-nums"
+                      className="fill-foreground font-semibold tabular-nums"
+                      style={{ fontSize: size }}
                     >
                       {(centerFormatter ?? valueFormatter)(total)}
                     </tspan>
-                    <tspan x={viewBox.cx} y={viewBox.cy + 22} className="fill-muted-foreground text-xs">
+                    <tspan x={viewBox.cx} y={viewBox.cy + size * 0.6 + 10} className="fill-muted-foreground text-xs">
                       {centerLabel}
                     </tspan>
                   </text>
