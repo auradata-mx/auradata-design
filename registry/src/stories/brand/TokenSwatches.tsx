@@ -4,6 +4,7 @@
  */
 import brand from "../../../../packages/tokens/src/tokens/brand.json"
 import light from "../../../../packages/tokens/src/tokens/light.json"
+import theme from "@auradata/tokens/shadcn-theme.json"
 
 type Token = { $value: string | number; $description?: string }
 
@@ -97,3 +98,50 @@ export function EaseCurves() {
     </div>
   )
 }
+
+type Mode = "light" | "dark"
+
+/**
+ * One ramp of shadcn variables (`--sequential-1` …, `--success-50` …) as the theme paints it, on a panel of that
+ * mode's own page color, so the dark ramp reads as it does in dark whatever the docs theme is. Every value comes
+ * from `shadcn-theme.json`.
+ */
+export function Ramp({ names, mode }: { names: string[]; mode: Mode }) {
+  const values = theme[mode] as Record<string, string>
+  return (
+    <div
+      className="grid gap-3 rounded-xl border p-4"
+      style={{ background: values.background, color: values.foreground, borderColor: values.border }}
+    >
+      <span className="text-sm font-medium">{mode === "light" ? "Claro" : "Oscuro"}</span>
+      {/* Nine steps fold into rows of three on a phone, ten into rows of five: never one step alone on a row. */}
+      <div className={`grid gap-x-2 gap-y-3 sm:gap-x-1 ${names.length === 9 ? "grid-cols-3 sm:grid-cols-9" : "grid-cols-5 sm:grid-cols-10"}`}>
+        {names.map((name) => (
+          <div key={name} className="grid gap-1">
+            <div className="h-10 rounded-md" style={{ background: values[name] }} />
+            <code className="font-mono text-xs">{name.split("-").at(-1)}</code>
+            <span className="font-mono text-[10px] sm:text-xs" style={{ color: values["muted-foreground"] }}>
+              {values[name]}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/** The light and the dark ramp of one palette, one above the other. */
+export function Ramps({ names }: { names: string[] }) {
+  return (
+    <div className="sb-unstyled my-6 grid gap-4">
+      <Ramp names={names} mode="light" />
+      <Ramp names={names} mode="dark" />
+    </div>
+  )
+}
+
+/** `prefix-1` … `prefix-9`, or `prefix-50` … `prefix-900`. */
+export const steps = (prefix: string, scale: "nine" | "status") =>
+  (scale === "nine" ? [1, 2, 3, 4, 5, 6, 7, 8, 9] : [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]).map(
+    (step) => `${prefix}-${step}`
+  )

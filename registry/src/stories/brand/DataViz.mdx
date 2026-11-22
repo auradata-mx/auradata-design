@@ -3,6 +3,8 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import theme from '@auradata/tokens/shadcn-theme.json'
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { chartConfig } from '@/lib/chart-palette'
+import { DivergingExample, SequentialExample } from './PaletteExamples'
+import { Ramps, steps } from './TokenSwatches'
 import { formatCompact, formatCurrency, formatDate, formatNumber, formatPercent } from '@/lib/format'
 
 <Meta title="Brand/10 Visualización de datos" />
@@ -35,6 +37,48 @@ La serie 1 siempre es Azul Aura. Cada serie nueva toma el siguiente color; nunca
 </div>
 
 Más de ocho series no se leen: agrupa el resto en «Otros».
+
+## Magnitud y polaridad
+
+La paleta categórica dice **quién** es cada serie. Para decir **cuánto** o **de qué lado**, como en un mapa de calor o una celda condicional, hay dos paletas más, de nueve pasos, en claro y oscuro.
+
+| La pregunta | Paleta | Variables |
+| --- | --- | --- |
+| ¿Cuánto? De cero a lo máximo | Secuencial: un solo tono, Azul Aura | `--sequential-*` |
+| ¿De qué lado de la meta, del cero o del promedio? | Divergente: rojo abajo, gris en el centro, azul arriba | `--diverging-*` |
+
+### Secuencial
+
+El 1 es casi cero y el 9 es lo máximo. En oscuro la rampa empieza cerca del fondo y se aclara: el 1 sigue siendo casi cero.
+
+<Ramps names={steps('sequential', 'nine')} />
+
+<SequentialExample />
+
+### Divergente
+
+El 5 es el centro: cero, la meta o el promedio. Del 4 al 1, cada vez más abajo, en rojo; del 6 al 9, cada vez más arriba, en azul. Rojo y azul, no rojo y verde, porque se distinguen también con daltonismo.
+
+<Ramps names={steps('diverging', 'nine')} />
+
+<DivergingExample />
+
+### Cómo usarlas
+
+`sequentialFill` y `divergingFill` de `lib/chart-palette` eligen el paso y un texto que pasa AA sobre él, en claro y en oscuro: el color del texto en los pasos claros, el del fondo en los fuertes.
+
+```tsx
+import { divergingFill, sequentialFill } from '@/lib/chart-palette'
+
+<td style={sequentialFill(consultas, [0, maximo])}>{formatNumber(consultas)}</td>
+<td style={divergingFill(contraMeta, 0.2)}>{formatPercent(contraMeta, { signDisplay: 'exceptZero' })}</td>
+```
+
+En Tailwind son clases como cualquier color: `bg-sequential-3`, `bg-diverging-8`.
+
+- Escribe el número en la celda, o dalo en el tooltip: el color muestra el patrón, el número da el valor.
+- Nunca pintes categorías con la secuencial ni magnitudes con la categórica.
+- Los colores de estado (`success`, `warning`…) se reservan para estados: no pintes datos con ellos.
 
 ## Qué gráfica usar
 

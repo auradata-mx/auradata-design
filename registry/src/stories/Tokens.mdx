@@ -5,7 +5,10 @@ import theme from '@auradata/tokens/shadcn-theme.json'
 <Meta title="Brand/Tokens" />
 
 export const pairs = (mode) =>
-  Object.entries(theme[mode]).filter(([name]) => !name.startsWith('chart-') && !['radius', 'gradient-brand'].includes(name))
+  Object.entries(theme[mode]).filter(
+    ([name]) =>
+      !/^(chart|sequential|diverging)-|-\d{2,3}$/.test(name) && !['radius', 'gradient-brand'].includes(name),
+  )
 
 # Tokens de AuraData
 
@@ -43,6 +46,8 @@ Cada valor de esta página sale de `@auradata/tokens`. Cambia `packages/tokens/s
     colors={[5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])}
   />
 </ColorPalette>
+
+Las paletas secuencial y divergente están en [Visualización de datos](?path=/docs/brand-10-visualización-de-datos--docs); las escalas de estado, de 50 a 900, en [Color](?path=/docs/brand-04-color--docs).
 
 ## Tipografía
 

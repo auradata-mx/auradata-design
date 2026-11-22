@@ -16,9 +16,9 @@ Branch: `feat/foundations-v2` from `origin/main`; merge to `main` once S1-S2 are
 
 | ID | Specs | Route | Status | Evidence |
 | --- | --- | --- | --- | --- |
-| F1 | S1 | inline | pending | Sequential and diverging tokens, shadcn variables, Tailwind colors, `chart-palette` helpers |
-| F2 | S2 | inline | pending | Status scales 50-900, light and dark, AA where used as text |
-| F3 | S5 | inline | pending | Brand/04 (status scales) and Brand/10 (data palettes) |
+| F1 | S1 | inline | done (7635e11) | Sequential and diverging tokens, shadcn `--sequential-*`/`--diverging-*`, Tailwind colors, `chart-palette` `sequentialStep`/`divergingStep`/`sequentialFill`/`divergingFill`. RED: tokens 22 failing (missing variables, contrast) and unit 6 failing (helpers missing) → GREEN tokens 122/122, unit 7/7 |
+| F2 | S2 | inline | done (304e011) | `--{success,warning,info,destructive}-{50…900}`; RED 18 → GREEN tokens 140/140 (order per scale; 700 on 50, 100 and the 4 surfaces, 800 on 200, ≥ 4.5:1 light and dark) |
+| F3 | S5 | inline | done (this commit) | Brand/04 «Escalas de estado» (usage table, soft badges and a note on a light and a dark panel, the 4 ramps light/dark), Brand/10 «Magnitud y polaridad» (ramps, a heatmap and a vs-target table through the helpers, usage), Brand/Tokens leaves the ramps to those pages; README. Stories 253/253; sections viewed at 390 and 1280 |
 | F4 | S6 | inline | pending | First merge to `main`: rebase, regenerate, all checks, push, CI and Coolify |
 | F5 | S3, S5 | inline | pending | `data-density="compact"`, comparison story, Brand/07 |
 | F6 | S4, S5 | inline | pending | `@media print` in the theme, print test, Brand/10 |
@@ -32,3 +32,4 @@ Branch: `feat/foundations-v2` from `origin/main`; merge to `main` once S1-S2 are
   - Diverging: red (negative, 1-4), gray (5), blue (positive, 6-9), blue/red rather than red/green so it survives red-green color blindness. Light: red-800, red-600, red-400, red-200, #E5E5E5, blue-200, blue-400, blue-600, blue-800; dark: red-300, red-500, red-700, red-900, #2E2E38, blue-900, blue-700, blue-500, blue-300. Text: steps 3-7 take `foreground`, 1, 2, 8 and 9 take `background` (≥ 4.83:1).
   - Status scales 50-900: light = Tailwind's 50-900; dark inverts them so the same class works in both themes (50 is the faintest tint: 950 mixed 50 % with #111117, then 950, 900 … 200). Text: 700 on 50, 100 and every surface (≥ 4.51:1), 800 on 200; borders 200-300.
   - Names: tokens `--aura-color-sequential-N`, `--aura-color-diverging-N`, `--aura-color-{success,warning,info,error}-{50…900}`; shadcn `--sequential-N`, `--diverging-N`, `--{success,warning,info,destructive}-{50…900}`, Tailwind `bg-sequential-3`, `text-success-700`.
+- L3 (F3): docs pages render light whatever the theme global is, so each ramp sits on a panel painted with its own mode's `background`/`foreground` from `shadcn-theme.json`, and the status example repeats inside a `.dark` div (the `.dark` selector re-themes a subtree). Screens: on a phone a ramp wrapped 4+4+1 → rows of 3 (nine steps) and 5 (ten), hex labels 10 px under `sm`; the variables column broke `--sequential-1` mid-word → `--sequential-*`; the usage table lost its «Paso» column (the class carries the step). Audit: no new findings (Brand/10's function table still scrolls on a phone, known). T61 plans its own table density (DT2): it should set `data-density="compact"` from F5 rather than its own sizes.
