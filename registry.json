@@ -706,12 +706,63 @@
       ]
     },
     {
+      "name": "cartesian-chart",
+      "type": "registry:ui",
+      "title": "Cartesian chart",
+      "dependencies": [
+        "cn",
+        "recharts"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/chart",
+        "cristianruben-dev/auradata-design/chart-palette",
+        "cristianruben-dev/auradata-design/format"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/cartesian-chart.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "chart-card",
+      "type": "registry:ui",
+      "title": "Chart card",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "card",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/chart-export",
+        "cristianruben-dev/auradata-design/dialog",
+        "cristianruben-dev/auradata-design/dropdown-menu",
+        "cristianruben-dev/auradata-design/empty",
+        "cristianruben-dev/auradata-design/error-state",
+        "cristianruben-dev/auradata-design/format",
+        "skeleton",
+        "table"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/chart-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "chart",
       "type": "registry:ui",
       "title": "Chart",
       "dependencies": [
         "cn",
         "recharts"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/delta",
+        "cristianruben-dev/auradata-design/format"
       ],
       "files": [
         {
@@ -812,6 +863,20 @@
       ]
     },
     {
+      "name": "dashboard-grid",
+      "type": "registry:ui",
+      "title": "Dashboard grid",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/dashboard-grid.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "data-table-selection-bar",
       "type": "registry:ui",
       "title": "Data table selection bar",
@@ -892,6 +957,24 @@
       ]
     },
     {
+      "name": "delta",
+      "type": "registry:ui",
+      "title": "Delta",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/format"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/delta.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "dialog",
       "type": "registry:ui",
       "title": "Dialog",
@@ -906,6 +989,26 @@
       "files": [
         {
           "path": "registry/src/components/ui/dialog.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "donut-chart",
+      "type": "registry:ui",
+      "title": "Donut chart",
+      "dependencies": [
+        "cn",
+        "recharts"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/chart",
+        "cristianruben-dev/auradata-design/chart-palette",
+        "cristianruben-dev/auradata-design/format"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/donut-chart.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1086,6 +1189,40 @@
       ]
     },
     {
+      "name": "funnel-chart",
+      "type": "registry:ui",
+      "title": "Funnel chart",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/format"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/funnel-chart.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "gauge",
+      "type": "registry:ui",
+      "title": "Gauge",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/format"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/gauge.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "gradient-border",
       "type": "registry:ui",
       "title": "Gradient border",
@@ -1110,6 +1247,24 @@
       "files": [
         {
           "path": "registry/src/components/ui/gradient-heading.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "heatmap",
+      "type": "registry:ui",
+      "title": "Heatmap",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/chart-palette",
+        "cristianruben-dev/auradata-design/format"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/heatmap.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1222,12 +1377,12 @@
       "type": "registry:ui",
       "title": "Kpi card",
       "dependencies": [
-        "cn",
-        "lucide-react"
+        "cn"
       ],
       "registryDependencies": [
         "card",
-        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/delta",
+        "cristianruben-dev/auradata-design/sparkline",
         "skeleton"
       ],
       "files": [
@@ -1803,6 +1958,20 @@
       ]
     },
     {
+      "name": "sparkline",
+      "type": "registry:ui",
+      "title": "Sparkline",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/sparkline.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "spotlight-card",
       "type": "registry:ui",
       "title": "Spotlight card",
@@ -2146,6 +2315,34 @@
       ]
     },
     {
+      "name": "dashboard",
+      "type": "registry:block",
+      "title": "Dashboard",
+      "dependencies": [
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "card",
+        "cristianruben-dev/auradata-design/cartesian-chart",
+        "cristianruben-dev/auradata-design/chart-card",
+        "cristianruben-dev/auradata-design/dashboard-grid",
+        "cristianruben-dev/auradata-design/data-table",
+        "cristianruben-dev/auradata-design/date-range-filter",
+        "cristianruben-dev/auradata-design/delta",
+        "cristianruben-dev/auradata-design/donut-chart",
+        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/funnel-chart",
+        "cristianruben-dev/auradata-design/kpi-card",
+        "cristianruben-dev/auradata-design/page-header"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/dashboard.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
       "name": "faq",
       "type": "registry:block",
       "title": "Faq",
@@ -2365,6 +2562,18 @@
         {
           "path": "registry/src/hooks/use-mobile.ts",
           "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "chart-export",
+      "type": "registry:lib",
+      "title": "Chart export",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/src/lib/chart-export.ts",
+          "type": "registry:lib"
         }
       ]
     },
