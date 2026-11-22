@@ -199,3 +199,9 @@ test('publishes the onboarding checklist with its progress bar', () => {
     expect.arrayContaining(['cristianruben-dev/auradata-design/progress', 'card']),
   )
 })
+
+test('publishes the guided tour on the Base UI popover', () => {
+  expect(item('tour')?.type).toBe('registry:ui')
+  expect(item('tour').dependencies).toContain('@base-ui/react')
+  expect(item('tour').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/button']))
+})
