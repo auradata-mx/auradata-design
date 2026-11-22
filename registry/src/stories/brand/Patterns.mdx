@@ -75,10 +75,10 @@ De arriba abajo, siempre en este orden:
 | Bloque | Componente | Qué lleva |
 | --- | --- | --- |
 | Encabezado | `PageHeader` | El título y, a la derecha, el periodo y las acciones |
-| Filtros | `DateRangeFilter` | El periodo primero; luego los segmentos (región, producto) |
+| Filtros | `DateRangeFilter`, `FacetedFilter`, `RangeFilter`, `FilterChips` | El periodo primero; luego los segmentos (región, producto) y los rangos (monto); los chips debajo dicen qué está filtrado |
 | KPI | `KpiCard` | De 3 a 4, con su cambio contra el periodo anterior |
 | Gráficas | `Chart` | La tendencia primero, luego las comparaciones |
-| Detalle | `DataTable` | Búsqueda, orden y columnas |
+| Detalle | `DataTable` | Búsqueda, filtros por columna, orden y columnas |
 
 <div className="sb-unstyled my-6 grid gap-6 rounded-2xl border p-6">
   <PageHeader
@@ -102,6 +102,7 @@ De arriba abajo, siempre en este orden:
 | --- | --- |
 | Los filtros arriba de todo lo que filtran | Quien lee sabe de qué periodo son los números antes de verlos |
 | El periodo siempre visible | «1 nov 2026 – 21 nov 2026» en el botón, no solo «Este mes» al abrirlo |
+| Lo filtrado, a la vista | Un chip por filtro con su «×» y «Limpiar todo»; cada filtro cuenta lo que dejan los demás. Las condiciones Y/O van en `FilterBuilder` |
 | Un KPI, una comparación | «vs. octubre» dice contra qué se mide el cambio |
 | Estados por bloque | Cada gráfica carga, falla o queda vacía sola: un `ErrorState` no tumba la página |
 
