@@ -139,7 +139,7 @@ type CalendarHeatmapProps = Omit<React.ComponentProps<"div">, "children"> & {
 }
 
 const DAY = 14
-const GAP = 3
+const GAP = 2
 const WEEKDAYS = ["Lun", "", "Mié", "", "Vie", "", ""]
 
 /** "2026-11-03" → that local day. */
@@ -184,7 +184,11 @@ function CalendarHeatmap({
     days.push({ date: new Date(day), key: keyOf(day), column: Math.floor(index / 7), row: index % 7 })
   }
   const weeks = (days[days.length - 1]?.column ?? 0) + 1
-  const months = days.filter((day, index) => index === 0 || day.date.getDate() === 1)
+  // Each month name spans the weeks up to the next month; one with less than two weeks of room shows no name.
+  const starts = days.filter((day, index) => index === 0 || day.date.getDate() === 1)
+  const months = starts
+    .map((month, index) => ({ ...month, span: (starts[index + 1]?.column ?? weeks) - month.column }))
+    .filter((month) => month.span >= 2)
 
   // On a phone the latest weeks matter most: open at the end.
   React.useEffect(() => {
@@ -218,7 +222,11 @@ function CalendarHeatmap({
           <div className="grid w-max gap-1">
             <div aria-hidden className="grid h-4" style={{ gridTemplateColumns: columns, columnGap: GAP }}>
               {months.map((month) => (
-                <span key={month.key} className="whitespace-nowrap" style={{ gridColumnStart: month.column + 1 }}>
+                <span
+                  key={month.key}
+                  className="truncate"
+                  style={{ gridColumn: `${month.column + 1} / span ${month.span}` }}
+                >
                   {formatDate(month.date, { month: "short", day: undefined, year: undefined })}
                 </span>
               ))}
