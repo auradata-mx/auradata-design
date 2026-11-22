@@ -234,3 +234,20 @@ test('publishes the user menu and installs it with the app shell', () => {
 test('publishes the empty-state illustrations', () => {
   expect(item('empty-illustration')?.type).toBe('registry:ui')
 })
+
+test('installs the attachment with the chat block, for the files of a question', () => {
+  expect(item('chat').registryDependencies).toContain('cristianruben-dev/auradata-design/attachment')
+})
+
+test('publishes the message feedback and installs it with the chat block', () => {
+  expect(item('message-feedback')?.type).toBe('registry:ui')
+  expect(item('chat').registryDependencies).toContain('cristianruben-dev/auradata-design/message-feedback')
+})
+
+test('publishes the insight card and installs it with the chat block', () => {
+  expect(item('insight-card')?.type).toBe('registry:ui')
+  expect(item('insight-card').registryDependencies).toEqual(
+    expect.arrayContaining(['card', 'cristianruben-dev/auradata-design/format']),
+  )
+  expect(item('chat').registryDependencies).toContain('cristianruben-dev/auradata-design/insight-card')
+})

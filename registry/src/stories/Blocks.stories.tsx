@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, fn, userEvent, within } from 'storybook/test'
+import { useEffect, useState } from 'react'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { ChartColumnIcon, DatabaseIcon, LayoutDashboardIcon, UsersIcon } from 'lucide-react'
 
 import { AppShell, type NavGroup } from '@/components/blocks/app-shell'
@@ -303,6 +304,197 @@ export const ChatWithSql: ChatStory = {
     await expect(await canvas.findByText(/FROM pedidos_2026/)).toBeVisible()
     // Rest state for the screenshot: the query open, nothing focused.
     ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Files go with the question: «Adjuntar archivo» picks them, each one can be removed, and they are sent with it. */
+export const ChatAttachments: ChatStory = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Chat attachments',
+  render: (args) => <ChatFrame {...args} />,
+  args: {
+    messages: [
+      {
+        id: '1',
+        role: 'user',
+        text: 'Compara estas ventas con las del sistema.',
+        attachments: [{ name: 'ventas-octubre.xlsx', size: 860_160 }],
+      },
+      { id: '2', role: 'assistant', text: 'Coinciden en 98\u00a0%: faltan 14 pedidos del 31 de octubre en tu archivo.' },
+    ],
+    attach: { accept: '.csv,.xlsx,.pdf' },
+    onSend: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+    // A sent message shows its files.
+    await expect(await canvas.findByText('ventas-octubre.xlsx')).toBeVisible()
+    await expect(canvas.getByText('840 KB')).toBeVisible()
+    // The sent file ends flush with its bubble (within the 4 px focus allowance).
+    const sent = canvas.getByRole('list', { name: 'Archivos de la pregunta' }).querySelector('[data-slot=attachment]')!
+    const bubble = canvas.getByText('Compara estas ventas con las del sistema.')
+    await expect(Math.abs(sent.getBoundingClientRect().right - bubble.getBoundingClientRect().right)).toBeLessThanOrEqual(4)
+    const input = canvasElement.querySelector<HTMLInputElement>('[data-slot=chat-file-input]')!
+    await expect(input).toHaveAttribute('accept', '.csv,.xlsx,.pdf')
+    await expect(canvas.getByRole('button', { name: 'Adjuntar archivo' })).toBeEnabled()
+    await userEvent.upload(input, [
+      new File(['region,total'], 'ventas.csv', { type: 'text/csv' }),
+      new File(['%PDF'], 'informe.pdf', { type: 'application/pdf' }),
+    ])
+    const files = canvas.getByRole('list', { name: 'Archivos adjuntos' })
+    await expect(within(files).getAllByRole('listitem')).toHaveLength(2)
+    await userEvent.click(canvas.getByRole('button', { name: 'Quitar informe.pdf' }))
+    await expect(within(files).getAllByRole('listitem')).toHaveLength(1)
+    // A file alone can be sent; the text goes with it when there is one.
+    await userEvent.type(canvas.getByRole('textbox', { name: 'Mensaje' }), 'Resume este archivo{Enter}')
+    await expect(args.onSend).toHaveBeenCalledWith('Resume este archivo', [expect.objectContaining({ name: 'ventas.csv' })])
+    await expect(canvas.queryByRole('list', { name: 'Archivos adjuntos' })).toBeNull()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+const STREAMED = 'En noviembre vendiste $4.16\u00a0M, 6.2\u00a0% más que en octubre. El Centro aportó la mitad.'
+
+/**
+ * An answer still arriving: a cursor after the text, the message `aria-busy` (screen readers read it once it is
+ * whole) and «Detener respuesta» instead of «Enviar». The cursor stops blinking with reduced motion.
+ */
+export const ChatStreaming: ChatStory = {
+  name: 'Chat streaming',
+  render: (args) => <ChatFrame {...args} />,
+  args: {
+    messages: [
+      { id: '1', role: 'user', text: '¿Cuánto vendimos en noviembre?' },
+      { id: '2', role: 'assistant', text: STREAMED.slice(0, 52), streaming: true },
+    ],
+    onSend: fn(),
+    onStop: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+    const answer = canvasElement.querySelector('[data-slot=chat-message][data-role=assistant]')!
+    await expect(answer).toHaveAttribute('aria-busy', 'true')
+    const cursor = answer.querySelector('[data-slot=chat-cursor]')!
+    await expect(cursor).toHaveAttribute('aria-hidden', 'true')
+    await expect(cursor).toHaveClass('motion-reduce:animate-none')
+    // No new question while the answer arrives; «Detener respuesta» asks the app to stop it.
+    await expect(canvas.queryByRole('button', { name: 'Enviar' })).toBeNull()
+    await userEvent.click(canvas.getByRole('button', { name: 'Detener respuesta' }))
+    await expect(args.onStop).toHaveBeenCalled()
+    await userEvent.type(canvas.getByRole('textbox', { name: 'Mensaje' }), 'Otra{Enter}')
+    await expect(args.onSend).not.toHaveBeenCalled()
+    await userEvent.clear(canvas.getByRole('textbox', { name: 'Mensaje' }))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** The app appends the text as it arrives; when it is done the cursor goes and the answer is read out. */
+function StreamingChat(props: React.ComponentProps<typeof Chat>) {
+  const [length, setLength] = useState(0)
+  useEffect(() => {
+    if (length >= STREAMED.length) return
+    const timer = setTimeout(() => setLength((current) => Math.min(current + 6, STREAMED.length)), 20)
+    return () => clearTimeout(timer)
+  }, [length])
+  const done = length >= STREAMED.length
+  return (
+    <ChatFrame
+      {...props}
+      messages={[
+        { id: '1', role: 'user', text: '¿Cuánto vendimos en noviembre?' },
+        { id: '2', role: 'assistant', text: STREAMED.slice(0, length), streaming: !done },
+      ]}
+    />
+  )
+}
+
+export const ChatStreamed: ChatStory = {
+  name: 'Chat streamed',
+  render: (args) => <StreamingChat {...args} />,
+  args: { messages: [], onSend: fn() },
+  play: async ({ canvasElement }) => {
+    const answer = () => canvasElement.querySelector('[data-slot=chat-message][data-role=assistant]')!
+    // textContent: toHaveTextContent collapses the no-break spaces of the received text only.
+    await waitFor(() => expect(answer().textContent).toBe(STREAMED), { timeout: 3000 })
+    await waitFor(() => expect(answer()).not.toHaveAttribute('aria-busy'))
+    await expect(answer().querySelector('[data-slot=chat-cursor]')).toBeNull()
+    await expect(within(canvasElement).getByRole('button', { name: 'Enviar' })).toBeVisible()
+  },
+}
+
+/** Each finished answer takes 👍/👎; the app gets the message id, the rating and the optional reason. */
+export const ChatFeedback: ChatStory = {
+  name: 'Chat feedback',
+  render: (args) => <ChatFrame {...args} />,
+  args: {
+    messages: [
+      { id: '1', role: 'user', text: '¿Qué región creció más?' },
+      { id: '2', role: 'assistant', text: 'El Norte: 9.4\u00a0% más que en octubre.' },
+      { id: '3', role: 'user', text: '¿Y cuál cayó?' },
+      { id: '4', role: 'assistant', text: 'El Sur bajó 2.1\u00a0%.', feedback: 'up' },
+    ],
+    onSend: fn(),
+    onFeedback: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement)
+    const [first, second] = await canvas.findAllByRole('button', { name: 'No útil' })
+    // A saved rating shows pressed.
+    await expect(canvas.getAllByRole('button', { name: 'Útil' })[1]).toHaveAttribute('aria-pressed', 'true')
+    await expect(second).toHaveAttribute('aria-pressed', 'false')
+    await userEvent.click(first)
+    await expect(args.onFeedback).toHaveBeenLastCalledWith('2', 'down', undefined)
+    const form = canvas.getByRole('group', { name: '¿Qué falló?' })
+    await userEvent.click(within(form).getByRole('button', { name: 'Incompleta' }))
+    await userEvent.click(within(form).getByRole('button', { name: 'Enviar' }))
+    await expect(args.onFeedback).toHaveBeenLastCalledWith('2', 'down', { reason: 'Incompleta' })
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** An answer that cites the dataset and report it used, and a finding with «Ver detalle». */
+export const ChatInsights: ChatStory = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Chat insights',
+  render: (args) => <ChatFrame {...args} />,
+  args: {
+    messages: [
+      { id: '1', role: 'user', text: '¿Hay algo raro en las ventas de noviembre?' },
+      {
+        id: '2',
+        role: 'assistant',
+        text: 'Sí: el Norte creció mucho más que el resto.',
+        sources: [
+          { id: 'd1', kind: 'dataset', label: 'pedidos_2026', href: '#dataset-pedidos' },
+          { id: 'r1', kind: 'report', label: 'Ventas 2026', href: '#informe-ventas' },
+        ],
+        embeds: [
+          {
+            type: 'insight',
+            title: 'El Norte creció más que ninguna región',
+            value: '$1.39\u00a0M',
+            change: 0.094,
+            comparison: 'vs. octubre',
+            description: 'Lo impulsaron las ventas en línea de Monterrey, que se duplicaron.',
+            action: { href: '#norte' },
+          },
+        ],
+      },
+    ],
+    onSend: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const sources = await canvas.findByRole('list', { name: 'Fuentes' })
+    const links = within(sources).getAllByRole('link')
+    await expect(links.map((link) => link.getAttribute('href'))).toEqual(['#dataset-pedidos', '#informe-ventas'])
+    // The kind is read out before the name.
+    await expect(links[0]).toHaveAccessibleName('Dataset: pedidos_2026')
+    await expect(links[1]).toHaveAccessibleName('Informe: Ventas 2026')
+    const insight = canvas.getByRole('article', { name: 'El Norte creció más que ninguna región' })
+    await expect(within(insight).getByRole('link', { name: 'Ver detalle' })).toHaveAttribute('href', '#norte')
   },
 }
 

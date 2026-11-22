@@ -1,16 +1,42 @@
-// registry: auradata (the AuraData BI chat panel on shadcn's chat primitives: ask your data, failed answers that retry, the SQL it ran)
-import { ArrowUpIcon, CircleAlertIcon, DatabaseIcon, RotateCwIcon, SparklesIcon } from "lucide-react"
-import { useId, useState } from "react"
+// registry: auradata (the AuraData BI chat panel on shadcn's chat primitives: ask your data with files, answers that stream in, cite their datasets and reports, show findings and take 👍/👎, failed answers that retry, the SQL it ran)
+import {
+  ArrowUpIcon,
+  CircleAlertIcon,
+  DatabaseIcon,
+  FileIcon,
+  FileImageIcon,
+  FileSpreadsheetIcon,
+  FileTextIcon,
+  LayoutDashboardIcon,
+  PaperclipIcon,
+  RotateCwIcon,
+  SparklesIcon,
+  SquareIcon,
+  XIcon,
+} from "lucide-react"
+import { useId, useRef, useState } from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { cn } from "cn"
 
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "@/components/ui/attachment"
 import { Bubble, BubbleContent } from "@/components/ui/bubble"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { CodeBlock, CodeBlockContent } from "@/components/ui/code-block"
+import { InsightCard } from "@/components/ui/insight-card"
 import { KpiCard } from "@/components/ui/kpi-card"
 import { Logo } from "@/components/ui/logo"
+import { MessageFeedback, type FeedbackDetails, type FeedbackValue } from "@/components/ui/message-feedback"
 import { Message, MessageAvatar, MessageContent } from "@/components/ui/message"
 import {
   MessageScroller,
@@ -30,6 +56,7 @@ import {
   TraceTitle,
 } from "@/components/ui/trace"
 import { chartConfig } from "@/lib/chart-palette"
+import { formatNumber } from "@/lib/format"
 
 /** A KPI card inside an answer: the props of `KpiCard`. */
 export type ChatKpiEmbed = { type: "kpi" } & Pick<
@@ -48,28 +75,54 @@ export type ChatChartEmbed = {
   series: Record<string, string>
 }
 
-export type ChatEmbed = ChatKpiEmbed | ChatChartEmbed
+/** A finding with its metric and «Ver detalle»: the props of `InsightCard`. */
+export type ChatInsightEmbed = { type: "insight" } & Pick<
+  React.ComponentProps<typeof InsightCard>,
+  "title" | "value" | "change" | "goodDirection" | "comparison" | "description" | "action"
+>
+
+export type ChatEmbed = ChatKpiEmbed | ChatChartEmbed | ChatInsightEmbed
+
+/** A dataset or report an answer used: a chip that links to it. */
+export type ChatSource = { id: string; kind: "dataset" | "report"; label: string; href: string }
+
+/** A file that went with a question: what the conversation shows of it. */
+export type ChatAttachment = { name: string; size?: number; type?: string }
 
 export type ChatMessage = {
   id: string
   role: "user" | "assistant"
   text: string
+  /** The files a user's question carried. */
+  attachments?: ChatAttachment[]
   /** KPI cards or charts under an assistant's text. */
   embeds?: ChatEmbed[]
   /** The SQL an assistant's answer ran: folded under «Ver consulta SQL». */
   sql?: string
   /** An assistant answer that failed: «No pudimos responder», the text as the reason, and «Reintentar». */
   status?: "error"
+  /** The answer is still arriving: the app appends to `text`; a cursor follows it and new questions wait. */
+  streaming?: boolean
+  /** The reader's saved rating of this answer. */
+  feedback?: FeedbackValue
+  /** The datasets and reports an assistant's answer used, under «Fuentes». */
+  sources?: ChatSource[]
 }
 
 type ChatProps = Omit<React.ComponentProps<"section">, "title"> & {
   messages: ChatMessage[]
-  /** Called with the trimmed text; the box clears itself. */
-  onSend: (text: string) => void
+  /** Called with the trimmed text and, when files were attached, the files; the box clears itself. */
+  onSend: (text: string, files?: File[]) => void
+  /** Lets the question carry files: «Adjuntar archivo» with the accepted types and how many at most (5). */
+  attach?: { accept?: string; maxFiles?: number }
   /** An answer is on its way: shows a thinking row and holds new questions. */
   loading?: boolean
   /** «Reintentar» on a failed answer: called with that message's id. */
   onRetry?: (messageId: string) => void
+  /** «Detener respuesta» while an answer streams in, in place of «Enviar». */
+  onStop?: () => void
+  /** 👍/👎 under each finished answer: called with its id, the rating (null when taken back) and the reason. */
+  onFeedback?: (messageId: string, value: FeedbackValue | null, details?: FeedbackDetails) => void
   /** Questions to start with, shown while there are no messages. */
   suggestions?: string[]
   title?: string
@@ -77,7 +130,75 @@ type ChatProps = Omit<React.ComponentProps<"section">, "title"> & {
   placeholder?: string
 }
 
+/** «840 KB», «1.2 MB»: the size of a file, in es-MX. */
+function fileSize(bytes: number) {
+  if (bytes < 1024) return `${formatNumber(bytes)} B`
+  if (bytes < 1024 ** 2) return `${formatNumber(Math.round(bytes / 1024))} KB`
+  return `${formatNumber(bytes / 1024 ** 2, { maximumFractionDigits: 1 })} MB`
+}
+
+function fileIcon(file: ChatAttachment) {
+  const name = file.name.toLowerCase()
+  if (file.type?.startsWith("image/")) return FileImageIcon
+  if (/\.(csv|xlsx?|ods)$/.test(name) || file.type === "text/csv") return FileSpreadsheetIcon
+  if (/\.(pdf|docx?|txt|md)$/.test(name)) return FileTextIcon
+  return FileIcon
+}
+
+/** The files of a question: in a sent message, or in the composer with a remove button each. */
+function FileChips({
+  files,
+  label,
+  onRemove,
+  className,
+}: {
+  files: ChatAttachment[]
+  label: string
+  onRemove?: (index: number) => void
+  className?: string
+}) {
+  return (
+    <AttachmentGroup role="list" aria-label={label} className={className}>
+      {files.map((file, index) => {
+        const Icon = fileIcon(file)
+        return (
+          <Attachment key={`${file.name}-${index}`} role="listitem" size="sm" className="bg-card">
+            <AttachmentMedia>
+              <Icon aria-hidden />
+            </AttachmentMedia>
+            <AttachmentContent>
+              <AttachmentTitle>{file.name}</AttachmentTitle>
+              {file.size !== undefined && <AttachmentDescription>{fileSize(file.size)}</AttachmentDescription>}
+            </AttachmentContent>
+            {onRemove && (
+              <AttachmentActions>
+                <AttachmentAction aria-label={`Quitar ${file.name}`} onClick={() => onRemove(index)}>
+                  <XIcon aria-hidden />
+                </AttachmentAction>
+              </AttachmentActions>
+            )}
+          </Attachment>
+        )
+      })}
+    </AttachmentGroup>
+  )
+}
+
 function Embed({ embed }: { embed: ChatEmbed }) {
+  if (embed.type === "insight") {
+    return (
+      <InsightCard
+        title={embed.title}
+        value={embed.value}
+        change={embed.change}
+        goodDirection={embed.goodDirection}
+        comparison={embed.comparison}
+        description={embed.description}
+        action={embed.action}
+        className="max-w-md"
+      />
+    )
+  }
   if (embed.type === "kpi") {
     return (
       <KpiCard
@@ -124,6 +245,41 @@ function AssistantAvatar() {
   )
 }
 
+const SOURCE = {
+  dataset: { icon: DatabaseIcon, kind: "Dataset" },
+  report: { icon: LayoutDashboardIcon, kind: "Informe" },
+}
+
+/** «Fuentes»: the datasets and reports an answer used, each a chip that links to it. */
+function Sources({ sources }: { sources: ChatSource[] }) {
+  const labelId = useId()
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span id={labelId} className="text-xs text-muted-foreground">
+        Fuentes
+      </span>
+      <ul aria-labelledby={labelId} className="flex flex-wrap gap-1.5">
+        {sources.map((source) => {
+          const { icon: Icon, kind } = SOURCE[source.kind]
+          return (
+            <li key={source.id} className="min-w-0">
+              <a
+                href={source.href}
+                data-slot="chat-source"
+                className="inline-flex h-7 max-w-64 items-center gap-1.5 rounded-full border bg-card px-2.5 text-xs font-medium outline-none transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none"
+              >
+                <Icon aria-hidden className="size-3.5 shrink-0 text-muted-foreground" />
+                <span className="sr-only">{kind}: </span>
+                <span className="truncate">{source.label}</span>
+              </a>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+  )
+}
+
 /** The SQL behind an answer, folded: «Ver consulta SQL» opens it. */
 function SqlTrace({ sql }: { sql: string }) {
   return (
@@ -147,11 +303,28 @@ function SqlTrace({ sql }: { sql: string }) {
   )
 }
 
-function ChatMessageRow({ message, onRetry }: { message: ChatMessage; onRetry?: (messageId: string) => void }) {
+function ChatMessageRow({
+  message,
+  onRetry,
+  onFeedback,
+}: {
+  message: ChatMessage
+  onRetry?: ChatProps["onRetry"]
+  onFeedback?: ChatProps["onFeedback"]
+}) {
   if (message.role === "user") {
     return (
       <Message align="end" data-slot="chat-message" data-role="user">
-        <MessageContent>
+        <MessageContent className="items-end">
+          {message.attachments && message.attachments.length > 0 && (
+            // Sent files wrap and end flush with the bubble: the group's scroll fade and end padding are for
+            // a row that overflows to the right.
+            <FileChips
+              files={message.attachments}
+              label="Archivos de la pregunta"
+              className="flex-wrap justify-end overflow-visible pe-1 mask-none"
+            />
+          )}
           <Bubble align="end">
             <BubbleContent className="rounded-2xl rounded-br-md px-4 py-2.5 whitespace-pre-wrap">{message.text}</BubbleContent>
           </Bubble>
@@ -180,14 +353,37 @@ function ChatMessageRow({ message, onRetry }: { message: ChatMessage; onRetry?: 
     )
   }
   return (
-    <Message data-slot="chat-message" data-role="assistant" className="gap-3">
+    <Message
+      data-slot="chat-message"
+      data-role="assistant"
+      // Screen readers wait for the whole answer instead of reading every piece as it arrives.
+      aria-busy={message.streaming || undefined}
+      className="gap-3"
+    >
       <AssistantAvatar />
       <MessageContent className="gap-3 pt-1">
         <Bubble variant="ghost">
-          <BubbleContent className="whitespace-pre-wrap">{message.text}</BubbleContent>
+          <BubbleContent className="whitespace-pre-wrap">
+            {message.text}
+            {message.streaming && (
+              <span
+                data-slot="chat-cursor"
+                aria-hidden="true"
+                className="ml-0.5 inline-block h-[1.1em] w-0.5 translate-y-[0.2em] animate-pulse rounded-full bg-foreground motion-reduce:animate-none"
+              />
+            )}
+          </BubbleContent>
         </Bubble>
+        {message.sources && message.sources.length > 0 && <Sources sources={message.sources} />}
         {message.sql && <SqlTrace sql={message.sql} />}
         {message.embeds?.map((embed, index) => <Embed key={index} embed={embed} />)}
+        {onFeedback && !message.streaming && (
+          <MessageFeedback
+            defaultValue={message.feedback ?? null}
+            onFeedback={(value, details) => onFeedback(message.id, value, details)}
+            className="-ml-2"
+          />
+        )}
       </MessageContent>
     </Message>
   )
@@ -221,6 +417,9 @@ function Chat({
   onSend,
   loading = false,
   onRetry,
+  onStop,
+  onFeedback,
+  attach,
   suggestions = [],
   title = "Pregúntale a tus datos",
   description = "Escribe una pregunta sobre tus informes y datasets. Te respondo con números y gráficas.",
@@ -229,15 +428,23 @@ function Chat({
   ...props
 }: ChatProps) {
   const [text, setText] = useState("")
+  const [files, setFiles] = useState<File[]>([])
+  const fileInput = useRef<HTMLInputElement>(null)
   const inputId = useId()
   const titleId = useId()
-  const canSend = text.trim() !== "" && !loading
+  const maxFiles = attach?.maxFiles ?? 5
+  // An answer streaming in holds new questions, as `loading` does.
+  const busy = loading || messages.some((message) => message.streaming)
+  const canSend = (text.trim() !== "" || files.length > 0) && !busy
 
   function send(value: string) {
     const trimmed = value.trim()
-    if (!trimmed || loading) return
-    onSend(trimmed)
+    if ((!trimmed && files.length === 0) || busy) return
+    // Existing callers get the text alone, as before; files come as a second argument.
+    if (files.length > 0) onSend(trimmed, files)
+    else onSend(trimmed)
     setText("")
+    setFiles([])
   }
 
   return (
@@ -291,7 +498,7 @@ function Chat({
                 {/* p-px: items contain their paint, and the cards' ring is drawn just outside them. */}
                 {messages.map((message) => (
                   <MessageScrollerItem key={message.id} messageId={message.id} className="p-px">
-                    <ChatMessageRow message={message} onRetry={onRetry} />
+                    <ChatMessageRow message={message} onRetry={onRetry} onFeedback={onFeedback} />
                   </MessageScrollerItem>
                 ))}
                 {loading && (
@@ -312,6 +519,14 @@ function Chat({
         }}
       >
         <div className="relative rounded-xl border border-[color:var(--control-border,var(--input))] bg-card shadow-(--aura-shadow-card) focus-within:ring-3 focus-within:ring-ring/50">
+          {files.length > 0 && (
+            <FileChips
+              files={files.map((file) => ({ name: file.name, size: file.size, type: file.type }))}
+              label="Archivos adjuntos"
+              onRemove={(index) => setFiles((current) => current.filter((_, at) => at !== index))}
+              className="px-3 pt-3"
+            />
+          )}
           <label htmlFor={inputId} className="sr-only">
             Mensaje
           </label>
@@ -328,17 +543,63 @@ function Chat({
                 send(text)
               }
             }}
-            className="max-h-40 min-h-12 resize-none border-0 bg-transparent py-3 pr-14 pl-4 shadow-none focus-visible:ring-0 dark:bg-transparent"
+            className={cn(
+              "max-h-40 min-h-12 resize-none border-0 bg-transparent py-3 pr-14 pl-4 shadow-none focus-visible:ring-0 dark:bg-transparent",
+              attach && "pl-12"
+            )}
           />
-          <Button
-            type="submit"
-            size="icon"
-            aria-label="Enviar"
-            disabled={!canSend}
-            className="absolute right-2 bottom-2 rounded-lg"
-          >
-            <ArrowUpIcon aria-hidden />
-          </Button>
+          {attach && (
+            <>
+              <input
+                ref={fileInput}
+                type="file"
+                multiple={maxFiles > 1}
+                accept={attach.accept}
+                data-slot="chat-file-input"
+                tabIndex={-1}
+                aria-hidden
+                className="sr-only"
+                onChange={(event) => {
+                  const picked = Array.from(event.target.files ?? [])
+                  setFiles((current) => [...current, ...picked].slice(0, maxFiles))
+                  // The same file can be picked again after it was removed.
+                  event.target.value = ""
+                }}
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label="Adjuntar archivo"
+                disabled={busy || files.length >= maxFiles}
+                className="absolute bottom-2 left-2 rounded-lg text-muted-foreground"
+                onClick={() => fileInput.current?.click()}
+              >
+                <PaperclipIcon aria-hidden />
+              </Button>
+            </>
+          )}
+          {busy && onStop ? (
+            <Button
+              type="button"
+              size="icon"
+              aria-label="Detener respuesta"
+              className="absolute right-2 bottom-2 rounded-lg"
+              onClick={onStop}
+            >
+              <SquareIcon aria-hidden className="fill-current" />
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="icon"
+              aria-label="Enviar"
+              disabled={!canSend}
+              className="absolute right-2 bottom-2 rounded-lg"
+            >
+              <ArrowUpIcon aria-hidden />
+            </Button>
+          )}
         </div>
       </form>
     </section>
