@@ -281,6 +281,8 @@ type DataTableView = {
   advancedFilter?: FilterGroup
 }
 
+const FILTER_SLICES: (keyof DataTableView)[] = ["globalFilter", "columnFilters", "advancedFilter"]
+
 /**
  * The view state: each slice the parent passes is controlled, the rest lives here. Several slices can change
  * in one event (a search also goes back to the first page), so every change builds on the latest one.
@@ -300,6 +302,9 @@ function useView(value: Partial<DataTableView> | undefined, initial: DataTableVi
           ? (updater as (old: DataTableView[K]) => DataTableView[K])(previous[key])
           : updater
       const next = { ...previous, [key]: slice }
+      // A new search or filter starts at the first page. Done here, not by TanStack's auto reset, so a view that
+      // arrives whole (a link, a saved view) keeps its own page.
+      if (FILTER_SLICES.includes(key) && slice !== previous[key]) next.pagination = { ...next.pagination, pageIndex: 0 }
       latest.current = next
       setLocal(next)
       onChange?.(next)
@@ -820,6 +825,7 @@ function DataTable<TData extends RowData>({
     getRowCanExpand: () => Boolean(renderDetail),
     enableColumnResizing: resizableColumns,
     columnResizeMode: "onChange",
+    autoResetPageIndex: false,
     state: {
       sorting: view.sorting,
       globalFilter: view.globalFilter,

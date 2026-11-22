@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { DateRangeFilter } from '@/components/ui/date-range-filter'
+import { useDataTableUrlState } from '@/hooks/use-data-table-url-state'
 import type { FilterField } from '@/lib/filter-conditions'
 import { formatCurrency, formatDate, formatNumber } from '@/lib/format'
 
@@ -889,5 +890,62 @@ export const Virtualized: Story = {
     scroller.scrollTop = 0
     await waitFor(() => expect(canvas.getByText('Ventas por región 1')).toBeInTheDocument())
     ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+function UrlStateTable() {
+  const [view, setView] = useDataTableUrlState({ prefix: 'informes' })
+  return (
+    <DataTable
+      columns={FILTER_COLUMNS}
+      data={INFORMES}
+      filterPlaceholder="Buscar informes…"
+      view={view}
+      onViewChange={setView}
+    />
+  )
+}
+
+/**
+ * The view in the URL (`useDataTableUrlState`): sorting, paging and filtering write it, and opening a link with
+ * it (or Back) brings the same view.
+ */
+export const UrlState: Story = {
+  render: () => <UrlStateTable />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(document.body)
+    const start = window.location.href
+    const param = (key: string) => new URLSearchParams(window.location.search).get(`informes.${key}`)
+    try {
+      await userEvent.click(within(canvas.getByRole('columnheader', { name: /Nombre/ })).getByRole('button', { name: /Nombre/ }))
+      await waitFor(() => expect(param('sort')).toBe('nombre.asc'))
+      await userEvent.click(canvas.getByRole('button', { name: 'Siguiente' }))
+      await waitFor(() => expect(param('page')).toBe('2'))
+      const toolbar = within(canvasElement.querySelector<HTMLElement>('[data-slot="data-table-toolbar"]')!)
+      await userEvent.click(toolbar.getByRole('button', { name: 'Estado' }))
+      await userEvent.click(within(await page.findByRole('dialog', { name: 'Estado' })).getByRole('option', { name: /Borrador/ }))
+      await waitFor(() => expect(param('f.estado')).toBe('["Borrador"]'))
+      // A filter goes back to the first page.
+      await expect(param('page')).toBeNull()
+      await userEvent.keyboard('{Escape}')
+      await waitFor(() => expect(page.queryByRole('dialog')).toBeNull())
+
+      // Someone opens a shared link: descending by «Actualizado», page 2 of 5 per page.
+      const shared = new URL(start)
+      shared.searchParams.set('informes.sort', 'actualizado.desc')
+      shared.searchParams.set('informes.page', '2')
+      shared.searchParams.set('informes.size', '5')
+      window.history.pushState(null, '', shared)
+      window.dispatchEvent(new PopStateEvent('popstate'))
+      await waitFor(() =>
+        expect(canvas.getByRole('columnheader', { name: /Actualizado/ })).toHaveAttribute('aria-sort', 'descending')
+      )
+      await expect(canvas.getByText('Página 2 de 5')).toBeInTheDocument()
+      await expect(canvasElement.querySelectorAll('tbody tr')).toHaveLength(5)
+    } finally {
+      window.history.replaceState(null, '', start)
+      ;(document.activeElement as HTMLElement | null)?.blur()
+    }
   },
 }
