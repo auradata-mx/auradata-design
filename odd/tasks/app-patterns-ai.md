@@ -36,10 +36,10 @@ Cross-cutting (coordinator rules):
 
 | ID | Specs | Route | Status | Evidence |
 | --- | --- | --- | --- | --- |
-| A1 | S1 | inline | pending | `TabsCount` in `tabs`, new `segmented-control` (Base UI radio group) |
-| A2 | S2 | inline | pending | `master-detail` |
-| A3 | S3 | inline | pending | `onboarding-checklist` |
-| A4 | S4 | inline | pending | `tour` |
+| A1 | S1 | inline | done (01c25a9) | `TabsCount` (es-MX thousands, «99+» past `max`, part of the tab name) in `tabs`; `segmented-control` on Base UI `RadioGroup`/`Radio` (`sm`, icon-only squares). RED unit + tsc → GREEN; plays: counts in the names, click, Tab + ArrowRight |
+| A2 | S2 | inline | done (4c326b3) | `master-detail` (`MasterDetail`, `List`, `Item`, `Pane`, `Back`); CSS swap below `md`; focus to the pane on open and back to the row that opened it. RED unit + tsc → GREEN; Phone play RED (focus lost: «Volver» clears the selection) → the opener row is remembered |
+| A3 | S3 | inline | done (db4a160) | `onboarding-checklist` (card, progress «1 de 4 pasos» as `aria-valuetext`, «(hecho)» for screen readers, next step primary, link steps, «Ocultar guía», «Todo listo» + «Listo»). Screenshot: link step lost its outline border → `cn(buttonVariants())`, pinned by a play (RED → GREEN) |
+| A4 | S4 | inline | done (5c30936) | `tour` on the Base UI popover primitive: anchor resolved per step, scroll into view (instant with reduced motion), dimmed page with a brand outline on the target, non-modal dialog, focus on «Siguiente», Escape/«Saltar tour» → `onSkip(step)`, outside clicks ignored, «Terminar» → `onComplete`. 5 plays; screenshot: the ring vanished under the dimming box-shadow → outline (play asserts it) |
 | A5 | S5 | inline | pending | `shortcuts-dialog` |
 | A6 | S6 | inline | pending | `user-menu`, used by `app-shell` |
 | A7 | S7 | inline | pending | `empty-illustration` |
@@ -59,3 +59,4 @@ Cross-cutting (coordinator rules):
   - Tour: Base UI `Popover` with `anchor` on the target element (stock `PopoverContent` does not pass `anchor`, so `tour.tsx` uses the primitive), non-modal; a highlight box with a dimming shadow over the target; «Saltar tour», Escape, «Anterior»/«Siguiente»/«Terminar», «Paso 1 de 3».
   - Shortcuts: `keys` strings such as `mod+k`, `shift+n`, `g i` (a sequence); `mod+<key>` renders through `shortcutLabel()`; «?» opens it unless focus is in a text field.
   - Chat: new props are optional, `onSend(text)` gains an optional second argument (the files), so existing callers and plays keep working.
+- L3 (A1-A4): the copied audit config served another thread's Storybook (port 6009, `reuseExistingServer`): this worktree's scratch copy uses port 6165. Story tests run at the story's viewport (390 px for `ON_PHONE`), so phone plays exercise the CSS swap. jest-dom `toBeVisible` fails during a popup's fade-in: tour plays wait for it. Lint (`react-hooks/set-state-in-effect`) moved the tour to `useSyncExternalStore` for reduced motion, an anchor resolver function and rect updates from callbacks only. The tour's outline assertion was added after the fix (RED not observed; the ring version had no outline).

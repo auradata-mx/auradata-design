@@ -205,3 +205,14 @@ test('publishes the guided tour on the Base UI popover', () => {
   expect(item('tour').dependencies).toContain('@base-ui/react')
   expect(item('tour').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/button']))
 })
+
+test('publishes the shortcuts dialog with the search command, whose key labels it reuses', () => {
+  expect(item('shortcuts-dialog')?.type).toBe('registry:ui')
+  expect(item('shortcuts-dialog').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/search-command',
+      'cristianruben-dev/auradata-design/kbd',
+      'cristianruben-dev/auradata-design/dialog',
+    ]),
+  )
+})
