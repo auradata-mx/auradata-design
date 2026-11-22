@@ -33,7 +33,7 @@ export const Default: Story = {
   tags: ['mobile'],
   render: (args) => (
     <header className="flex items-center justify-between gap-6 border-b pb-4">
-      <a href="#inicio" aria-label="AuraData, inicio">
+      <a href="#inicio" aria-label="AuraData, inicio" className="flex">
         <Logo className="h-6" />
       </a>
       <NavigationMenu className="hidden md:flex" aria-label="Principal" {...args}>

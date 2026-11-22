@@ -14,13 +14,13 @@ const TESTIMONIALS = [
     quote:
       "Cerramos el mes en dos días, no en una semana: el informe de ventas se arma solo.",
     name: "Ana López",
-    role: "Directora de Finanzas, Grupo Bajío",
+    role: "Directora de finanzas, Grupo Bajío",
   },
   {
     quote:
       "Cada sucursal ve sus números a las 8:00, sin pedirle nada a sistemas.",
     name: "Jorge Ramírez",
-    role: "Gerente de Operaciones, Farmacias del Norte",
+    role: "Gerente de operaciones, Farmacias del Norte",
   },
   {
     quote:

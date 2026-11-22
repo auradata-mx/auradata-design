@@ -1,14 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { formatCurrency, formatPercent } from '@/lib/format'
 
 const ROWS = [
-  { region: 'Norte', sales: 1_284_500, change: '+12 %' },
-  { region: 'Centro', sales: 2_031_900, change: '+4 %' },
-  { region: 'Sur', sales: 846_200, change: '−3 %' },
+  { region: 'Norte', sales: 1_284_500, change: 0.12 },
+  { region: 'Centro', sales: 2_031_900, change: 0.04 },
+  { region: 'Sur', sales: 846_200, change: -0.03 },
 ]
 
-const money = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 })
+const money = { format: (value: number) => formatCurrency(value) }
+const change = (value: number) => formatPercent(value, { signDisplay: 'exceptZero' })
 
 const meta = {
   title: 'Components/Table',
@@ -33,15 +35,15 @@ export const Default: Story = {
         {ROWS.map((row) => (
           <TableRow key={row.region}>
             <TableCell>{row.region}</TableCell>
-            <TableCell className="text-right font-mono">{money.format(row.sales)}</TableCell>
-            <TableCell className="text-right font-mono">{row.change}</TableCell>
+            <TableCell className="text-right tabular-nums">{money.format(row.sales)}</TableCell>
+            <TableCell className="text-right tabular-nums">{change(row.change)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell>Total</TableCell>
-          <TableCell className="text-right font-mono">{money.format(ROWS.reduce((sum, row) => sum + row.sales, 0))}</TableCell>
+          <TableCell className="text-right tabular-nums">{money.format(ROWS.reduce((sum, row) => sum + row.sales, 0))}</TableCell>
           <TableCell />
         </TableRow>
       </TableFooter>
@@ -62,7 +64,7 @@ export const LongCell: Story = {
         <TableHeader>
           <TableRow>
             <TableHead>Informe</TableHead>
-            <TableHead>Dataset</TableHead>
+            <TableHead className="max-sm:hidden">Dataset</TableHead>
             <TableHead className="text-right">Ventas</TableHead>
           </TableRow>
         </TableHeader>
@@ -71,15 +73,15 @@ export const LongCell: Story = {
             <TableCell className="whitespace-normal">
               Rentabilidad por sucursal y línea de producto en el Bajío y Occidente, contra el presupuesto anual
             </TableCell>
-            <TableCell className="max-w-40 truncate" title="ventas_rentabilidad_sucursal_linea_producto_2026">
+            <TableCell className="max-w-40 truncate max-sm:hidden" title="ventas_rentabilidad_sucursal_linea_producto_2026">
               ventas_rentabilidad_sucursal_linea_producto_2026
             </TableCell>
-            <TableCell className="text-right font-mono">{money.format(2_031_900)}</TableCell>
+            <TableCell className="text-right tabular-nums">{money.format(2_031_900)}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell className="whitespace-normal">Ventas por región</TableCell>
-            <TableCell className="max-w-40 truncate">pedidos_2026</TableCell>
-            <TableCell className="text-right font-mono">{money.format(1_284_500)}</TableCell>
+            <TableCell className="max-w-40 truncate max-sm:hidden">pedidos_2026</TableCell>
+            <TableCell className="text-right tabular-nums">{money.format(1_284_500)}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

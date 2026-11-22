@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { Separator } from '@/components/ui/separator'
+import { formatCurrency, formatNumber } from '@/lib/format'
 
 const meta = {
   title: 'Components/Separator',
@@ -31,12 +32,12 @@ export const Vertical: Story = {
     <div className="flex h-16 items-center gap-4 text-sm">
       <div className="grid">
         <span className="text-muted-foreground">Ventas</span>
-        <span className="font-mono">$1,284,500</span>
+        <span className="font-medium tabular-nums">{formatCurrency(1284500)}</span>
       </div>
       <Separator orientation="vertical" />
       <div className="grid">
         <span className="text-muted-foreground">Pedidos</span>
-        <span className="font-mono">4,812</span>
+        <span className="font-medium tabular-nums">{formatNumber(4812)}</span>
       </div>
     </div>
   ),
