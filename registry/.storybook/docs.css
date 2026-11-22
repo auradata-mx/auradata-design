@@ -7,3 +7,27 @@
 .sbdocs-content ol > li {
   padding-inline-start: 0.25rem;
 }
+
+/* Headers read from the left, as the cells under them. */
+.sbdocs-content th {
+  text-align: left;
+}
+
+/* Long inline code (paths, token names) breaks instead of widening the page. */
+.sbdocs-content :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+
+/* On a phone a wide table scrolls inside itself instead of widening the page; wider screens keep a plain table. */
+@media (max-width: 640px) {
+  .sbdocs-content table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  /* Storybook keeps inline code on one line; in running text on a phone a long path has to break. */
+  .sbdocs-content :is(p, li) > code {
+    white-space: normal;
+  }
+}

@@ -35,7 +35,8 @@ Los productos usan los colores por su función, nunca por su valor: `primary`, `
   <ColorItem title="Texto" subtitle="foreground · muted-foreground" colors={{ claro: theme.light.foreground, 'claro, secundario': theme.light['muted-foreground'], oscuro: theme.dark.foreground, 'oscuro, secundario': theme.dark['muted-foreground'] }} />
   <ColorItem title="Superficies" subtitle="background · muted · border" colors={{ background: theme.light.background, muted: theme.light.muted, border: theme.light.border }} />
   <ColorItem title="Estados" subtitle="success · warning · info · destructive" colors={{ success: theme.light.success, warning: theme.light.warning, info: theme.light.info, destructive: theme.light.destructive }} />
-  <ColorItem title="Gráficas" subtitle="--chart-1 … --chart-8, en este orden" colors={[1, 2, 3, 4, 5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])} />
+  <ColorItem title="Gráficas, 1 a 4" subtitle="--chart-1 … --chart-4, en este orden" colors={[1, 2, 3, 4].map((n) => theme.light[`chart-${n}`])} />
+  <ColorItem title="Gráficas, 5 a 8" subtitle="--chart-5 … --chart-8" colors={[5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])} />
 </ColorPalette>
 
 ## El color acompaña al mensaje

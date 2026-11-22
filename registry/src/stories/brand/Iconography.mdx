@@ -54,7 +54,7 @@ Dentro de un `Button` no pongas tamaño: el botón ya le da 16 px a su ícono.
 | --- | --- | --- |
 | Ícono junto a un texto | Decorativo: `aria-hidden` | <Button variant="outline"><DownloadIcon data-icon="inline-start" aria-hidden />Descargar</Button> |
 | Botón solo con ícono | Necesita un nombre: `aria-label` | <span className="inline-flex gap-2"><Button size="icon" variant="ghost" aria-label="Editar informe"><PencilIcon aria-hidden /></Button><Button size="icon" variant="ghost" aria-label="Eliminar informe"><Trash2Icon aria-hidden /></Button></span> |
-| Ícono de estado | Siempre con una palabra: el color no basta | <Badge variant="outline"><CircleCheckIcon aria-hidden className="text-success" />Publicado</Badge> |
+| Ícono de estado | Siempre con una palabra: el color no basta | <span className="sb-unstyled"><Badge variant="outline"><CircleCheckIcon aria-hidden className="text-success" />Publicado</Badge></span> |
 | Campo de búsqueda | El ícono es decorativo; el campo lleva su etiqueta | <span className="inline-flex items-center gap-2 text-sm text-muted-foreground"><SearchIcon aria-hidden className="size-4" />Buscar informes</span> |
 
 Un botón solo con ícono también lleva un `Tooltip` con el mismo texto que su `aria-label`, para quien usa el mouse.

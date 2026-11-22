@@ -7,11 +7,11 @@ import theme from '@auradata/tokens/shadcn-theme.json'
 export const pairs = (mode) =>
   Object.entries(theme[mode]).filter(([name]) => !name.startsWith('chart-') && !['radius', 'gradient-brand'].includes(name))
 
-# AuraData tokens
+# Tokens de AuraData
 
-Every value on this page is read from `@auradata/tokens`. Change `packages/tokens/src/tokens` and rebuild; never edit a color in a component.
+Cada valor de esta página sale de `@auradata/tokens`. Cambia `packages/tokens/src/tokens` y vuelve a compilar; nunca escribas un color en un componente.
 
-## Light
+## Claro
 
 <ColorPalette>
   {pairs('light').map(([name, value]) => (
@@ -19,7 +19,7 @@ Every value on this page is read from `@auradata/tokens`. Change `packages/token
   ))}
 </ColorPalette>
 
-## Dark
+## Oscuro
 
 <ColorPalette>
   {pairs('dark').map(([name, value]) => (
@@ -27,17 +27,24 @@ Every value on this page is read from `@auradata/tokens`. Change `packages/token
   ))}
 </ColorPalette>
 
-## Chart palette
+## Paleta de gráficas
+
+{/* Two rows of four: eight swatches in one row run their hex labels together. */}
 
 <ColorPalette>
   <ColorItem
-    title="AuraData"
-    subtitle="--chart-1 … --chart-8"
-    colors={[1, 2, 3, 4, 5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])}
+    title="1 a 4"
+    subtitle="--chart-1 … --chart-4"
+    colors={[1, 2, 3, 4].map((n) => theme.light[`chart-${n}`])}
+  />
+  <ColorItem
+    title="5 a 8"
+    subtitle="--chart-5 … --chart-8"
+    colors={[5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])}
   />
 </ColorPalette>
 
-## Type
+## Tipografía
 
 <TypeScale font="sans" sizes={[38, 30, 24, 20, 16, 14, 12]} sample="Informes que se entienden" />
 <TypeScale font="mono" sizes={[18, 14, 12]} sample="$1,284,500 · 12.4 %" />

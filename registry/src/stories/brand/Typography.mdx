@@ -10,10 +10,10 @@ La familia principal en títulos, textos, botones y navegación. El logotipo usa
 
 <div className="sb-unstyled my-8 grid gap-6 md:grid-cols-2">
   <p className="text-8xl font-semibold leading-none">Aa</p>
-  <p className="text-lg break-all text-muted-foreground">
-    ABCDEFGHIJKLMNÑOPQRSTUVWXYZ
+  <p className="text-lg wrap-anywhere text-muted-foreground">
+    ABCDEFGHIJKLMN<wbr />ÑOPQRSTUVWXYZ
     <br />
-    abcdefghijklmnñopqrstuvwxyz
+    abcdefghijklmn<wbr />ñopqrstuvwxyz
     <br />
     0123456789 ¿? ¡! @ &
   </p>
@@ -49,7 +49,7 @@ La de antd, la misma de AuraData BI: 14 px el cuerpo y los títulos de 38 a 16 p
 
 La familia de apoyo para datos, códigos, medidas y etiquetas técnicas. Su uso es puntual: los textos largos se componen con Outfit. En tablas y KPI, las cifras van en `tabular-nums` para que se alineen.
 
-<TypeScale font="mono" sizes={[18, 14, 12]} sample="Aa 0123456789 · #2563EB / 48 px / 600" />
+<TypeScale font="mono" sizes={[18, 14, 12]} sample={'Aa 0123456789 · #2563EB / 48\u00a0px / 600'} />
 
 ## Archivos
 

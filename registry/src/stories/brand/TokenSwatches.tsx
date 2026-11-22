@@ -80,7 +80,7 @@ export function EaseCurves() {
         const point = (x: number, y: number) => `${x * 100} ${100 - y * 100}`
         return (
           <div key={name} className="grid justify-items-start gap-2">
-            <svg viewBox="-4 -4 108 108" className="size-32 rounded-lg bg-muted" aria-hidden>
+            <svg viewBox="-12 -12 124 124" className="size-32 rounded-lg bg-muted" aria-hidden>
               <path d="M0 100 L100 0" className="stroke-border" strokeWidth={1} fill="none" />
               <path
                 d={`M0 100 C${point(x1, y1)} ${point(x2, y2)} 100 0`}
