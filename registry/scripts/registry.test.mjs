@@ -319,3 +319,12 @@ test('publishes the chart card with its states, its menu and the PNG export', ()
     ]),
   )
 })
+
+test('publishes the cartesian charts on the chart, its palette and the formats', () => {
+  expect(item('cartesian-chart').registryDependencies).toEqual([
+    'cristianruben-dev/auradata-design/chart',
+    'cristianruben-dev/auradata-design/chart-palette',
+    'cristianruben-dev/auradata-design/format',
+  ])
+  expect(item('cartesian-chart').dependencies).toEqual(['cn', 'recharts'])
+})
