@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsCount, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const meta = {
   title: 'Components/Tabs',
@@ -103,4 +103,55 @@ export const Switching: Story = {
     await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveTextContent('Tres productos suman el 70 %.'))
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
+}
+
+/** Tabs that count what they hold: the number is part of the tab's name and caps at `max`. */
+export const WithCounts: Story = {
+  args: { defaultValue: 'all' },
+  render: (args) => (
+    <Tabs {...args} className="w-full max-w-md">
+      <TabsList>
+        <TabsTrigger value="all">
+          Todos <TabsCount value={1284} />
+        </TabsTrigger>
+        <TabsTrigger value="mine">
+          Míos <TabsCount value={12} />
+        </TabsTrigger>
+        <TabsTrigger value="shared">
+          Compartidos <TabsCount value={140} max={99} />
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="all">Todos los informes del espacio.</TabsContent>
+      <TabsContent value="mine">Los informes que creaste.</TabsContent>
+      <TabsContent value="shared">Los informes que te compartieron.</TabsContent>
+    </Tabs>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // es-MX thousands, and «99+» past the cap.
+    await expect(canvas.getByRole('tab', { name: 'Todos 1,284' })).toHaveAttribute('aria-selected', 'true')
+    await expect(canvas.getByRole('tab', { name: 'Compartidos 99+' })).toBeVisible()
+    await userEvent.click(canvas.getByRole('tab', { name: 'Míos 12' }))
+    await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveTextContent('Los informes que creaste.'))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Line tabs with counts, as a page's sections. */
+export const LineWithCounts: Story = {
+  args: { defaultValue: 'open' },
+  render: (args) => (
+    <Tabs {...args} className="w-full max-w-md">
+      <TabsList variant="line">
+        <TabsTrigger value="open">
+          Abiertas <TabsCount value={8} />
+        </TabsTrigger>
+        <TabsTrigger value="closed">
+          Cerradas <TabsCount value={0} />
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="open">Ocho alertas abiertas.</TabsContent>
+      <TabsContent value="closed">Sin alertas cerradas.</TabsContent>
+    </Tabs>
+  ),
 }

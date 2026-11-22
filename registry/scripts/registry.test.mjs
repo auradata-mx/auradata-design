@@ -178,3 +178,10 @@ test('installs the data table with its own parts (T61)', () => {
     expect.arrayContaining(['cristianruben-dev/auradata-design/button', 'cristianruben-dev/auradata-design/format', 'separator'])
   )
 })
+
+// T65: app patterns.
+test('publishes the segmented control on the Base UI radio group, and tabs with counts', () => {
+  expect(item('segmented-control')?.type).toBe('registry:ui')
+  expect(item('segmented-control').dependencies).toContain('@base-ui/react')
+  expect(item('tabs').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/format']))
+})

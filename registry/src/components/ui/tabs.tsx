@@ -1,7 +1,9 @@
-// registry: auradata (shadcn tabs: line tabs sit flush with the content (no transparent border shifting their label), the active pill has room, the vertical panel lines up with the first tab, and only the brand focus outline shows)
+// registry: auradata (shadcn tabs: line tabs sit flush with the content (no transparent border shifting their label), the active pill has room, the vertical panel lines up with the first tab, only the brand focus outline shows, and `TabsCount` counts what a tab holds)
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
+
+import { formatNumber } from "@/lib/format"
 
 function Tabs({
   className,
@@ -77,4 +79,31 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
   )
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+/**
+ * How many things a tab holds, after its label: es-MX thousands («1,284») and «99+» past `max`.
+ * It is part of the tab's name («Informes 12»), so screen readers hear it too.
+ */
+function TabsCount({
+  value,
+  max,
+  className,
+  ...props
+}: Omit<React.ComponentProps<"span">, "children"> & { value: number; max?: number }) {
+  const text = max !== undefined && value > max ? `${formatNumber(max)}+` : formatNumber(value)
+  return (
+    <span
+      data-slot="tabs-count"
+      className={cn(
+        // On the muted list the pill is the page's color; on the chosen (light) tab and on line tabs it is muted.
+        "inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-background px-1.5 text-xs font-medium tabular-nums",
+        "group-data-[variant=line]/tabs-list:bg-muted in-data-active:bg-muted dark:bg-foreground/10 dark:in-data-active:bg-foreground/10",
+        className
+      )}
+      {...props}
+    >
+      {text}
+    </span>
+  )
+}
+
+export { Tabs, TabsList, TabsTrigger, TabsContent, TabsCount, tabsListVariants }
