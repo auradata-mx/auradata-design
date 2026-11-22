@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, export to CSV and Excel, and a view state to control or share)
 import * as React from "react"
 import {
   columnFacetingFeature,
@@ -50,6 +50,7 @@ import {
   ArrowUpIcon,
   ChevronRightIcon,
   Columns3Icon,
+  DownloadIcon,
   EllipsisIcon,
   EyeOffIcon,
   PinIcon,
@@ -88,6 +89,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Toggle } from "@/components/ui/toggle"
 import { countConditions, matchesFilter, type FilterField, type FilterGroup } from "@/lib/filter-conditions"
 import { formatDate, formatNumber } from "@/lib/format"
+import { downloadFile, MIME, toCsv, toXlsx, type ExportColumn } from "@/lib/table-export"
 
 /** Keeps the rows whose value is one of the chosen ones (a `select` filter); no choice keeps every row. */
 // A filter function serves any table, as the stock ones (`CreatedFilterFn<any, any>`).
@@ -218,6 +220,13 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
    * not change `data`: update it here and pass it back.
    */
   onCellEdit?: (row: TData, columnId: string, value: string | number) => void
+  /**
+   * An «Exportar» menu in the toolbar: CSV or Excel of the rows in view (filtered and sorted, every page), or of the
+   * selected rows when there are any, with the visible columns and their raw values. `fileName` without extension.
+   */
+  exportable?: boolean | { fileName?: string; sheetName?: string }
+  /** Receives the exported file instead of downloading it (to send it to a server, or in a test). */
+  onExport?: (file: DataTableExport) => void
   /** Filters beside the search, in the toolbar: a `DateRangeFilter`, the filter system's popovers. */
   filters?: React.ReactNode
   /** The page's own actions at the end of the toolbar («Nuevo informe»). */
@@ -241,6 +250,9 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   defaultView?: Partial<DataTableView>
   onViewChange?: (view: DataTableView) => void
 }
+
+/** A file the «Exportar» menu made: CSV text (with a BOM) or the bytes of an .xlsx. */
+type DataTableExport = { format: "csv" | "xlsx"; fileName: string; data: string | Uint8Array }
 
 /** `normal`: 40 px header and rows of 8 px padding; `compact`: 32 px header and 4 px. */
 type DataTableDensity = "normal" | "compact"
@@ -665,6 +677,8 @@ function DataTable<TData extends RowData>({
   renderDetail,
   defaultExpanded,
   onCellEdit,
+  exportable = false,
+  onExport,
   filters,
   actions,
   densityToggle = false,
@@ -894,6 +908,20 @@ function DataTable<TData extends RowData>({
       : []),
   ]
   const setAdvanced = setView("advancedFilter")
+  const selectedCount = Object.values(rowSelection).filter(Boolean).length
+  const exportRows = () =>
+    (selectedCount ? table.getSelectedRowModel() : table.getPrePaginatedRowModel()).rows
+  const exportFile = (format: DataTableExport["format"]) => {
+    const options = typeof exportable === "object" ? exportable : {}
+    const fileName = `${options.fileName ?? "datos"}.${format}`
+    const exported: ExportColumn<(typeof rows)[number]>[] = visibleColumns
+      .filter((column) => column.id !== "select" && column.id !== "expand")
+      .map((column) => ({ header: columnLabel(column.columnDef.header, column.id), value: (row) => row.getValue(column.id) }))
+    const data =
+      format === "csv" ? toCsv(exportRows(), exported) : toXlsx(exportRows(), exported, { sheetName: options.sheetName })
+    if (onExport) onExport({ format, fileName, data })
+    else downloadFile(data as BlobPart, fileName, MIME[format])
+  }
   const filterOf = (column: FilterColumn) => {
     const filter = column.columnDef.meta?.filter
     const title = titleOf(column)
@@ -990,7 +1018,7 @@ function DataTable<TData extends RowData>({
             {filters}
           </div>
         )}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-2">
           {densityToggle && (
             <Toggle
               variant="outline"
@@ -1001,6 +1029,25 @@ function DataTable<TData extends RowData>({
             >
               <Rows4Icon aria-hidden />
             </Toggle>
+          )}
+          {exportable && (
+            <DropdownMenu>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                <DownloadIcon data-icon="inline-start" aria-hidden />
+                Exportar
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="tabular-nums">
+                    {selectedCount
+                      ? `Filas seleccionadas: ${formatNumber(selectedCount)}`
+                      : `Filas filtradas: ${formatNumber(table.getPrePaginatedRowModel().rows.length)}`}
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => exportFile("csv")}>CSV (.csv)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => exportFile("xlsx")}>Excel (.xlsx)</DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
           {hideable.length > 0 && (
             <DropdownMenu defaultOpen={defaultColumnsOpen}>
@@ -1219,6 +1266,7 @@ export {
   dataTableFeatures,
   type DataTableColumn,
   type DataTableDensity,
+  type DataTableExport,
   type DataTableProps,
   type DataTableView,
 }

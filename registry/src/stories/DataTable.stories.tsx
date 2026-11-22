@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { strFromU8, unzipSync } from 'fflate'
 import { FolderInputIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import * as React from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
@@ -281,13 +282,14 @@ export const SelectionBar: Story = {
 }
 
 /**
- * The full toolbar: the search, the filters (here the period), the density switch, the column menu and the
- * page's own actions. On a phone the pieces wrap onto a second line.
+ * The full toolbar: the search, the filters (here the period), the density switch, «Exportar», the column menu
+ * and the page's own actions. On a phone the pieces wrap onto a second line.
  */
 export const Toolbar: Story = {
   tags: ['mobile'],
   args: {
     densityToggle: true,
+    exportable: true,
     filters: <DateRangeFilter today={new Date(2026, 10, 21)} placeholder="Periodo" />,
     actions: (
       <Button>
@@ -790,6 +792,64 @@ export const InlineEdit: Story = {
     await userEvent.click(canvas.getAllByRole('button', { name: /^Borrador\b.*editar «Estado»$/ })[0])
     await userEvent.selectOptions(canvas.getByRole('combobox', { name: 'Editar «Estado»' }), 'Publicado')
     await expect(onCellEdit).toHaveBeenLastCalledWith('Pedidos del mes', 'estado', 'Publicado')
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+const onExport = fn()
+
+/**
+ * «Exportar» saves the rows in view (filtered and sorted, every page; the selected ones when there is a
+ * selection) as CSV or Excel, with the visible columns.
+ */
+export const Export: Story = {
+  args: { exportable: { fileName: 'informes' }, onExport },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(document.body)
+    await userEvent.click(canvas.getByRole('button', { name: 'Exportar' }))
+    await userEvent.click(await page.findByRole('menuitem', { name: 'CSV (.csv)' }))
+    const [csv] = onExport.mock.lastCall!
+    await expect(csv.fileName).toBe('informes.csv')
+    const lines = (csv.data as string).split('\r\n')
+    await expect(lines[0]).toBe('\uFEFFNombre,Espacio,Actualizado,Dueño,Estado')
+    await expect(lines).toHaveLength(26)
+    await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
+
+    await userEvent.type(canvas.getByRole('searchbox', { name: 'Buscar informes…' }), 'inventario')
+    await userEvent.click(canvas.getByRole('button', { name: 'Exportar' }))
+    await expect(await page.findByText('Filas filtradas: 2')).toBeInTheDocument()
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Excel (.xlsx)' }))
+    const [xlsx] = onExport.mock.lastCall!
+    await expect(xlsx.fileName).toBe('informes.xlsx')
+    const sheet = strFromU8(unzipSync(xlsx.data as Uint8Array)['xl/worksheets/sheet1.xml'])
+    await expect(sheet).toContain('Inventario por almacén')
+    await expect(sheet).toContain('<row r="3">')
+    await expect(sheet).not.toContain('<row r="4">')
+    await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** With rows selected, «Exportar» saves only them. */
+export const ExportSelection: Story = {
+  args: { ...selectionArgs, exportable: true, onExport },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(document.body)
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Seleccionar «Ventas por región»' }))
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Seleccionar «Devoluciones»' }))
+    await userEvent.click(canvas.getByRole('button', { name: 'Exportar' }))
+    await expect(await page.findByText('Filas seleccionadas: 2')).toBeInTheDocument()
+    await userEvent.click(await page.findByRole('menuitem', { name: 'CSV (.csv)' }))
+    const [csv] = onExport.mock.lastCall!
+    await expect(csv.fileName).toBe('datos.csv')
+    await expect((csv.data as string).split('\r\n').slice(1)).toEqual([
+      'Ventas por región,Ventas,2026-11-01,Ana Torres,Publicado',
+      'Devoluciones,Dirección,2026-08-08,Luis Méndez,Borrador',
+    ])
+    await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
+    await userEvent.click(canvas.getByRole('button', { name: 'Quitar selección' }))
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }

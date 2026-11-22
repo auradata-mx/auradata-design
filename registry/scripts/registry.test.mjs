@@ -224,6 +224,8 @@ test('installs the data table with its own parts (T61)', () => {
     expect.arrayContaining(['cristianruben-dev/auradata-design/filter-conditions', 'cristianruben-dev/auradata-design/native-select'])
   )
   expect(item('filter-conditions').type).toBe('registry:lib')
+  expect(item('table-export').dependencies).toEqual(['fflate'])
+  expect(item('data-table').registryDependencies).toContain('cristianruben-dev/auradata-design/table-export')
   expect(item('faceted-filter').registryDependencies).toEqual(
     expect.arrayContaining(['cristianruben-dev/auradata-design/command', 'popover', 'cristianruben-dev/auradata-design/badge'])
   )
