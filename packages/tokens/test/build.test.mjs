@@ -341,3 +341,37 @@ test('the theme gives data-density="compact" a smaller Tailwind spacing', () => 
   expect(read('shadcn.css')).toMatch(/@layer base \{[^@]*\[data-density="compact"\] \{\s*--spacing: 0\.21875rem;/s);
 });
 
+// A report printed from any app with the theme: light colors (even from dark), no shadows or motion, no navigation,
+// sensible page breaks and the address of each link.
+test('the theme prints reports light, flat, without navigation and with link addresses', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  const print = theme.css['@media print'];
+  expect(print).toBeDefined();
+  // Dark mode prints with the light values of every shadcn variable.
+  expect(print[':root:root, .dark.dark']['color-scheme']).toBe('light');
+  expect(print[':root:root, .dark.dark']['--background']).toBe('#FFFFFF');
+  expect(print[':root:root, .dark.dark']['--foreground']).toBe('#0A0A0F');
+  expect(print[':root:root, .dark.dark']['--sequential-9']).toBe(theme.light['sequential-9']);
+  expect(Object.keys(print[':root:root, .dark.dark']).filter((key) => key.startsWith('--'))).toHaveLength(Object.keys(theme.light).length);
+  expect(print['*, ::before, ::after']).toMatchObject({
+    '--tw-shadow': '0 0 #0000 !important',
+    'text-shadow': 'none !important',
+    animation: 'none !important',
+    transition: 'none !important',
+  });
+  const hidden = Object.entries(print).find(([, rule]) => rule.display === 'none !important')[0];
+  for (const selector of ['nav', '[data-slot="sidebar"]', '[data-slot="sidebar-trigger"]', '[data-print="hide"]']) {
+    expect(hidden).toContain(selector);
+  }
+  expect(Object.entries(print).find(([selector]) => selector.includes('thead'))[1]).toEqual({ display: 'table-header-group' });
+  const avoid = Object.entries(print).find(([, rule]) => rule['break-inside'] === 'avoid')[0];
+  for (const selector of ['tr', '[data-slot="card"]', '[data-slot="chart"]']) expect(avoid).toContain(selector);
+  const link = Object.entries(print).find(([selector]) => selector.includes('::after') && selector.includes('a[href^="http"]'));
+  expect(link[1].content).toBe('" (" attr(href) ")"');
+  expect(theme.css['@media screen']['[data-print="only"]']).toEqual({ display: 'none' });
+  expect(read('shadcn.css')).toMatch(/@media print \{\s*:root:root, \.dark\.dark \{\s*color-scheme: light;/);
+});
+
+test('tokens.css prints the dark theme with its light values', () => {
+  expect(read('tokens.css')).toMatch(/@media print \{\s*\.dark\.dark \{[^}]*--aura-color-bg-container: #FFFFFF;[^}]*--aura-color-text: #0A0A0F;/s);
+});

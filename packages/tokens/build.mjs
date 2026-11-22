@@ -5,7 +5,7 @@
  * below turns the resolved tokens into the shape one consumer reads:
  *
  *   tokens.css    --aura-* variables, light on :root and dark on .dark
- *   shadcn.css    the shadcn semantic variables, pointing at --aura-*, the brand focus ring and compact density
+ *   shadcn.css    the shadcn semantic variables, pointing at --aura-*, the brand focus ring, compact density and print
  *   shadcn-theme.json  the same mapping with raw values and the focus ring (`css`), for a shadcn
  *                 registry theme item
  *   tailwind.css  a Tailwind 4 @theme with the brand
@@ -47,7 +47,17 @@ function tokensCss(light, dark) {
   const themed = (tokens) => [...pick(tokens, 'color-'), ...pick(tokens, 'shadow-')];
   const brand = Object.entries(light).filter(([name]) => !name.startsWith('color-') && !name.startsWith('shadow-'));
   const aura = (entries) => entries.map(([name, value]) => [`--aura-${name}`, value]);
-  return HEADER + block(':root', [...aura(brand), ...aura(themed(light))]) + '\n' + block('.dark', aura(themed(dark)));
+  // Doubled class: wins over the .dark block wherever a product's CSS puts it.
+  const print = block('.dark.dark', aura(themed(light))).replace(/^(?=.)/gm, '  ');
+  return (
+    HEADER +
+    block(':root', [...aura(brand), ...aura(themed(light))]) +
+    '\n' +
+    block('.dark', aura(themed(dark))) +
+    '\n/* Paper is light: dark mode prints with the light values. */\n@media print {\n' +
+    print +
+    '}\n'
+  );
 }
 
 const NINE = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -180,10 +190,79 @@ function densityCss(tokens) {
   };
 }
 
+/** Elements a printed report leaves out: app navigation, toasts, and anything marked data-print="hide". */
+const PRINT_HIDDEN = [
+  'nav',
+  '[role="navigation"]',
+  '[data-slot="sidebar"]',
+  '[data-slot="sidebar-trigger"]',
+  '[data-slot="sidebar-rail"]',
+  // The app bar: the header that holds the sidebar trigger (its breadcrumb and actions are screen-only).
+  'header:has([data-slot="sidebar-trigger"])',
+  '[data-sonner-toaster]',
+  '[data-print="hide"]',
+];
+
+/** Blocks a page break should not cut: table rows, figures, cards, charts, KPI cards. */
+const PRINT_WHOLE = [
+  'tr',
+  'img',
+  'svg',
+  'figure',
+  'pre',
+  'blockquote',
+  '[data-slot="card"]',
+  '[data-slot="chart"]',
+  '[data-slot="kpi-card"]',
+  '[data-slot="alert"]',
+];
+
+/**
+ * Reports on paper: printing from dark mode gives the light theme (every shadcn variable at its light value), with
+ * backgrounds kept, so tints, badges and heatmap cells print as on screen; no shadows (rings, the edge of a card,
+ * stay), animations or transitions;
+ * no navigation; headings stay with what follows, cards, charts and rows stay whole, table headers repeat on
+ * each page; scrolling tables print whole; an external link prints its address after it. `data-print="only"`
+ * shows something only on paper (a printed-on date), `data-print="hide"` only on screen.
+ */
+function printCss(light) {
+  const lightVars = Object.fromEntries(Object.entries(SHADCN).map(([name, aura]) => [`--${name}`, light[aura]]));
+  return {
+    '@media print': {
+      // Doubled: wins over the theme's own :root and .dark blocks wherever the shadcn CLI writes them.
+      ':root:root, .dark.dark': { 'color-scheme': 'light', ...lightVars },
+      html: { '-webkit-print-color-adjust': 'exact', 'print-color-adjust': 'exact' },
+      // Tailwind composes box-shadow from rings (the 1px edge of a card) and --tw-shadow: only the shadow goes.
+      '*, ::before, ::after': {
+        '--tw-shadow': '0 0 #0000 !important',
+        '--tw-inset-shadow': '0 0 #0000 !important',
+        'text-shadow': 'none !important',
+        animation: 'none !important',
+        transition: 'none !important',
+      },
+      [PRINT_HIDDEN.join(', ')]: { display: 'none !important' },
+      '[data-slot="table-container"], [data-slot="scroll-area-viewport"]': { overflow: 'visible !important' },
+      'h1, h2, h3, h4': { 'break-after': 'avoid' },
+      [PRINT_WHOLE.join(', ')]: { 'break-inside': 'avoid' },
+      thead: { display: 'table-header-group' },
+      'p, li': { orphans: '3', widows: '3' },
+      'a[href^="http"]:not([data-slot="button"])::after': {
+        content: '" (" attr(href) ")"',
+        'font-size': '0.875em',
+        'font-weight': 'normal',
+        color: 'var(--muted-foreground)',
+        'overflow-wrap': 'anywhere',
+      },
+    },
+    '@media screen': { '[data-print="only"]': { display: 'none' } },
+    '@page': { margin: '16mm 14mm' },
+  };
+}
+
 /** Every rule the theme adds besides its variables, merged so each at-rule appears once. */
 function themeCss(tokens) {
   const merged = {};
-  for (const rules of [focusCss(tokens), densityCss(tokens)]) {
+  for (const rules of [focusCss(tokens), densityCss(tokens), printCss(tokens)]) {
     for (const [selector, body] of Object.entries(rules)) {
       merged[selector] = selector.startsWith('@') ? { ...merged[selector], ...body } : body;
     }
@@ -209,7 +288,7 @@ function shadcnCss(light) {
     HEADER +
     "/* Import after tokens.css and shadcn's own theme, so these win. */\n" +
     block(':root, .dark', entries) +
-    '\n/* The brand focus ring on every component, and the compact density. */\n' +
+    '\n/* The brand focus ring on every component, the compact density and print. */\n' +
     cssOf(themeCss(light))
   );
 }

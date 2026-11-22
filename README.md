@@ -12,8 +12,8 @@ The AuraData brand for every product, in one private repository.
 
 | Product | File |
 | --- | --- |
-| Any CSS | `@auradata/tokens/tokens.css` (`--aura-*`, light on `:root`, dark on `.dark`): colors, `space-*`, `font-size-*`, `font-weight-*`, `line-height-*`, `z-index-*`, `focus-*` |
-| shadcn apps | `shadcn.css`, or the `auradata-theme` item of the registry; adds `success`, `warning`, `info` and their `-foreground`, a 50-900 scale of each status (`success-50` … `destructive-900`: tint 50, border 200, text 700), the data palettes `sequential-1..9` (one hue, magnitude) and `diverging-1..9` (red, neutral 5, blue) beside the categorical `chart-1..8`, the brand focus ring (2px of `--ring`, 2px away) on every component, and `control-border`, the 3:1 edge of unchecked checkboxes and radios |
+| Any CSS | `@auradata/tokens/tokens.css` (`--aura-*`, light on `:root`, dark on `.dark`, which prints light): colors, `space-*`, `font-size-*`, `font-weight-*`, `line-height-*`, `z-index-*`, `focus-*`, `density-compact` |
+| shadcn apps | `shadcn.css`, or the `auradata-theme` item of the registry; adds `success`, `warning`, `info` and their `-foreground`, a 50-900 scale of each status (`success-50` … `destructive-900`: tint 50, border 200, text 700), the data palettes `sequential-1..9` (one hue, magnitude) and `diverging-1..9` (red, neutral 5, blue) beside the categorical `chart-1..8`, the brand focus ring (2px of `--ring`, 2px away) on every component, `control-border`, the 3:1 edge of unchecked checkboxes and radios, compact density (`data-density="compact"` on `<html>` or a section scales Tailwind's `--spacing` by 0.875) and print styles for reports (light paper, no shadows, motion or navigation, sensible page breaks, link URLs; `data-print="hide"` and `data-print="only"`) |
 | Tailwind 4 sites | `tailwind.css` (`@theme` with `--color-aura-*`, fonts, radii, ease) |
 | Docusaurus | `infima.css` (light and `[data-theme='dark']`) |
 | AuraData BI (antd) | `antd.json` (`light` and `dark`, the shape of `THEME_DEFAULT` and `THEME_DARK`) |

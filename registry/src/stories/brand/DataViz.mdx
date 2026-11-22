@@ -132,6 +132,25 @@ Siempre con `lib/format` (es-MX). Estos ejemplos los escribe la librería, no es
 
 Las cifras de tablas y KPI llevan `tabular-nums`, para que las columnas se alineen.
 
+## Imprimir un reporte
+
+Un reporte se imprime desde el navegador (⌘P) sin código extra: el tema de AuraData trae los estilos de impresión.
+
+- **Papel claro.** Aunque la app esté en oscuro, se imprime con los colores del tema claro. Los fondos se conservan, así que los tintes, los badges y las celdas de un mapa de calor salen como en pantalla.
+- **Sin sombras ni movimiento.** Las tarjetas conservan su borde.
+- **Sin navegación.** Se ocultan la barra lateral, la barra superior de la app, los `<nav>` y los toasts.
+- **Saltos de página razonables.** Un título no queda solo al final de una hoja; las tarjetas, las gráficas, los KPI y las filas de una tabla no se parten, y el encabezado de una tabla se repite en cada hoja.
+- **La dirección de cada link.** Un link a otro sitio imprime su URL después del texto: «el dataset de ventas (https://auradata.mx/datos/ventas)».
+
+Dos atributos deciden qué sale en papel:
+
+| Atributo | Qué hace | Ejemplo |
+| --- | --- | --- |
+| `data-print="hide"` | Solo en pantalla | Los botones de imprimir, descargar o filtrar |
+| `data-print="only"` | Solo en papel | «Impreso el 21 nov 2026» |
+
+Mira el ejemplo en [Print](?path=/story/auradata-print--report) y ábrelo en la vista previa de impresión. Una gráfica guarda el ancho que midió en pantalla: si la hoja es más angosta, puede cortarse por la derecha.
+
 ## AuraData BI: ECharts
 
 Las gráficas de AuraData BI son de ECharts. Usan el tema de `@auradata/tokens/echarts.json`, con la misma paleta, la fuente Outfit y los colores de texto y ejes de los tokens, en claro y oscuro:
