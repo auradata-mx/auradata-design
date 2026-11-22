@@ -80,6 +80,7 @@ function DateRangeFilter({
   const range = value ?? uncontrolled
   const [month, setMonth] = React.useState(() => startOfMonth(subDays(range?.to ?? today, 31)))
   const active = presetOf(range, today)
+  const presetsRef = React.useRef<HTMLDivElement>(null)
 
   const change = (next: DateRange | undefined) => {
     if (value === undefined) setUncontrolled(next)
@@ -106,8 +107,20 @@ function DateRangeFilter({
         <CalendarIcon data-icon="inline-start" aria-hidden />
         {label ?? placeholder}
       </PopoverTrigger>
-      <PopoverContent align="start" aria-label="Periodo" className="w-auto flex-row gap-0 p-0">
-        <div role="group" aria-label="Periodos" className="flex w-40 flex-col gap-0.5 border-r p-2">
+      {/* On a phone the presets wrap in a row above the calendar, as wide as it; from sm they are a column beside it. */}
+      <PopoverContent
+        align="start"
+        aria-label="Periodo"
+        // The pressed preset takes the first focus, not the first one in the list.
+        initialFocus={() => presetsRef.current?.querySelector<HTMLElement>('[aria-pressed="true"]') ?? true}
+        className="w-min gap-0 p-0 sm:w-auto sm:flex-row"
+      >
+        <div
+          ref={presetsRef}
+          role="group"
+          aria-label="Periodos"
+          className="flex flex-row flex-wrap gap-0.5 border-b p-2 sm:w-40 sm:flex-col sm:border-r sm:border-b-0"
+        >
           {PRESETS.map((preset) => (
             <Button
               key={preset.id}
@@ -141,7 +154,9 @@ function DateRangeFilter({
           selected={range}
           onSelect={change}
           disabled={{ after: today }}
-          className="p-3"
+          today={today}
+          // Bigger days on a phone, where a finger picks them.
+          className="p-3 max-sm:[--cell-size:--spacing(9)]"
         />
       </PopoverContent>
     </Popover>

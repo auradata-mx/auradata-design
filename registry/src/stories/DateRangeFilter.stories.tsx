@@ -24,17 +24,26 @@ export const Empty: Story = { args: { defaultValue: undefined } }
 /** Open, for the visual tests and to see the presets and the calendar. */
 export const Open: Story = { args: { defaultOpen: true } }
 
-/** A preset, then a custom range picked on the calendar: the button's label follows each choice. */
+/** Another day than the browser's, so the calendar's «today» must come from the `today` prop. */
+const OTHER_TODAY = new Date(2026, 10, 18)
+
+/**
+ * A preset, then a custom range picked on the calendar: the button's label follows each choice. The
+ * calendar marks the `today` it is given, not the browser's clock.
+ */
 export const Choosing: Story = {
-  args: { onValueChange: fn() },
+  args: { onValueChange: fn(), today: OTHER_TODAY, defaultValue: presetRange('this-month', OTHER_TODAY) },
   play: async ({ args, canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body)
     const trigger = within(canvasElement).getByRole('button')
-    await expect(trigger).toHaveTextContent('1 nov 2026 – 21 nov 2026')
+    await expect(trigger).toHaveTextContent('1 nov 2026 – 18 nov 2026')
     await userEvent.click(trigger)
     const dialog = await body.findByRole('dialog', { name: 'Periodo' })
+    await expect(dialog.querySelector('[data-today]')).toHaveAttribute('data-day', '2026-11-18')
+    // The pressed preset takes the first focus, not «Hoy» above it.
+    await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Este mes' })).toHaveFocus())
     await userEvent.click(within(dialog).getByRole('button', { name: 'Últimos 7 días' }))
-    await expect(trigger).toHaveTextContent('15 nov 2026 – 21 nov 2026')
+    await expect(trigger).toHaveTextContent('12 nov 2026 – 18 nov 2026')
     await userEvent.click(within(dialog).getByRole('button', { name: 'Personalizado' }))
     await userEvent.click(dialog.querySelector<HTMLElement>('[data-day="2026-11-03"] button')!)
     await userEvent.click(dialog.querySelector<HTMLElement>('[data-day="2026-11-10"] button')!)
