@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { ChevronDownIcon, DownloadIcon, ShareIcon } from 'lucide-react'
+import { expect, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
 import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '@/components/ui/button-group'
@@ -61,4 +62,15 @@ export const WithInput: Story = {
       </ButtonGroup>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    // Between two solid buttons the separator is a hairline of the fill, as tall as the buttons: no pale gap.
+    const separator = canvasElement.querySelector<HTMLElement>('[data-slot="button-group-separator"]')!
+    const save = within(canvasElement).getByRole('button', { name: 'Guardar' })
+    await expect(separator.getBoundingClientRect().height).toBe(save.getBoundingClientRect().height)
+    const probe = document.createElement('span')
+    probe.className = 'bg-input'
+    canvasElement.append(probe)
+    await expect(getComputedStyle(separator).backgroundColor).not.toBe(getComputedStyle(probe).backgroundColor)
+    probe.remove()
+  },
 }

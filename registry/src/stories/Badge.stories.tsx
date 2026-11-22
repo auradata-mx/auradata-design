@@ -18,15 +18,15 @@ export const Default: Story = {}
 export const Variants: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-2">
-      <Badge {...args}>Default</Badge>
-      <Badge {...args} variant="secondary">Secondary</Badge>
-      <Badge {...args} variant="outline">Outline</Badge>
-      <Badge {...args} variant="success">Success</Badge>
-      <Badge {...args} variant="warning">Warning</Badge>
-      <Badge {...args} variant="info">Info</Badge>
-      <Badge {...args} variant="destructive">Destructive</Badge>
-      <Badge {...args} variant="ghost">Ghost</Badge>
-      <Badge {...args} variant="link">Link</Badge>
+      <Badge {...args}>Principal</Badge>
+      <Badge {...args} variant="secondary">Secundario</Badge>
+      <Badge {...args} variant="outline">Contorno</Badge>
+      <Badge {...args} variant="success">Éxito</Badge>
+      <Badge {...args} variant="warning">Advertencia</Badge>
+      <Badge {...args} variant="info">Información</Badge>
+      <Badge {...args} variant="destructive">Destructivo</Badge>
+      <Badge {...args} variant="ghost">Fantasma</Badge>
+      <Badge {...args} variant="link">Enlace</Badge>
     </div>
   ),
 }

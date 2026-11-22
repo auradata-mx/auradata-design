@@ -1,3 +1,4 @@
+// registry: auradata (shadcn button group whose separator between two solid buttons is a full-height hairline of the fill)
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -72,6 +73,8 @@ function ButtonGroupSeparator({
       orientation={orientation}
       className={cn(
         "relative self-stretch bg-input data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto",
+        // AuraData: between solid buttons, a hairline of the fill, edge to edge (the gray line left a pale gap).
+        "[[data-slot=button][data-variant=default]+&]:my-0 [[data-slot=button][data-variant=default]+&]:bg-[color-mix(in_oklch,var(--primary),var(--primary-foreground)_25%)]",
         className
       )}
       {...props}

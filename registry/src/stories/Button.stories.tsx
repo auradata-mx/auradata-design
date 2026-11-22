@@ -22,14 +22,21 @@ export const Primary: Story = {}
 export const Variants: Story = {
   render: (args) => (
     <div className="flex flex-wrap gap-3">
-      <Button {...args}>Default</Button>
-      <Button {...args} variant="outline">Outline</Button>
-      <Button {...args} variant="secondary">Secondary</Button>
-      <Button {...args} variant="ghost">Ghost</Button>
-      <Button {...args} variant="destructive">Destructive</Button>
-      <Button {...args} variant="link">Link</Button>
+      <Button {...args}>Principal</Button>
+      <Button {...args} variant="outline">Contorno</Button>
+      <Button {...args} variant="secondary">Secundario</Button>
+      <Button {...args} variant="ghost">Fantasma</Button>
+      <Button {...args} variant="destructive">Destructivo</Button>
+      <Button {...args} variant="link">Enlace</Button>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // A fill that stopped inside the transparent border painted 2px shorter than the outline button beside it.
+    for (const name of ['Principal', 'Secundario', 'Destructivo']) {
+      await expect(getComputedStyle(canvas.getByRole('button', { name })).backgroundClip, name).toBe('border-box')
+    }
+  },
 }
 
 export const Disabled: Story = { args: { disabled: true } }
@@ -44,6 +51,11 @@ export const Sizes: Story = {
       <Button {...args} size="lg">Grande</Button>
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const large = getComputedStyle(within(canvasElement).getByRole('button', { name: 'Grande' }))
+    // Taller and roomier than the default (h-8 px-2.5), not just 4px taller.
+    await expect([large.height, large.paddingLeft]).toEqual(['40px', '16px'])
+  },
 }
 
 /** Icon-only sizes: each one has an accessible name, the icon is hidden from assistive tech. */
@@ -131,6 +143,8 @@ export const Loading: Story = {
     await expect(button).toBeDisabled()
     await expect(button).toHaveAttribute('aria-busy', 'true')
     await expect(button.querySelector('[data-slot=spinner]')).not.toBeNull()
+    // Busy is not disabled: the label stays at full strength, so «Guardando…» reads.
+    await expect(getComputedStyle(button).opacity).toBe('1')
   },
 }
 
