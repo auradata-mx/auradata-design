@@ -147,3 +147,25 @@ test('gives the theme the data palettes, status scales, compact density and prin
   expect(theme.css['@media print'][':root:root, .dark.dark']['--background']).toBe('#FFFFFF')
   expect(Object.keys(theme.css)).not.toContain('@page')
 })
+
+// T60: notifications.
+test('publishes the announcement banner and the notification center, and gives the app shell the bell', () => {
+  expect(item('announcement-banner').registryDependencies).toEqual(['cristianruben-dev/auradata-design/button'])
+  expect(item('notification-center').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/button',
+      'cristianruben-dev/auradata-design/empty',
+      'popover',
+      'cristianruben-dev/auradata-design/sheet',
+      'skeleton',
+      'cristianruben-dev/auradata-design/use-mobile',
+    ]),
+  )
+  expect(item('app-shell').registryDependencies).toContain('cristianruben-dev/auradata-design/notification-center')
+})
+
+test('installs the progress bar and the formatter with sonner, for progress toasts', () => {
+  expect(item('sonner').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/progress', 'cristianruben-dev/auradata-design/format']),
+  )
+})

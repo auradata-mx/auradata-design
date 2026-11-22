@@ -515,6 +515,25 @@
       ]
     },
     {
+      "name": "announcement-banner",
+      "type": "registry:ui",
+      "title": "Announcement banner",
+      "dependencies": [
+        "class-variance-authority",
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/announcement-banner.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "attachment",
       "type": "registry:ui",
       "title": "Attachment",
@@ -1210,6 +1229,29 @@
       ]
     },
     {
+      "name": "notification-center",
+      "type": "registry:ui",
+      "title": "Notification center",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/empty",
+        "cristianruben-dev/auradata-design/sheet",
+        "cristianruben-dev/auradata-design/use-mobile",
+        "popover",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/notification-center.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "page-header",
       "type": "registry:ui",
       "title": "Page header",
@@ -1428,7 +1470,9 @@
         "sonner"
       ],
       "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/progress"
       ],
       "files": [
         {
@@ -1603,6 +1647,7 @@
         "cristianruben-dev/auradata-design/dropdown-menu",
         "cristianruben-dev/auradata-design/initials",
         "cristianruben-dev/auradata-design/logo",
+        "cristianruben-dev/auradata-design/notification-center",
         "cristianruben-dev/auradata-design/sidebar",
         "cristianruben-dev/auradata-design/theme-toggle",
         "cristianruben-dev/auradata-design/workspace-switcher",

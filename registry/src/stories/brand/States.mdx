@@ -90,8 +90,11 @@ Un estado vacío dice qué falta y ofrece el primer paso. Un error dice qué pas
 
 | Mensaje | Componente | Cuándo |
 | --- | --- | --- |
-| Resultado de una acción | Toast (`toast.success`, `toast.error`) | «Informe publicado». Se va solo; nunca lleva lo único que hay que hacer |
+| Resultado de una acción | Toast (`toast.success`, `toast.error`) | «Informe publicado». Se va solo; nunca lleva lo único que hay que hacer. Con `richColors` toma el tinte de su estado, como el `Alert` |
+| Una tarea larga | `toastProgress` o `toast.promise` | «Exportando…» con su barra y el porcentaje; termina en «Listo» con «Descargar», o en el error con «Reintentar» |
 | Algo que afecta a la página | `Alert` | Persiste hasta que cambia la causa |
+| Algo que afecta a toda la app | `AnnouncementBanner` | «Nueva versión disponible», «Mantenimiento programado». Fijo arriba, con una acción y «Cerrar aviso» |
+| Lo que pasó mientras no estabas | `NotificationCenter` | La campana del top bar: «Sin leer» y «Leídas», con «Marcar todas como leídas» |
 | Algo que bloquea el contenido | `ErrorState` | En lugar del contenido que falló |
 
 <div className="sb-unstyled my-6 max-w-xl">
