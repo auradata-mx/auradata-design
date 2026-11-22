@@ -185,3 +185,10 @@ test('publishes the segmented control on the Base UI radio group, and tabs with 
   expect(item('segmented-control').dependencies).toContain('@base-ui/react')
   expect(item('tabs').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/format']))
 })
+
+test('publishes the master-detail view', () => {
+  expect(item('master-detail')?.type).toBe('registry:ui')
+  expect(item('master-detail').registryDependencies).toEqual(
+    expect.arrayContaining(['cristianruben-dev/auradata-design/button']),
+  )
+})
