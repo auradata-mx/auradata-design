@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { buildRegistry } from './registry.mjs'
+import { GITHUB, buildRegistry } from './registry.mjs'
 
 const registry = buildRegistry()
 const item = (name) => registry.items.find((entry) => entry.name === name)
@@ -379,5 +379,33 @@ test('publishes the dashboard grid and the dashboard block built on it', () => {
       'cristianruben-dev/auradata-design/date-range-filter',
       'cristianruben-dev/auradata-design/page-header',
     ]),
+  )
+})
+
+test('publishes the advanced form controls with their helpers (T63)', () => {
+  const names = registry.items.map((entry) => entry.name)
+  for (const name of [
+    'number-input', 'currency-input', 'phone-input', 'file-dropzone', 'csv-preview', 'date-picker', 'time-picker',
+    'input-otp', 'password-input', 'stepper', 'amount-input', 'phone', 'file-upload', 'date-time', 'password-strength',
+  ]) {
+    expect(names).toContain(name)
+  }
+  expect(item('currency-input').registryDependencies).toContain(`${GITHUB}/amount-input`)
+  expect(item('amount-input').registryDependencies).toEqual([`${GITHUB}/format`])
+  expect(item('phone-input').registryDependencies).toContain(`${GITHUB}/phone`)
+  expect(item('file-dropzone').registryDependencies).toEqual(
+    expect.arrayContaining([`${GITHUB}/attachment`, `${GITHUB}/file-upload`, `${GITHUB}/progress`])
+  )
+  expect(item('date-picker').registryDependencies).toEqual(
+    expect.arrayContaining([`${GITHUB}/calendar`, `${GITHUB}/time-picker`, `${GITHUB}/date-time`, 'popover'])
+  )
+  expect(item('input-otp').dependencies).toContain('input-otp')
+})
+
+test('publishes the validated connection form with react-hook-form and zod (T63)', () => {
+  expect(item('connection-form')?.type).toBe('registry:block')
+  expect(item('connection-form').dependencies).toEqual(['@hookform/resolvers', 'react-hook-form', 'zod'])
+  expect(item('connection-form').registryDependencies).toEqual(
+    expect.arrayContaining([`${GITHUB}/number-input`, `${GITHUB}/password-input`, `${GITHUB}/select`, `${GITHUB}/field`])
   )
 })
