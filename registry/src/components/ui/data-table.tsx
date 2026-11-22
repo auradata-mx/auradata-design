@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) and chips, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, and a view state to control or share)
 import * as React from "react"
 import {
   columnFacetingFeature,
@@ -53,9 +53,11 @@ import {
   PinOffIcon,
   Rows4Icon,
   SearchIcon,
+  SlidersHorizontalIcon,
 } from "lucide-react"
 import { cn } from "cn"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DataTableSelectionBar } from "@/components/ui/data-table-selection-bar"
@@ -71,13 +73,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DateRangeFilter } from "@/components/ui/date-range-filter"
 import { FacetedFilter, type FacetedFilterOption } from "@/components/ui/faceted-filter"
+import { FilterBuilder } from "@/components/ui/filter-builder"
 import { FilterChips } from "@/components/ui/filter-chips"
 import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { RangeFilter, type NumberRange } from "@/components/ui/range-filter"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Toggle } from "@/components/ui/toggle"
+import { countConditions, matchesFilter, type FilterField, type FilterGroup } from "@/lib/filter-conditions"
 import { formatDate, formatNumber } from "@/lib/format"
 
 /** Keeps the rows whose value is one of the chosen ones (a `select` filter); no choice keeps every row. */
@@ -201,6 +206,11 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   actions?: React.ReactNode
   /** A «Filas compactas» switch in the toolbar. */
   densityToggle?: boolean
+  /**
+   * The fields of an advanced filter: a «Filtros» button opens the filter builder (conditions joined by Y/O, in
+   * groups). A field's `id` is the key of the row it reads.
+   */
+  filterFields?: FilterField[]
   /** A menu on each header: sort, pin to a side, move one place, hide. */
   columnActions?: boolean
   /** A handle on each header's right edge: drag it, or focus it and use the arrow keys, to change the width. */
@@ -231,6 +241,8 @@ type DataTableView = {
   columnSizing: ColumnSizingState
   pagination: PaginationState
   density: DataTableDensity
+  /** The advanced filter of `filterFields`, when there is one. */
+  advancedFilter?: FilterGroup
 }
 
 /**
@@ -528,6 +540,7 @@ function DataTable<TData extends RowData>({
   filters,
   actions,
   densityToggle = false,
+  filterFields,
   columnActions = false,
   resizableColumns = false,
   view: viewProp,
@@ -605,9 +618,17 @@ function DataTable<TData extends RowData>({
       ? { start: ["select", ...pinnedStart.filter((id) => id !== "select")], end: pinnedEnd }
       : view.columnPinning
 
+  // The advanced filter runs before the table, so the column filters count only what it leaves.
+  const advanced = filterFields && view.advancedFilter
+  const advancedCount = advanced ? countConditions(advanced, filterFields) : 0
+  const rowsIn = React.useMemo(
+    () => (advanced && advancedCount ? data.filter((row) => matchesFilter(row, advanced, filterFields)) : data),
+    [data, advanced, advancedCount, filterFields]
+  )
+
   const table = useTable({
     features: dataTableFeatures,
-    data,
+    data: rowsIn,
     columns: allColumns,
     getRowId,
     enableRowSelection: selectable,
@@ -688,11 +709,24 @@ function DataTable<TData extends RowData>({
     }
     return null
   }
-  const chips = view.columnFilters.flatMap(({ id, value }) => {
-    const column = table.getColumn(id)
-    const text = column ? describe(column, value) : null
-    return column && text ? [{ id, label: titleOf(column), value: text }] : []
-  })
+  const ADVANCED = "advanced-filter"
+  const chips = [
+    ...view.columnFilters.flatMap(({ id, value }) => {
+      const column = table.getColumn(id)
+      const text = column ? describe(column, value) : null
+      return column && text ? [{ id, label: titleOf(column), value: text }] : []
+    }),
+    ...(advancedCount
+      ? [
+          {
+            id: ADVANCED,
+            label: "Filtros avanzados",
+            value: `${formatNumber(advancedCount)} ${advancedCount === 1 ? "condición" : "condiciones"}`,
+          },
+        ]
+      : []),
+  ]
+  const setAdvanced = setView("advancedFilter")
   const filterOf = (column: FilterColumn) => {
     const filter = column.columnDef.meta?.filter
     const title = titleOf(column)
@@ -763,9 +797,29 @@ function DataTable<TData extends RowData>({
           </div>
         )}
         {/* On a phone the filters take their own line under the search and the buttons; beside them from `sm`. */}
-        {(filterable.length > 0 || filters) && (
+        {(filterable.length > 0 || filterFields || filters) && (
           <div className="order-last flex basis-full flex-wrap items-center gap-2 sm:order-none sm:basis-auto">
             {filterable.map(filterOf)}
+            {filterFields && (
+              <Popover>
+                <PopoverTrigger render={<Button variant="outline" className="border-dashed" />}>
+                  <SlidersHorizontalIcon data-icon="inline-start" aria-hidden />
+                  Filtros
+                  {advancedCount > 0 && (
+                    <Badge variant="secondary" className="rounded-sm px-1.5 font-normal tabular-nums">
+                      {formatNumber(advancedCount)}
+                    </Badge>
+                  )}
+                </PopoverTrigger>
+                <PopoverContent align="start" aria-label="Filtros avanzados" className="w-[min(46rem,calc(100vw-3rem))]">
+                  <FilterBuilder
+                    fields={filterFields}
+                    value={view.advancedFilter ?? { id: "root", combinator: "and", conditions: [] }}
+                    onValueChange={(next) => setAdvanced(next.conditions.length ? next : undefined)}
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
             {filters}
           </div>
         )}
@@ -809,8 +863,11 @@ function DataTable<TData extends RowData>({
 
       <FilterChips
         chips={chips}
-        onRemove={(id) => table.getColumn(id)?.setFilterValue(undefined)}
-        onClearAll={() => table.resetColumnFilters(true)}
+        onRemove={(id) => (id === ADVANCED ? setAdvanced(undefined) : table.getColumn(id)?.setFilterValue(undefined))}
+        onClearAll={() => {
+          table.resetColumnFilters(true)
+          if (advanced) setAdvanced(undefined)
+        }}
       />
 
       {/* On a narrow screen the table scrolls sideways inside its border; a fade marks the side with more columns. */}

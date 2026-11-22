@@ -204,6 +204,8 @@ test('installs the data table with its own parts (T61)', () => {
       'cristianruben-dev/auradata-design/filter-chips',
       'cristianruben-dev/auradata-design/range-filter',
       'cristianruben-dev/auradata-design/date-range-filter',
+      'cristianruben-dev/auradata-design/filter-builder',
+      'cristianruben-dev/auradata-design/filter-conditions',
     ])
   )
   expect(item('data-table-selection-bar').registryDependencies).toEqual(

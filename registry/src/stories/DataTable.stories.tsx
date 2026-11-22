@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { DateRangeFilter } from '@/components/ui/date-range-filter'
+import type { FilterField } from '@/lib/filter-conditions'
 import { formatCurrency, formatDate } from '@/lib/format'
 
 type Estado = 'Publicado' | 'Borrador' | 'Desactualizado' | 'Con errores'
@@ -611,4 +612,71 @@ export const RangeAndDateActive: Story = {
       }}
     />
   ),
+}
+
+const VENTAS_FIELDS: FilterField[] = [
+  { id: 'sucursal', label: 'Sucursal', type: 'text' },
+  { id: 'region', label: 'Región', type: 'select', options: ['Norte', 'Centro', 'Bajío', 'Occidente', 'Sur'].map((value) => ({ value })) },
+  { id: 'ventas', label: 'Ventas', type: 'number' },
+  { id: 'fecha', label: 'Fecha', type: 'date' },
+]
+
+/**
+ * «Filtros» opens the filter builder: any field, joined by Y/O, in groups. The button counts the finished
+ * conditions and a chip says the advanced filter is on.
+ */
+export const AdvancedFilter: Story = {
+  render: () => (
+    <DataTable columns={VENTAS_COLUMNS} data={VENTAS} filterPlaceholder="Buscar sucursales…" filterFields={VENTAS_FIELDS} />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(document.body)
+    const toolbar = within(canvasElement.querySelector<HTMLElement>('[data-slot="data-table-toolbar"]')!)
+    const rows = () => canvasElement.querySelectorAll('tbody tr')
+    await userEvent.click(toolbar.getByRole('button', { name: 'Filtros' }))
+    const dialog = await page.findByRole('dialog', { name: 'Filtros avanzados' })
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Agregar condición' }))
+    const row = within(dialog).getByRole('group', { name: 'Condición 1' })
+    await userEvent.selectOptions(within(row).getByRole('combobox', { name: 'Campo' }), 'ventas')
+    await userEvent.selectOptions(within(row).getByRole('combobox', { name: 'Operador' }), 'gt')
+    await userEvent.type(within(row).getByRole('spinbutton', { name: 'Valor' }), '300000')
+    await waitFor(() => expect(rows()).toHaveLength(3))
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull())
+    await expect(toolbar.getByRole('button', { name: /Filtros/ })).toHaveTextContent('Filtros1')
+    const chips = canvas.getByRole('group', { name: 'Filtros activos' })
+    await expect(chips).toHaveTextContent('Filtros avanzados: 1 condición')
+    await userEvent.click(within(chips).getByRole('button', { name: 'Quitar el filtro «Filtros avanzados»' }))
+    await waitFor(() => expect(rows()).toHaveLength(10))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** An advanced filter on, with the builder open, for the visual tests: on a phone it takes the screen's width. */
+export const AdvancedFilterOpen: Story = {
+  tags: ['mobile'],
+  render: () => (
+    <DataTable
+      columns={VENTAS_COLUMNS}
+      data={VENTAS}
+      filterPlaceholder="Buscar sucursales…"
+      filterFields={VENTAS_FIELDS}
+      defaultView={{
+        advancedFilter: {
+          id: 'root',
+          combinator: 'and',
+          conditions: [
+            { id: 'c1', field: 'ventas', operator: 'gte', value: 100000 },
+            { id: 'c2', field: 'region', operator: 'notEquals', value: 'Centro' },
+          ],
+        },
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const toolbar = within(canvasElement.querySelector<HTMLElement>('[data-slot="data-table-toolbar"]')!)
+    await userEvent.click(toolbar.getByRole('button', { name: /Filtros/ }))
+    await within(document.body).findByRole('dialog', { name: 'Filtros avanzados' })
+  },
 }
