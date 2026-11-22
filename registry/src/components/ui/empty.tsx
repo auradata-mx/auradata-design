@@ -1,3 +1,4 @@
+// registry: auradata (shadcn empty state whose title reads above its description)
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
@@ -59,7 +60,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty-title"
       className={cn(
-        "font-heading text-sm font-medium tracking-tight",
+        "font-heading text-base font-semibold tracking-normal sm:text-lg",
         className
       )}
       {...props}

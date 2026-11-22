@@ -6,7 +6,8 @@ import { Calendar } from '@/components/ui/calendar'
 const meta = {
   title: 'Components/Calendar',
   component: Calendar,
-  args: { locale: es, defaultMonth: new Date(2026, 10, 1), className: 'rounded-lg border' },
+  // `today` is fixed so the marker does not move with the clock.
+  args: { locale: es, today: new Date(2026, 10, 21), defaultMonth: new Date(2026, 10, 1), className: 'rounded-lg border' },
 } satisfies Meta<typeof Calendar>
 
 export default meta

@@ -34,7 +34,7 @@ export const Default: Story = {
 /** Sideways: region cards wider than the box. */
 export const Horizontal: Story = {
   render: () => (
-    <ScrollArea className="w-96 rounded-lg border whitespace-nowrap">
+    <ScrollArea className="w-full max-w-96 rounded-lg border whitespace-nowrap">
       <div className="flex w-max gap-3 p-4">
         {REGIONS.map((region) => (
           <div key={region} className="flex h-20 w-32 shrink-0 items-center justify-center rounded-md bg-muted text-sm">

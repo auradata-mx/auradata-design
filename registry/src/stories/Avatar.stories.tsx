@@ -22,13 +22,24 @@ export const Default: Story = {
 export const Group: Story = {
   render: () => (
     <AvatarGroup>
-      {['AL', 'JM', 'RG'].map((initials) => (
+      {['AL', 'MW', 'RG'].map((initials) => (
         <Avatar key={initials}>
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       ))}
     </AvatarGroup>
   ),
+  play: async ({ canvasElement }) => {
+    const avatars = [...canvasElement.querySelectorAll('[data-slot="avatar"]')]
+    for (const [index, avatar] of avatars.slice(0, -1).entries()) {
+      const range = document.createRange()
+      range.selectNodeContents(avatar.querySelector('[data-slot="avatar-fallback"]')!)
+      const initials = range.getBoundingClientRect()
+      const next = avatars[index + 1].getBoundingClientRect()
+      // The next avatar paints a 2 px ring of the page color around itself; 1 px is the glyphs' side bearing.
+      await expect(next.left - 2 + 1, `${avatar.textContent} is covered`).toBeGreaterThanOrEqual(initials.right)
+    }
+  },
 }
 
 /** The three sizes: `sm`, `default` and `lg`. */

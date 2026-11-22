@@ -1,3 +1,4 @@
+// registry: auradata (shadcn item whose image or avatar centers like its actions, and only the brand focus outline shows)
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -35,7 +36,7 @@ function ItemSeparator({
 }
 
 const itemVariants = cva(
-  "group/item flex w-full flex-wrap items-center rounded-lg border text-sm transition-colors duration-100 outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted",
+  "group/item flex w-full flex-wrap items-center rounded-lg border text-sm transition-colors duration-100 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [a]:transition-colors [a]:hover:bg-muted",
   {
     variants: {
       variant: {
@@ -81,7 +82,8 @@ function Item({
 }
 
 const itemMediaVariants = cva(
-  "flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:translate-y-0.5 group-has-data-[slot=item-description]/item:self-start [&_svg]:pointer-events-none",
+  // AuraData: a small icon sits on the title line; an image or an avatar (32 px and up) centers, like the actions.
+  "flex shrink-0 items-center justify-center gap-2 group-has-data-[slot=item-description]/item:not-data-[variant=image]:not-has-data-[slot=avatar]:translate-y-0.5 group-has-data-[slot=item-description]/item:not-data-[variant=image]:not-has-data-[slot=avatar]:self-start [&_svg]:pointer-events-none",
   {
     variants: {
       variant: {

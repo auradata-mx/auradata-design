@@ -99,4 +99,18 @@ export const LongTrigger: Story = {
       </AccordionItem>
     </Accordion>
   ),
+  play: async ({ canvasElement }) => {
+    for (const trigger of canvasElement.querySelectorAll<HTMLElement>('[data-slot="accordion-trigger"]')) {
+      const text = [...trigger.childNodes].find((node) => node.nodeType === Node.TEXT_NODE && node.textContent!.trim())!
+      const range = document.createRange()
+      range.selectNodeContents(text)
+      const line = range.getClientRects()[0]
+      const icon = [...trigger.querySelectorAll('svg')].find((svg) => svg.getBoundingClientRect().height > 0)!
+      const box = icon.getBoundingClientRect()
+      // The chevron sits on the first line, centered on it, and never touches the text.
+      await expect(Math.abs(box.top + box.height / 2 - (line.top + line.height / 2))).toBeLessThanOrEqual(1)
+      const textRight = Math.max(...[...range.getClientRects()].map((rect) => rect.right))
+      await expect(box.left - textRight).toBeGreaterThanOrEqual(8)
+    }
+  },
 }

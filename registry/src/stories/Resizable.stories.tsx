@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { formatNumber } from '@/lib/format'
 
 const meta = {
   title: 'Components/Resizable',
@@ -11,10 +12,10 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 const ROWS = [
-  ['Norte', '1 284 500'],
-  ['Bajío', '986 200'],
-  ['Occidente', '842 900'],
-]
+  ['Norte', 1_284_500],
+  ['Bajío', 986_200],
+  ['Occidente', 842_900],
+] as const
 
 /** SQL Lab: the editor above, the results below; drag the handle or use the arrow keys. */
 export const Default: Story = {
@@ -43,7 +44,7 @@ export const Default: Story = {
               {ROWS.map(([region, sales]) => (
                 <tr key={region} className="border-t">
                   <td className="py-1">{region}</td>
-                  <td className="py-1 text-right font-mono tabular-nums">{sales}</td>
+                  <td className="py-1 text-right tabular-nums">{formatNumber(sales)}</td>
                 </tr>
               ))}
             </tbody>
