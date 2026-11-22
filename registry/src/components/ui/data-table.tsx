@@ -565,7 +565,7 @@ function DataTable<TData extends RowData>({
   }
 
   return (
-    <div data-slot="data-table" data-density={density} className={cn("grid gap-3", className)} {...props}>
+    <div data-slot="data-table" data-row-density={density} className={cn("grid gap-3", className)} {...props}>
       {/* The search shrinks first (down to 160 px), then the filters and buttons wrap onto a second line. */}
       <div data-slot="data-table-toolbar" className="flex flex-wrap items-center gap-2">
         {filterPlaceholder !== null && (

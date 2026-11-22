@@ -309,10 +309,10 @@ export const Compact: Story = {
     await expect(toggle).toHaveAttribute('aria-pressed', 'false')
     await userEvent.click(toggle)
     await expect(toggle).toHaveAttribute('aria-pressed', 'true')
-    await expect(table).toHaveAttribute('data-density', 'compact')
+    await expect(table).toHaveAttribute('data-row-density', 'compact')
     await expect(rowHeight()).toBeLessThanOrEqual(normal - 8)
     await userEvent.click(toggle)
-    await expect(table).toHaveAttribute('data-density', 'normal')
+    await expect(table).toHaveAttribute('data-row-density', 'normal')
     await expect(rowHeight()).toBe(normal)
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
@@ -443,5 +443,24 @@ export const Pinned: Story = {
     await waitFor(() =>
       expect(canvasElement.querySelector('[data-slot="data-table-region"]')).toHaveAttribute('data-more', 'start')
     )
+  },
+}
+
+/**
+ * Inside a section with the theme's compact density (`data-density="compact"`, T59), the table follows it: it
+ * never resets the density of what it sits in. Its own «Filas compactas» only packs the rows.
+ */
+export const InCompactSection: Story = {
+  args: { densityToggle: true },
+  render: (args) => (
+    <div data-density="compact">
+      <DataTable {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvasElement.querySelector('[data-slot="data-table"]')).not.toHaveAttribute('data-density')
+    // h-8 is 32 px at the stock step and 28 px in compact density.
+    await expect(canvas.getByRole('button', { name: 'Columnas' }).getBoundingClientRect().height).toBe(28)
   },
 }
