@@ -1,4 +1,4 @@
-// registry: auradata (the list button has a name and leaves the tab order, as axe requires; the popup's edge is a border inside its box, like the select's, not a ring 1 px outside the trigger)
+// registry: auradata (the list button has a name and leaves the tab order, as axe requires; the popup's edge is a border inside its box, like the select's, not a ring 1 px outside the trigger; multiple: the chips field reads 3:1, keeps its border on focus (the brand outline alone), turns a crisp red when invalid, and each chip's remove button says «Quitar <chip>»)
 "use client"
 
 import * as React from "react"
@@ -230,7 +230,7 @@ function ComboboxChips({
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        "flex min-h-8 flex-wrap items-center gap-1 rounded-lg border border-input bg-transparent bg-clip-padding px-2.5 py-1 text-sm transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 has-data-[slot=combobox-chip]:px-1 dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40",
+        "flex min-h-8 flex-wrap items-center gap-1 rounded-lg border border-[color:var(--control-border,var(--input))] bg-transparent px-2.5 py-1 text-sm transition-colors focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-2 has-aria-invalid:ring-destructive/20 has-data-[slot=combobox-chip]:px-1 has-disabled:cursor-not-allowed has-disabled:bg-input/50 has-disabled:opacity-50 dark:bg-input/30 dark:has-aria-invalid:ring-destructive/25 dark:has-disabled:bg-input/80",
         className
       )}
       {...props}
@@ -242,25 +242,30 @@ function ComboboxChip({
   className,
   children,
   showRemove = true,
+  removeLabel,
   ...props
 }: ComboboxPrimitive.Chip.Props & {
   showRemove?: boolean
+  /** The name of the remove button; «Quitar <chip>» when the chip is plain text. */
+  removeLabel?: string
 }) {
+  const label = removeLabel ?? (typeof children === "string" ? `Quitar ${children}` : "Quitar")
   return (
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
       className={cn(
-        "flex h-[calc(--spacing(5.25))] w-fit items-center justify-center gap-1 rounded-sm bg-muted px-1.5 text-xs font-medium whitespace-nowrap text-foreground has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 has-data-[slot=combobox-chip-remove]:pr-0",
+        "flex h-[calc(--spacing(5.25))] w-fit max-w-full min-w-0 items-center justify-center gap-1 rounded-sm bg-muted px-1.5 text-xs font-medium whitespace-nowrap text-foreground focus-visible:bg-accent has-disabled:pointer-events-none has-disabled:cursor-not-allowed aria-disabled:pointer-events-none has-data-[slot=combobox-chip-remove]:pr-0",
         className
       )}
       {...props}
     >
-      {children}
+      <span className="truncate">{children}</span>
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
           render={<Button variant="ghost" size="icon-xs" />}
-          className="-ml-1 opacity-50 hover:opacity-100"
+          className="-ml-1 opacity-60 hover:opacity-100"
           data-slot="combobox-chip-remove"
+          aria-label={label}
         >
           <XIcon aria-hidden className="pointer-events-none" />
         </ComboboxPrimitive.ChipRemove>
@@ -276,7 +281,10 @@ function ComboboxChipsInput({
   return (
     <ComboboxPrimitive.Input
       data-slot="combobox-chip-input"
-      className={cn("min-w-16 flex-1 outline-none", className)}
+      className={cn(
+        "min-w-16 flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed md:text-sm",
+        className
+      )}
       {...props}
     />
   )
