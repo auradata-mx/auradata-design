@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column with their counts and chips, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) and chips, and a view state to control or share)
 import * as React from "react"
 import {
   columnFacetingFeature,
@@ -69,13 +69,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { DateRangeFilter } from "@/components/ui/date-range-filter"
 import { FacetedFilter, type FacetedFilterOption } from "@/components/ui/faceted-filter"
 import { FilterChips } from "@/components/ui/filter-chips"
 import { Input } from "@/components/ui/input"
+import { RangeFilter, type NumberRange } from "@/components/ui/range-filter"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Toggle } from "@/components/ui/toggle"
+import { formatDate, formatNumber } from "@/lib/format"
 
 /** Keeps the rows whose value is one of the chosen ones (a `select` filter); no choice keeps every row. */
 // A filter function serves any table, as the stock ones (`CreatedFilterFn<any, any>`).
@@ -83,6 +86,31 @@ import { Toggle } from "@/components/ui/toggle"
 const filterFn_inSet: FilterFn<any, any> = (row, columnId, chosen: string[]) =>
   chosen.includes(String(row.getValue(columnId)))
 filterFn_inSet.autoRemove = (chosen?: string[]) => !chosen?.length
+
+/** Keeps the rows whose number is between the two ends, both included (a `range` filter). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const filterFn_inRange: FilterFn<any, any> = (row, columnId, [low, high]: NumberRange) => {
+  const value = Number(row.getValue(columnId))
+  return value >= low && value <= high
+}
+filterFn_inRange.autoRemove = (range?: NumberRange) => !range
+
+type DayRange = { from: Date | undefined; to?: Date }
+
+/** A day from a `Date`, a timestamp or a `YYYY-MM-DD` string (that local day, not UTC midnight). */
+function dayOf(value: unknown) {
+  const match = typeof value === "string" ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(value) : null
+  const date = match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : new Date(value as string)
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
+/** Keeps the rows whose day falls in the period, both ends included (a `date` filter). */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const filterFn_inPeriod: FilterFn<any, any> = (row, columnId, { from, to }: DayRange) => {
+  const day = dayOf(row.getValue(columnId))
+  return (!from || day >= dayOf(from)) && (!to || day <= dayOf(to))
+}
+filterFn_inPeriod.autoRemove = (period?: DayRange) => !period?.from && !period?.to
 
 /** What every data table does in the browser: sort, filter, size, pin, order and hide columns, select rows and paginate. */
 const dataTableFeatures = tableFeatures({
@@ -102,15 +130,27 @@ const dataTableFeatures = tableFeatures({
   filteredRowModel: createFilteredRowModel(),
   sortedRowModel: createSortedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
-  filterFns: { includesString: filterFn_includesString, inSet: filterFn_inSet },
+  filterFns: {
+    includesString: filterFn_includesString,
+    inSet: filterFn_inSet,
+    inRange: filterFn_inRange,
+    inPeriod: filterFn_inPeriod,
+  },
   sortFns,
 })
 
 /**
- * A filter a column offers in the toolbar. `select`: a `FacetedFilter` with the column's values and their counts
- * (or the `options` given, to name them or keep values with no rows in the list).
+ * A filter a column offers in the toolbar, named by `title` or the column's header:
+ * - `select`: a `FacetedFilter` with the column's values and their counts (or the `options` given, to name them);
+ * - `range`: a `RangeFilter` over the column's numbers (or `min`/`max`), written with `format`;
+ * - `date`: a `DateRangeFilter` over the column's days (`Date`, timestamp or `YYYY-MM-DD`); `today` fixes its presets.
  */
-type DataTableColumnFilter = { type: "select"; title?: string; options?: FacetedFilterOption[] }
+type DataTableColumnFilter =
+  | { type: "select"; title?: string; options?: FacetedFilterOption[] }
+  | { type: "range"; title?: string; min?: number; max?: number; step?: number; format?: (value: number) => string }
+  | { type: "date"; title?: string; today?: Date }
+
+const FILTER_FNS = { select: "inSet", range: "inRange", date: "inPeriod" } as const
 
 declare module "@tanstack/table-core" {
   // The data table reads `meta.filter` from a column; the type parameters must match TanStack's declaration.
@@ -516,11 +556,11 @@ function DataTable<TData extends RowData>({
   )
   const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
 
-  // A `select` filter needs its filter function; a column's own `filterFn` wins.
+  // A column filter needs its filter function; a column's own `filterFn` wins.
   const withFilterFns = React.useMemo(
     () =>
       columns.map((column) =>
-        column.meta?.filter?.type === "select" && !column.filterFn ? { ...column, filterFn: "inSet" as const } : column
+        column.meta?.filter && !column.filterFn ? { ...column, filterFn: FILTER_FNS[column.meta.filter.type] } : column
       ),
     [columns]
   )
@@ -607,26 +647,92 @@ function DataTable<TData extends RowData>({
   const pageCount = Math.max(table.getPageCount(), 1)
   const hideable = table.getAllLeafColumns().filter((column) => column.getCanHide())
   const filterable = table.getAllLeafColumns().filter((column) => column.columnDef.meta?.filter)
-  const optionsOf = (column: (typeof filterable)[number]): FacetedFilterOption[] => {
+  type FilterColumn = (typeof filterable)[number]
+  const optionsOf = (column: FilterColumn): FacetedFilterOption[] => {
     // Keyed by text, as the filter compares values: a number column counts under "12".
     const counts = new Map([...column.getFacetedUniqueValues()].map(([value, count]) => [String(value), count]))
-    const given = column.columnDef.meta?.filter?.options
-    if (given) return given.map((option) => ({ ...option, count: option.count ?? counts.get(option.value) ?? 0 }))
+    const filter = column.columnDef.meta?.filter
+    if (filter?.type === "select" && filter.options)
+      return filter.options.map((option) => ({ ...option, count: option.count ?? counts.get(option.value) ?? 0 }))
     // Every value of the column stays listed, with 0 when the other filters leave none, so the list never jumps.
     const values = new Set(table.getCoreRowModel().rows.map((row) => String(row.getValue(column.id))))
     return [...values]
       .sort((a, b) => a.localeCompare(b, "es"))
       .map((value) => ({ value, count: counts.get(value) ?? 0 }))
   }
-  const titleOf = (column: (typeof filterable)[number]) =>
+  /** The span of a range filter: its `min`/`max`, else the column's numbers over every row, so it never shrinks. */
+  const spanOf = (column: FilterColumn): NumberRange => {
+    const filter = column.columnDef.meta?.filter
+    const numbers = table.getCoreRowModel().rows.map((row) => Number(row.getValue(column.id)))
+    const given = filter?.type === "range" ? filter : undefined
+    return [given?.min ?? Math.min(...numbers), given?.max ?? Math.max(...numbers)]
+  }
+  const formatOf = (column: FilterColumn) => {
+    const filter = column.columnDef.meta?.filter
+    return (filter?.type === "range" && filter.format) || ((value: number) => formatNumber(value))
+  }
+  const titleOf = (column: FilterColumn) =>
     column.columnDef.meta?.filter?.title ?? columnLabel(column.columnDef.header, column.id)
+  /** A filter as people read it, for its chip: «Norte, Bajío», «$10,000 – $250,000», «1 nov 2026 – 21 nov 2026». */
+  const describe = (column: FilterColumn, value: unknown): string | null => {
+    const type = column.columnDef.meta?.filter?.type
+    if (type === "range" && Array.isArray(value)) return `${formatOf(column)(value[0])} – ${formatOf(column)(value[1])}`
+    if (type === "date" && value && typeof value === "object") {
+      const { from, to } = value as DayRange
+      if (!from) return null
+      return to && dayOf(to) !== dayOf(from) ? `${formatDate(from)} – ${formatDate(to)}` : formatDate(from)
+    }
+    if (Array.isArray(value) && value.length) {
+      const options = optionsOf(column)
+      return value.map((v: string) => options.find((option) => option.value === v)?.label ?? v).join(", ")
+    }
+    return null
+  }
   const chips = view.columnFilters.flatMap(({ id, value }) => {
     const column = table.getColumn(id)
-    if (!column || !Array.isArray(value) || value.length === 0) return []
-    const options = optionsOf(column)
-    const label = (v: string) => options.find((option) => option.value === v)?.label ?? v
-    return [{ id, label: titleOf(column), value: value.map((v: string) => label(v)).join(", ") }]
+    const text = column ? describe(column, value) : null
+    return column && text ? [{ id, label: titleOf(column), value: text }] : []
   })
+  const filterOf = (column: FilterColumn) => {
+    const filter = column.columnDef.meta?.filter
+    const title = titleOf(column)
+    if (filter?.type === "range") {
+      const [min, max] = spanOf(column)
+      return (
+        <RangeFilter
+          key={column.id}
+          title={title}
+          min={min}
+          max={max}
+          step={filter.step}
+          format={formatOf(column)}
+          value={(column.getFilterValue() as NumberRange | undefined) ?? null}
+          onValueChange={(range) => column.setFilterValue(range)}
+        />
+      )
+    }
+    if (filter?.type === "date")
+      return (
+        <DateRangeFilter
+          key={column.id}
+          placeholder={title}
+          today={filter.today}
+          className="border-dashed"
+          // An empty range, not `undefined`: the filter stays controlled, so a removed chip empties it too.
+          value={(column.getFilterValue() as DayRange | undefined) ?? { from: undefined }}
+          onValueChange={(period) => column.setFilterValue(period?.from ? period : undefined)}
+        />
+      )
+    return (
+      <FacetedFilter
+        key={column.id}
+        title={title}
+        options={optionsOf(column)}
+        value={(column.getFilterValue() as string[] | undefined) ?? []}
+        onValueChange={(chosen) => column.setFilterValue(chosen.length ? chosen : undefined)}
+      />
+    )
+  }
   const selectedRows = bulkActions ? table.getSelectedRowModel().rows.map((row) => row.original) : []
   const clearSelection = () => {
     // The bar is about to go: when it has the focus, the header checkbox takes it, so the keyboard stays in the table.
@@ -659,15 +765,7 @@ function DataTable<TData extends RowData>({
         {/* On a phone the filters take their own line under the search and the buttons; beside them from `sm`. */}
         {(filterable.length > 0 || filters) && (
           <div className="order-last flex basis-full flex-wrap items-center gap-2 sm:order-none sm:basis-auto">
-            {filterable.map((column) => (
-              <FacetedFilter
-                key={column.id}
-                title={titleOf(column)}
-                options={optionsOf(column)}
-                value={(column.getFilterValue() as string[] | undefined) ?? []}
-                onValueChange={(chosen) => column.setFilterValue(chosen.length ? chosen : undefined)}
-              />
-            ))}
+            {filterable.map(filterOf)}
             {filters}
           </div>
         )}

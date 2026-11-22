@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { DateRangeFilter } from '@/components/ui/date-range-filter'
-import { formatDate } from '@/lib/format'
+import { formatCurrency, formatDate } from '@/lib/format'
 
 type Estado = 'Publicado' | 'Borrador' | 'Desactualizado' | 'Con errores'
 
@@ -516,4 +516,99 @@ export const ColumnFiltersActive: Story = {
     columns: FILTER_COLUMNS,
     defaultView: { columnFilters: [{ id: 'estado', value: ['Publicado', 'Desactualizado'] }, { id: 'espacio', value: ['Ventas'] }] },
   },
+}
+
+type Venta = { sucursal: string; region: string; ventas: number; fecha: string }
+
+const VENTAS: Venta[] = [
+  ['Monterrey Centro', 'Norte', 412500, '2026-11-18'],
+  ['Saltillo', 'Norte', 98400, '2026-11-03'],
+  ['Guadalajara Sur', 'Occidente', 276300, '2026-10-27'],
+  ['Zapopan', 'Occidente', 154900, '2026-11-12'],
+  ['CDMX Reforma', 'Centro', 488000, '2026-11-20'],
+  ['CDMX Coyoacán', 'Centro', 231700, '2026-09-30'],
+  ['Puebla', 'Centro', 87600, '2026-11-07'],
+  ['Querétaro', 'Bajío', 199800, '2026-10-15'],
+  ['León', 'Bajío', 143200, '2026-11-15'],
+  ['Mérida', 'Sur', 121500, '2026-08-22'],
+  ['Cancún', 'Sur', 305600, '2026-11-01'],
+  ['Oaxaca', 'Sur', 45300, '2026-10-05'],
+].map(([sucursal, region, ventas, fecha]) => ({ sucursal, region, ventas, fecha }) as Venta)
+
+const VENTAS_COLUMNS: DataTableColumn<Venta>[] = [
+  { accessorKey: 'sucursal', header: 'Sucursal', size: 200, cell: ({ getValue }) => <span className="font-medium">{getValue()}</span> },
+  { accessorKey: 'region', header: 'Región', size: 140, meta: { filter: { type: 'select' } } },
+  {
+    accessorKey: 'ventas',
+    header: 'Ventas',
+    size: 160,
+    meta: { filter: { type: 'range', step: 1000, format: (value: number) => formatCurrency(value) } },
+    cell: ({ getValue }) => <span className="tabular-nums">{formatCurrency(getValue())}</span>,
+  },
+  {
+    accessorKey: 'fecha',
+    header: 'Fecha',
+    size: 140,
+    meta: { filter: { type: 'date', today: new Date(2026, 10, 21) } },
+    cell: ({ getValue }) => <span className="tabular-nums">{formatDate(getValue())}</span>,
+  },
+]
+
+/**
+ * A number range and a period beside the values filter: «Ventas» from $100,000 and «Fecha» this month leave the
+ * big November branches; the chips write each filter with the field's format.
+ */
+export const RangeAndDateFilters: Story = {
+  render: () => <DataTable columns={VENTAS_COLUMNS} data={VENTAS} filterPlaceholder="Buscar sucursales…" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const page = within(document.body)
+    const toolbar = within(canvasElement.querySelector<HTMLElement>('[data-slot="data-table-toolbar"]')!)
+    const rows = () => canvasElement.querySelectorAll('tbody tr')
+    await expect(rows()).toHaveLength(10)
+
+    await userEvent.click(toolbar.getByRole('button', { name: 'Ventas' }))
+    let dialog = await page.findByRole('dialog', { name: 'Ventas' })
+    const min = within(dialog).getByRole('spinbutton', { name: 'Mínimo' })
+    await expect(min).toHaveValue(45300)
+    await userEvent.clear(min)
+    await userEvent.type(min, '100000{Enter}')
+    await waitFor(() => expect(rows()).toHaveLength(9))
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull())
+
+    await userEvent.click(toolbar.getByRole('button', { name: /Fecha/ }))
+    dialog = await page.findByRole('dialog', { name: 'Periodo' })
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Este mes' }))
+    await waitFor(() => expect(rows()).toHaveLength(5))
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(page.queryByRole('dialog')).toBeNull())
+
+    const chips = canvas.getByRole('group', { name: 'Filtros activos' })
+    await expect(chips).toHaveTextContent('Ventas: $100,000 – $488,000')
+    await expect(chips).toHaveTextContent('Fecha: 1 nov 2026 – 21 nov 2026')
+    await userEvent.click(within(chips).getByRole('button', { name: 'Quitar el filtro «Ventas»' }))
+    await waitFor(() => expect(rows()).toHaveLength(7))
+    await userEvent.click(within(chips).getByRole('button', { name: 'Limpiar todo' }))
+    await waitFor(() => expect(rows()).toHaveLength(10))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** A range and a period on, for the visual tests, on a phone too. */
+export const RangeAndDateActive: Story = {
+  tags: ['mobile'],
+  render: () => (
+    <DataTable
+      columns={VENTAS_COLUMNS}
+      data={VENTAS}
+      filterPlaceholder="Buscar sucursales…"
+      defaultView={{
+        columnFilters: [
+          { id: 'ventas', value: [100000, 500000] },
+          { id: 'fecha', value: { from: new Date(2026, 10, 1), to: new Date(2026, 10, 21) } },
+        ],
+      }}
+    />
+  ),
 }

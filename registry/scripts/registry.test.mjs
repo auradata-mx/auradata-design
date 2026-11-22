@@ -202,13 +202,17 @@ test('installs the data table with its own parts (T61)', () => {
       'cristianruben-dev/auradata-design/data-table-selection-bar',
       'cristianruben-dev/auradata-design/faceted-filter',
       'cristianruben-dev/auradata-design/filter-chips',
+      'cristianruben-dev/auradata-design/range-filter',
+      'cristianruben-dev/auradata-design/date-range-filter',
     ])
   )
   expect(item('data-table-selection-bar').registryDependencies).toEqual(
     expect.arrayContaining(['cristianruben-dev/auradata-design/button', 'cristianruben-dev/auradata-design/format', 'separator'])
   )
   // The filter system stands alone: a dashboard installs a filter without the table.
-  expect(item('faceted-filter').registryDependencies).not.toContain('cristianruben-dev/auradata-design/data-table')
+  for (const filter of ['faceted-filter', 'range-filter', 'filter-chips'])
+    expect(item(filter).registryDependencies).not.toContain('cristianruben-dev/auradata-design/data-table')
+  expect(item('range-filter').registryDependencies).toContain('cristianruben-dev/auradata-design/slider')
   expect(item('faceted-filter').registryDependencies).toEqual(
     expect.arrayContaining(['cristianruben-dev/auradata-design/command', 'popover', 'cristianruben-dev/auradata-design/badge'])
   )
