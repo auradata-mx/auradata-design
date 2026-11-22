@@ -230,3 +230,7 @@ test('publishes the user menu and installs it with the app shell', () => {
   )
   expect(item('app-shell').registryDependencies).toContain('cristianruben-dev/auradata-design/user-menu')
 })
+
+test('publishes the empty-state illustrations', () => {
+  expect(item('empty-illustration')?.type).toBe('registry:ui')
+})
