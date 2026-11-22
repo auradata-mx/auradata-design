@@ -133,7 +133,10 @@ export const Colored: Story = {
         const description = paint(getComputedStyle(box.querySelector('[data-description]')!).color, rgb(background))
         await expect(contrast(description, background), `${label}: description AA`).toBeGreaterThanOrEqual(4.5)
         const icon = paint(getComputedStyle(box.querySelector('[data-icon] svg')!).color, rgb(background))
-        await expect(icon, `${label}: icon`).toEqual(token(status.token))
+        if (type !== 'warning' || theme === 'dark') {
+          await expect(icon, `${label}: icon`).toEqual(token(status.token))
+        }
+        await expect(contrast(icon, background), `${label}: icon 3:1`).toBeGreaterThanOrEqual(3)
       }
     })
   },

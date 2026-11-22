@@ -35,7 +35,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           <InfoIcon className="size-4 text-info" />
         ),
         warning: (
-          <TriangleAlertIcon className="size-4 text-warning" />
+          // AuraData: #D97706 reads 2.9:1 on the rich warning tint: a darker amber in light (3:1).
+          <TriangleAlertIcon className="size-4 text-[color-mix(in_oklab,var(--warning)_75%,var(--foreground))] dark:text-warning" />
         ),
         error: (
           <OctagonXIcon className="size-4 text-destructive" />
