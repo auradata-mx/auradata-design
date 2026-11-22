@@ -1,3 +1,4 @@
+// registry: auradata (shadcn code block with its copy button in Spanish)
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
@@ -108,7 +109,7 @@ function CodeBlockCopyButton({
         data-copied={copied || undefined}
         variant={variant}
         size={size}
-        aria-label={copied ? "Copied" : "Copy"}
+        aria-label={copied ? "Copiado" : "Copiar"}
         className={cn(className)}
         onClick={(event) => {
           onClick?.(event)
@@ -128,7 +129,7 @@ function CodeBlockCopyButton({
         )}
       </Button>
       <span aria-live="polite" className="sr-only">
-        {copied ? "Copied" : ""}
+        {copied ? "Copiado" : ""}
       </span>
     </>
   )

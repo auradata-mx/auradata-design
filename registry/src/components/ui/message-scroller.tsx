@@ -1,4 +1,5 @@
 "use client"
+// registry: auradata (shadcn message scroller with its labels in Spanish)
 
 import * as React from "react"
 import {
@@ -110,7 +111,7 @@ function MessageScrollerButton({
           <ArrowDownIcon
           />
           <span className="sr-only">
-            {direction === "end" ? "Scroll to end" : "Scroll to start"}
+            {direction === "end" ? "Ir al final" : "Ir al inicio"}
           </span>
         </>
       )}

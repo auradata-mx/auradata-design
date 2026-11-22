@@ -1,3 +1,4 @@
+// registry: auradata (shadcn breadcrumb in Spanish, whose separators stay with the item before them when the trail wraps)
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -7,7 +8,7 @@ import { ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 function Breadcrumb({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
-      aria-label="breadcrumb"
+      aria-label="Ruta de navegación"
       data-slot="breadcrumb"
       className={cn(className)}
       {...props}
@@ -32,7 +33,11 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-slot="breadcrumb-item"
-      className={cn("inline-flex items-center gap-1", className)}
+      // AuraData: an item followed by a separator keeps room for it (6 px gap and the 14 px chevron).
+      className={cn(
+        "inline-flex items-center gap-1 [&:has(+[data-slot=breadcrumb-separator])]:pr-5",
+        className
+      )}
       {...props}
     />
   )
@@ -81,7 +86,9 @@ function BreadcrumbSeparator({
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5", className)}
+      // AuraData: no width of its own (and its gap cancelled), so it can never wrap alone to the start of
+      // the next line; the chevron overflows to the left, into the room its item keeps.
+      className={cn("-ml-1.5 flex w-0 justify-end [&>svg]:size-3.5 [&>svg]:shrink-0", className)}
       {...props}
     >
       {children ?? (
@@ -108,7 +115,7 @@ function BreadcrumbEllipsis({
     >
       <MoreHorizontalIcon
       />
-      <span className="sr-only">More</span>
+      <span className="sr-only">Más</span>
     </span>
   )
 }

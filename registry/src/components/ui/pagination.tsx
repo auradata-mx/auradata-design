@@ -1,3 +1,4 @@
+// registry: auradata (shadcn pagination in Spanish, whose previous and next buttons are square on a phone, the chevron centered)
 import * as React from "react"
 import { cn } from "cn"
 
@@ -8,7 +9,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
       role="navigation"
-      aria-label="pagination"
+      aria-label="Paginación"
       data-slot="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
@@ -64,14 +65,14 @@ function PaginationLink({
 
 function PaginationPrevious({
   className,
-  text = "Previous",
+  text = "Anterior",
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label="Página anterior"
       size="default"
-      className={cn("pl-1.5!", className)}
+      className={cn("max-sm:w-8 max-sm:px-0! sm:pl-1.5!", className)}
       {...props}
     >
       <ChevronLeftIcon data-icon="inline-start" />
@@ -82,14 +83,14 @@ function PaginationPrevious({
 
 function PaginationNext({
   className,
-  text = "Next",
+  text = "Siguiente",
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label="Página siguiente"
       size="default"
-      className={cn("pr-1.5!", className)}
+      className={cn("max-sm:w-8 max-sm:px-0! sm:pr-1.5!", className)}
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
@@ -114,7 +115,6 @@ function PaginationEllipsis({
     >
       <MoreHorizontalIcon
       />
-      <span className="sr-only">More pages</span>
     </span>
   )
 }

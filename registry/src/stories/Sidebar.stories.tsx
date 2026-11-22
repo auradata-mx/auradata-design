@@ -109,7 +109,7 @@ export const Mobile: Story = {
   tags: ['mobile'],
   play: async ({ canvasElement }) => {
     if (!window.matchMedia('(max-width: 767px)').matches) return
-    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Toggle Sidebar' }))
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Mostrar u ocultar la barra lateral' }))
     const body = within(canvasElement.ownerDocument.body)
     const sheet = await body.findByRole('dialog')
     await waitFor(() => expect(within(sheet).getByRole('button', { name: 'Informes' })).toBeVisible())
@@ -129,10 +129,15 @@ export const MenuSkeleton: Story = {
             <SidebarGroupLabel>Explorar</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu aria-busy="true" aria-label="Cargando el menú">
-                {[0, 1, 2, 3].map((row) => (
-                  <SidebarMenuItem key={row}>
-                    {/* The stock skeleton picks a random 50–90 % width on every render. */}
-                    <SidebarMenuSkeleton showIcon className="[&_[data-sidebar=menu-skeleton-text]]:max-w-3/4" />
+                {/* The stock skeleton picks a random 50–90 % width on every render: fixed widths here. */}
+                {[
+                  '[&_[data-sidebar=menu-skeleton-text]]:max-w-[72%]',
+                  '[&_[data-sidebar=menu-skeleton-text]]:max-w-[56%]',
+                  '[&_[data-sidebar=menu-skeleton-text]]:max-w-[80%]',
+                  '[&_[data-sidebar=menu-skeleton-text]]:max-w-[64%]',
+                ].map((width) => (
+                  <SidebarMenuItem key={width}>
+                    <SidebarMenuSkeleton showIcon className={width} />
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
