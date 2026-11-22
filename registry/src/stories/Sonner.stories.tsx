@@ -3,8 +3,14 @@ import { expect, waitFor, within } from 'storybook/test'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster, toastProgress } from '@/components/ui/sonner'
 import { contrast, inBothThemes, pageBackground, paint, rgb, token } from './support/contrast'
+
+/** Dismisses every toast and waits until they leave, so a story never finds the toasts of the one before. */
+async function clearToasts(doc: Document) {
+  toast.dismiss()
+  await waitFor(() => expect(doc.querySelector('[data-sonner-toast]')).toBeNull())
+}
 
 const meta = {
   title: 'Components/Sonner',
@@ -47,7 +53,7 @@ export const Visible: Story = {
     </div>
   ),
   play: async ({ canvasElement }) => {
-    toast.dismiss()
+    await clearToasts(canvasElement.ownerDocument)
     toast.success('Informe publicado', { description: 'Tu equipo ya puede ver «Ventas por región».' })
     toast.error('No se pudo conectar con la base de datos', {
       action: { label: 'Reintentar', onClick: () => {} },
@@ -87,7 +93,7 @@ export const Colored: Story = {
     </div>
   ),
   play: async ({ canvasElement }) => {
-    toast.dismiss()
+    await clearToasts(canvasElement.ownerDocument)
     toast.success('Informe publicado', { description: 'Tu equipo ya puede ver «Ventas por región».' })
     toast.info('Hay una nueva versión de AuraData BI', { description: 'Recarga la página para usarla.' })
     toast.warning('El dataset tiene 3 días sin actualizarse', {
@@ -130,5 +136,91 @@ export const Colored: Story = {
         await expect(icon, `${label}: icon`).toEqual(token(status.token))
       }
     })
+  },
+}
+
+/**
+ * A long task: `toastProgress` opens a toast with a bar, `update(40)` moves it, and `success` or `error` ends it
+ * in place, with «Descargar» or «Reintentar». Three exports side by side: running, done and failed.
+ */
+export const Progress: Story = {
+  tags: ['mobile'],
+  args: { expand: true, position: 'top-center', duration: Infinity },
+  render: (args, { globals }) => (
+    <div className="min-h-100">
+      <Toaster {...args} theme={globals.theme === 'dark' ? 'dark' : 'light'} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    await clearToasts(canvasElement.ownerDocument)
+    const failed = toastProgress('Exportando «Clientes»…')
+    failed.update(70)
+    failed.error('No se pudo exportar «Clientes»', {
+      description: 'Se perdió la conexión con la base de datos.',
+      action: { label: 'Reintentar', onClick: () => {} },
+    })
+    const done = toastProgress('Exportando «Ventas por región»…')
+    done.update(100)
+    done.success('Listo', {
+      description: '«Ventas por región».xlsx',
+      action: { label: 'Descargar', onClick: () => {} },
+    })
+    const running = toastProgress('Exportando «Ventas 2026»…')
+    running.update(40)
+    const body = within(canvasElement.ownerDocument.body)
+    const bar = await body.findByRole('progressbar', { name: 'Exportando «Ventas 2026»…' })
+    await expect(bar).toHaveAttribute('aria-valuenow', '40')
+    // es-MX with a no-break space before the sign, as the voice guide.
+    await expect(bar).toHaveAttribute('aria-valuetext', '40\u00a0%')
+    await expect(bar.querySelector('[data-slot=progress-value]')?.textContent).toBe('40\u00a0%')
+    // Done and failed replaced their bars: only the running export has one.
+    await expect(body.getAllByRole('progressbar')).toHaveLength(1)
+    // Sonner closes a toast when its action is clicked, so the screenshot keeps them unclicked.
+    await waitFor(() => expect(body.getByRole('button', { name: 'Descargar' })).toBeVisible())
+    await waitFor(() => expect(body.getByRole('button', { name: 'Reintentar' })).toBeVisible())
+  },
+}
+
+/** A promise in a toast: «Exportando…» while it runs, then «Listo» with «Descargar», or the error with «Reintentar». */
+export const WithPromise: Story = {
+  args: { expand: true, position: 'top-center', duration: Infinity },
+  render: (args, { globals }) => (
+    <div className="min-h-70">
+      <Toaster {...args} theme={globals.theme === 'dark' ? 'dark' : 'light'} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    await clearToasts(canvasElement.ownerDocument)
+    const body = within(canvasElement.ownerDocument.body)
+    const deferred = () => {
+      let resolve!: (file: string) => void
+      let reject!: (error: Error) => void
+      const promise = new Promise<string>((ok, fail) => ((resolve = ok), (reject = fail)))
+      return { promise, resolve, reject }
+    }
+    const failing = deferred()
+    const working = deferred()
+    toast.promise(failing.promise, {
+      loading: 'Exportando «Clientes»…',
+      error: {
+        message: 'No se pudo exportar «Clientes»',
+        description: 'La consulta tardó demasiado.',
+        action: { label: 'Reintentar', onClick: () => {} },
+      },
+    })
+    toast.promise(working.promise, {
+      loading: 'Exportando «Ventas 2026»…',
+      success: (file) => ({
+        message: 'Listo',
+        description: file,
+        action: { label: 'Descargar', onClick: () => {} },
+      }),
+    })
+    await waitFor(() => expect(body.getByText('Exportando «Ventas 2026»…')).toBeVisible())
+    working.resolve('«Ventas 2026».pdf')
+    failing.reject(new Error('timeout'))
+    await waitFor(() => expect(body.getByRole('button', { name: 'Descargar' })).toBeVisible())
+    await waitFor(() => expect(body.getByRole('button', { name: 'Reintentar' })).toBeVisible())
+    await expect(body.queryByText(/Exportando/)).toBeNull()
   },
 }

@@ -2,10 +2,12 @@
 // registry: auradata (shadcn sonner in the brand font, with the brand buttons, status-colored icons and richColors on the status tokens)
 
 import { useTheme } from "next-themes"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { Toaster as Sonner, toast, type ExternalToast, type ToasterProps } from "sonner"
 import { cn } from "cn"
 
 import { buttonVariants } from "@/components/ui/button"
+import { Progress, ProgressValue } from "@/components/ui/progress"
+import { formatPercent } from "@/lib/format"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
 /** Sonner's rich color variables for one toast type, on our tokens. */
@@ -39,7 +41,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           <OctagonXIcon className="size-4 text-destructive" />
         ),
         loading: (
-          <Loader2Icon className="size-4 animate-spin" />
+          <Loader2Icon className="size-4 animate-spin motion-reduce:animate-none" />
         ),
       }}
       style={
@@ -65,7 +67,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           // AuraData: the icon sits on the title's first line, as in the alert (sonner centers it on the toast).
           icon: "self-start! mt-0.5!",
           title: "text-pretty",
-          description: "text-muted-foreground!",
+          description: "text-pretty text-muted-foreground!",
           // AuraData: the toast's buttons are the brand's, not sonner's stock pill. Sonner's CSS is
           // unlayered and beats utilities, so the properties it sets are forced.
           actionButton: cn(
@@ -83,4 +85,47 @@ const Toaster = ({ ...props }: ToasterProps) => {
   )
 }
 
-export { Toaster }
+/** The bar of a progress toast, with its value as «40 %». The bar is named after the task (its toast title). */
+function ToastProgress({ value, label }: { value: number; label: string }) {
+  const percent = (current: number | null) => formatPercent((current ?? 0) / 100, { maximumFractionDigits: 0 })
+  return (
+    <Progress
+      value={value}
+      aria-label={label}
+      getAriaValueText={(_formatted, current) => percent(current)}
+      data-slot="toast-progress"
+      className="mt-1.5 flex-nowrap items-center gap-3"
+    >
+      {/* The toast sits in a live region: the bar's value is announced by the progressbar, not this text. */}
+      <ProgressValue aria-hidden className="order-last w-10 shrink-0 text-right text-xs">
+        {(_formatted, current) => percent(current)}
+      </ProgressValue>
+    </Progress>
+  )
+}
+
+/**
+ * A toast for a long task, such as an export: a spinner, its title and a bar that `update(percent)` moves.
+ * `success` and `error` end it in place (the bar goes), usually with «Descargar» or «Reintentar» as the action.
+ */
+function toastProgress(message: string, data?: ExternalToast) {
+  const id = toast.loading(message, { ...data, description: <ToastProgress value={0} label={message} /> })
+  return {
+    id,
+    update(percent: number, title: string = message) {
+      const value = Math.min(100, Math.max(0, percent))
+      toast.loading(title, { ...data, id, description: <ToastProgress value={value} label={title} /> })
+    },
+    success(title: React.ReactNode, result?: ExternalToast) {
+      toast.success(title, { ...data, description: undefined, ...result, id })
+    },
+    error(title: React.ReactNode, result?: ExternalToast) {
+      toast.error(title, { ...data, description: undefined, ...result, id })
+    },
+    dismiss() {
+      toast.dismiss(id)
+    },
+  }
+}
+
+export { Toaster, ToastProgress, toastProgress }
