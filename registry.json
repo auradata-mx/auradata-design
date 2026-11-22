@@ -841,13 +841,22 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "cristianruben-dev/auradata-design/badge",
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/checkbox",
         "cristianruben-dev/auradata-design/data-table-selection-bar",
+        "cristianruben-dev/auradata-design/date-range-filter",
         "cristianruben-dev/auradata-design/dropdown-menu",
+        "cristianruben-dev/auradata-design/faceted-filter",
+        "cristianruben-dev/auradata-design/filter-builder",
+        "cristianruben-dev/auradata-design/filter-chips",
+        "cristianruben-dev/auradata-design/filter-conditions",
+        "cristianruben-dev/auradata-design/format",
         "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/range-filter",
         "cristianruben-dev/auradata-design/select",
         "cristianruben-dev/auradata-design/toggle",
+        "popover",
         "skeleton",
         "table"
       ],
@@ -996,6 +1005,29 @@
       ]
     },
     {
+      "name": "faceted-filter",
+      "type": "registry:ui",
+      "title": "Faceted filter",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/badge",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/command",
+        "cristianruben-dev/auradata-design/format",
+        "popover",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/faceted-filter.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "field",
       "type": "registry:ui",
       "title": "Field",
@@ -1010,6 +1042,45 @@
       "files": [
         {
           "path": "registry/src/components/ui/field.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "filter-builder",
+      "type": "registry:ui",
+      "title": "Filter builder",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/filter-conditions",
+        "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/native-select"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/filter-builder.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "filter-chips",
+      "type": "registry:ui",
+      "title": "Filter chips",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/filter-chips.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1484,6 +1555,31 @@
       "files": [
         {
           "path": "registry/src/components/ui/radio-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "range-filter",
+      "type": "registry:ui",
+      "title": "Range filter",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/badge",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/label",
+        "cristianruben-dev/auradata-design/slider",
+        "popover",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/range-filter.tsx",
           "type": "registry:ui"
         }
       ]
@@ -2283,6 +2379,18 @@
       "files": [
         {
           "path": "registry/src/lib/chart-palette.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "filter-conditions",
+      "type": "registry:lib",
+      "title": "Filter conditions",
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/src/lib/filter-conditions.ts",
           "type": "registry:lib"
         }
       ]
