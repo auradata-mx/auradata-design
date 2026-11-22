@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { expect, waitFor } from 'storybook/test'
 
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { CHART_COLORS, chartConfig } from '@/lib/chart-palette'
+import { formatCompact } from '@/lib/format'
 
 const DATA = [
   { month: 'Jul', norte: 1180, centro: 1920, sur: 790 },
@@ -22,13 +24,14 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** Series take the brand palette in order: no chart writes a color. */
+/** Series take the brand palette in order: no chart writes a color. The axis labels take the theme's muted text. */
 export const Bars: Story = {
   render: (args) => (
     <ChartContainer {...args} className="h-64 w-full max-w-xl">
       <BarChart data={DATA} accessibilityLayer>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" tickLine={false} axisLine={false} />
+        <YAxis tickLine={false} axisLine={false} width={40} tickFormatter={(value: number) => formatCompact(value)} />
         <ChartTooltip content={<ChartTooltipContent />} />
         {/* Keep the series order: Recharts sorts the legend by name otherwise. */}
         <ChartLegend content={<ChartLegendContent />} itemSorter={null} />
@@ -38,6 +41,24 @@ export const Bars: Story = {
       </BarChart>
     </ChartContainer>
   ),
+  play: async ({ canvasElement }) => {
+    await waitFor(() => expect(canvasElement.querySelectorAll('.recharts-cartesian-axis-tick-value').length).toBeGreaterThan(4))
+    // Both themes: Recharts' own #666 is close to the light muted text, and only 3.3:1 on the dark card.
+    const root = document.documentElement
+    const wasDark = root.classList.contains('dark')
+    for (const dark of [false, true]) {
+      root.classList.toggle('dark', dark)
+      const muted = document.createElement('span')
+      muted.style.color = 'var(--color-muted-foreground)'
+      canvasElement.append(muted)
+      const expected = getComputedStyle(muted).color
+      muted.remove()
+      for (const label of canvasElement.querySelectorAll('.recharts-cartesian-axis-tick-value')) {
+        await expect(getComputedStyle(label).fill).toBe(expected)
+      }
+    }
+    root.classList.toggle('dark', wasDark)
+  },
 }
 
 export const Palette: Story = {
