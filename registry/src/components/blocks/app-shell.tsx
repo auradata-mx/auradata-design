@@ -1,4 +1,5 @@
 // registry: auradata (the shell of every AuraData app: sidebar and top bar)
+import { Fragment } from "react"
 import { ChevronsUpDownIcon, LogOutIcon, type LucideIcon, SettingsIcon } from "lucide-react"
 import { cn } from "cn"
 
@@ -157,14 +158,16 @@ export function AppShell({
               <Breadcrumb>
                 <BreadcrumbList>
                   {breadcrumbs.map((crumb, index) => (
-                    <BreadcrumbItem key={crumb}>
+                    <Fragment key={crumb}>
                       {index > 0 && <BreadcrumbSeparator />}
-                      {index === breadcrumbs.length - 1 ? (
-                        <BreadcrumbPage>{crumb}</BreadcrumbPage>
-                      ) : (
-                        <span className="text-muted-foreground">{crumb}</span>
-                      )}
-                    </BreadcrumbItem>
+                      <BreadcrumbItem>
+                        {index === breadcrumbs.length - 1 ? (
+                          <BreadcrumbPage>{crumb}</BreadcrumbPage>
+                        ) : (
+                          <span className="text-muted-foreground">{crumb}</span>
+                        )}
+                      </BreadcrumbItem>
+                    </Fragment>
                   ))}
                 </BreadcrumbList>
               </Breadcrumb>

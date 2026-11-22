@@ -86,9 +86,13 @@ function BreadcrumbSeparator({
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      // AuraData: no width of its own (and its gap cancelled), so it can never wrap alone to the start of
-      // the next line; the chevron overflows to the left, into the room its item keeps.
-      className={cn("-ml-1.5 flex w-0 justify-end [&>svg]:size-3.5 [&>svg]:shrink-0", className)}
+      // AuraData: right after an item, no width of its own (and its gap cancelled), so it can never wrap alone
+      // to the start of the next line; the chevron overflows to the left, into the room that item keeps.
+      // Anywhere else (nested in an item by mistake, say) it takes its own width and never covers text.
+      className={cn(
+        "flex [&>svg]:size-3.5 [&>svg]:shrink-0 [[data-slot=breadcrumb-item]+&]:-ml-1.5 [[data-slot=breadcrumb-item]+&]:w-0 [[data-slot=breadcrumb-item]+&]:justify-end",
+        className
+      )}
       {...props}
     >
       {children ?? (

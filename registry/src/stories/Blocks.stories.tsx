@@ -78,10 +78,33 @@ const CONVERSATION: ChatMessage[] = [
   },
 ]
 
-/** The chat fills its parent: here, a panel as tall as a laptop screen. */
+/** A CSS color as sRGB, painted over a background (for colors with alpha). */
+const paint = (color: string, background: string) => {
+  const context = document.createElement('canvas').getContext('2d', { willReadFrequently: true })!
+  context.fillStyle = background
+  context.fillRect(0, 0, 1, 1)
+  context.fillStyle = color
+  context.fillRect(0, 0, 1, 1)
+  return [...context.getImageData(0, 0, 1, 1).data.slice(0, 3)]
+}
+
+const luminance = (rgb: number[]) => {
+  const [r, g, b] = rgb.map((value) => {
+    const c = value / 255
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+const contrast = (a: number[], b: number[]) => {
+  const [high, low] = [luminance(a), luminance(b)].sort((x, y) => y - x)
+  return (high + 0.05) / (low + 0.05)
+}
+
+/** The chat fills its parent: the whole screen on a phone, a panel as tall as a laptop screen from sm. */
 function ChatFrame(props: React.ComponentProps<typeof Chat>) {
   return (
-    <div className="h-[min(720px,100svh)]">
+    <div className="h-svh sm:h-[min(720px,100svh)]">
       <Chat {...props} />
     </div>
   )
@@ -128,6 +151,15 @@ export const Shell: Story = {
       </div>
     </AppShell>
   ),
+  play: async ({ canvasElement }) => {
+    // Each chevron sits between two crumbs: never over the text before or after it.
+    const nav = within(canvasElement).getByRole('navigation', { name: 'Ruta de navegación' })
+    const before = within(nav).getByText('Informes').getBoundingClientRect()
+    const after = within(nav).getByText('Ventas 2026').getBoundingClientRect()
+    const chevron = nav.querySelector('[data-slot=breadcrumb-separator] svg')!.getBoundingClientRect()
+    await expect(chevron.left).toBeGreaterThanOrEqual(before.right)
+    await expect(chevron.right).toBeLessThanOrEqual(after.left)
+  },
 }
 
 export const SettingsPage: Story = {
@@ -153,6 +185,19 @@ export const ChatEmpty: ChatStory = {
     await expect(canvas.getByRole('heading', { name: 'Pregúntale a tus datos' })).toBeVisible()
     await userEvent.click(canvas.getByRole('button', { name: '¿Cuánto vendimos este mes?' }))
     await expect(args.onSend).toHaveBeenCalledWith('¿Cuánto vendimos este mes?')
+    // The composer is a text control: its edge reads 3:1 against the page and its own fill, light and dark.
+    const composer = canvas.getByRole('textbox', { name: 'Mensaje' }).parentElement!
+    const root = document.documentElement
+    const wasDark = root.classList.contains('dark')
+    for (const dark of [false, true]) {
+      root.classList.toggle('dark', dark)
+      const page = paint(getComputedStyle(document.body).getPropertyValue('--background'), '#fff')
+      const fill = paint(getComputedStyle(composer).backgroundColor, `rgb(${page.join(' ')})`)
+      const border = paint(getComputedStyle(composer).borderTopColor, `rgb(${page.join(' ')})`)
+      await expect(contrast(border, page), dark ? 'dark page' : 'light page').toBeGreaterThanOrEqual(3)
+      await expect(contrast(border, fill), dark ? 'dark fill' : 'light fill').toBeGreaterThanOrEqual(3)
+    }
+    root.classList.toggle('dark', wasDark)
     // Rest state for the screenshot: nothing focused.
     ;(document.activeElement as HTMLElement | null)?.blur()
   },

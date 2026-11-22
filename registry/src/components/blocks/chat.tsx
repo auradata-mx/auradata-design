@@ -311,7 +311,7 @@ function Chat({
           send(text)
         }}
       >
-        <div className="relative rounded-xl border border-input bg-card shadow-(--aura-shadow-card) focus-within:ring-3 focus-within:ring-ring/50">
+        <div className="relative rounded-xl border border-[color:var(--control-border,var(--input))] bg-card shadow-(--aura-shadow-card) focus-within:ring-3 focus-within:ring-ring/50">
           <label htmlFor={inputId} className="sr-only">
             Mensaje
           </label>
