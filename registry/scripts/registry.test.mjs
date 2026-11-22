@@ -302,3 +302,20 @@ test('publishes the chart pieces with the formats and the delta they share', () 
     'cristianruben-dev/auradata-design/format',
   ])
 })
+
+test('publishes the chart card with its states, its menu and the PNG export', () => {
+  expect(item('chart-export').type).toBe('registry:lib')
+  expect(item('chart-card').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'card',
+      'skeleton',
+      'table',
+      'cristianruben-dev/auradata-design/chart-export',
+      'cristianruben-dev/auradata-design/dialog',
+      'cristianruben-dev/auradata-design/dropdown-menu',
+      'cristianruben-dev/auradata-design/empty',
+      'cristianruben-dev/auradata-design/error-state',
+      'cristianruben-dev/auradata-design/format',
+    ]),
+  )
+})
