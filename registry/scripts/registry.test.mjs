@@ -59,9 +59,11 @@ test('publishes the blocks with their components', () => {
     expect.arrayContaining([
       'cristianruben-dev/auradata-design/logo',
       'cristianruben-dev/auradata-design/sidebar',
-      'cristianruben-dev/auradata-design/avatar',
+      'cristianruben-dev/auradata-design/user-menu',
     ]),
   )
+  // The avatar comes with the user menu (T65).
+  expect(item('user-menu').registryDependencies).toContain('cristianruben-dev/auradata-design/avatar')
 })
 
 test('installs the workspace switcher and the theme toggle with the app shell', () => {
@@ -215,4 +217,16 @@ test('publishes the shortcuts dialog with the search command, whose key labels i
       'cristianruben-dev/auradata-design/dialog',
     ]),
   )
+})
+
+test('publishes the user menu and installs it with the app shell', () => {
+  expect(item('user-menu')?.type).toBe('registry:ui')
+  expect(item('user-menu').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/dropdown-menu',
+      'cristianruben-dev/auradata-design/theme-toggle',
+      'cristianruben-dev/auradata-design/initials',
+    ]),
+  )
+  expect(item('app-shell').registryDependencies).toContain('cristianruben-dev/auradata-design/user-menu')
 })

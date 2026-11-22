@@ -101,6 +101,14 @@ async function checkStory(
   })
   await page.evaluate(() => document.fonts.ready)
   await page.waitForLoadState("networkidle")
+  // A play may open and close menus or dialogs: axe and the screenshot wait for it to finish, or they
+  // catch it halfway (T65). Storybook's render ends in "finished" (or "errored"/"aborted").
+  await page.waitForFunction(() => {
+    const preview = (window as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } })
+      .__STORYBOOK_PREVIEW__
+    const phase = preview?.currentRender?.phase
+    return phase === undefined || ["finished", "errored", "aborted"].includes(phase)
+  })
 
   // WCAG A and AA, as the Storybook a11y tests check in light; this pass covers dark too.
   const violations = await axe(page)

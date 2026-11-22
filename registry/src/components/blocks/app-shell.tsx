@@ -1,9 +1,8 @@
-// registry: auradata (the shell of every AuraData app: sidebar and top bar, with an optional notification center and announcement banner)
+// registry: auradata (the shell of every AuraData app: sidebar and top bar, with the full user menu, an optional notification center and announcement banner)
 import { Fragment } from "react"
-import { ChevronsUpDownIcon, LogOutIcon, type LucideIcon, SettingsIcon } from "lucide-react"
+import { type LucideIcon } from "lucide-react"
 import { cn } from "cn"
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,15 +10,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Logo, ProductTag } from "@/components/ui/logo"
 import { NotificationCenter } from "@/components/ui/notification-center"
 import { Separator } from "@/components/ui/separator"
@@ -40,8 +30,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { UserMenu, type UserMenuProps } from "@/components/ui/user-menu"
 import { WorkspaceSwitcher } from "@/components/ui/workspace-switcher"
-import { initials } from "@/lib/initials"
 
 export type NavItem = { title: string; href: string; icon: LucideIcon; active?: boolean }
 export type NavGroup = { label: string; items: NavItem[] }
@@ -64,40 +54,9 @@ type AppShellProps = {
   notifications?: React.ComponentProps<typeof NotificationCenter>
   /** An announcement for the whole app (an `AnnouncementBanner`), pinned under the top bar. */
   banner?: React.ReactNode
+  /** The account menu at the foot of the sidebar: its actions and sections (`UserMenu`). */
+  userMenu?: Omit<UserMenuProps, "user" | "variant" | "trigger" | "side" | "align">
   children: React.ReactNode
-}
-
-function UserMenu({ user }: { user: User }) {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={<SidebarMenuButton size="lg" className="data-popup-open:bg-sidebar-accent" />}
-      >
-        <Avatar className="size-8 rounded-lg">
-          <AvatarFallback className="rounded-lg">{initials(user.name)}</AvatarFallback>
-        </Avatar>
-        <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-medium">{user.name}</span>
-          <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-        </div>
-        <ChevronsUpDownIcon className="ml-auto size-4" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="top" align="start" className="w-(--anchor-width) min-w-56">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
-          <DropdownMenuItem>
-            <SettingsIcon />
-            Ajustes
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LogOutIcon />
-          Cerrar sesión
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  )
 }
 
 /** The sidebar with the logo, the sections and the user; the top bar with where you are and the page actions. */
@@ -111,6 +70,7 @@ export function AppShell({
   theme,
   notifications,
   banner,
+  userMenu,
   children,
 }: AppShellProps) {
   return (
@@ -148,7 +108,14 @@ export function AppShell({
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <UserMenu user={user} />
+              <UserMenu
+                user={user}
+                variant="full"
+                side="top"
+                align="start"
+                trigger={<SidebarMenuButton size="lg" className="data-popup-open:bg-sidebar-accent" />}
+                {...userMenu}
+              />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

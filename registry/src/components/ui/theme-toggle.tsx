@@ -1,4 +1,4 @@
-// registry: auradata (light, dark or system theme, in the AuraData top bar)
+// registry: auradata (light, dark or system theme, in the AuraData top bar; its options shared with the user menu)
 import { MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,8 @@ import {
 
 export type Theme = "light" | "dark" | "system"
 
-const OPTIONS: { value: Theme; label: string; icon: typeof SunIcon }[] = [
+/** The three themes, in menu order: shared with the user menu. */
+const themeOptions: { value: Theme; label: string; icon: typeof SunIcon }[] = [
   { value: "light", label: "Claro", icon: SunIcon },
   { value: "dark", label: "Oscuro", icon: MoonIcon },
   { value: "system", label: "Sistema", icon: MonitorIcon },
@@ -40,7 +41,7 @@ function ThemeToggle({ theme, onThemeChange, defaultOpen }: ThemeToggleProps) {
         <DropdownMenuGroup>
           <DropdownMenuLabel>Tema</DropdownMenuLabel>
           <DropdownMenuRadioGroup value={theme} onValueChange={(value) => onThemeChange(value as Theme)}>
-            {OPTIONS.map((option) => (
+            {themeOptions.map((option) => (
               <DropdownMenuRadioItem key={option.value} value={option.value}>
                 <option.icon />
                 {option.label}
@@ -53,4 +54,4 @@ function ThemeToggle({ theme, onThemeChange, defaultOpen }: ThemeToggleProps) {
   )
 }
 
-export { ThemeToggle }
+export { ThemeToggle, themeOptions }
