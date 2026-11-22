@@ -124,18 +124,18 @@ export const Colored: Story = {
         await expect(box, `${label}: on screen`).toBeVisible()
         const background = paint(getComputedStyle(box).backgroundColor, page)
         await expect(background, `${label}: tinted`).not.toEqual(popover)
+        // T59's status scale: the 50 tint, the 200 border and the 700 icon (AA in both themes).
+        await expect(background, `${label}: ${status.token}-50`).toEqual(token(`${status.token}-50`))
         await expect(status.leads(...(background as [number, number, number])), `${label}: hue`).toBe(true)
         const border = paint(getComputedStyle(box).borderTopColor, rgb(background))
-        await expect(border, `${label}: border`).not.toEqual(token('--border'))
+        await expect(border, `${label}: ${status.token}-200 border`).toEqual(token(`${status.token}-200`))
         const title = paint(getComputedStyle(box.querySelector('[data-title]')!).color, rgb(background))
         await expect(title, `${label}: title in the foreground color`).toEqual(foreground)
         await expect(contrast(title, background), `${label}: title AA`).toBeGreaterThanOrEqual(4.5)
         const description = paint(getComputedStyle(box.querySelector('[data-description]')!).color, rgb(background))
         await expect(contrast(description, background), `${label}: description AA`).toBeGreaterThanOrEqual(4.5)
         const icon = paint(getComputedStyle(box.querySelector('[data-icon] svg')!).color, rgb(background))
-        if (type !== 'warning' || theme === 'dark') {
-          await expect(icon, `${label}: icon`).toEqual(token(status.token))
-        }
+        await expect(icon, `${label}: ${status.token}-700 icon`).toEqual(token(`${status.token}-700`))
         await expect(contrast(icon, background), `${label}: icon 3:1`).toBeGreaterThanOrEqual(3)
       }
     })

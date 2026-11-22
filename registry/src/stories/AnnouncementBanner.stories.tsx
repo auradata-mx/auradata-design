@@ -109,12 +109,13 @@ export const Variants: Story = {
           await expect(contrast(color, background), `${label}: ${slot} AA`).toBeGreaterThanOrEqual(4.5)
         }
         if (variant !== 'default') {
-          await expect(background, `${label}: tinted`).not.toEqual(token('--background'))
+          // T59's status scale: the 50 tint, the 200 border and the 700 icon (AA in both themes).
+          const scale = STATUS_TOKEN[variant]
+          await expect(background, `${label}: ${scale}-50`).toEqual(token(`${scale}-50`))
+          const border = paint(getComputedStyle(banner).borderBottomColor, rgb(background))
+          await expect(border, `${label}: ${scale}-200 border`).toEqual(token(`${scale}-200`))
           const icon = paint(getComputedStyle(banner.querySelector('svg')!).color, rgb(background))
-          // Warning's icon is a darker amber in light (3:1); the others are the status token itself.
-          if (variant !== 'warning' || theme === 'dark') {
-            await expect(icon, `${label}: icon`).toEqual(token(STATUS_TOKEN[variant]))
-          }
+          await expect(icon, `${label}: ${scale}-700 icon`).toEqual(token(`${scale}-700`))
           await expect(contrast(icon, background), `${label}: icon 3:1`).toBeGreaterThanOrEqual(3)
         }
       }

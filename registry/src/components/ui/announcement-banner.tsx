@@ -15,22 +15,19 @@ import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
 
-// The tint is opaque (the page scrolls under the pinned banner) and stronger in dark, where a 10% mix over the
-// near-black page does not read as the status hue. In dark, an outline action takes a lighter edge (--input), as
-// in the alert, so it does not melt into the tint.
+// T59's status scale: the opaque 50 tint (the page scrolls under the pinned banner), the 200 border and the 700
+// icon, which reads at least 3:1 in light and dark. In dark, an outline action takes a lighter edge (--input), as in
+// the alert, so it does not melt into the tint.
 const announcementBannerVariants = cva(
   "@container/banner top-0 z-40 w-full border-b text-sm text-foreground dark:[--input:color-mix(in_oklab,var(--foreground)_22%,transparent)]",
   {
     variants: {
       variant: {
         default: "bg-muted",
-        info: "border-info/40 bg-[color-mix(in_oklab,var(--info)_10%,var(--background))] dark:bg-[color-mix(in_oklab,var(--info)_18%,var(--background))]",
-        success:
-          "border-success/40 bg-[color-mix(in_oklab,var(--success)_10%,var(--background))] dark:bg-[color-mix(in_oklab,var(--success)_18%,var(--background))]",
-        warning:
-          "border-warning/50 bg-[color-mix(in_oklab,var(--warning)_10%,var(--background))] dark:bg-[color-mix(in_oklab,var(--warning)_18%,var(--background))]",
-        destructive:
-          "border-destructive/40 bg-[color-mix(in_oklab,var(--destructive)_10%,var(--background))] dark:bg-[color-mix(in_oklab,var(--destructive)_18%,var(--background))]",
+        info: "border-info-200 bg-info-50",
+        success: "border-success-200 bg-success-50",
+        warning: "border-warning-200 bg-warning-50",
+        destructive: "border-destructive-200 bg-destructive-50",
       },
     },
     defaultVariants: { variant: "info" },
@@ -39,11 +36,10 @@ const announcementBannerVariants = cva(
 
 const ICONS = {
   default: { icon: MegaphoneIcon, className: "text-foreground" },
-  info: { icon: InfoIcon, className: "text-info" },
-  success: { icon: CircleCheckIcon, className: "text-success" },
-  // #D97706 reads 2.9:1 on its own light tint: in light the icon takes a darker amber (3:1, WCAG 1.4.11).
-  warning: { icon: TriangleAlertIcon, className: "text-[color-mix(in_oklab,var(--warning)_75%,var(--foreground))] dark:text-warning" },
-  destructive: { icon: OctagonXIcon, className: "text-destructive" },
+  info: { icon: InfoIcon, className: "text-info-700" },
+  success: { icon: CircleCheckIcon, className: "text-success-700" },
+  warning: { icon: TriangleAlertIcon, className: "text-warning-700" },
+  destructive: { icon: OctagonXIcon, className: "text-destructive-700" },
 }
 
 type AnnouncementBannerProps = Omit<React.ComponentProps<"div">, "title"> &

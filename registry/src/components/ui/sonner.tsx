@@ -1,5 +1,5 @@
 "use client"
-// registry: auradata (shadcn sonner in the brand font, with the brand buttons, status-colored icons and richColors on the status tokens)
+// registry: auradata (shadcn sonner in the brand font, with the brand buttons, status-colored icons and richColors on the status scale)
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, toast, type ExternalToast, type ToasterProps } from "sonner"
@@ -10,11 +10,11 @@ import { Progress, ProgressValue } from "@/components/ui/progress"
 import { formatPercent } from "@/lib/format"
 import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon, Loader2Icon } from "lucide-react"
 
-/** Sonner's rich color variables for one toast type, on our tokens. */
-function richColors(type: "success" | "info" | "warning" | "error", color: string) {
+/** Sonner's rich color variables for one toast type, on T59's status scale: the 50 tint, the 200 border. */
+function richColors(type: "success" | "info" | "warning" | "error", scale: string) {
   return {
-    [`--${type}-bg`]: `color-mix(in oklab, ${color} var(--toast-tint, 12%), var(--popover))`,
-    [`--${type}-border`]: `color-mix(in oklab, ${color} 45%, var(--popover))`,
+    [`--${type}-bg`]: `var(--${scale}-50)`,
+    [`--${type}-border`]: `var(--${scale}-200)`,
     [`--${type}-text`]: "var(--popover-foreground)",
   }
 }
@@ -25,21 +25,19 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
-      // AuraData: the rich color tint is 12% in light; a dark popover needs 20% to read as the status hue.
-      className="toaster group [--toast-tint:12%] dark:[--toast-tint:20%]"
+      className="toaster group"
       icons={{
         success: (
-          <CircleCheckIcon className="size-4 text-success" />
+          <CircleCheckIcon className="size-4 text-success in-data-[rich-colors=true]:text-success-700" />
         ),
         info: (
-          <InfoIcon className="size-4 text-info" />
+          <InfoIcon className="size-4 text-info in-data-[rich-colors=true]:text-info-700" />
         ),
         warning: (
-          // AuraData: #D97706 reads 2.9:1 on the rich warning tint: a darker amber in light (3:1).
-          <TriangleAlertIcon className="size-4 text-[color-mix(in_oklab,var(--warning)_75%,var(--foreground))] dark:text-warning" />
+<TriangleAlertIcon className="size-4 text-warning in-data-[rich-colors=true]:text-warning-700" />
         ),
         error: (
-          <OctagonXIcon className="size-4 text-destructive" />
+          <OctagonXIcon className="size-4 text-destructive in-data-[rich-colors=true]:text-destructive-700" />
         ),
         loading: (
           <Loader2Icon className="size-4 animate-spin motion-reduce:animate-none" />
@@ -51,13 +49,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-text": "var(--popover-foreground)",
           "--normal-border": "var(--border)",
           "--border-radius": "var(--radius)",
-          // AuraData: `richColors` (on the Toaster or on one toast) tints the toast like the `alert`: an
-          // opaque mix of the status color over the popover (it floats over content), a stronger border and
-          // the status icon, while the text keeps the popover foreground so it reads AA in light and dark.
-          ...richColors("success", "var(--success)"),
-          ...richColors("info", "var(--info)"),
-          ...richColors("warning", "var(--warning)"),
-          ...richColors("error", "var(--destructive)"),
+          // AuraData: `richColors` (on the Toaster or on one toast) tints the toast like the `alert`, on the
+          // status scale: the opaque 50 tint (it floats over content), the 200 border and the 700 icon, while the
+          // text keeps the popover foreground so it reads AA in light and dark.
+          ...richColors("success", "success"),
+          ...richColors("info", "info"),
+          ...richColors("warning", "warning"),
+          ...richColors("error", "destructive"),
           // AuraData: sonner's own CSS sets a system font stack on the toaster; the brand font wins here.
           fontFamily: "var(--font-sans)",
         } as React.CSSProperties
