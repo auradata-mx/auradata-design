@@ -319,4 +319,129 @@ export const Compact: Story = {
 }
 
 /** Compact from the start, for the visual tests. */
-export const CompactRows: Story = { args: { densityToggle: true, defaultDensity: 'compact' } }
+export const CompactRows: Story = { args: { densityToggle: true, defaultView: { density: 'compact' } } }
+
+const header = (canvasElement: HTMLElement, name: RegExp) =>
+  within(canvasElement).getByRole('columnheader', { name })
+const headerNames = (canvasElement: HTMLElement) =>
+  [...canvasElement.querySelectorAll('thead th')].map((th) => th.textContent?.trim())
+
+/** Opens a header's column menu and picks an item. */
+async function columnAction(canvasElement: HTMLElement, column: string, item: string) {
+  const canvas = within(canvasElement)
+  await userEvent.click(canvas.getByRole('button', { name: `Opciones de la columna «${column}»` }))
+  await userEvent.click(await within(document.body).findByRole('menuitem', { name: item }))
+  // The menu closes (its exit animation too) before the next step or the axe check.
+  await waitFor(() => expect(document.querySelector('[data-base-ui-focus-guard]')).toBeNull())
+}
+
+/**
+ * Each header gets a menu (sort, pin, move, hide) and a handle on its right edge that drags or, with the
+ * arrow keys, changes its width.
+ */
+export const ColumnTools: Story = {
+  tags: ['mobile'],
+  args: { columnActions: true, resizableColumns: true },
+}
+
+/** «Fijar a la izquierda» keeps «Nombre» in view while the rest scrolls sideways under it. */
+export const PinColumn: Story = {
+  args: { columnActions: true },
+  render: (args) => (
+    <div className="max-w-[22rem]">
+      <DataTable {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    await columnAction(canvasElement, 'Estado', 'Fijar a la izquierda')
+    await waitFor(() => expect(headerNames(canvasElement)[0]).toBe('Estado'))
+    const estado = header(canvasElement, /Estado/)
+    await expect(estado).toHaveAttribute('data-pinned', 'start')
+    const scroller = canvasElement.querySelector<HTMLElement>('[data-slot="table-container"]')!
+    const left = estado.getBoundingClientRect().left
+    scroller.scrollLeft = 200
+    await waitFor(() => expect(estado.getBoundingClientRect().left).toBe(left))
+    await expect(header(canvasElement, /Nombre/).getBoundingClientRect().left).toBeLessThan(left)
+    scroller.scrollLeft = 0
+    await columnAction(canvasElement, 'Estado', 'Desfijar')
+    await waitFor(() => expect(headerNames(canvasElement).at(-1)).toBe('Estado'))
+    await expect(header(canvasElement, /Estado/)).not.toHaveAttribute('data-pinned')
+  },
+}
+
+/** «Mover a la izquierda» and «Ocultar columna» from a header's menu. */
+export const MoveAndHide: Story = {
+  args: { columnActions: true },
+  play: async ({ canvasElement }) => {
+    await expect(headerNames(canvasElement)).toEqual(['Nombre', 'Espacio', 'Actualizado', 'Dueño', 'Estado'])
+    await columnAction(canvasElement, 'Espacio', 'Mover a la izquierda')
+    await waitFor(() => expect(headerNames(canvasElement).slice(0, 2)).toEqual(['Espacio', 'Nombre']))
+    // The first column cannot move further left.
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Opciones de la columna «Espacio»' }))
+    await expect(await within(document.body).findByRole('menuitem', { name: 'Mover a la izquierda' })).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    )
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(document.querySelector('[data-base-ui-focus-guard]')).toBeNull())
+    await columnAction(canvasElement, 'Dueño', 'Ocultar columna')
+    await waitFor(() => expect(headerNames(canvasElement)).toEqual(['Espacio', 'Nombre', 'Actualizado', 'Estado']))
+    // A header's menu sorts too.
+    await columnAction(canvasElement, 'Actualizado', 'Orden descendente')
+    await expect(header(canvasElement, /Actualizado/)).toHaveAttribute('aria-sort', 'descending')
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** The width handle: the arrow keys change it by 16 px, a drag by the distance moved. */
+export const ResizeColumn: Story = {
+  args: { resizableColumns: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const nombre = header(canvasElement, /Nombre/)
+    const width = () => Math.round(nombre.getBoundingClientRect().width)
+    const before = width()
+    const handle = canvas.getByRole('separator', { name: 'Ancho de la columna «Nombre»' })
+    await expect(handle).toHaveAttribute('aria-valuenow', '240')
+    handle.focus()
+    await userEvent.keyboard('{ArrowRight}{ArrowRight}')
+    await expect(handle).toHaveAttribute('aria-valuenow', '272')
+    await waitFor(() => expect(width()).toBe(before + 32))
+    await userEvent.keyboard('{ArrowLeft}')
+    await expect(handle).toHaveAttribute('aria-valuenow', '256')
+    // Drag the edge 40 px to the right.
+    const box = handle.getBoundingClientRect()
+    const x = box.left + box.width / 2
+    const y = box.top + box.height / 2
+    handle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: x, clientY: y }))
+    document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: x + 40, clientY: y }))
+    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: x + 40, clientY: y }))
+    await waitFor(() => expect(handle).toHaveAttribute('aria-valuenow', '296'))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/**
+ * «Nombre» pinned from the start (`defaultView`) on a narrow screen, scrolled to the end, for the visual tests.
+ * Without the header menus: a menu button half under the pinned column fails axe's 24 px target size.
+ */
+export const Pinned: Story = {
+  tags: ['mobile'],
+  args: {
+    // A narrower «Nombre», so on a phone most of the width still scrolls.
+    columns: COLUMNS.map((column) => (column.header === 'Nombre' ? { ...column, size: 168 } : column)),
+    defaultView: { columnPinning: { start: ['nombre'], end: [] } },
+  },
+  render: (args) => (
+    <div className="max-w-[22rem]">
+      <DataTable {...args} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const scroller = canvasElement.querySelector<HTMLElement>('[data-slot="table-container"]')!
+    scroller.scrollLeft = scroller.scrollWidth
+    await waitFor(() =>
+      expect(canvasElement.querySelector('[data-slot="data-table-region"]')).toHaveAttribute('data-more', 'start')
+    )
+  },
+}

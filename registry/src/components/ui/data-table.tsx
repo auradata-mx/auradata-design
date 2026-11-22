@@ -1,7 +1,10 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, and compact rows)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, and a view state to control or share)
 import * as React from "react"
 import {
   columnFilteringFeature,
+  columnOrderingFeature,
+  columnPinningFeature,
+  columnResizingFeature,
   columnSizingFeature,
   columnVisibilityFeature,
   createFilteredRowModel,
@@ -16,15 +19,34 @@ import {
   sortFns,
   tableFeatures,
   useTable,
+  type Column,
   type ColumnDef,
+  type ColumnOrderState,
+  type ColumnPinningState,
+  type ColumnSizingState,
   type ColumnVisibilityState,
+  type Header,
+  type Table as TanStackTable,
   type OnChangeFn,
   type PaginationState,
   type RowData,
   type RowSelectionState,
   type SortingState,
 } from "@tanstack/react-table"
-import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, Columns3Icon, Rows4Icon, SearchIcon } from "lucide-react"
+import {
+  ArrowDownIcon,
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  ArrowUpDownIcon,
+  ArrowUpIcon,
+  Columns3Icon,
+  EllipsisIcon,
+  EyeOffIcon,
+  PinIcon,
+  PinOffIcon,
+  Rows4Icon,
+  SearchIcon,
+} from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
@@ -35,7 +57,9 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -44,9 +68,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Toggle } from "@/components/ui/toggle"
 
-/** What every data table does in the browser: sort, filter (global), size and hide columns, select rows and paginate. */
+/** What every data table does in the browser: sort, filter, size, pin, order and hide columns, select rows and paginate. */
 const dataTableFeatures = tableFeatures({
   columnFilteringFeature,
+  columnOrderingFeature,
+  columnPinningFeature,
+  columnResizingFeature,
   columnSizingFeature,
   columnVisibilityFeature,
   globalFilteringFeature,
@@ -96,14 +123,62 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   actions?: React.ReactNode
   /** A «Filas compactas» switch in the toolbar. */
   densityToggle?: boolean
-  /** How tall the rows are, controlled; `defaultDensity` only starts there. */
-  density?: DataTableDensity
-  defaultDensity?: DataTableDensity
-  onDensityChange?: (density: DataTableDensity) => void
+  /** A menu on each header: sort, pin to a side, move one place, hide. */
+  columnActions?: boolean
+  /** A handle on each header's right edge: drag it, or focus it and use the arrow keys, to change the width. */
+  resizableColumns?: boolean
+  /**
+   * How the table is shown (sort, search, columns, page, density), for a URL or a saved view. Any slice given
+   * here is controlled; `defaultView` only sets where the others start. `onViewChange` hears every change.
+   */
+  view?: Partial<DataTableView>
+  defaultView?: Partial<DataTableView>
+  onViewChange?: (view: DataTableView) => void
 }
 
 /** `normal`: 40 px header and rows of 8 px padding; `compact`: 32 px header and 4 px. */
 type DataTableDensity = "normal" | "compact"
+
+/** What a person changes in how a table looks, without changing its data. Row selection is not part of it. */
+type DataTableView = {
+  sorting: SortingState
+  globalFilter: string
+  columnVisibility: ColumnVisibilityState
+  /** Column ids in display order; empty keeps the order of `columns`. */
+  columnOrder: ColumnOrderState
+  columnPinning: ColumnPinningState
+  /** Widths in px by column id, over each column's `size`. */
+  columnSizing: ColumnSizingState
+  pagination: PaginationState
+  density: DataTableDensity
+}
+
+/**
+ * The view state: each slice the parent passes is controlled, the rest lives here. Several slices can change
+ * in one event (a search also goes back to the first page), so every change builds on the latest one.
+ */
+function useView(value: Partial<DataTableView> | undefined, initial: DataTableView, onChange?: (view: DataTableView) => void) {
+  const [local, setLocal] = React.useState(initial)
+  const current: DataTableView = value ? { ...local, ...value } : local
+  const latest = React.useRef(current)
+  React.useLayoutEffect(() => {
+    latest.current = current
+  })
+  function setSlice<K extends keyof DataTableView>(key: K): OnChangeFn<DataTableView[K]> {
+    return (updater) => {
+      const previous = latest.current
+      const slice =
+        typeof updater === "function"
+          ? (updater as (old: DataTableView[K]) => DataTableView[K])(previous[key])
+          : updater
+      const next = { ...previous, [key]: slice }
+      latest.current = next
+      setLocal(next)
+      onChange?.(next)
+    }
+  }
+  return [current, setSlice] as const
+}
 
 /** A value its parent may control: the prop when given, else local state; either way `onChange` hears it. */
 function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (value: T) => void) {
@@ -152,11 +227,207 @@ function columnLabel(header: unknown, id: string) {
   return typeof header === "string" ? header : id
 }
 
+type DataTableInstance<TData extends RowData> = TanStackTable<typeof dataTableFeatures, TData>
+type DataTableColumnInstance<TData extends RowData> = Column<typeof dataTableFeatures, TData, unknown>
+
+/**
+ * A pinned header or cell sticks to its side over an opaque background that still shows the row's hover and
+ * selected tints, with a hairline on the edge facing the columns that scroll under it.
+ */
+function pinnedProps<TData extends RowData>(column: DataTableColumnInstance<TData>) {
+  const pinned = column.getIsPinned()
+  if (!pinned) return {}
+  return {
+    "data-pinned": pinned,
+    style: pinned === "start" ? { left: column.getStart("start") } : { right: column.getAfter("end") },
+    className: cn(
+      "sticky z-[1] bg-background in-[tr:hover]:bg-[color-mix(in_oklab,var(--muted)_50%,var(--background))] in-data-[state=selected]:bg-muted",
+      pinned === "start" && column.getIsLastColumn("start") && "border-r",
+      pinned === "end" && column.getIsFirstColumn("end") && "border-l"
+    ),
+  }
+}
+
+/** Moves a column one place among the visible columns on its side (pinned start, center, pinned end). */
+function neighborOf<TData extends RowData>(
+  table: DataTableInstance<TData>,
+  column: DataTableColumnInstance<TData>,
+  step: -1 | 1
+): DataTableColumnInstance<TData> | undefined {
+  const side = table.getPinnedVisibleLeafColumns(column.getIsPinned() || "center")
+  return side[side.findIndex((other) => other.id === column.id) + step]
+}
+
+function moveColumn<TData extends RowData>(table: DataTableInstance<TData>, column: DataTableColumnInstance<TData>, step: -1 | 1) {
+  const neighbor = neighborOf(table, column, step)
+  if (!neighbor) return
+  table.setColumnOrder((order) => {
+    const ids = [...order, ...table.getAllLeafColumns().map((other) => other.id).filter((id) => !order.includes(id))]
+    const from = ids.indexOf(column.id)
+    const to = ids.indexOf(neighbor.id)
+    ;[ids[from], ids[to]] = [ids[to], ids[from]]
+    return ids
+  })
+}
+
+const RESIZE_STEP = 16
+
+/** A header cell: the sort button, the column menu and the width handle, each when the table asks for it. */
+function DataTableHead<TData extends RowData>({
+  header,
+  table,
+  sized,
+  columnActions,
+  resizable,
+}: {
+  header: Header<typeof dataTableFeatures, TData, unknown>
+  table: DataTableInstance<TData>
+  sized: boolean
+  columnActions: boolean
+  resizable: boolean
+}) {
+  const column = header.column
+  const sorted = column.getIsSorted()
+  const canSort = column.getCanSort()
+  const label = columnLabel(column.columnDef.header, column.id)
+  const content = header.isPlaceholder ? null : <FlexRender header={header} />
+  const SortIcon = sorted === "asc" ? ArrowUpIcon : sorted === "desc" ? ArrowDownIcon : ArrowUpDownIcon
+  const pinned = column.getIsPinned()
+  const { className: pinnedClassName, style: pinnedStyle, ...pinnedData } = pinnedProps(column)
+  const menu = columnActions && !header.isPlaceholder && column.id !== "select"
+  const size = header.getSize()
+  const { minSize = 64, maxSize = 640 } = column.columnDef
+
+  // The label in the cells' size, its text on the cells' text: the negative margin takes back the button's
+  // padding and 1px border.
+  const title =
+    canSort && !header.isPlaceholder ? (
+      <Button variant="ghost" size="sm" className="-ml-2.75 text-sm" onClick={column.getToggleSortingHandler()}>
+        {content}
+        <SortIcon data-icon="inline-end" aria-hidden className={cn(!sorted && "text-muted-foreground")} />
+      </Button>
+    ) : (
+      content
+    )
+
+  return (
+    <TableHead
+      {...pinnedData}
+      className={cn(resizable && "relative", pinnedClassName)}
+      style={{ ...(sized ? { width: size } : {}), ...pinnedStyle }}
+      aria-sort={canSort ? (sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none") : undefined}
+    >
+      {menu ? (
+        <div className="flex min-w-0 items-center justify-between gap-1">
+          {title}
+          <DropdownMenu>
+            {/* Faint until the header is hovered or focused; always shown on touch screens, which cannot hover. */}
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  className="shrink-0 text-muted-foreground opacity-0 group-hover/head:opacity-100 focus-visible:opacity-100 aria-expanded:opacity-100 pointer-coarse:opacity-100 [th:hover_&]:opacity-100"
+                  aria-label={`Opciones de la columna «${label}»`}
+                />
+              }
+            >
+              <EllipsisIcon aria-hidden />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-52">
+              {canSort && (
+                <>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
+                      <ArrowUpIcon aria-hidden />
+                      Orden ascendente
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
+                      <ArrowDownIcon aria-hidden />
+                      Orden descendente
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              <DropdownMenuGroup>
+                {pinned ? (
+                  <DropdownMenuItem onClick={() => column.pin(false)}>
+                    <PinOffIcon aria-hidden />
+                    Desfijar
+                  </DropdownMenuItem>
+                ) : (
+                  <>
+                    <DropdownMenuItem onClick={() => column.pin("start")}>
+                      <PinIcon aria-hidden />
+                      Fijar a la izquierda
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => column.pin("end")}>
+                      <PinIcon aria-hidden />
+                      Fijar a la derecha
+                    </DropdownMenuItem>
+                  </>
+                )}
+                <DropdownMenuItem disabled={!neighborOf(table, column, -1)} onClick={() => moveColumn(table, column, -1)}>
+                  <ArrowLeftIcon aria-hidden />
+                  Mover a la izquierda
+                </DropdownMenuItem>
+                <DropdownMenuItem disabled={!neighborOf(table, column, 1)} onClick={() => moveColumn(table, column, 1)}>
+                  <ArrowRightIcon aria-hidden />
+                  Mover a la derecha
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              {column.getCanHide() && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
+                    <EyeOffIcon aria-hidden />
+                    Ocultar columna
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      ) : (
+        title
+      )}
+      {resizable && column.getCanResize() && (
+        // A window splitter: a focusable separator with a value, so the arrow keys resize it too.
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label={`Ancho de la columna «${label}»`}
+          aria-valuenow={size}
+          aria-valuemin={minSize}
+          aria-valuemax={maxSize}
+          tabIndex={0}
+          data-resizing={column.getIsResizing() || undefined}
+          onMouseDown={header.getResizeHandler()}
+          onTouchStart={header.getResizeHandler()}
+          onDoubleClick={() => column.resetSize()}
+          onKeyDown={(event) => {
+            const step = event.key === "ArrowRight" ? RESIZE_STEP : event.key === "ArrowLeft" ? -RESIZE_STEP : 0
+            if (!step) return
+            event.preventDefault()
+            const width = Math.min(maxSize, Math.max(minSize, size + step))
+            table.setColumnSizing((sizing) => ({ ...sizing, [column.id]: width }))
+          }}
+          className="absolute inset-y-0 -right-1.5 z-[2] w-3 cursor-col-resize touch-none outline-offset-[-2px] select-none after:absolute after:inset-y-2 after:left-1/2 after:w-px after:-translate-x-1/2 after:bg-border hover:after:w-0.5 hover:after:bg-primary focus-visible:after:w-0.5 focus-visible:after:bg-primary data-resizing:after:w-0.5 data-resizing:after:bg-primary"
+        />
+      )}
+    </TableHead>
+  )
+}
+
 /**
  * A table of records with sortable headers, a text filter over every column, a column menu and pages.
  * Columns are TanStack `ColumnDef`s; give each a string `header` so the column menu can name it. Give the
  * columns a `size` (px) and they keep their widths across pages, sorting, loading and the empty state (a
  * column without one takes 150 px); the table then scrolls sideways when they add up to more than its box.
+ *
+ * Everything else is opt-in: row selection and bulk actions, toolbar slots and density, header menus to pin,
+ * move and hide columns, resizable widths, and a `view` to control or keep (a URL, a saved view).
  */
 function DataTable<TData extends RowData>({
   columns,
@@ -177,19 +448,31 @@ function DataTable<TData extends RowData>({
   filters,
   actions,
   densityToggle = false,
-  density: densityProp,
-  defaultDensity = "normal",
-  onDensityChange,
+  columnActions = false,
+  resizableColumns = false,
+  view: viewProp,
+  defaultView,
+  onViewChange,
   className,
   ...props
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [globalFilter, setGlobalFilter] = React.useState("")
-  const [columnVisibility, setColumnVisibility] = React.useState<ColumnVisibilityState>({})
-  const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize })
   const pageSizeLabel = React.useId()
   const [regionRef, more] = useMoreColumns()
-  const [density, setDensity] = useControllable(densityProp, defaultDensity, onDensityChange)
+  const [view, setView] = useView(
+    viewProp,
+    {
+      sorting: [],
+      globalFilter: "",
+      columnVisibility: {},
+      columnOrder: [],
+      columnPinning: { start: [], end: [] },
+      columnSizing: {},
+      pagination: { pageIndex: 0, pageSize },
+      density: "normal",
+      ...defaultView,
+    },
+    onViewChange
+  )
   const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
 
   const allColumns = React.useMemo<DataTableColumn<TData>[]>(
@@ -201,6 +484,7 @@ function DataTable<TData extends RowData>({
               size: 44,
               enableSorting: false,
               enableHiding: false,
+              enableResizing: false,
               header: ({ table }) => (
                 <Checkbox
                   data-select-all=""
@@ -225,23 +509,50 @@ function DataTable<TData extends RowData>({
     [columns, selectable, rowLabel]
   )
 
+  // With columns pinned to the start, the checkbox column sticks with them, first.
+  const { start: pinnedStart = [], end: pinnedEnd = [] } = view.columnPinning
+  const columnPinning =
+    selectable && pinnedStart.some((id) => id !== "select")
+      ? { start: ["select", ...pinnedStart.filter((id) => id !== "select")], end: pinnedEnd }
+      : view.columnPinning
+
   const table = useTable({
     features: dataTableFeatures,
     data,
     columns: allColumns,
     getRowId,
     enableRowSelection: selectable,
-    state: { sorting, globalFilter, columnVisibility, pagination, rowSelection },
+    enableColumnResizing: resizableColumns,
+    columnResizeMode: "onChange",
+    state: {
+      sorting: view.sorting,
+      globalFilter: view.globalFilter,
+      columnVisibility: view.columnVisibility,
+      columnOrder: view.columnOrder,
+      columnPinning,
+      columnSizing: view.columnSizing,
+      pagination: view.pagination,
+      rowSelection,
+    },
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
+    onSortingChange: setView("sorting"),
+    onGlobalFilterChange: setView("globalFilter"),
+    onColumnVisibilityChange: setView("columnVisibility"),
+    onColumnOrderChange: setView("columnOrder"),
+    onColumnPinningChange: setView("columnPinning"),
+    onColumnSizingChange: setView("columnSizing"),
+    onPaginationChange: setView("pagination"),
   })
 
+  const density = view.density
   const rows = table.getRowModel().rows
-  // Sized columns: a fixed layout, so the widths come from the sizes and never from the page's content.
-  const sized = columns.some((column) => column.size !== undefined)
+  // Sized columns: a fixed layout, so the widths come from the sizes and never from the page's content. Pinned
+  // columns stick at offsets that add up those sizes, and a resized column needs one too.
+  const pinnedAny = pinnedStart.length > 0 || pinnedEnd.length > 0
+  const sized = columns.some((column) => column.size !== undefined) || resizableColumns || columnActions || pinnedAny
+  // With resizable widths, a last empty column takes what is left, so every width is exactly what was set.
+  const filler = resizableColumns
+  const visibleColumns = table.getVisibleLeafColumns()
   const pageCount = Math.max(table.getPageCount(), 1)
   const hideable = table.getAllLeafColumns().filter((column) => column.getCanHide())
   const selectedRows = bulkActions ? table.getSelectedRowModel().rows.map((row) => row.original) : []
@@ -265,7 +576,7 @@ function DataTable<TData extends RowData>({
             />
             <Input
               type="search"
-              value={globalFilter}
+              value={view.globalFilter}
               onChange={(event) => table.setGlobalFilter(event.target.value)}
               placeholder={filterPlaceholder}
               aria-label={filterPlaceholder}
@@ -279,7 +590,7 @@ function DataTable<TData extends RowData>({
             <Toggle
               variant="outline"
               pressed={density === "compact"}
-              onPressedChange={(pressed) => setDensity(pressed ? "compact" : "normal")}
+              onPressedChange={(pressed) => setView("density")(pressed ? "compact" : "normal")}
               aria-label="Filas compactas"
               title="Filas compactas"
             >
@@ -320,17 +631,20 @@ function DataTable<TData extends RowData>({
         aria-busy={loading || undefined}
         className="@container relative overflow-hidden rounded-lg border"
       >
+        {/* The fades sit beside the pinned columns, over the ones that scroll. */}
         <div
           aria-hidden
+          style={{ left: table.getStartTotalSize() }}
           className={cn(
-            "pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-linear-to-r from-background to-transparent transition-opacity",
+            "pointer-events-none absolute inset-y-0 z-10 w-8 bg-linear-to-r from-background to-transparent transition-opacity",
             more === "start" || more === "both" ? "opacity-100" : "opacity-0"
           )}
         />
         <div
           aria-hidden
+          style={{ right: table.getEndTotalSize() }}
           className={cn(
-            "pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-linear-to-l from-background to-transparent transition-opacity",
+            "pointer-events-none absolute inset-y-0 z-10 w-8 bg-linear-to-l from-background to-transparent transition-opacity",
             more === "end" || more === "both" ? "opacity-100" : "opacity-0"
           )}
         />
@@ -346,68 +660,52 @@ function DataTable<TData extends RowData>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const sorted = header.column.getIsSorted()
-                  const canSort = header.column.getCanSort()
-                  const content = header.isPlaceholder ? null : <FlexRender header={header} />
-                  const SortIcon = sorted === "asc" ? ArrowUpIcon : sorted === "desc" ? ArrowDownIcon : ArrowUpDownIcon
-                  return (
-                    <TableHead
-                      key={header.id}
-                      style={sized ? { width: header.getSize() } : undefined}
-                      aria-sort={
-                        canSort ? (sorted === "asc" ? "ascending" : sorted === "desc" ? "descending" : "none") : undefined
-                      }
-                    >
-                      {/* The label in the cells' size, its text on the cells' text: the negative margin takes
-                          back the button's padding and 1px border. */}
-                      {canSort && !header.isPlaceholder ? (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="-ml-2.75 text-sm"
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          {content}
-                          <SortIcon
-                            data-icon="inline-end"
-                            aria-hidden
-                            className={cn(!sorted && "text-muted-foreground")}
-                          />
-                        </Button>
-                      ) : (
-                        content
-                      )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <DataTableHead
+                    key={header.id}
+                    header={header}
+                    table={table}
+                    sized={sized}
+                    columnActions={columnActions}
+                    resizable={resizableColumns}
+                  />
+                ))}
+                {filler && <TableHead aria-hidden className="p-0" />}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {loading ? (
-              Array.from({ length: pagination.pageSize }, (_, index) => (
+              Array.from({ length: view.pagination.pageSize }, (_, index) => (
                 <TableRow key={index}>
-                  {table.getVisibleLeafColumns().map((column) => (
-                    <TableCell key={column.id}>
-                      <Skeleton aria-hidden className="h-5 w-full min-w-16" />
-                    </TableCell>
-                  ))}
+                  {visibleColumns.map((column) => {
+                    const { className: pinnedClassName, ...pinned } = pinnedProps(column)
+                    return (
+                      <TableCell key={column.id} {...pinned} className={pinnedClassName}>
+                        <Skeleton aria-hidden className="h-5 w-full min-w-16" />
+                      </TableCell>
+                    )
+                  })}
+                  {filler && <TableCell aria-hidden className="p-0" />}
                 </TableRow>
               ))
             ) : rows.length ? (
               rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() ? "selected" : undefined}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      <FlexRender cell={cell} />
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const { className: pinnedClassName, ...pinned } = pinnedProps(cell.column)
+                    return (
+                      <TableCell key={cell.id} {...pinned} className={pinnedClassName}>
+                        <FlexRender cell={cell} />
+                      </TableCell>
+                    )
+                  })}
+                  {filler && <TableCell aria-hidden className="p-0" />}
                 </TableRow>
               ))
             ) : (
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={table.getVisibleLeafColumns().length || 1} className="p-0">
+                <TableCell colSpan={visibleColumns.length + (filler ? 1 : 0) || 1} className="p-0">
                   {/* As wide as the visible table and stuck to its left edge: on a phone the headers scroll
                       sideways, but the message stays centered in view instead of across every column. */}
                   <div className="sticky left-0 flex min-h-24 w-[100cqw] items-center justify-center px-4 py-6 text-center text-balance whitespace-normal text-muted-foreground">
@@ -427,7 +725,7 @@ function DataTable<TData extends RowData>({
           </span>
           <Select
             items={pageSizeOptions.map((size) => ({ value: size, label: String(size) }))}
-            value={pagination.pageSize}
+            value={view.pagination.pageSize}
             onValueChange={(size) => table.setPageSize(Number(size))}
             disabled={loading}
           >
@@ -444,7 +742,7 @@ function DataTable<TData extends RowData>({
           </Select>
         </div>
         <span className={cn("tabular-nums", loading && "text-muted-foreground")} aria-live="polite">
-          Página {pagination.pageIndex + 1} de {pageCount}
+          Página {view.pagination.pageIndex + 1} de {pageCount}
         </span>
         {/* When the pager wraps on a phone, the buttons keep to the right. */}
         <div className="ml-auto flex items-center gap-2 sm:ml-0">
@@ -471,4 +769,11 @@ function DataTable<TData extends RowData>({
   )
 }
 
-export { DataTable, dataTableFeatures, type DataTableColumn, type DataTableDensity, type DataTableProps }
+export {
+  DataTable,
+  dataTableFeatures,
+  type DataTableColumn,
+  type DataTableDensity,
+  type DataTableProps,
+  type DataTableView,
+}

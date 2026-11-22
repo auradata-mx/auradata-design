@@ -92,6 +92,13 @@ async function checkStory(
     `/iframe.html?id=${story.id}&viewMode=story&globals=theme:${theme}`
   )
   await page.locator("#storybook-root > *").first().waitFor()
+  // A play function opens menus and dialogs on the way: axe and the screenshot wait for it to finish.
+  await page.waitForFunction(() => {
+    const phase = (
+      window as { __STORYBOOK_PREVIEW__?: { currentRender?: { phase?: string } } }
+    ).__STORYBOOK_PREVIEW__?.currentRender?.phase
+    return phase === "finished" || phase === "errored" || phase === "aborted"
+  })
   await page.evaluate(() => document.fonts.ready)
   await page.waitForLoadState("networkidle")
 
