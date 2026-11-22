@@ -69,6 +69,25 @@ export const WithAction: Story = {
 }
 
 /**
+ * In a narrow alert (under 24rem, a phone) the action drops under the text and lines up with it, so the text keeps
+ * the full width.
+ */
+export const Narrow: Story = {
+  args: { className: 'max-w-80' },
+  render: WithAction.render,
+  play: async ({ canvasElement }) => {
+    const rect = (selector: string) => canvasElement.querySelector(selector)!.getBoundingClientRect()
+    const action = rect('[data-slot="alert-action"] button')
+    const title = rect('[data-slot="alert-title"]')
+    const description = rect('[data-slot="alert-description"]')
+    await expect(action.top).toBeGreaterThanOrEqual(description.bottom)
+    await expect(Math.abs(action.left - title.left)).toBeLessThanOrEqual(1)
+    // No empty action column steals width from the text.
+    await expect(rect('[data-slot="alert"]').right - title.right).toBeLessThanOrEqual(12)
+  },
+}
+
+/**
  * A long title and description wrap beside the action, which keeps its natural width at the top corner and never
  * covers the text.
  */
