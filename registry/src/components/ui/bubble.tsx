@@ -1,3 +1,4 @@
+// registry: auradata (shadcn bubble whose focused link or button shows only the brand focus outline)
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
