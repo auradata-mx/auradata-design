@@ -23,6 +23,13 @@ test.each(['color', 'negro', 'blanco', 'texto-degradado'])('horizontal-%s.svg ha
   expect(svg.slice(0, svg.indexOf('>'))).toContain('width="634" height="144" viewBox="23 0 634 144"');
 });
 
+// The vertical logos are cropped to their artwork (the mark over the wordmark), so they line up with text
+// beside or under them and size by what is drawn.
+test.each(['color', 'negro', 'blanco', 'texto-degradado'])('vertical-%s.svg has no inset around the artwork', (variant) => {
+  const svg = readFileSync(require.resolve(`@auradata/tokens/assets/continua/vertical-${variant}.svg`), 'utf8');
+  expect(svg.slice(0, svg.indexOf('>'))).toContain('width="392" height="305" viewBox="42 51 392 305"');
+});
+
 test.each(ICONS)('@auradata/tokens/assets/continua/%s is a PNG', (file) => {
   const png = readFileSync(require.resolve(`@auradata/tokens/assets/continua/${file}`));
   expect(png.subarray(1, 4).toString()).toBe('PNG');

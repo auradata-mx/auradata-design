@@ -6,7 +6,7 @@ const BASE_PATH = "/brand/continua"
 
 const SIZES = {
   horizontal: { width: 634, height: 144, file: "horizontal" },
-  vertical: { width: 480, height: 420, file: "vertical" },
+  vertical: { width: 392, height: 305, file: "vertical" },
   mark: { width: 260, height: 175, file: "isotipo" },
 } as const
 
