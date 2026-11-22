@@ -57,6 +57,16 @@ const DATA_PALETTES = Object.fromEntries(
   ['sequential', 'diverging'].flatMap((palette) => NINE.map((n) => [`${palette}-${n}`, `color-${palette}-${n}`])),
 );
 
+/**
+ * The 50-900 scale of each status (tints, borders and text of colored toasts, cells and soft badges): shadcn's
+ * names, destructive for error, so `bg-success-50 text-success-700` sits beside `bg-success`.
+ */
+const STATUS_SCALES = Object.fromEntries(
+  [['success', 'success'], ['warning', 'warning'], ['info', 'info'], ['destructive', 'error']].flatMap(([name, aura]) =>
+    [50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((step) => [`${name}-${step}`, `color-${aura}-${step}`]),
+  ),
+);
+
 /** shadcn names → AuraData names. One block: the --aura-* variables already switch with .dark. */
 const SHADCN = {
   background: 'color-bg-container',
@@ -104,6 +114,7 @@ const SHADCN = {
   'sidebar-border': 'color-border',
   'sidebar-ring': 'color-focus-ring',
   ...DATA_PALETTES,
+  ...STATUS_SCALES,
 };
 
 /**
@@ -185,6 +196,7 @@ const SHADCN_EXTRA = [
   'chart-7',
   'chart-8',
   ...Object.keys(DATA_PALETTES),
+  ...Object.keys(STATUS_SCALES),
 ];
 
 /** The shadcn mapping with resolved values (the cssVars of a registry:theme item) and its `css`. */

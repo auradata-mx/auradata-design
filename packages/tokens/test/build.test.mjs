@@ -298,3 +298,33 @@ test('shadcn gets the sequential and diverging palettes as variables and Tailwin
   expect(theme.light['chart-1']).toBe('#2563EB');
   expect(Object.keys(theme.light).filter((name) => /^chart-\d$/.test(name))).toHaveLength(8);
 });
+
+// Colored toasts, conditional cells and soft badges: a tint, a border and a text of each status, from one scale.
+const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+
+test('tokens.css carries a 50-900 scale of each status, inverted in dark so 50 stays the faint tint', () => {
+  const css = read('tokens.css');
+  for (const status of ['success', 'warning', 'info', 'error']) {
+    for (const step of STEPS) {
+      expect(css).toMatch(new RegExp(`:root \\{[^}]*--aura-color-${status}-${step}: #[0-9A-F]{6};`, 's'));
+      expect(css).toMatch(new RegExp(`\\.dark \\{[^}]*--aura-color-${status}-${step}: #[0-9A-F]{6};`, 's'));
+    }
+  }
+  // Light is Tailwind's scale of each status color: success is emerald-600, error red-600.
+  expect(css).toMatch(/:root \{[^}]*--aura-color-success-50: #ECFDF5;[^}]*--aura-color-success-600: #059669;/s);
+  expect(css).toMatch(/:root \{[^}]*--aura-color-error-600: #DC2626;[^}]*--aura-color-error-900: #7F1D1D;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-error-100: #450A0A;[^}]*--aura-color-error-900: #FECACA;/s);
+});
+
+test('shadcn gets the status scales as variables and Tailwind colors, destructive for error', () => {
+  const css = read('shadcn.css');
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  for (const [status, aura] of [['success', 'success'], ['warning', 'warning'], ['info', 'info'], ['destructive', 'error']]) {
+    for (const step of STEPS) {
+      expect(css).toContain(`--${status}-${step}: var(--aura-color-${aura}-${step});`);
+      expect(theme.theme[`color-${status}-${step}`]).toBe(`var(--${status}-${step})`);
+    }
+  }
+  expect(theme.light).toMatchObject({ 'success-700': '#047857', 'warning-50': '#FFFBEB', 'destructive-200': '#FECACA' });
+  expect(theme.dark).toMatchObject({ 'success-700': '#34D399', 'info-900': '#BFDBFE' });
+});

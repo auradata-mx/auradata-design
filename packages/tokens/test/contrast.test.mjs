@@ -121,3 +121,28 @@ describe.each(['light', 'dark'])('%s theme data palettes', (name) => {
     }
   });
 });
+
+/** The scale of each status: 50 the faintest tint, 900 the strongest, in light and dark. */
+const STATUS = ['success', 'warning', 'info', 'error'];
+const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+
+describe.each(['light', 'dark'])('%s theme status scales', (name) => {
+  test.each(STATUS)('the %s scale moves away from the page step by step', (status) => {
+    const theme = themes[name];
+    const ratios = STEPS.map((step) => contrast(theme[`${status}-${step}`], theme['bg-container']));
+    for (let n = 1; n < ratios.length; n++) expect(ratios[n], `${status}-${STEPS[n]}`).toBeGreaterThan(ratios[n - 1]);
+  });
+
+  // Text of a status: 700 on its 50 and 100 tints and on every surface; 800 on the 200 tint.
+  test.each(STATUS)('the %s text steps pass WCAG AA on their tints and the surfaces', (status) => {
+    const theme = themes[name];
+    const pairs = [
+      ...[`${status}-50`, `${status}-100`, ...SURFACES].map((background) => [`${status}-700`, background]),
+      [`${status}-800`, `${status}-200`],
+    ];
+    for (const [text, background] of pairs) {
+      const ratio = contrast(theme[text], theme[background]);
+      expect(ratio, `${text} ${theme[text]} on ${background} ${theme[background]} is ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA);
+    }
+  });
+});
