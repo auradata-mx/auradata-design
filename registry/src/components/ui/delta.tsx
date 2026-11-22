@@ -1,4 +1,4 @@
-// registry: auradata (the change against the previous period: arrow, signed percent and what it compares with, shared by the KPI card and the chart tooltip)
+// registry: auradata (the change against the previous period: arrow, signed percent and what it compares with, shared by the KPI card and the chart tooltip; the comparison wraps whole)
 import { ArrowDownRightIcon, ArrowRightIcon, ArrowUpRightIcon } from "lucide-react"
 import { cn } from "cn"
 
@@ -39,7 +39,8 @@ function Delta({ change, comparison, goodDirection = "up", locale = "es-MX", cla
     <div
       data-slot="delta"
       data-tone={tone}
-      className={cn("flex items-center gap-1 text-sm text-muted-foreground", className)}
+      // In a narrow card the comparison drops under the number whole, never broken across two lines.
+      className={cn("flex flex-wrap items-center gap-x-1 text-sm text-muted-foreground", className)}
       {...props}
     >
       <Icon
@@ -49,7 +50,7 @@ function Delta({ change, comparison, goodDirection = "up", locale = "es-MX", cla
       <span className="font-medium text-foreground tabular-nums">
         {formatPercent(change, { locale, signDisplay: "exceptZero" })}
       </span>
-      {comparison && <span>{comparison}</span>}
+      {comparison && <span className="whitespace-nowrap">{comparison}</span>}
     </div>
   )
 }

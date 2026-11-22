@@ -355,3 +355,21 @@ test('publishes the heatmaps on the sequential and diverging palettes', () => {
     'cristianruben-dev/auradata-design/format',
   ])
 })
+
+test('publishes the dashboard grid and the dashboard block built on it', () => {
+  expect(item('dashboard-grid').type).toBe('registry:ui')
+  expect(item('dashboard').type).toBe('registry:block')
+  expect(item('dashboard').registryDependencies).toEqual(
+    expect.arrayContaining([
+      'cristianruben-dev/auradata-design/dashboard-grid',
+      'cristianruben-dev/auradata-design/kpi-card',
+      'cristianruben-dev/auradata-design/chart-card',
+      'cristianruben-dev/auradata-design/cartesian-chart',
+      'cristianruben-dev/auradata-design/donut-chart',
+      'cristianruben-dev/auradata-design/funnel-chart',
+      'cristianruben-dev/auradata-design/data-table',
+      'cristianruben-dev/auradata-design/date-range-filter',
+      'cristianruben-dev/auradata-design/page-header',
+    ]),
+  )
+})

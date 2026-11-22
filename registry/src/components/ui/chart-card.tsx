@@ -1,4 +1,4 @@
-// registry: auradata (a chart in a card: title, description, its filter, a menu to export a PNG or view the data, and loading, refreshing, empty and error states)
+// registry: auradata (a chart in a card: title, description, its filter, a menu to export a PNG or view the data, and loading, refreshing, empty and error states; an automatic height for content such as a funnel)
 "use client"
 
 import * as React from "react"
@@ -39,8 +39,11 @@ type ChartCardProps = Omit<React.ComponentProps<typeof Card>, "title"> & {
   columns?: ChartCardColumn[]
   /** The PNG's name, without `.png`; from the title otherwise. */
   fileName?: string
-  /** The chart's height in pixels: the states take the same, so nothing jumps. */
-  height?: number
+  /**
+   * The chart's height in pixels: the states take the same, so nothing jumps. `"auto"` for content that sets its own
+   * height, such as a funnel; its states then take 256 px.
+   */
+  height?: number | "auto"
   /** The first load: a skeleton instead of the chart. */
   loading?: boolean
   /** New data on its way: the last chart stays, dimmed. */
@@ -90,11 +93,14 @@ function ChartCard({
   const ready = !loading && !failed && !empty
   const tableColumns = columns ?? Object.keys(data?.[0] ?? {}).map((key) => ({ key, label: key }))
   const titleText = typeof title === "string" ? title : undefined
+  const stateHeight = height === "auto" ? 256 : height
   const descriptionText = typeof description === "string" ? description : undefined
 
   function exportPng() {
     if (!cardRef.current) return
-    void exportChartPng(cardRef.current, { title: titleText, description: descriptionText, fileName })
+    exportChartPng(cardRef.current, { title: titleText, description: descriptionText, fileName }).catch((error: unknown) =>
+      console.error("The chart could not be exported", error)
+    )
   }
 
   let body: React.ReactNode = children
@@ -189,12 +195,15 @@ function ChartCard({
       </div>
       <div
         data-slot="chart-card-body"
-        // The chart fills the body; the states take its height, so the card never jumps.
+        // The chart fills the body; the states take its height, so the card never jumps. In a row of taller cards the
+        // body grows, so the cards line up and the chart fills the room.
         className={cn(
-          "flex flex-col px-(--card-spacing) transition-opacity *:data-[slot=chart]:aspect-auto *:data-[slot=chart]:size-full motion-reduce:transition-none",
+          "flex grow flex-col px-(--card-spacing) transition-opacity *:data-[slot=chart]:aspect-auto *:data-[slot=chart]:size-full motion-reduce:transition-none",
           refreshing && "opacity-50"
         )}
-        style={ready || loading ? { height } : { minHeight: height }}
+        style={
+          ready ? (height === "auto" ? undefined : { height }) : loading ? { height: stateHeight } : { minHeight: stateHeight }
+        }
       >
         {body}
       </div>

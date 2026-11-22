@@ -1,4 +1,4 @@
-// registry: auradata (a KPI card of the brand, with loading and no-data states, the shared sparkline beside the value and change, and the shared delta)
+// registry: auradata (a KPI card of the brand, with loading and no-data states, the shared sparkline beside the value and change (below them when the card is narrow), and the shared delta)
 import { cn } from "cn"
 
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
@@ -76,8 +76,9 @@ function KpiCard({
         <CardDescription>{label}</CardDescription>
       </CardHeader>
       <CardContent>
-        {/* The sparkline sits beside the value and its change, never wrapped between them. */}
-        <div className="flex items-center justify-between gap-4">
+        {/* The sparkline sits beside the value and its change, never between them; in a card too narrow for both it
+            drops below them, so the number never breaks. */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div className="grid min-w-0 gap-1">
             {number}
             {change !== undefined && (

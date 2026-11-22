@@ -44,6 +44,11 @@ type CartesianChartProps = {
   comparison?: React.ReactNode
   /** When a fall is the good news (costs, churn), set "down". */
   goodDirection?: "up" | "down"
+  /**
+   * Line charts only: `false` fits the axis to the values, for a trend whose change matters more than its size.
+   * Bars and areas always start at zero: their length or area is the value.
+   */
+  startAtZero?: boolean
   /** Opens the tooltip at this point from the start: for a screenshot or a highlighted point. */
   tooltipIndex?: number
   /** Animates the marks in; `false` in stories and screenshots. */
@@ -72,6 +77,32 @@ function niceTicks(max: number, intervals = 5) {
     }
     power *= 10
   }
+}
+
+/** Round ticks around `[min, max]` in at most five steps, for an axis that does not start at zero. */
+function fittedTicks(min: number, max: number, intervals = 5) {
+  if (!(max > min)) return niceTicks(max, intervals)
+  let power = 10 ** Math.floor(Math.log10((max - min) / intervals))
+  for (;;) {
+    for (const multiple of STEPS) {
+      const step = multiple * power
+      const low = Math.floor(min / step + 1e-9) * step
+      const count = Math.ceil((max - low) / step - 1e-9)
+      if (count <= intervals) {
+        return Array.from({ length: count + 1 }, (_, index) => Number((low + index * step).toPrecision(12)))
+      }
+    }
+    power *= 10
+  }
+}
+
+/** The smallest value to show, of the given keys. */
+function minOf(data: Row[], keys: string[]) {
+  let min = Number.POSITIVE_INFINITY
+  for (const row of data) {
+    for (const key of keys) if (typeof row[key] === "number") min = Math.min(min, row[key] as number)
+  }
+  return min
 }
 
 /** The largest value to show: of each series, or of their sum when stacked. Undefined with negatives. */
@@ -113,6 +144,7 @@ function CartesianFrame({
   previousKey,
   comparison,
   goodDirection,
+  startAtZero = true,
   tooltipIndex,
   animate,
   className,
@@ -131,12 +163,17 @@ function CartesianFrame({
     maxOf(data, visible, stacked) ?? Number.NaN,
     maxOf(data, [...visibleLines, ...previousKeys], false) ?? Number.NaN
   )
-  const ticks = Number.isNaN(max) ? undefined : niceTicks(max)
+  const fitted = kind === "line" && !startAtZero
+  const ticks = Number.isNaN(max)
+    ? undefined
+    : fitted
+      ? fittedTicks(minOf(data, [...visible, ...previousKeys]), max)
+      : niceTicks(max)
   const valueAxis = {
     tickLine: false,
     axisLine: false,
     tickFormatter: axisFormatter,
-    ...(ticks ? { ticks, domain: [0, ticks[ticks.length - 1]] } : {}),
+    ...(ticks ? { ticks, domain: [ticks[0], ticks[ticks.length - 1]] } : {}),
   }
   const indexAxis = {
     dataKey: index,

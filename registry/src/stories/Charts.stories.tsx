@@ -86,6 +86,20 @@ export const LineWithPrevious: Story = {
   },
 }
 
+/**
+ * A trend whose change matters more than its size: `startAtZero={false}` fits the axis to the values. Only for lines:
+ * a bar's length and an area's size are the value, so they always start at zero.
+ */
+export const LineFitted: Story = {
+  args: { series: { norte: 'Norte' }, startAtZero: false, valueFormatter: pesos, axisFormatter: pesosShort },
+  play: async ({ canvasElement }) => {
+    const ticks = () =>
+      [...canvasElement.querySelectorAll('.recharts-yAxis-tick-labels .recharts-cartesian-axis-tick-value')].map((tick) => tick.textContent)
+    // Norte runs from 980 to 1,284 thousand: round steps of 100 around it, not from zero.
+    await waitFor(() => expect(ticks()).toEqual([900, 1000, 1100, 1200, 1300].map(pesosShort)))
+  },
+}
+
 /** Volume over time: one area with a light wash under its line. */
 export const Area: Story = {
   render: (args) => <AreaChart {...args} />,
