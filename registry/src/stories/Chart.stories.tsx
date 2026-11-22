@@ -31,7 +31,14 @@ export const Bars: Story = {
       <BarChart data={DATA} accessibilityLayer>
         <CartesianGrid vertical={false} />
         <XAxis dataKey="month" tickLine={false} axisLine={false} />
-        <YAxis tickLine={false} axisLine={false} width={40} tickFormatter={(value: number) => formatCompact(value)} />
+        <YAxis
+          tickLine={false}
+          axisLine={false}
+          width={40}
+          ticks={[0, 500, 1000, 1500, 2000, 2500]}
+          domain={[0, 2500]}
+          tickFormatter={(value: number) => formatCompact(value)}
+        />
         <ChartTooltip content={<ChartTooltipContent />} />
         {/* Keep the series order: Recharts sorts the legend by name otherwise. */}
         <ChartLegend content={<ChartLegendContent />} itemSorter={null} />

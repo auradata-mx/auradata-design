@@ -313,7 +313,8 @@ function DataTable<TData extends RowData>({
         <span className={cn("tabular-nums", loading && "text-muted-foreground")} aria-live="polite">
           Página {pagination.pageIndex + 1} de {pageCount}
         </span>
-        <div className="flex items-center gap-2">
+        {/* When the pager wraps on a phone, the buttons keep to the right. */}
+        <div className="ml-auto flex items-center gap-2 sm:ml-0">
           <Button
             variant="outline"
             size="sm"
