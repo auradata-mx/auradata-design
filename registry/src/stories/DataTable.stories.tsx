@@ -1,11 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { FolderInputIcon, Trash2Icon } from 'lucide-react'
+import { FolderInputIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import type * as React from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
+import { DateRangeFilter } from '@/components/ui/date-range-filter'
 import { formatDate } from '@/lib/format'
 
 type Estado = 'Publicado' | 'Borrador' | 'Desactualizado' | 'Con errores'
@@ -277,3 +278,45 @@ export const SelectionBar: Story = {
     defaultRowSelection: { 'Ventas por región': true, 'Pedidos del mes': true, 'Ticket promedio': true },
   },
 }
+
+/**
+ * The full toolbar: the search, the filters (here the period), the density switch, the column menu and the
+ * page's own actions. On a phone the pieces wrap onto a second line.
+ */
+export const Toolbar: Story = {
+  tags: ['mobile'],
+  args: {
+    densityToggle: true,
+    filters: <DateRangeFilter today={new Date(2026, 10, 21)} placeholder="Periodo" />,
+    actions: (
+      <Button>
+        <PlusIcon data-icon="inline-start" aria-hidden />
+        Nuevo informe
+      </Button>
+    ),
+  },
+}
+
+/** «Filas compactas» packs the rows tighter, for long lists; a second click goes back to normal. */
+export const Compact: Story = {
+  args: { densityToggle: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const table = canvasElement.querySelector<HTMLElement>('[data-slot="data-table"]')!
+    const rowHeight = () => canvasElement.querySelector('tbody tr')!.getBoundingClientRect().height
+    const normal = rowHeight()
+    const toggle = canvas.getByRole('button', { name: 'Filas compactas' })
+    await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+    await userEvent.click(toggle)
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+    await expect(table).toHaveAttribute('data-density', 'compact')
+    await expect(rowHeight()).toBeLessThanOrEqual(normal - 8)
+    await userEvent.click(toggle)
+    await expect(table).toHaveAttribute('data-density', 'normal')
+    await expect(rowHeight()).toBe(normal)
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
+}
+
+/** Compact from the start, for the visual tests. */
+export const CompactRows: Story = { args: { densityToggle: true, defaultDensity: 'compact' } }

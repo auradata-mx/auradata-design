@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, and optional row selection with a floating bar of bulk actions)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, and compact rows)
 import * as React from "react"
 import {
   columnFilteringFeature,
@@ -24,7 +24,7 @@ import {
   type RowSelectionState,
   type SortingState,
 } from "@tanstack/react-table"
-import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, Columns3Icon, SearchIcon } from "lucide-react"
+import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, Columns3Icon, Rows4Icon, SearchIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
@@ -42,6 +42,7 @@ import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Toggle } from "@/components/ui/toggle"
 
 /** What every data table does in the browser: sort, filter (global), size and hide columns, select rows and paginate. */
 const dataTableFeatures = tableFeatures({
@@ -89,7 +90,20 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   onRowSelectionChange?: (selection: RowSelectionState) => void
   /** The actions of the floating bar while rows are selected; `clear` empties the selection. */
   bulkActions?: (selected: TData[], clear: () => void) => React.ReactNode
+  /** Filters beside the search, in the toolbar: a `DateRangeFilter`, the filter system's popovers. */
+  filters?: React.ReactNode
+  /** The page's own actions at the end of the toolbar («Nuevo informe»). */
+  actions?: React.ReactNode
+  /** A «Filas compactas» switch in the toolbar. */
+  densityToggle?: boolean
+  /** How tall the rows are, controlled; `defaultDensity` only starts there. */
+  density?: DataTableDensity
+  defaultDensity?: DataTableDensity
+  onDensityChange?: (density: DataTableDensity) => void
 }
+
+/** `normal`: 40 px header and rows of 8 px padding; `compact`: 32 px header and 4 px. */
+type DataTableDensity = "normal" | "compact"
 
 /** A value its parent may control: the prop when given, else local state; either way `onChange` hears it. */
 function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (value: T) => void) {
@@ -160,6 +174,12 @@ function DataTable<TData extends RowData>({
   defaultRowSelection = {},
   onRowSelectionChange,
   bulkActions,
+  filters,
+  actions,
+  densityToggle = false,
+  density: densityProp,
+  defaultDensity = "normal",
+  onDensityChange,
   className,
   ...props
 }: DataTableProps<TData>) {
@@ -169,6 +189,7 @@ function DataTable<TData extends RowData>({
   const [pagination, setPagination] = React.useState<PaginationState>({ pageIndex: 0, pageSize })
   const pageSizeLabel = React.useId()
   const [regionRef, more] = useMoreColumns()
+  const [density, setDensity] = useControllable(densityProp, defaultDensity, onDensityChange)
   const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
 
   const allColumns = React.useMemo<DataTableColumn<TData>[]>(
@@ -233,10 +254,11 @@ function DataTable<TData extends RowData>({
   }
 
   return (
-    <div data-slot="data-table" className={cn("grid gap-3", className)} {...props}>
-      <div className="flex items-center gap-2">
+    <div data-slot="data-table" data-density={density} className={cn("grid gap-3", className)} {...props}>
+      {/* The search shrinks first (down to 160 px), then the filters and buttons wrap onto a second line. */}
+      <div data-slot="data-table-toolbar" className="flex flex-wrap items-center gap-2">
         {filterPlaceholder !== null && (
-          <div className="relative w-full max-w-xs">
+          <div className="relative max-w-xs min-w-0 flex-1 basis-40">
             <SearchIcon
               aria-hidden
               className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground"
@@ -251,28 +273,43 @@ function DataTable<TData extends RowData>({
             />
           </div>
         )}
-        {hideable.length > 0 && (
-          <DropdownMenu defaultOpen={defaultColumnsOpen}>
-            <DropdownMenuTrigger render={<Button variant="outline" className="ml-auto" />}>
-              <Columns3Icon data-icon="inline-start" />
-              Columnas
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>Columnas visibles</DropdownMenuLabel>
-                {hideable.map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(checked) => column.toggleVisibility(checked)}
-                  >
-                    {columnLabel(column.columnDef.header, column.id)}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        {filters}
+        <div className="ml-auto flex items-center gap-2">
+          {densityToggle && (
+            <Toggle
+              variant="outline"
+              pressed={density === "compact"}
+              onPressedChange={(pressed) => setDensity(pressed ? "compact" : "normal")}
+              aria-label="Filas compactas"
+              title="Filas compactas"
+            >
+              <Rows4Icon aria-hidden />
+            </Toggle>
+          )}
+          {hideable.length > 0 && (
+            <DropdownMenu defaultOpen={defaultColumnsOpen}>
+              <DropdownMenuTrigger render={<Button variant="outline" />}>
+                <Columns3Icon data-icon="inline-start" />
+                Columnas
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>Columnas visibles</DropdownMenuLabel>
+                  {hideable.map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(checked) => column.toggleVisibility(checked)}
+                    >
+                      {columnLabel(column.columnDef.header, column.id)}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          {actions}
+        </div>
       </div>
 
       {/* On a narrow screen the table scrolls sideways inside its border; a fade marks the side with more columns. */}
@@ -302,7 +339,8 @@ function DataTable<TData extends RowData>({
         <Table
           className={cn(
             "[&_td:first-child:not([colspan])]:pl-4 [&_td:last-child:not([colspan])]:pr-4 [&_th:first-child]:pl-4 [&_th:last-child]:pr-4",
-            sized && "table-fixed [&_td]:truncate"
+            sized && "table-fixed [&_td]:truncate",
+            density === "compact" && "[&_td]:py-1 [&_th]:h-8"
           )}
         >
           <TableHeader>
@@ -433,4 +471,4 @@ function DataTable<TData extends RowData>({
   )
 }
 
-export { DataTable, dataTableFeatures, type DataTableColumn, type DataTableProps }
+export { DataTable, dataTableFeatures, type DataTableColumn, type DataTableDensity, type DataTableProps }
