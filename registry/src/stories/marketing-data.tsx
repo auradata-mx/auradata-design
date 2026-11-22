@@ -13,11 +13,20 @@ export const CLIENTS: { name: string; icon: LucideIcon }[] = [
   { name: 'Textiles Puebla', icon: ShirtIcon },
 ]
 
-/** A client's wordmark: its icon and name, in the muted text color, as logos sit on a page. */
-export function ClientMark({ name, icon: Icon }: { name: string; icon: LucideIcon }) {
+/**
+ * A client's wordmark: its icon and name, in the muted text color, as logos sit on a page. `compact`
+ * for a grid cell on a phone: smaller, and the name may wrap.
+ */
+export function ClientMark({ name, icon: Icon, compact = false }: { name: string; icon: LucideIcon; compact?: boolean }) {
   return (
-    <span className="flex items-center gap-2 text-lg font-semibold tracking-tight whitespace-nowrap text-muted-foreground">
-      <Icon aria-hidden className="size-6" />
+    <span
+      className={
+        compact
+          ? 'flex items-center gap-2 text-sm leading-tight font-semibold tracking-tight text-muted-foreground sm:text-base'
+          : 'flex items-center gap-2 text-lg font-semibold tracking-tight whitespace-nowrap text-muted-foreground'
+      }
+    >
+      <Icon aria-hidden className={compact ? 'size-5 shrink-0' : 'size-6'} />
       {name}
     </span>
   )
@@ -79,5 +88,41 @@ export const COMPARISON = [
       { feature: 'Bitácora de auditoría', values: [false, true, true] },
       { feature: 'Soporte', values: ['Correo', 'Prioritario', 'Consultor asignado'] },
     ],
+  },
+]
+
+/** Made-up quotes from the made-up clients above. */
+export const TESTIMONIALS = [
+  {
+    quote:
+      'Pasamos de juntar cinco hojas de cálculo cada lunes a abrir un tablero. La junta de ventas ahora empieza por las decisiones.',
+    name: 'Mariana López',
+    role: 'Directora comercial',
+    company: 'Ferretera del Bajío',
+  },
+  {
+    quote: 'En dos semanas teníamos el inventario de los tres almacenes en un solo lugar.',
+    name: 'Jorge Ramírez',
+    role: 'Gerente de operaciones',
+    company: 'Logística Pacífico',
+  },
+  {
+    quote: 'Lo que más valoro es que el equipo entendió nuestro negocio antes de proponer tecnología.',
+    name: 'Ana Sofía Treviño',
+    role: 'Directora general',
+    company: 'Grupo Norteño',
+  },
+  {
+    quote:
+      'Preguntarle a los datos en español cambió cómo trabaja la dirección: ya no esperamos el reporte de fin de mes.',
+    name: 'Luis Hernández',
+    role: 'Director de finanzas',
+    company: 'Clínica Santa Fe',
+  },
+  {
+    quote: 'La implementación fue ordenada, con avances visibles cada semana.',
+    name: 'Paola Mendoza',
+    role: 'Coordinadora de TI',
+    company: 'Agrícola Sonora',
   },
 ]

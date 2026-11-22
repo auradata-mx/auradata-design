@@ -6,12 +6,14 @@ import { BenefitsGrid, type Benefit } from '@/components/blocks/benefits-grid'
 import { CtaBand } from '@/components/blocks/cta-band'
 import { Faq, type FaqItem } from '@/components/blocks/faq'
 import { Hero } from '@/components/blocks/hero'
+import { LogoCloud } from '@/components/blocks/logo-cloud'
 import { PlanComparison } from '@/components/blocks/plan-comparison'
 import { Pricing, type PricingPlan } from '@/components/blocks/pricing'
 import { SiteFooter, type FooterColumn } from '@/components/blocks/site-footer'
+import { Testimonials } from '@/components/blocks/testimonials'
 import { Button } from '@/components/ui/button'
 import { formatPercent } from '@/lib/format'
-import { COMPARISON, PLANS } from './marketing-data'
+import { CLIENTS, ClientMark, COMPARISON, PLANS, TESTIMONIALS } from './marketing-data'
 
 const BENEFITS: Benefit[] = [
   {
@@ -180,6 +182,26 @@ const comparison = (
   />
 )
 
+const testimonials = (
+  <Testimonials
+    eyebrow="Testimonios"
+    title="Equipos que ya deciden"
+    highlight="con sus datos"
+    items={TESTIMONIALS}
+  />
+)
+
+const logoCloud = (variant: 'grid' | 'marquee') => (
+  <LogoCloud
+    title="Empresas de todo México ya ordenaron sus datos con AuraData"
+    logos={CLIENTS.map((client) => ({
+      name: client.name,
+      logo: <ClientMark {...client} compact={variant === 'grid'} />,
+    }))}
+    variant={variant}
+  />
+)
+
 const meta = {
   title: 'Blocks/Marketing',
   // Blocks are whole sections: no padding around them.
@@ -307,6 +329,60 @@ export const Comparison: Story = {
     // The frame scrolls with the keyboard too, and nothing in it widens the page.
     await expect(canvas.getByRole('region', { name: 'Comparación de planes' })).toHaveAttribute('tabindex', '0')
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth)
+  },
+}
+
+/** Quotes from clients in a grid: one column on a phone, two on a tablet, three on a desktop. */
+export const TestimonialsSection: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Testimonials',
+  render: () => testimonials,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const quotes = canvas.getAllByRole('figure')
+    await expect(quotes).toHaveLength(TESTIMONIALS.length)
+    // Each one: the quote in «», then who said it; the initials are decoration beside the name.
+    const first = quotes[0]
+    await expect(first.querySelector('blockquote')).toHaveTextContent(/^«Pasamos de juntar.*decisiones\.»$/)
+    await expect(first.querySelector('figcaption')).toHaveTextContent('Mariana LópezDirectora comercial · Ferretera del Bajío')
+    await expect(first.querySelector('[data-slot=avatar]')).toHaveAttribute('aria-hidden', 'true')
+    // In a row, the names sit at the bottom of the cards, level with each other.
+    if (window.innerWidth >= 1024) {
+      const bottoms = quotes.slice(0, 3).map((quote) => quote.querySelector('figcaption')!.getBoundingClientRect().bottom)
+      await expect(new Set(bottoms).size).toBe(1)
+    }
+  },
+}
+
+/** Client logos in a still grid: two columns on a phone, four from sm. */
+export const LogoCloudGrid: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Logo cloud',
+  render: () => logoCloud('grid'),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const section = canvas.getByRole('region', { name: /ya ordenaron sus datos/ })
+    const list = within(section).getByRole('list', { name: 'Clientes' })
+    await expect(list.children).toHaveLength(CLIENTS.length)
+    // No logo spills out of its cell, nor the page.
+    for (const item of list.children) await expect(item.scrollWidth).toBeLessThanOrEqual(item.clientWidth)
+    await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth)
+  },
+}
+
+/** The same logos moving in a marquee: it stops on hover and focus, and its copies stay hidden. */
+export const LogoCloudMarquee: Story = {
+  tags: ['mobile'],
+  globals: ON_PHONE,
+  name: 'Logo cloud marquee',
+  render: () => logoCloud('marquee'),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await expect(canvas.getByRole('list', { name: 'Clientes' })).toBeInTheDocument()
+    const copies = canvasElement.querySelectorAll('[data-slot=marquee-track][aria-hidden=true]')
+    await expect(copies.length).toBeGreaterThan(0)
   },
 }
 
