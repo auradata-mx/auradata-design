@@ -1,4 +1,4 @@
-// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, export to CSV and Excel, a virtualized body for thousands of rows, saved views, and a view state to control or share)
+// registry: auradata (a data table on TanStack Table: sort, filter, column visibility and pagination in Spanish, a loading state, a sideways scroll on narrow screens, optional row selection with a floating bar of bulk actions, a toolbar with filter and action slots, compact rows, columns to pin, move and resize, filters per column (values with their counts, number ranges, periods) an advanced Y/O filter, and chips, rows that open a detail, cells edited in place, export to CSV and Excel, a virtualized body for thousands of rows, saved views, a totals row, heatmap cells and bars, and a view state to control or share)
 import * as React from "react"
 import {
   columnFacetingFeature,
@@ -87,9 +87,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { RangeFilter, type NumberRange } from "@/components/ui/range-filter"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Toggle } from "@/components/ui/toggle"
 import { useSavedViews, type ViewStorage } from "@/hooks/use-saved-views"
+import { divergingFill, sequentialFill } from "@/lib/chart-palette"
 import { countConditions, matchesFilter, type FilterField, type FilterGroup } from "@/lib/filter-conditions"
 import { formatDate, formatNumber } from "@/lib/format"
 import { downloadFile, MIME, toCsv, toXlsx, type ExportColumn } from "@/lib/table-export"
@@ -168,6 +169,20 @@ type DataTableColumnFilter =
 /** How a cell edits in place (`meta.editable`, with `onCellEdit`): a text, a number or one of the `options`. */
 type DataTableCellEditor = { type: "text" | "number" | "select"; options?: { value: string; label?: string }[] }
 
+/**
+ * Conditional formatting of a number column (`meta.conditional`), on the brand's data palettes:
+ * - `heatmap`: the cell's fill, `sequential` (how much, from the column's least to its most, or `domain`) or
+ *   `diverging` (which side of `center`, 0 by default, up to `limit` each way); the text stays AA on every step;
+ * - `bar`: a bar behind the value, as long as its share of the column's most (or of `domain`).
+ */
+type DataTableConditional =
+  | { type: "heatmap"; palette?: "sequential"; domain?: [number, number] }
+  | { type: "heatmap"; palette: "diverging"; limit?: number; center?: number }
+  | { type: "bar"; domain?: [number, number] }
+
+/** A column's figure in the totals row (`meta.total`), over the filtered rows of every page. */
+type DataTableTotal = "sum" | "avg" | "min" | "max" | "count"
+
 const FILTER_FNS = { select: "inSet", range: "inRange", date: "inPeriod" } as const
 
 declare module "@tanstack/table-core" {
@@ -180,6 +195,10 @@ declare module "@tanstack/table-core" {
   > {
     filter?: DataTableColumnFilter
     editable?: DataTableCellEditor
+    conditional?: DataTableConditional
+    total?: DataTableTotal
+    /** How the column's total reads: `formatNumber` by default. */
+    totalFormat?: (value: number) => string
   }
   /* eslint-enable @typescript-eslint/no-unused-vars */
 }
@@ -970,6 +989,46 @@ function DataTable<TData extends RowData>({
     const filter = column.columnDef.meta?.filter
     return (filter?.type === "range" && filter.format) || ((value: number) => formatNumber(value))
   }
+  /** The numbers of a column over every row (not only the filtered ones), so the colors do not shift with a filter. */
+  const numbersOf = (column: FilterColumn) =>
+    table
+      .getCoreRowModel()
+      .rows.map((row) => Number(row.getValue(column.id)))
+      .filter(Number.isFinite)
+  const conditionalOf = (column: FilterColumn, value: unknown) => {
+    const conditional = column.columnDef.meta?.conditional
+    const number = Number(value)
+    if (!conditional || value === null || value === undefined || !Number.isFinite(number)) return null
+    if (conditional.type === "heatmap" && conditional.palette === "diverging") {
+      const center = conditional.center ?? 0
+      const limit = conditional.limit ?? Math.max(...numbersOf(column).map((other) => Math.abs(other - center)))
+      return { style: divergingFill(number, limit, center) }
+    }
+    const numbers = numbersOf(column)
+    const domain: [number, number] = conditional.domain ?? [Math.min(...numbers), Math.max(...numbers)]
+    if (conditional.type === "heatmap") return { style: sequentialFill(number, domain) }
+    const share = domain[1] > 0 ? Math.min(1, Math.max(0, number / domain[1])) : 0
+    return { bar: `${share * 100}%` }
+  }
+  const totalOf = (column: FilterColumn) => {
+    const total = column.columnDef.meta?.total
+    if (!total) return null
+    const numbers = table
+      .getPrePaginatedRowModel()
+      .rows.map((row) => Number(row.getValue(column.id)))
+      .filter(Number.isFinite)
+    const value =
+      total === "count"
+        ? numbers.length
+        : total === "sum" || total === "avg"
+          ? numbers.reduce((sum, number) => sum + number, 0) / (total === "avg" ? numbers.length || 1 : 1)
+          : numbers.length
+            ? Math[total](...numbers)
+            : 0
+    return (column.columnDef.meta?.totalFormat ?? ((number: number) => formatNumber(number)))(value)
+  }
+  const dataColumns = visibleColumns.filter((column) => column.id !== "select" && column.id !== "expand")
+  const totalsRow = dataColumns.some((column) => column.columnDef.meta?.total)
   const titleOf = (column: FilterColumn) =>
     column.columnDef.meta?.filter?.title ?? columnLabel(column.columnDef.header, column.id)
   /** A filter as people read it, for its chip: «Norte, Bajío», «$10,000 – $250,000», «1 nov 2026 – 21 nov 2026». */
@@ -1079,9 +1138,8 @@ function DataTable<TData extends RowData>({
                       const { className: pinnedClassName, ...pinned } = pinnedProps(cell.column)
                       const editor = onCellEdit && cell.column.columnDef.meta?.editable
                       const key = `${row.id}:${cell.column.id}`
-                      return (
-                        <TableCell key={cell.id} {...pinned} className={pinnedClassName}>
-                          {editor ? (
+                      const conditional = conditionalOf(cell.column, cell.getValue())
+                      const content = editor ? (
                             <EditableCell
                               cellKey={key}
                               editor={editor}
@@ -1095,6 +1153,27 @@ function DataTable<TData extends RowData>({
                             </EditableCell>
                           ) : (
                             <FlexRender cell={cell} />
+                          )
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          {...pinned}
+                          style={{ ...pinned.style, ...conditional?.style }}
+                          className={pinnedClassName}
+                        >
+                          {conditional?.bar ? (
+                            // A data bar behind the value, on a light step of the ramp: the value stays readable on it and off it.
+                            <div className="relative">
+                              <span
+                                aria-hidden
+                                data-slot="data-table-bar"
+                                style={{ width: conditional.bar }}
+                                className="absolute -inset-y-0.5 left-0 -ml-1.5 rounded-sm bg-sequential-2"
+                              />
+                              <span className="relative">{content}</span>
+                            </div>
+                          ) : (
+                            content
                           )}
                         </TableCell>
                       )
@@ -1244,7 +1323,7 @@ function DataTable<TData extends RowData>({
           "@container relative overflow-hidden rounded-lg border",
           // Virtualized, the table's own container scrolls both ways, under a header that stays on top.
           virtualize &&
-            "[&_[data-slot=table-container]]:max-h-(--data-table-height) [&_[data-slot=table-container]]:overflow-y-auto [&_thead]:sticky [&_thead]:top-0 [&_thead]:z-[3] [&_thead]:bg-background"
+            "[&_[data-slot=table-container]]:max-h-(--data-table-height) [&_[data-slot=table-container]]:overflow-y-auto [&_thead]:sticky [&_thead]:top-0 [&_thead]:z-[3] [&_thead]:bg-background [&_tfoot]:sticky [&_tfoot]:bottom-0 [&_tfoot]:z-[3] [&_tfoot]:bg-muted"
         )}
       >
         {/* The fades sit beside the pinned columns, over the ones that scroll. */}
@@ -1335,6 +1414,22 @@ function DataTable<TData extends RowData>({
               </TableRow>
             )}
           </TableBody>
+          {totalsRow && !loading && (
+            <TableFooter>
+              <TableRow className="hover:bg-transparent">
+                {visibleColumns.map((column) => {
+                  const { className: pinnedClassName, ...pinned } = pinnedProps(column)
+                  const total = totalOf(column)
+                  return (
+                    <TableCell key={column.id} {...pinned} className={cn("tabular-nums", pinnedClassName)}>
+                      {total ?? (column === dataColumns[0] ? "Total" : null)}
+                    </TableCell>
+                  )
+                })}
+                {filler && <TableCell aria-hidden className="p-0" />}
+              </TableRow>
+            </TableFooter>
+          )}
         </Table>
       </div>
 

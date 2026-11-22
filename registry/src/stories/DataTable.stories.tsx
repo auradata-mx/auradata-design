@@ -10,7 +10,7 @@ import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
 import { DateRangeFilter } from '@/components/ui/date-range-filter'
 import { useDataTableUrlState } from '@/hooks/use-data-table-url-state'
 import type { FilterField } from '@/lib/filter-conditions'
-import { formatCurrency, formatDate, formatNumber } from '@/lib/format'
+import { formatCurrency, formatDate, formatNumber, formatPercent } from '@/lib/format'
 
 type Estado = 'Publicado' | 'Borrador' | 'Desactualizado' | 'Con errores'
 
@@ -1021,5 +1021,79 @@ export const SavedViewsOpen: Story = {
     await waitFor(() => expect(page.queryByRole('menu')).toBeNull())
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Vista: Recientes primero' }))
     await page.findByRole('menu')
+  },
+}
+
+type Sucursal = { sucursal: string; ventas: number; pedidos: number; contraMeta: number }
+
+const SUCURSALES: Sucursal[] = [
+  ['Monterrey Centro', 412500, 318, 0.12],
+  ['Saltillo', 98400, 96, -0.18],
+  ['Guadalajara Sur', 276300, 241, 0.04],
+  ['Zapopan', 154900, 150, -0.06],
+  ['CDMX Reforma', 488000, 402, 0.2],
+  ['Puebla', 87600, 71, -0.21],
+  ['Querétaro', 199800, 188, 0.01],
+  ['Mérida', 121500, 104, -0.09],
+].map(([sucursal, ventas, pedidos, contraMeta]) => ({ sucursal, ventas, pedidos, contraMeta }) as Sucursal)
+
+const SUCURSAL_COLUMNS: DataTableColumn<Sucursal>[] = [
+  { accessorKey: 'sucursal', header: 'Sucursal', size: 180, cell: ({ getValue }) => <span className="font-medium">{getValue()}</span> },
+  {
+    accessorKey: 'ventas',
+    header: 'Ventas',
+    size: 180,
+    meta: { conditional: { type: 'bar' }, total: 'sum', totalFormat: (value: number) => formatCurrency(value) },
+    cell: ({ getValue }) => <span className="tabular-nums">{formatCurrency(getValue())}</span>,
+  },
+  {
+    accessorKey: 'pedidos',
+    header: 'Pedidos',
+    size: 120,
+    meta: { conditional: { type: 'heatmap' }, total: 'sum' },
+    cell: ({ getValue }) => <span className="tabular-nums">{formatNumber(getValue())}</span>,
+  },
+  {
+    accessorKey: 'contraMeta',
+    header: 'Contra meta',
+    size: 140,
+    meta: {
+      conditional: { type: 'heatmap', palette: 'diverging', limit: 0.2 },
+      total: 'avg',
+      totalFormat: (value: number) => formatPercent(value, { signDisplay: 'exceptZero' }),
+    },
+    cell: ({ getValue }) => <span className="tabular-nums">{formatPercent(getValue(), { signDisplay: 'exceptZero' })}</span>,
+  },
+]
+
+/**
+ * A totals row and conditional formatting: «Ventas» draws a bar per cell, «Pedidos» a heatmap on the sequential
+ * palette, «Contra meta» on the diverging one (red under the goal, blue over it). The totals follow the filters.
+ */
+export const TotalsAndFormatting: Story = {
+  tags: ['mobile'],
+  render: () => <DataTable columns={SUCURSAL_COLUMNS} data={SUCURSALES} filterPlaceholder="Buscar sucursales…" />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const totals = () => canvasElement.querySelector('tfoot tr')!
+    await expect(totals()).toHaveTextContent('Total$1,839,0001,570−2.1 %')
+    // The most orders take the darkest step, the fewest the lightest.
+    const pedidos = (name: string) => canvas.getByText(name).closest('tr')!.querySelectorAll('td')[2]
+    await expect(pedidos('CDMX Reforma').style.backgroundColor).toBe('var(--sequential-9)')
+    await expect(pedidos('Puebla').style.backgroundColor).toBe('var(--sequential-1)')
+    const meta = (name: string) => canvas.getByText(name).closest('tr')!.querySelectorAll('td')[3]
+    await expect(meta('CDMX Reforma').style.backgroundColor).toBe('var(--diverging-9)')
+    await expect(meta('Puebla').style.backgroundColor).toBe('var(--diverging-1)')
+    const bar = (name: string) =>
+      canvas.getByText(name).closest('tr')!.querySelector<HTMLElement>('[data-slot="data-table-bar"]')!.style.width
+    await expect(bar('CDMX Reforma')).toBe('100%')
+    await expect(parseFloat(bar('Puebla'))).toBeCloseTo((87600 / 488000) * 100, 2)
+
+    await userEvent.type(canvas.getByRole('searchbox', { name: 'Buscar sucursales…' }), 'cdmx')
+    await waitFor(() => expect(totals()).toHaveTextContent('Total$488,000402+20 %'))
+    // Every branch again, for the screenshot.
+    await userEvent.clear(canvas.getByRole('searchbox', { name: 'Buscar sucursales…' }))
+    await waitFor(() => expect(totals()).toHaveTextContent('Total$1,839,000'))
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
