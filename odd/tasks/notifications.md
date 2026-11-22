@@ -1,0 +1,31 @@
+# Notifications (T60 of design-system-bootstrap S11)
+
+Objective: colored toasts on our tokens, progress and promise toasts, an announcement banner and a notification center, published through the registry.
+Branch: feat/notifications (from origin/main), merged by rebase + `git push origin HEAD:main`. Delivery: one commit per task. Test runner: `test:stories` (render, plays, axe light), `test:visual:docker` (screenshots, axe dark), `test:unit` (generator).
+
+## Specs
+
+- S1 (user): «Los soner, recuerdo que hay veces que los soners pueden ser como coloridos. Eso me gustaría». Coordinator brief: «Toasts con color: success, error, warning e info con fondo tintado, borde e ícono del color de estado, igual que nuestro `alert`. Sonner tiene `richColors`, pero hay que mapearlo a nuestros tokens, en claro y oscuro, con contraste AA en el texto. Que sea opcional, por ejemplo con una prop o un `variant` en el `Toaster`.»
+- S2: «Toast con progreso y con promesa: «Exportando… 40 %» con barra, y después «Listo» con la acción «Descargar». También el caso de error con «Reintentar».»
+- S3: «Banner de anuncio fijo arriba («Nueva versión disponible», «Mantenimiento programado»): variantes por estado, con cierre, una acción y que funcione en móvil.»
+- S4: «Centro de notificaciones: una campana con contador, y un popover (sheet en móvil) con lista de leídas y no leídas, «Marcar todas como leídas», vacío y carga. Va como bloque o componente según convenga. El app-shell lo puede integrar como opcional.»
+- S5: «Si el T59 publica escalas de color de estado en `main` mientras trabajas, haz rebase y úsalas. Si no, usa los tokens de estado actuales.»
+- S6 (repo rules): every story passes axe in light (`test:stories`) and in dark with a screenshot (`test:visual:docker`); deterministic stories (toasts with `duration: Infinity`); every new or changed screenshot looked at, phone and desktop; stories that change on a phone tagged `mobile`, literally on each story; Spanish UI copy (tú, «», sentence case), English code, comments and commits.
+
+## Tasks
+
+| ID | Specs | Route | Status | Evidence |
+| --- | --- | --- | --- | --- |
+| N1 | S1, S5, S6 | inline | done (this commit) | Colored toasts: sonner's `richColors` (Toaster prop or per toast) mapped to our status tokens. RED play Colored: title `rgb(0 138 46)` (sonner's green text) → GREEN; dark tint 12% read grey-teal `(33,44,46)` → `--toast-tint` 20% in dark; only 3 of 4 toasts on screen (sonner `visibleToasts` 3) → story shows 4 and asserts each visible; icon 19.8 px off the title's first line → RED → GREEN (`self-start mt-0.5`). Sonner stories 3/3, visual Sonner 8/8 (axe dark), tsc and lint clean; 4 new + 2 changed baselines looked at |
+| N2 | S2, S6 | inline | pending | Progress toast helper (bar + «40 %»), promise success «Listo» + «Descargar», error + «Reintentar» |
+| N3 | S3, S6 | inline | pending | `announcement-banner` component: status variants, close, action, phone layout |
+| N4 | S4, S6 | inline | pending | `notification-center` component (popover, sheet on phones), optional in `app-shell` |
+| N5 | S5, S6 | inline | pending | Docs (Brand/09 avisos), README row, registry.json, generator expectations, rebase, all checks, push to main |
+
+Route evidence: each task is one unit of behavior under ~400 lines, done one after another in this thread; no writer trigger (no parallel units launched together, no context backstop).
+
+## Log
+
+- L1 (2026-11-21, user via coordinator): «Los soner, recuerdo que hay veces que los soners pueden ser como coloridos. Eso me gustaría», then «vamos a hacer por favor todo eso … en chats separados». This thread owns T60, Notificaciones.
+- L2 (design): sonner 2.0.8 paints `richColors` from CSS variables (`--success-bg`, `--success-border`, `--success-text`, same for info, warning, error) that its unlayered stylesheet sets on `[data-sonner-toaster]`; the Toaster's inline `style` beats them. So the option stays sonner's own `richColors` (on the `Toaster` or per toast), and AuraData maps those variables to opaque tints of our status tokens over `--popover` (the toast floats over content, so it cannot be translucent like the alert), the border to a stronger mix, the text to `--popover-foreground` (as the alert: status colors never color text). No new `variant` prop: one API, the one sonner documents.
+- L3 (N1): the tint is `color-mix(in oklab, <status> var(--toast-tint, 12%), var(--popover))`, `--toast-tint` 20% under `.dark` (a Tailwind class on the toaster); border 45%; text `--popover-foreground`; description keeps `text-muted-foreground` (AA on every tint, light and dark, measured in the play). The status icon now sits on the title's first line in every toast (Visible baselines changed on purpose). T59 status scales are not on main yet (S5): current status tokens used.
