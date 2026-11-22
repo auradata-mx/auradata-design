@@ -73,7 +73,8 @@ export const Default: Story = {
     const body = within(canvasElement.ownerDocument.body)
     const dialog = await body.findByRole('dialog', { name: 'Crea un informe' })
     await expect(dialog).toHaveAccessibleDescription(/Empieza desde un dataset/)
-    await expect(within(dialog).getByText('Paso 1 de 3')).toBeVisible()
+    // waitFor: the card fades in.
+    await waitFor(() => expect(within(dialog).getByText('Paso 1 de 3')).toBeVisible())
     await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Siguiente' })).toHaveFocus())
     // Nothing to go back to on the first step.
     await expect(within(dialog).queryByRole('button', { name: 'Anterior' })).toBeNull()

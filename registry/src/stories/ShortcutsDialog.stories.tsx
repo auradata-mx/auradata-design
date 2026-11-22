@@ -58,7 +58,8 @@ export const Open: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body)
     const dialog = await body.findByRole('dialog', { name: 'Atajos de teclado' })
-    await expect(within(dialog).getByRole('heading', { name: 'Navegación' })).toBeVisible()
+    // waitFor: the dialog fades in (slower runners caught it at opacity 0).
+    await waitFor(() => expect(within(dialog).getByRole('heading', { name: 'Navegación' })).toBeVisible())
     const search = within(dialog).getByText('Buscar').closest('li')!
     await expect(search).toHaveTextContent(shortcutLabel('k'))
     // A sequence reads «G luego I».
