@@ -1,4 +1,4 @@
-// registry: auradata (the shell of every AuraData app: sidebar and top bar)
+// registry: auradata (the shell of every AuraData app: sidebar and top bar, with an optional notification center and announcement banner)
 import { Fragment } from "react"
 import { ChevronsUpDownIcon, LogOutIcon, type LucideIcon, SettingsIcon } from "lucide-react"
 import { cn } from "cn"
@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Logo, ProductTag } from "@/components/ui/logo"
+import { NotificationCenter } from "@/components/ui/notification-center"
 import { Separator } from "@/components/ui/separator"
 import {
   Sidebar,
@@ -59,6 +60,10 @@ type AppShellProps = {
   workspaces?: React.ComponentProps<typeof WorkspaceSwitcher>
   /** The app theme: a light, dark or system menu at the right of the top bar. */
   theme?: React.ComponentProps<typeof ThemeToggle>
+  /** The user's notifications: a bell with the unread count in the top bar. */
+  notifications?: React.ComponentProps<typeof NotificationCenter>
+  /** An announcement for the whole app (an `AnnouncementBanner`), pinned under the top bar. */
+  banner?: React.ReactNode
   children: React.ReactNode
 }
 
@@ -104,6 +109,8 @@ export function AppShell({
   actions,
   workspaces,
   theme,
+  notifications,
+  banner,
   children,
 }: AppShellProps) {
   return (
@@ -173,13 +180,15 @@ export function AppShell({
               </Breadcrumb>
             </>
           )}
-          {(actions || theme) && (
-            <div className={cn("ml-auto flex items-center gap-2", theme && "-mr-2")}>
+          {(actions || theme || notifications) && (
+            <div className={cn("ml-auto flex items-center gap-2", (theme || notifications) && "-mr-2")}>
               {actions}
+              {notifications && <NotificationCenter {...notifications} />}
               {theme && <ThemeToggle {...theme} />}
             </div>
           )}
         </header>
+        {banner}
         {/* SidebarInset is the <main> landmark already. */}
         <div className="flex-1 p-6">{children}</div>
       </SidebarInset>
