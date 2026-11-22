@@ -42,8 +42,9 @@ export const Default: Story = {
     // Below the fold the words wait in the muted color, never transparent; scrolled into view they
     // take the paragraph's color.
     const final = getComputedStyle(reveal).color
+    // A scroll timeline turns active on the frame after the page lays out: wait for it, do not read it on mount.
     for (const word of [words[0], last]) {
-      await expect(getComputedStyle(word).color).not.toBe(final)
+      await waitFor(() => expect(getComputedStyle(word).color).not.toBe(final))
       await expect(getComputedStyle(word).opacity).toBe('1')
     }
     window.scrollTo(0, document.documentElement.scrollHeight)
