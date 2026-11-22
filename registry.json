@@ -1015,6 +1015,20 @@
       ]
     },
     {
+      "name": "gradient-border",
+      "type": "registry:ui",
+      "title": "Gradient border",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/gradient-border.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "gradient-heading",
       "type": "registry:ui",
       "title": "Gradient heading",
@@ -1236,6 +1250,21 @@
       ]
     },
     {
+      "name": "marquee",
+      "type": "registry:ui",
+      "title": "Marquee",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/marquee.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "master-detail",
       "type": "registry:ui",
       "title": "Master detail",
@@ -1347,6 +1376,23 @@
       ]
     },
     {
+      "name": "number-ticker",
+      "type": "registry:ui",
+      "title": "Number ticker",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/format"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/number-ticker.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "onboarding-checklist",
       "type": "registry:ui",
       "title": "Onboarding checklist",
@@ -1409,6 +1455,20 @@
       "files": [
         {
           "path": "registry/src/components/ui/progress.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "progressive-blur",
+      "type": "registry:ui",
+      "title": "Progressive blur",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/progressive-blur.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1550,6 +1610,23 @@
       ]
     },
     {
+      "name": "shimmer-button",
+      "type": "registry:ui",
+      "title": "Shimmer button",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/shimmer-button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "shortcuts-dialog",
       "type": "registry:ui",
       "title": "Shortcuts dialog",
@@ -1630,6 +1707,23 @@
       ]
     },
     {
+      "name": "spotlight-card",
+      "type": "registry:ui",
+      "title": "Spotlight card",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "card"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/spotlight-card.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
@@ -1659,6 +1753,20 @@
       "files": [
         {
           "path": "registry/src/components/ui/tabs.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "text-reveal",
+      "type": "registry:ui",
+      "title": "Text reveal",
+      "dependencies": [
+        "cn"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/text-reveal.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1870,6 +1978,25 @@
       ]
     },
     {
+      "name": "changelog",
+      "type": "registry:block",
+      "title": "Changelog",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/badge",
+        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/section-header"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/changelog.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
       "name": "chat",
       "type": "registry:block",
       "title": "Chat",
@@ -1941,6 +2068,25 @@
       ]
     },
     {
+      "name": "feature-tabs",
+      "type": "registry:block",
+      "title": "Feature tabs",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/section-header",
+        "cristianruben-dev/auradata-design/tabs"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/feature-tabs.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
       "name": "hero",
       "type": "registry:block",
       "title": "Hero",
@@ -1982,6 +2128,23 @@
       ]
     },
     {
+      "name": "logo-cloud",
+      "type": "registry:block",
+      "title": "Logo cloud",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/marquee"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/logo-cloud.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
       "name": "not-found",
       "type": "registry:block",
       "title": "Not found",
@@ -1993,6 +2156,49 @@
       "files": [
         {
           "path": "registry/src/components/blocks/not-found.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "plan-comparison",
+      "type": "registry:block",
+      "title": "Plan comparison",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/badge",
+        "cristianruben-dev/auradata-design/section-header",
+        "table"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/plan-comparison.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "pricing",
+      "type": "registry:block",
+      "title": "Pricing",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "card",
+        "cristianruben-dev/auradata-design/badge",
+        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/gradient-border",
+        "cristianruben-dev/auradata-design/section-header",
+        "cristianruben-dev/auradata-design/toggle-group"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/pricing.tsx",
           "type": "registry:block"
         }
       ]
@@ -2031,6 +2237,25 @@
       "files": [
         {
           "path": "registry/src/components/blocks/site-footer.tsx",
+          "type": "registry:block"
+        }
+      ]
+    },
+    {
+      "name": "testimonials",
+      "type": "registry:block",
+      "title": "Testimonials",
+      "dependencies": [
+        "cn"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/avatar",
+        "cristianruben-dev/auradata-design/initials",
+        "cristianruben-dev/auradata-design/section-header"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/blocks/testimonials.tsx",
           "type": "registry:block"
         }
       ]

@@ -17,6 +17,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { KpiCard } from '@/components/ui/kpi-card'
+import { Logo } from '@/components/ui/logo'
+import { ProgressiveBlur } from '@/components/ui/progressive-blur'
+import { ShimmerButton } from '@/components/ui/shimmer-button'
+import { TextReveal } from '@/components/ui/text-reveal'
 import { formatPercent } from '@/lib/format'
 import { CLIENTS, ClientMark, COMPARISON, PLANS, RELEASES, TESTIMONIALS } from './marketing-data'
 
@@ -521,19 +525,95 @@ export const ChangelogSection: Story = {
   },
 }
 
-/** A whole page of auradata.mx: hero, benefits, FAQ, call to action and footer. */
+/**
+ * The bar of auradata.mx: it stays on top and the page blurs progressively as it scrolls under it.
+ * `-mb-16` floats it over the hero, so the aura runs up to the top edge instead of starting under the bar.
+ */
+const siteHeader = (
+  <header className="sticky top-0 z-20 isolate -mb-16 flex h-16 items-center justify-between gap-6 px-6 md:px-10">
+    <ProgressiveBlur side="top" tint size="calc(100% + 1.5rem)" className="-z-10" />
+    <a href="#inicio" aria-label="AuraData, inicio" className="rounded-sm">
+      <Logo className="h-6" />
+    </a>
+    <nav aria-label="Principal" className="hidden items-center gap-2 text-sm font-medium text-muted-foreground md:flex">
+      {['Producto', 'Clientes', 'Precios', 'Preguntas'].map((label) => (
+        <a key={label} href={`#${label.toLowerCase()}`} className="rounded-md px-2 py-2 hover:text-foreground">
+          {label}
+        </a>
+      ))}
+    </nav>
+    <Button size="sm" render={<a href="#contacto" />} nativeButton={false}>
+      Iniciar proyecto
+    </Button>
+  </header>
+)
+
+/** The hero of the landing: its one shimmer button, the page's main call to action. */
+const landingHero = (
+  <Hero
+    eyebrow="Software a la medida · Hecho en México"
+    title="Claramente imaginado."
+    highlight="Precisamente construido."
+    description="Diseñamos y desarrollamos software con claridad, propósito y precisión para impulsar tu negocio."
+    actions={
+      <>
+        <ShimmerButton size="lg" render={<a href="#contacto" />} nativeButton={false}>
+          Iniciar proyecto
+        </ShimmerButton>
+        <Button size="lg" variant="outline" render={<a href="#producto" />} nativeButton={false}>
+          Ver el producto
+        </Button>
+      </>
+    }
+  />
+)
+
+/** One sentence that lights up as it scrolls by, between two sections. */
+const statement = (
+  <section aria-label="Nuestra forma de trabajar" className="px-6 py-16 md:px-10 md:py-24">
+    <TextReveal className="mx-auto max-w-4xl font-heading text-3xl leading-tight font-semibold tracking-tight text-balance sm:text-4xl lg:text-5xl">
+      Dejamos de adivinar. Hoy cada área ve los mismos números, a la misma hora, y las juntas empiezan por la decisión.
+    </TextReveal>
+  </section>
+)
+
+/**
+ * A whole page of auradata.mx: the sticky header, hero, client logos, benefits, a statement, the
+ * product tour, testimonials, pricing, FAQ, call to action and footer. One effect per section.
+ */
 export const Landing: Story = {
   tags: ['mobile'],
   globals: ON_PHONE,
   render: () => (
     <>
-      <main>
-        {hero}
+      {siteHeader}
+      <main id="inicio">
+        {landingHero}
+        {logoCloud('marquee')}
         {benefits}
-        {faq}
-        {cta}
+        {statement}
+        <div id="producto">{featureTabs}</div>
+        <div id="clientes">{testimonials}</div>
+        {pricing()}
+        <div id="preguntas">{faq}</div>
+        <div id="contacto">{cta}</div>
       </main>
       {footer}
     </>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // One page, one main heading; every section is a named landmark.
+    await expect(canvas.getAllByRole('heading', { level: 1 })).toHaveLength(1)
+    for (const name of [/ya ordenaron sus datos/, 'Nuestra forma de trabajar', /Todo tu negocio/, /Equipos que ya deciden/, /Un plan para cada/]) {
+      await expect(canvas.getByRole('region', { name })).toBeInTheDocument()
+    }
+    // The decorative layers stay out of the accessibility tree.
+    for (const layer of canvasElement.querySelectorAll('[data-slot=progressive-blur], [data-slot=shimmer], [data-slot=gradient-border-ring], [data-slot=aura-background]')) {
+      await expect(layer).toHaveAttribute('aria-hidden', 'true')
+    }
+    // The shimmer goes once per page.
+    await expect(canvasElement.querySelectorAll('[data-slot=shimmer]')).toHaveLength(1)
+    await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth)
+  },
 }

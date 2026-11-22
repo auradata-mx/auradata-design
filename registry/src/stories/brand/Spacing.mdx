@@ -92,5 +92,16 @@ En oscuro las sombras cambian solas: `--aura-shadow-*` tiene su valor en `.dark`
 ## Reglas de movimiento
 
 - **Respeta `prefers-reduced-motion`.** Toda animación lleva `motion-reduce:animate-none` o `motion-reduce:transition-none`.
-- **`aura-background` es la única animación ambiental.** Nada más se mueve solo: ni íconos, ni degradados, ni números.
 - **El movimiento explica un cambio** (algo se abre, entra o se guarda). Si no explica nada, quítalo.
+- **En la app nada se mueve solo.** Ni íconos, ni degradados, ni números: los datos se leen quietos.
+- **En marketing, un efecto por sección.** Además del aura del hero, cada sección usa como mucho uno de estos, y el `shimmer-button` va una sola vez por página:
+
+| Efecto | Para qué | Con movimiento reducido |
+| --- | --- | --- |
+| `marquee` | Logos de clientes. Se detiene con el mouse, el foco o su botón de pausa | Los logos quedan quietos, centrados |
+| `number-ticker` | Una cifra que cuenta al entrar en pantalla, con `lib/format` | La cifra final, sin contar |
+| `gradient-border` | El borde del único elemento recomendado, como el plan destacado | El degradado quieto |
+| `shimmer-button` | El llamado principal de la página | Sin destello |
+| `text-reveal` | Una frase que se ilumina palabra por palabra al hacer scroll; siempre legible (AA) | El texto completo |
+
+`progressive-blur` y `spotlight-card` no se mueven solos (uno sigue al scroll, el otro al mouse): úsalos donde ayuden, en la app también.

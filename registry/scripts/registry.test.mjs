@@ -95,6 +95,29 @@ test('publishes the marketing blocks with the eyebrow, the gradient heading and 
   expect(item('site-footer').registryDependencies).toEqual(['cristianruben-dev/auradata-design/logo'])
 })
 
+// T64: the effects are components; the new marketing blocks build on them.
+test('publishes the effects and the new marketing blocks on top of them', () => {
+  const ours = (name) => `cristianruben-dev/auradata-design/${name}`
+  for (const name of ['progressive-blur', 'marquee', 'number-ticker', 'spotlight-card', 'gradient-border', 'shimmer-button', 'text-reveal']) {
+    expect(item(name)?.type).toBe('registry:ui')
+  }
+  for (const name of ['pricing', 'plan-comparison', 'testimonials', 'logo-cloud', 'feature-tabs', 'changelog']) {
+    expect(item(name)?.type).toBe('registry:block')
+  }
+  // Effects that wrap a component take ours (button) or shadcn's (card); the ticker writes with lib/format.
+  expect(item('shimmer-button').registryDependencies).toEqual([ours('button')])
+  expect(item('spotlight-card').registryDependencies).toEqual(['card'])
+  expect(item('number-ticker').registryDependencies).toEqual([ours('format')])
+  // The recommended plan wears the gradient border; prices in MXN come from lib/format.
+  expect(item('pricing').registryDependencies).toEqual(
+    expect.arrayContaining([ours('gradient-border'), ours('format'), ours('toggle-group'), ours('section-header')]),
+  )
+  expect(item('logo-cloud').registryDependencies).toEqual([ours('marquee')])
+  expect(item('plan-comparison').registryDependencies).toEqual([ours('badge'), ours('section-header'), 'table'])
+  expect(item('testimonials').registryDependencies).toEqual([ours('avatar'), ours('initials'), ours('section-header')])
+  expect(item('changelog').registryDependencies).toEqual(expect.arrayContaining([ours('format')]))
+})
+
 test('publishes the chat block with the KPI card and the chart palette', () => {
   expect(item('chat')?.type).toBe('registry:block')
   expect(item('chat').registryDependencies).toEqual(

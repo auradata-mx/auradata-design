@@ -95,7 +95,7 @@ function FeatureTabs({
                   <ul className="mt-2 flex flex-col gap-2.5">
                     {feature.points.map((point, index) => (
                       <li key={index} className="flex gap-2.5">
-                        <CheckIcon aria-hidden className="mt-1 size-4 shrink-0 text-primary" />
+                        <CheckIcon aria-hidden className="mt-0.5 size-4 shrink-0 text-primary" />
                         <span>{point}</span>
                       </li>
                     ))}
