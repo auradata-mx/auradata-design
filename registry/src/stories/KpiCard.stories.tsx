@@ -6,7 +6,7 @@ import { KpiCard } from '@/components/ui/kpi-card'
 const meta = {
   title: 'AuraData/KPI card',
   component: KpiCard,
-  args: { label: 'Ventas del mes', value: '$4.16 M', change: 0.062, comparison: 'vs. septiembre', className: 'max-w-xs' },
+  args: { label: 'Ventas del mes', value: '$4.16 M', change: 0.062, comparison: 'vs. septiembre', className: 'max-w-sm' },
   argTypes: { goodDirection: { control: 'inline-radio', options: ['up', 'down'] } },
 } satisfies Meta<typeof KpiCard>
 

@@ -44,7 +44,8 @@ function Sparkline({ values, tone }: { values: number[]; tone: "good" | "bad" | 
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       preserveAspectRatio="none"
       className={cn(
-        "h-8 w-24 shrink-0 overflow-visible",
+        // ml-auto: when the row wraps, the sparkline stays on the right instead of jumping under the value.
+        "ml-auto h-8 w-24 shrink-0 overflow-visible",
         tone === "good" && "text-success",
         tone === "bad" && "text-destructive",
         tone === "flat" && "text-muted-foreground",

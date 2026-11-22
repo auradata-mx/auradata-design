@@ -36,8 +36,11 @@ describe("formatPercent", () => {
   })
   it("shows the sign of a change when asked", () => {
     expect(formatPercent(0.062, { signDisplay: "exceptZero" })).toBe(`+6.2${nbsp}%`)
-    expect(formatPercent(-0.021, { signDisplay: "exceptZero" })).toBe(`-2.1${nbsp}%`)
+    expect(formatPercent(-0.021, { signDisplay: "exceptZero" })).toBe(`\u22122.1${nbsp}%`)
     expect(formatPercent(0, { signDisplay: "exceptZero" })).toBe(`0${nbsp}%`)
+  })
+  it("writes a fall with a true minus sign (U+2212), not a hyphen", () => {
+    expect(formatPercent(-0.021)).toBe(`\u22122.1${nbsp}%`)
   })
   it("follows another locale's own pattern", () => {
     expect(formatPercent(0.124, { locale: "en-US" })).toBe("12.4%")

@@ -51,7 +51,8 @@ function formatPercent(
     ...options,
   }).format(fraction)
   // Mexico (and the brand voice) separates the sign: "12.4 %". A no-break space keeps them together.
-  return locale.startsWith("es") ? text.replace(/(\d)%/, `$1${NBSP}%`) : text
+  // A fall takes the true minus sign (U+2212), as wide as the plus, not a hyphen: "−2.1 %".
+  return locale.startsWith("es") ? text.replace(/(\d)%/, `$1${NBSP}%`).replace(/^-/, "−") : text
 }
 
 /** A plain number: `1,284,500.75`. */
