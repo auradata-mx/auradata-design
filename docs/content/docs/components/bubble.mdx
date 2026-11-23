@@ -1,0 +1,58 @@
+---
+title: Bubble
+description: "Presenta un mensaje dentro de una conversación."
+---
+
+La burbuja de AuraData deja visible el anillo de foco de marca cuando su contenido es un enlace o un botón. La alineación y el fondo se configuran por separado.
+
+<ComponentPreview name="bubble/demo" />
+
+## Instalación
+
+<ComponentInstall item="bubble" />
+
+## Uso
+
+```tsx
+import { Bubble, BubbleContent } from '@/components/ui/bubble';
+
+<Bubble align="end">
+  <BubbleContent>¿Cómo van las ventas de este mes?</BubbleContent>
+</Bubble>;
+```
+
+## Ejemplos
+
+### Con un enlace
+
+Con `render`, el contenido conserva la semántica del enlace y recibe foco con el teclado.
+
+<ComponentPreview name="bubble/link" />
+
+## Props
+
+### Bubble
+
+<ComponentProps file="bubble" type="Pick<React.ComponentProps<typeof Bubble>, 'align' | 'variant'>" />
+
+### BubbleContent
+
+<ComponentProps file="bubble" type="Pick<React.ComponentProps<typeof BubbleContent>, 'render' | 'children'>" />
+
+### BubbleGroup
+
+<ComponentProps file="bubble" type="Pick<React.ComponentProps<typeof BubbleGroup>, 'children'>" />
+
+### BubbleReactions
+
+<ComponentProps file="bubble" type="Pick<React.ComponentProps<typeof BubbleReactions>, 'align' | 'side' | 'children'>" />
+
+## Cuándo usarlo
+
+- Usa la alineación para separar turnos y texto accesible para distinguir quién habla. En el chat de AuraData, la pregunta va al final y la respuesta usa `ghost`.
+
+## Cuándo no
+
+- Para manejar el desplazamiento de todo el historial, usa `MessageScroller`; una burbuja representa solo un mensaje.
+
+<StorybookLink stories="Blocks" story="ChatConversation" />

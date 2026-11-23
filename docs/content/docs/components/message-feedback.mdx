@@ -1,0 +1,42 @@
+---
+title: Message feedback
+description: "Permite valorar una respuesta del asistente y explicar el motivo de una crítica."
+---
+
+AuraData añade dos botones de valoración y, al marcar que la respuesta no ayudó, ofrece un motivo y un comentario opcionales. Se puede omitir el motivo.
+
+<ComponentPreview name="message-feedback/demo" />
+
+## Instalación
+
+<ComponentInstall item="message-feedback" />
+
+## Uso
+
+```tsx
+import { MessageFeedback } from '@/components/ui/message-feedback';
+
+<MessageFeedback onFeedback={(value, details) => registrarValoracion(value, details)} />;
+```
+
+## Ejemplos
+
+### Motivos de una respuesta incorrecta
+
+Personaliza `reasons` si las opciones deben referirse al tipo de respuesta. Deja el comentario y el motivo como opcionales.
+
+<ComponentPreview name="message-feedback/reasons" />
+
+## Props
+
+<ComponentProps file="message-feedback" type="Pick<React.ComponentProps<typeof MessageFeedback>, 'onFeedback' | 'defaultValue' | 'reasons' | 'defaultAsking'>" />
+
+## Cuándo usarlo
+
+- Debajo de la respuesta del asistente. Asocia cada valoración con su respuesta y procesa `null` como una valoración retirada.
+
+## Cuándo no
+
+- No lo uses como encuesta general ni para pedir datos obligatorios. Si el usuario quiere volver a ejecutar una consulta fallida, ofrece «Reintentar».
+
+<StorybookLink stories="Messagefeedback" story="Helpful" />
