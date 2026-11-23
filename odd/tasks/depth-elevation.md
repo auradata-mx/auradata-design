@@ -21,7 +21,7 @@ Requirements come from the proposal the user accepted on 2026-11-23 («a ver vam
 | --- | --- | --- | --- | --- |
 | D1 | S1, S5, S6 | inline | done (this commit) | RED: tokens 3 failing (scale, shadcn mapping, forced colors) → GREEN tokens 146/146. `shadow-card`/`float` unchanged (antd) |
 | D2 | S2, S3, S4, S5 | inline | done (this commit) | Story AuraData/Depth: RED with the old button (Levels, Hover) → GREEN; tokens 147/147, unit 216/216, stories 491/491 (axe light and dark), lint, typecheck. Level 1 buttons (`shadow-(--elevation-control)`, hover lift, pressed inset, disabled flat), tabs/segments; sunken fields; level 2 menus, selects, popups, chart tooltips, tour, selection bar; level 3 dialog, alert dialog, drawer; blocks on `--elevation-*` |
-| D3 | S7 (docs, story) | inline | pending | |
+| D3 | S7 (docs, story) | inline | done (this commit) | Brand/07 «Sombras y elevación» (levels table, scale, usage, states, dark, forced colors, grain), Brand/09 hover/pressed and flat disabled, README; story AuraData/Depth from D2 |
 | D4 | S7 (verification, before/after) | inline; visual suite in a per-action worker | pending | |
 
 Route evidence: D2 depends on D1's tokens and D3 on D2, so no unit is independent; no Writer trigger reason, the parent writes inline.
@@ -33,4 +33,4 @@ Route evidence: D2 depends on D1's tokens and D3 on D2, so no unit is independen
 - L3: D1 done (b274650).
 - L4: `cn` (tailwind-merge) keeps both `shadow-raised` and a later `shadow-none` (unknown names), and Tailwind sorts `shadow-none` before `shadow-raised`, so overrides would lose. The arbitrary-variable form `shadow-(--elevation-raised)` merges with `shadow-none` (checked), so components use it and the theme exposes no `shadow-*` utilities.
 - L5: `card`, `popover`, `sheet` are stock and asserted unpublished (`registry.test.mjs:21`); edits there would reach Storybook only. The theme raises `[data-slot="card"]` from the base layer through `--tw-shadow` (a `shadow-none` still wins); popover and sheet keep their stock shadow. Story `:hover` can't be triggered by `userEvent.hover` (synthetic events), so the Hover story checks the generated `:hover` rules.
-- Next: D3.
+- Next: D4 (build-storybook, visual suite in Docker with --workers=2: 15 other containers share the VM).
