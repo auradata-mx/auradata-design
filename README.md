@@ -146,3 +146,8 @@ npx shadcn add cristianruben-dev/auradata-design/logo            # also copies t
 ```
 
 Pin a release with `#<tag or commit>`: `cristianruben-dev/auradata-design/kpi-card#v0.1.0`.
+
+## License
+
+MIT for the code, the tokens and the docs (`LICENSE`). The AuraData name and logos are trademarks, not under MIT: see
+`TRADEMARKS.md`. Outfit is under the SIL Open Font License 1.1.

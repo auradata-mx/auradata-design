@@ -1,7 +1,7 @@
 {
   "name": "@cristianruben-dev/auradata-tokens",
   "version": "0.3.0",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "description": "AuraData brand tokens for every product: CSS variables, Tailwind 4, shadcn, Docusaurus, antd and ECharts.",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
     "access": "restricted"
   },
   "type": "module",
-  "files": ["dist", "assets"],
+  "files": ["dist", "assets", "TRADEMARKS.md"],
   "exports": {
     "./tokens.css": "./dist/tokens.css",
     "./shadcn.css": "./dist/shadcn.css",
