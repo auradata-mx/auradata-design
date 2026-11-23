@@ -62,20 +62,20 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          toast: "cn-toast shadow-(--elevation-overlay)!",
           // AuraData: the icon sits on the title's first line, as in the alert (sonner centers it on the toast).
           icon: "self-start! mt-0.5!",
           title: "text-pretty",
           description: "text-pretty text-muted-foreground!",
-          // AuraData: the toast's buttons are the brand's, not sonner's stock pill. Sonner's CSS is
-          // unlayered and beats utilities, so the properties it sets are forced.
+          // AuraData: the toast's buttons are the brand's, not sonner's stock pill, with concentric corners.
+          // Sonner's CSS is unlayered and beats utilities, so the properties it sets are forced.
           actionButton: cn(
             buttonVariants({ size: "sm" }),
-            "h-7! rounded-[min(var(--radius-md),12px)]! border-transparent! bg-primary! px-2.5! text-[0.8rem]! text-primary-foreground! hover:bg-primary/80!"
+            "h-7! rounded-[calc(var(--radius)-2px)]! border-transparent! bg-primary! px-2.5! text-[0.8rem]! text-primary-foreground! hover:bg-primary/80!"
           ),
           cancelButton: cn(
             buttonVariants({ variant: "outline", size: "sm" }),
-            "h-7! rounded-[min(var(--radius-md),12px)]! border! border-border! bg-background! px-2.5! text-[0.8rem]! text-foreground! hover:bg-muted! dark:border-input! dark:bg-input/30! dark:hover:bg-input/50!"
+            "h-7! rounded-[calc(var(--radius)-2px)]! border! border-border! bg-background! px-2.5! text-[0.8rem]! text-foreground! hover:bg-muted! dark:border-input! dark:bg-input/30! dark:hover:bg-input/50!"
           ),
         },
       }}

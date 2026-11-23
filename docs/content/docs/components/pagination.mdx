@@ -1,0 +1,73 @@
+---
+title: Pagination
+description: "Las páginas de una lista larga: anterior, siguiente y el número de cada página."
+---
+
+La paginación de shadcn en español: el `nav` se llama «Paginación», los botones dicen «Anterior» y «Siguiente» (con `aria-label` «Página anterior» y «Página siguiente») y, en el teléfono, quedan cuadrados, solo con el chevron centrado. La página actual lleva `aria-current="page"`.
+
+<ComponentPreview name="pagination/demo" />
+
+## Instalación
+
+<ComponentInstall item="pagination" />
+
+## Uso
+
+```tsx
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+
+<Pagination aria-label="Páginas de informes">
+  <PaginationContent>
+    <PaginationItem>
+      <PaginationPrevious href="?pagina=1" />
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationLink href="?pagina=2" aria-label="Página 2" isActive>
+        2
+      </PaginationLink>
+    </PaginationItem>
+    <PaginationItem>
+      <PaginationNext href="?pagina=3" />
+    </PaginationItem>
+  </PaginationContent>
+</Pagination>;
+```
+
+Cada enlace es un `a` con su `href`: la página se puede abrir en otra pestaña o compartir. Dale a cada número un `aria-label` («Página 2»).
+
+## Ejemplos
+
+### Con estado
+
+Sin cambiar de URL: cada enlace cambia la página con `onClick`, y «Anterior» y «Siguiente» se deshabilitan en los extremos. Arriba, qué parte de la lista se ve.
+
+<ComponentPreview name="pagination/controlled" />
+
+## Props
+
+### PaginationLink
+
+<ComponentProps file="pagination" type="Pick<React.ComponentProps<typeof PaginationLink>, 'isActive' | 'size' | 'href'>" />
+
+### PaginationPrevious y PaginationNext
+
+<ComponentProps file="pagination" type="Pick<React.ComponentProps<typeof PaginationNext>, 'text'>" />
+
+## Cuándo usarlo
+
+- **Una lista larga** que se recorre por páginas, con el rango a la vista: «Informes 21–40 de 236».
+- **Páginas con URL**, para volver a la misma página o compartirla.
+
+## Cuándo no
+
+- **Las filas de una tabla de datos**: `DataTable`, que ya trae su paginación.
+- **Pasos de un proceso**: `Stepper`.
+
+<StorybookLink stories="Pagination" />

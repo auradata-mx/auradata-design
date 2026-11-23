@@ -1,0 +1,42 @@
+---
+title: Donut chart
+description: "Muestra cómo se reparte un total entre sus partes."
+---
+
+La dona de AuraData pone el total al centro, toma la paleta en orden y junta las partes pequeñas en «Otros» cuando hay más de seis. La leyenda deja ocultar partes y el tooltip da el valor y el porcentaje.
+
+<ComponentPreview name="donut-chart/demo" />
+
+## Instalación
+
+<ComponentInstall item="donut-chart" />
+
+## Uso
+
+```tsx
+import { DonutChart } from '@/components/ui/donut-chart';
+
+<DonutChart data={canales} index="canal" value="ventas" centerLabel="Ventas totales" />;
+```
+
+## Ejemplos
+
+### Pastel de tres partes
+
+Usa `variant="pie"` solo si hay dos o tres partes que se leen de un vistazo.
+
+<ComponentPreview name="donut-chart/pie" />
+
+## Props
+
+<ComponentProps file="donut-chart" name="DonutChartProps" />
+
+## Cuándo usarlo
+
+- **¿Qué parte del total es cada una?** Usa una dona para hasta seis partes y muestra el total al centro. Si sobran, agrúpalas en «Otros».
+
+## Cuándo no
+
+- Para comparar valores cercanos, o cuando importan más de seis categorías por separado, usa barras ordenadas.
+
+<StorybookLink stories="DonutChart" />

@@ -1,0 +1,42 @@
+---
+title: Marquee
+description: "Muestra una fila continua de logotipos o tarjetas que el usuario puede pausar."
+---
+
+La fila se detiene con el puntero, al entrar el foco o al pulsar «Pausar». Con la preferencia de movimiento reducido, solo queda una fila estática cuyos elementos se ajustan al ancho.
+
+<ComponentPreview name="marquee/demo" />
+
+## Instalación
+
+<ComponentInstall item="marquee" />
+
+## Uso
+
+```tsx
+import { Marquee } from '@/components/ui/marquee';
+
+<Marquee label="Espacios de trabajo" items={['Ventas', 'Finanzas', 'Operaciones']} />;
+```
+
+## Ejemplos
+
+### En sentido inverso
+
+`reverse` cambia la dirección; `duration` define cuántos segundos tarda una vuelta. Usa Tab para llegar al botón de pausa.
+
+<ComponentPreview name="marquee/reverse" />
+
+## Props
+
+<ComponentProps file="marquee" type="Pick<React.ComponentProps<typeof Marquee>, 'items' | 'label' | 'duration' | 'reverse' | 'gap' | 'copies' | 'pauseLabel' | 'resumeLabel'>" />
+
+## Cuándo usarlo
+
+- Para una fila decorativa de clientes o elementos de presentación. Usa un nombre de lista que describa lo que contiene.
+
+## Cuándo no
+
+- Si el usuario necesita avanzar tarjeta por tarjeta para leer el contenido, usa `Carousel`; para información indispensable, prefiere una lista estática.
+
+<StorybookLink stories="Marquee" story="Default" />

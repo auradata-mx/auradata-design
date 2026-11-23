@@ -32,7 +32,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { themeOptions, type Theme } from "@/components/ui/theme-toggle"
+import { themeOptions, transitionTheme, type Theme } from "@/components/ui/theme-toggle"
 import type { Workspace } from "@/components/ui/workspace-switcher"
 import { initials } from "@/lib/initials"
 
@@ -102,11 +102,13 @@ function UserMenu({
   const label = `Cuenta de ${user.name}`
   const languages = language?.languages ?? LANGUAGES
   const current = workspaces?.workspaces.find((workspace) => workspace.id === workspaces.current)
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
 
   return (
     <DropdownMenu defaultOpen={defaultOpen}>
       {variant === "full" ? (
         <DropdownMenuTrigger
+          ref={triggerRef}
           render={trigger ?? <Button variant="ghost" className="h-auto w-full justify-start gap-2 p-2 text-left" />}
         >
           {/* Named by its visible text (name and email): an aria-label would not match it. */}
@@ -119,6 +121,7 @@ function UserMenu({
         </DropdownMenuTrigger>
       ) : (
         <DropdownMenuTrigger
+          ref={triggerRef}
           render={trigger ?? <Button variant="ghost" size="icon" className="rounded-full" />}
         >
           {/* Named by sr-only text, not aria-label: the initials would not match it (label-content-name-mismatch). */}
@@ -182,7 +185,11 @@ function UserMenu({
                   <DropdownMenuSubContent aria-label="Tema" className="min-w-36">
                     <DropdownMenuRadioGroup
                       value={theme.theme}
-                      onValueChange={(value) => theme.onThemeChange(value as Theme)}
+                      onValueChange={(value) => {
+                        const next = value as Theme
+                        if (next === theme.theme) return
+                        transitionTheme(() => theme.onThemeChange(next), triggerRef.current)
+                      }}
                     >
                       {themeOptions.map((option) => (
                         <DropdownMenuRadioItem key={option.value} value={option.value} closeOnClick>

@@ -1,4 +1,4 @@
-// registry: auradata (shadcn command: the highlighted item takes --accent, apart from the popover; the whole search box takes the tap; the empty message is muted; a separator as wide as the rows)
+// registry: auradata (shadcn command: sliding active highlight in the list, the highlighted item takes --accent apart from the popover, concentric item corners, the whole search box takes the tap, the empty message is muted, a separator as wide as the rows)
 import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { cn } from "cn"
@@ -90,17 +90,110 @@ function CommandInput({
 
 function CommandList({
   className,
+  children,
+  ref,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.List>) {
+  const listRef = React.useRef<HTMLDivElement>(null)
+  const hasMeasured = React.useRef(false)
+  const [indicator, setIndicator] = React.useState<{
+    top: number
+    left: number
+    width: number
+    height: number
+    animate: boolean
+  } | null>(null)
+
+  const setRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      listRef.current = node
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref]
+  )
+
+  React.useLayoutEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    const measure = () => {
+      const selected = list.querySelector<HTMLElement>(
+        '[data-slot="command-item"][data-selected="true"]'
+      )
+      if (!selected) {
+        setIndicator(null)
+        return
+      }
+      const listRect = list.getBoundingClientRect()
+      const itemRect = selected.getBoundingClientRect()
+      if (itemRect.width === 0 || itemRect.height === 0) {
+        setIndicator(null)
+        return
+      }
+      const next = {
+        top: Math.round((itemRect.top - listRect.top + list.scrollTop) * 10) / 10,
+        left: Math.round((itemRect.left - listRect.left + list.scrollLeft) * 10) / 10,
+        width: Math.round(itemRect.width * 10) / 10,
+        height: Math.round(itemRect.height * 10) / 10,
+        animate: hasMeasured.current,
+      }
+      hasMeasured.current = true
+      setIndicator((current) =>
+        current &&
+        current.top === next.top &&
+        current.left === next.left &&
+        current.width === next.width &&
+        current.height === next.height
+          ? current
+          : next
+      )
+    }
+    measure()
+    const mutations = new MutationObserver(measure)
+    mutations.observe(list, {
+      attributes: true,
+      attributeFilter: ["data-selected", "hidden"],
+      childList: true,
+      subtree: true,
+    })
+    const resize = new ResizeObserver(measure)
+    resize.observe(list)
+    return () => {
+      mutations.disconnect()
+      resize.disconnect()
+    }
+  }, [])
+
   return (
     <CommandPrimitive.List
+      ref={setRef}
       data-slot="command-list"
+      data-indicator-ready={indicator ? "true" : undefined}
       className={cn(
-        "no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
+        "group/command-list relative no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
         className
       )}
       {...props}
-    />
+    >
+      {indicator && (
+        <div
+          aria-hidden="true"
+          role="presentation"
+          data-slot="command-active-indicator"
+          style={{
+            transform: `translate3d(${indicator.left}px, ${indicator.top}px, 0)`,
+            width: indicator.width,
+            height: indicator.height,
+          }}
+          className={cn(
+            "pointer-events-none absolute top-0 left-0 z-0 rounded-[calc(var(--radius)-4px)] bg-accent in-data-[slot=dialog-content]:rounded-lg",
+            indicator.animate &&
+              "transition-[transform,width,height] duration-150 ease-(--ease-fluid) motion-reduce:transition-none"
+          )}
+        />
+      )}
+      {children}
+    </CommandPrimitive.List>
   )
 }
 
@@ -155,7 +248,7 @@ function CommandItem({
     <CommandPrimitive.Item
       data-slot="command-item"
       className={cn(
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-accent data-selected:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground",
+        "group/command-item relative z-[1] flex cursor-default items-center gap-2 rounded-[calc(var(--radius)-4px)] px-2 py-1.5 text-sm outline-hidden select-none in-data-[slot=dialog-content]:rounded-lg! data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-accent group-data-[indicator-ready=true]/command-list:data-selected:bg-transparent data-selected:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground",
         className
       )}
       {...props}

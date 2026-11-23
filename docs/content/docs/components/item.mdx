@@ -1,0 +1,64 @@
+---
+title: Item
+description: "Una fila con medio, título, descripción y acciones: un espacio, un dataset, un informe."
+---
+
+El ítem de shadcn con una imagen o un avatar centrados como sus acciones (un ícono pequeño se queda en la línea del título), una variante `muted` con el relleno completo, que sí se ve, y solo el contorno de foco de la marca.
+
+<ComponentPreview name="item/demo" />
+
+## Instalación
+
+<ComponentInstall item="item" />
+
+## Uso
+
+```tsx
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/item';
+
+<Item variant="outline">
+  <ItemMedia variant="icon">
+    <DatabaseIcon aria-hidden />
+  </ItemMedia>
+  <ItemContent>
+    <ItemTitle>Pedidos 2026</ItemTitle>
+    <ItemDescription>PostgreSQL · 1.2 M filas</ItemDescription>
+  </ItemContent>
+  <ItemActions>
+    <Button variant="outline" size="sm">Abrir</Button>
+  </ItemActions>
+</Item>;
+```
+
+`ItemGroup` es una lista (`role="list"`): dale `role="listitem"` a cada `Item` dentro. Para un ítem que es un enlace, pasa el `a` en `render`.
+
+## Ejemplos
+
+### Variantes
+
+Sin borde (por omisión), `outline` con una acción, y `muted` como enlace, que se resalta al pasar el mouse.
+
+<ComponentPreview name="item/variants" />
+
+## Props
+
+### Item
+
+<ComponentProps file="item" type="VariantProps<typeof itemVariants>" />
+
+### ItemMedia
+
+<ComponentProps file="item" type="VariantProps<typeof itemMediaVariants>" />
+
+## Cuándo usarlo
+
+- **Listas de objetos** con su resumen: espacios con tu rol, datasets con su fuente, informes con quién los editó.
+- **Una acción por fila**, a la derecha; o la fila entera como enlace.
+
+## Cuándo no
+
+- **Datos que se comparan por columnas**: `DataTable`.
+- **Una lista con su detalle al lado**: `MasterDetail`.
+- **Un bloque con más contenido** (gráficas, varias acciones): `Card`.
+
+<StorybookLink stories="Item" story="Variants" />

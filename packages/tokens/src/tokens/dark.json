@@ -13,6 +13,7 @@
     "bg-elevated": { "$value": "#191921" },
     "border": { "$value": "#26262F" },
     "border-secondary": { "$value": "#1D1D25" },
+    "border-field": { "$value": "#3B3B47" },
     "border-control": { "$value": "#6B6B76" },
     "text": { "$value": "#F5F5F7" },
     "text-secondary": { "$value": "#A3A3AD" },
@@ -20,7 +21,7 @@
     "fill-secondary": { "$value": "#1C1C24" },
     "fill-accent": { "$value": "#26262F", "$description": "The highlighted row of a menu: stands out from the #191921 popover, where fill-secondary (#1C1C24) vanished; text reads 13.8:1, text-secondary 6.0:1" },
     "selection": { "$value": "#1E3A8A" },
-    "focus-ring": { "$value": "#F5F5F7" },
+    "focus-ring": { "$value": "#60A5FA", "$description": "A lighter Azul Aura for the focus halo: 7.4:1 on the night container" },
     "info-foreground": { "$value": "#0A0A0F" },
     "success-foreground": { "$value": "#0A0A0F" },
     "warning-foreground": { "$value": "#0A0A0F" },
@@ -100,6 +101,7 @@
   "surface": {
     "raised": { "$value": "linear-gradient(180deg, rgb(255 255 255 / 0.04) 0%, rgb(255 255 255 / 0.01) 100%)", "$description": "The card lit from above, as the translucent surfaces of the Kepler app" },
     "filled": { "$value": "linear-gradient(180deg, rgb(255 255 255 / 0.14) 0%, rgb(255 255 255 / 0) 50%, rgb(0 0 0 / 0.06) 100%)" },
-    "grain": { "$value": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", "$description": "Opt-in 3 % noise over a page or a hero: bg-(image:--surface-grain). Costs paint time on large dashboards" }
+    "grain": { "$value": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")", "$description": "Opt-in 3 % noise over a page or a hero: bg-(image:--surface-grain). Costs paint time on large dashboards" },
+    "glass": { "$value": "rgb(25 25 33 / 0.86)", "$description": "Frosted floating surfaces on dark: 86 % keeps muted labels above 4.5:1 even over bright content" }
   }
 }

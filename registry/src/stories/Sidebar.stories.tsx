@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import { ChartColumnIcon, DatabaseIcon, LayoutDashboardIcon, SettingsIcon } from 'lucide-react'
@@ -151,4 +152,46 @@ export const MenuSkeleton: Story = {
       </Sidebar>
     </SidebarProvider>
   ),
+}
+
+function InteractiveSidebar(args: React.ComponentProps<typeof SidebarProvider>) {
+  const [active, setActive] = useState('Informes')
+  return (
+    <SidebarProvider className="min-h-96" {...args}>
+      <Sidebar collapsible="none" className="border-r">
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Explorar</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {ITEMS.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton isActive={active === item.title} onClick={() => setActive(item.title)}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarInset className="p-4 text-sm text-muted-foreground">Sección: {active}</SidebarInset>
+    </SidebarProvider>
+  )
+}
+
+/** Clicking another item slides the active indicator down to it. */
+export const Switching: Story = {
+  render: (args) => <InteractiveSidebar {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const indicator = canvasElement.querySelector<HTMLElement>('[data-slot="sidebar-active-indicator"]')!
+    await expect(indicator).not.toBeNull()
+    const firstTop = indicator.getBoundingClientRect().top
+    await userEvent.click(canvas.getByRole('button', { name: 'Datasets' }))
+    await waitFor(() => expect(indicator.getBoundingClientRect().top).toBeGreaterThan(firstTop))
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
 }

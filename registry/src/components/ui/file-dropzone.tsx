@@ -117,7 +117,7 @@ function FileDropzone({
         if (!disabled) take(event.dataTransfer.files)
       }}
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[color:var(--control-border,var(--input))] bg-muted/40 px-6 py-8 text-center transition-colors data-dragging:border-solid data-dragging:border-primary data-dragging:bg-primary/5 dark:bg-input/20 data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[color:var(--field-border,var(--input))] bg-muted/40 px-6 py-8 text-center transition-colors data-dragging:border-solid data-dragging:border-primary data-dragging:bg-primary/5 dark:bg-input/20 data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className
       )}
       {...props}

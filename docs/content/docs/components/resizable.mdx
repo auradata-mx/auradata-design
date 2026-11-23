@@ -1,0 +1,60 @@
+---
+title: Resizable
+description: "Paneles que se reparten el espacio y se ajustan arrastrando el divisor, como el editor y los resultados de SQL Lab."
+---
+
+Los paneles redimensionables de shadcn (sobre [react-resizable-panels](https://github.com/bvaughn/react-resizable-panels)) con un agarre que se lee contra el divisor y un divisor de 16 px de ancho bajo el dedo en pantallas táctiles.
+
+<ComponentPreview name="resizable/demo" align="start" />
+
+## Instalación
+
+<ComponentInstall item="resizable" />
+
+## Uso
+
+```tsx
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+
+<ResizablePanelGroup orientation="vertical">
+  <ResizablePanel defaultSize="45%" minSize="20%">{/* el editor */}</ResizablePanel>
+  <ResizableHandle withHandle aria-label="Cambiar el tamaño del editor" />
+  <ResizablePanel defaultSize="55%" minSize="20%">{/* los resultados */}</ResizablePanel>
+</ResizablePanelGroup>;
+```
+
+El divisor se enfoca con Tab y se mueve con las flechas del teclado. Dale un `aria-label` que diga qué panel cambia.
+
+## Ejemplos
+
+### Lado a lado
+
+`orientation="horizontal"` pone los paneles uno junto al otro: la lista de consultas y el editor.
+
+<ComponentPreview name="resizable/horizontal" align="start" />
+
+## Props
+
+### ResizablePanelGroup
+
+<ComponentProps file="resizable" type="Pick<ResizablePrimitive.GroupProps, 'orientation'>" />
+
+### ResizablePanel
+
+<ComponentProps file="resizable" type="Pick<ResizablePrimitive.PanelProps, 'defaultSize' | 'minSize' | 'maxSize' | 'collapsible'>" />
+
+### ResizableHandle
+
+<ComponentProps file="resizable" type="Pick<React.ComponentProps<typeof ResizableHandle>, 'withHandle'>" />
+
+## Cuándo usarlo
+
+- **Dos áreas de trabajo** que el usuario reparte según la tarea: el editor y los resultados, una lista y su detalle.
+- **Con un tamaño mínimo** (`minSize`) en cada panel, para que ninguno desaparezca por accidente.
+
+## Cuándo no
+
+- **En el teléfono**: no hay espacio para repartir; apila las áreas o usa `MasterDetail`.
+- **Una lista y su detalle con navegación**: `MasterDetail`, que en el teléfono cambia de vista.
+
+<StorybookLink stories="Resizable" />

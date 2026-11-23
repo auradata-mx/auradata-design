@@ -3,7 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { CurrencyInput } from '@/components/ui/currency-input'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
-import { blur, expectBorderReads, expectDestructiveBorder } from './play-helpers'
+import { blur, expectSoftFieldBorder, expectDestructiveBorder } from './play-helpers'
 
 const meta = {
   title: 'AuraData/Currency input',
@@ -26,7 +26,7 @@ export const Default: Story = {
   args: { id: 'budget', defaultValue: 1284500.5 },
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('textbox')).toHaveValue('1,284,500.50')
-    await expectBorderReads(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
+    await expectSoftFieldBorder(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
   },
 }
 

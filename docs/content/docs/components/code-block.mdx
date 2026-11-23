@@ -1,0 +1,62 @@
+---
+title: Code block
+description: "Muestra código o consultas con un control para copiar en español."
+---
+
+`CodeBlock` conserva la alineación con tipografía monoespaciada. Su contenido se puede desplazar con el teclado; el botón de copia dice «Copiar» y confirma «Copiado» sin cambiar el código.
+
+<ComponentPreview name="code-block/demo" />
+
+## Instalación
+
+<ComponentInstall item="code-block" />
+
+## Uso
+
+```tsx
+import { CodeBlock, CodeBlockContent } from '@/components/ui/code-block';
+
+<CodeBlock>
+  <CodeBlockContent aria-label="Consulta SQL">{sql}</CodeBlockContent>
+</CodeBlock>;
+```
+
+## Ejemplos
+
+### Números de línea
+
+Activa `lineNumbers` para señalar líneas concretas. Si el fragmento empieza a mitad de un archivo, indica la primera con `startLine`.
+
+<ComponentPreview name="code-block/numbered" />
+
+## Props
+
+### CodeBlock
+
+<ComponentProps file="code-block" type="Pick<React.ComponentProps<typeof CodeBlock>, 'variant' | 'size' | 'children'>" />
+
+### CodeBlockHeader, CodeBlockTitle, CodeBlockActions y CodeBlockFooter
+
+<ComponentProps file="code-block" type="Pick<React.ComponentProps<typeof CodeBlockHeader>, 'children' | 'className'>" />
+
+### CodeBlockContent
+
+<ComponentProps file="code-block" type="Pick<React.ComponentProps<typeof CodeBlockContent>, 'children' | 'wrap' | 'lineNumbers' | 'startLine' | 'aria-label'>" />
+
+### CodeBlockCopyButton
+
+<ComponentProps file="code-block" type="Pick<React.ComponentProps<typeof CodeBlockCopyButton>, 'value' | 'size' | 'variant'>" />
+
+### CodeBlockLine
+
+<ComponentProps file="code-block" type="Pick<React.ComponentProps<typeof CodeBlockLine>, 'children' | 'variant'>" />
+
+## Cuándo usarlo
+
+- Para mostrar una consulta SQL o un fragmento de varias líneas. Pasa al botón de copia el mismo texto que muestras.
+
+## Cuándo no
+
+- Para una tecla o un atajo, usa `Kbd`. Para editar una consulta, usa un campo o un editor, no un bloque de solo lectura.
+
+<StorybookLink stories="Blocks" story="ChatWithSql" />

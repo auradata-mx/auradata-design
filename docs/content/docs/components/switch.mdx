@@ -1,0 +1,61 @@
+---
+title: Switch
+description: "Enciende o apaga un ajuste que se aplica al instante."
+---
+
+El switch de shadcn sobre Base UI con el riel apagado que contrasta 3:1 con la página, en claro y oscuro (el riel es la única señal del control). En oscuro, el pulgar es blanco sobre el riel azul, y el foco es solo el contorno de la marca.
+
+<ComponentPreview name="switch/demo" />
+
+## Instalación
+
+<ComponentInstall item="switch" />
+
+## Uso
+
+```tsx
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+
+<div className="flex items-center gap-3">
+  <Switch id="refresh" />
+  <Label htmlFor="refresh">Actualizar cada hora</Label>
+</div>;
+```
+
+Deja 12 px (`gap-3`) entre el switch y su etiqueta: el contorno de foco y su separación caben sin tocar el texto.
+
+## Ejemplos
+
+### En un formulario de ajustes
+
+La etiqueta y su descripción a la izquierda, el switch a la derecha, en un `Field` horizontal.
+
+<ComponentPreview name="switch/field" />
+
+### Tamaños y deshabilitado
+
+`size="sm"` para listas densas; el deshabilitado se atenúa junto con su etiqueta.
+
+<ComponentPreview name="switch/sizes" />
+
+## Props
+
+<ComponentProps
+  file="switch"
+  type="Pick<React.ComponentProps<typeof Switch>, 'size' | 'checked' | 'defaultChecked' | 'onCheckedChange' | 'disabled'>"
+  baseUi="switch"
+/>
+
+## Cuándo usarlo
+
+- **Un ajuste que toma efecto en cuanto cambia**: avisos, actualización automática, modo compacto.
+- **En formularios**, con `react-hook-form`: el `Switch` no es un input nativo, así que va con `Controller` (`checked` y `onCheckedChange`) y el `ref` en el `Switch`, para que el foco llegue al primer error.
+
+## Cuándo no
+
+- **Una opción que se confirma al enviar** («Acepto los términos»): `Checkbox`.
+- **Elegir entre más de dos opciones**: `RadioGroup` o `ToggleGroup`.
+- **Un botón que se queda presionado en una barra** (negritas, favorito): `Toggle`.
+
+<StorybookLink stories="Switch" />

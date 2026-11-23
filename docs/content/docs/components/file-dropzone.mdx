@@ -1,0 +1,69 @@
+---
+title: File dropzone
+description: "Arrastra o elige archivos para importar, con la lista de cada archivo y su estado."
+---
+
+Una zona para importar archivos de AuraData: un botón real para elegirlos (el teclado y el teléfono usan el botón), revisión de tipo y tamaño en español, y una lista de archivos sobre el attachment de shadcn, con progreso y el error de cada uno. Un archivo encima de la zona la marca con un borde sólido y un tinte.
+
+<ComponentPreview name="file-dropzone/demo" />
+
+## Instalación
+
+<ComponentInstall item="file-dropzone" />
+
+## Uso
+
+```tsx
+import { FileDropzone } from '@/components/ui/file-dropzone';
+
+<FileDropzone
+  accept=".csv,text/csv"
+  maxSize={10_000_000}
+  description="Un archivo CSV de hasta 10 MB."
+  onFiles={(files) => files.forEach(({ file, problem }) => (problem ? showError(problem.reason) : upload(file)))}
+/>;
+```
+
+`onFiles` recibe todos los archivos, cada uno con su `problem` (`null` cuando puede seguir), para que la lista diga qué pasó con cada uno.
+
+## Ejemplos
+
+### Importar
+
+La zona y la lista: uno subiendo, uno listo. Suelta o elige otro archivo; uno que no es CSV o pesa más de 10 MB queda en la lista con la razón. Para ver las primeras filas del CSV listo, `CsvPreview`.
+
+<ComponentPreview name="file-dropzone/import" />
+
+### Deshabilitado
+
+<ComponentPreview name="file-dropzone/disabled" />
+
+## Props
+
+### FileDropzone
+
+<ComponentProps
+  file="file-dropzone"
+  type="Pick<FileDropzoneProps, 'accept' | 'maxSize' | 'multiple' | 'disabled' | 'onFiles' | 'title' | 'description' | 'buttonLabel' | 'inputId'>"
+/>
+
+### FileUploadItem
+
+<ComponentProps
+  file="file-dropzone"
+  type="Pick<React.ComponentProps<typeof FileUploadItem>, 'name' | 'size' | 'progress' | 'error' | 'onRemove' | 'removeLabel'>"
+/>
+
+Acepta además las props de un `li` (`className`, `aria-*`…).
+
+## Cuándo usarlo
+
+- **Un archivo para importar**: `FileDropzone` y `CsvPreview`; arrastrar o elegir, y ver las primeras filas.
+- **La descripción dice qué acepta**: el tipo, el tamaño y cómo debe venir («con los nombres de las columnas en la primera fila»).
+- **Un error por archivo**, en una frase, en lugar del tamaño: «No es un CSV.», «Pesa 12.4 MB…».
+
+## Cuándo no
+
+- **Adjuntar un archivo a un mensaje del chat**: el `Attachment` del chat.
+
+<StorybookLink stories="FileDropzone" story="ImportStates" />

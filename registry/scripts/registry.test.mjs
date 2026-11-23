@@ -130,10 +130,12 @@ test('installs the stock spinner with the button, for its loading state', () => 
 })
 
 // Apps that install the theme inherit the brand focus ring, without copying any component (T51).
-test('gives the theme the brand focus ring as css, apart from its variables', () => {
+test('gives the theme the focus halo and the soft field border, apart from its variables', () => {
   const theme = item('auradata-theme')
   expect(theme.css['@layer base'][':focus-visible']).toEqual({ outline: '2px solid var(--ring)', 'outline-offset': '2px' })
-  expect(Object.values(theme.css).some((rule) => rule['--tw-ring-shadow'] === '0 0 #0000')).toBe(true)
+  expect(Object.values(theme.css).some((rule) => String(rule['--tw-ring-shadow']).startsWith('0 0 0 1px var(--ring)'))).toBe(true)
+  expect(theme.cssVars.light['field-border']).toBe('#C4C4CC')
+  expect(theme.cssVars.theme['color-field-border']).toBe('var(--field-border)')
   expect(Object.keys(theme.cssVars).sort()).toEqual(['dark', 'light', 'theme'])
 })
 
@@ -219,9 +221,9 @@ test('installs the data table with its own parts (T61)', () => {
 })
 
 // T65: app patterns.
-test('publishes the segmented control on the Base UI radio group, and tabs with counts', () => {
-  expect(item('segmented-control')?.type).toBe('registry:ui')
-  expect(item('segmented-control').dependencies).toContain('@base-ui/react')
+// No segmented control: it looked like the tabs; one choice among views takes tabs or a toggle group.
+test('publishes tabs with counts and no segmented control', () => {
+  expect(registry.items.map((entry) => entry.name)).not.toContain('segmented-control')
   expect(item('tabs').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/format']))
 })
 
@@ -389,4 +391,41 @@ test('publishes the validated connection form with react-hook-form and zod (T63)
   expect(item('connection-form').registryDependencies).toEqual(
     expect.arrayContaining([`${GITHUB}/number-input`, `${GITHUB}/password-input`, `${GITHUB}/select`, `${GITHUB}/field`])
   )
+})
+
+test('wires progressive-blur into sticky headers, scrollable overlays and the data table', () => {
+  for (const name of ['page-header', 'dialog', 'drawer', 'data-table']) {
+    expect(item(name).registryDependencies).toContain(`${GITHUB}/progressive-blur`)
+  }
+})
+
+test('gives the theme frosted floating surfaces, concentric radii, trigger-origin popup motion and view transitions', () => {
+  const theme = item('auradata-theme')
+  expect(theme.cssVars.light['surface-glass']).toBeDefined()
+  expect(theme.cssVars.dark['surface-glass']).toBeDefined()
+  expect(theme.css['@supports (backdrop-filter: blur(1px))']).toBeDefined()
+  expect(theme.css[':where([data-slot="card"]) :where([data-slot="card"])']).toEqual({
+    'border-radius': 'var(--radius-lg)',
+  })
+  expect(
+    Object.keys(theme.css).some((key) => key.includes('[data-slot="popover-content"]') && key.endsWith('[data-closed]'))
+  ).toBe(true)
+  expect(
+    Object.keys(theme.css).some((key) => key.includes(':root[data-theme-transition]::view-transition-new(root)'))
+  ).toBe(true)
+  expect(theme.cssVars.light.selection).toBe('#DBEAFE')
+  expect(theme.css['@layer base']['::selection']).toEqual({
+    'background-color': 'var(--selection)',
+    color: 'var(--foreground)',
+  })
+  expect(theme.css[':where([data-slot="skeleton"])'].animation).toContain('aura-skeleton-shimmer')
+  expect(theme.css['@layer base'][':where([data-slot="collapsible-content"])'].height).toBe(
+    'var(--collapsible-panel-height)'
+  )
+})
+
+test('publishes the reusable copy button and wires it into code-block', () => {
+  expect(item('copy-button')?.type).toBe('registry:ui')
+  expect(item('copy-button').registryDependencies).toContain(`${GITHUB}/button`)
+  expect(item('code-block').registryDependencies).toContain(`${GITHUB}/copy-button`)
 })

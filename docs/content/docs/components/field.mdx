@@ -1,0 +1,89 @@
+---
+title: Field
+description: "Junta la etiqueta, el control, la ayuda y el error de cada dato de un formulario."
+---
+
+El field de shadcn con el ritmo de AuraData: la leyenda de un `FieldSet` guarda el mismo espacio que los campos debajo, las descripciones no dejan una palabra sola en la última línea, una tarjeta de opción enfocada no cambia de borde y la leyenda de un grupo inválido se vuelve destructiva como la etiqueta de un campo.
+
+<ComponentPreview name="field/demo" />
+
+## Instalación
+
+<ComponentInstall item="field" />
+
+## Uso
+
+```tsx
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+
+<Field>
+  <FieldLabel htmlFor="name">Nombre</FieldLabel>
+  <Input id="name" />
+  <FieldDescription>Así lo verá tu equipo.</FieldDescription>
+</Field>;
+```
+
+| Parte | Para qué |
+| --- | --- |
+| `Field` | Un dato: etiqueta, control, ayuda y error |
+| `FieldLabel` | El nombre del control (`htmlFor`) |
+| `FieldDescription` | La ayuda, en una línea, debajo del control |
+| `FieldError` | Qué está mal y cómo corregirlo |
+| `FieldSet` y `FieldLegend` | Un grupo de campos o de opciones con su título |
+| `FieldGroup` | Apila los campos con el espacio de la marca |
+| `FieldContent` | La etiqueta y la ayuda juntas, al lado del control |
+
+## Ejemplos
+
+### Horizontal
+
+Etiqueta y control en una fila (`orientation="horizontal"`), como un switch con su descripción.
+
+<ComponentPreview name="field/horizontal" />
+
+### Inválido
+
+`data-invalid` en el `Field` pone la etiqueta en destructivo; `aria-invalid` en el control pinta su borde; `FieldError` dice cómo corregirlo, en la voz de la marca.
+
+<ComponentPreview name="field/invalid" />
+
+### Varios errores
+
+Con `errors`, `FieldError` los lista.
+
+<ComponentPreview name="field/multiple-errors" />
+
+### Deshabilitado
+
+`data-disabled` atenúa la etiqueta junto con el control; la descripción dice por qué no se puede cambiar.
+
+<ComponentPreview name="field/disabled" />
+
+## Props
+
+### Field
+
+<ComponentProps file="field" type="Pick<React.ComponentProps<typeof Field>, 'orientation'>" />
+
+### FieldLegend
+
+<ComponentProps file="field" type="Pick<React.ComponentProps<typeof FieldLegend>, 'variant'>" />
+
+### FieldError
+
+<ComponentProps file="field" type="Pick<React.ComponentProps<typeof FieldError>, 'errors'>" />
+
+## Cuándo usarlo
+
+- **Cada control de un formulario** va en un `Field`, con su `FieldLabel`. El placeholder no reemplaza a la etiqueta.
+- **Valida al salir del campo y al enviar** (`mode: "onTouched"` en react-hook-form), no mientras se escribe.
+- **El error dice qué hacer**: «Escribe un correo completo, como ana@empresa.mx», no «Correo inválido».
+- **Los errores del servidor que no son de un campo** van en un `Alert` arriba del formulario, no en un `FieldError`.
+
+## Cuándo no
+
+- **Un control suelto fuera de un formulario** (un checkbox en una barra): `Label`.
+- **Un control con texto o botones dentro** (un «$», un botón de copiar): `InputGroup`, dentro del `Field`.
+
+<StorybookLink stories="Field" />

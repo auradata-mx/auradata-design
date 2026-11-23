@@ -1,0 +1,42 @@
+---
+title: Announcement banner
+description: "Anuncia un cambio que afecta a toda la app."
+---
+
+El aviso de AuraData se fija arriba de su contenedor por defecto. Usa un ícono y un tinte según el estado; en una vista estrecha la acción baja debajo del mensaje.
+
+<ComponentPreview name="announcement-banner/demo" />
+
+## Instalación
+
+<ComponentInstall item="announcement-banner" />
+
+## Uso
+
+```tsx
+import { AnnouncementBanner } from '@/components/ui/announcement-banner';
+
+<AnnouncementBanner title="Nueva versión disponible" />;
+```
+
+## Ejemplos
+
+### Sin fijarlo
+
+Pasa `sticky={false}` cuando el aviso deba desplazarse con el contenido.
+
+<ComponentPreview name="announcement-banner/in-flow" />
+
+## Props
+
+<ComponentProps file="announcement-banner" type="Pick<React.ComponentProps<typeof AnnouncementBanner>, 'variant' | 'title' | 'description' | 'icon' | 'action' | 'onDismiss' | 'dismissLabel' | 'sticky'>" />
+
+## Cuándo usarlo
+
+- Colócalo encima del contenido para avisar de mantenimiento o una nueva versión. Si se puede cerrar, guarda esa preferencia en la app mediante `onDismiss`.
+
+## Cuándo no
+
+- Si el aviso solo afecta una página, usa `Alert`. Para novedades que llegaron mientras no estabas, usa `NotificationCenter`.
+
+<StorybookLink stories="AnnouncementBanner" story="Default" />

@@ -3,7 +3,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { NumberInput } from '@/components/ui/number-input'
-import { blur, expectBorderReads, expectDestructiveBorder } from './play-helpers'
+import { blur, expectSoftFieldBorder, expectDestructiveBorder } from './play-helpers'
 
 const meta = {
   title: 'AuraData/Number input',
@@ -25,7 +25,7 @@ export const Default: Story = {
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement)
-    await expectBorderReads(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
+    await expectSoftFieldBorder(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
     const input = canvas.getByRole('textbox', { name: 'Puerto' })
     await expect(input).toHaveAttribute('aria-roledescription', 'Campo numérico')
     await expect(canvas.getByRole('button', { name: 'Disminuir' })).toBeInTheDocument()

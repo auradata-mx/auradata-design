@@ -84,6 +84,7 @@ import { FilterChips } from "@/components/ui/filter-chips"
 import { Input } from "@/components/ui/input"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ProgressiveBlur } from "@/components/ui/progressive-blur"
 import { RangeFilter, type NumberRange } from "@/components/ui/range-filter"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -423,22 +424,47 @@ function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (v
   return [current, set] as const
 }
 
-type MoreColumns = "none" | "start" | "end" | "both"
+type ScrollMore = "none" | "start" | "end" | "both"
+
+type ScrollEdges = {
+  more: ScrollMore
+  verticalMore: ScrollMore
+  headerHeight: number
+  footerHeight: number
+}
 
 /**
- * Which sides of a sideways-scrolling table hide columns, kept up to date on scroll and resize.
- * The ref goes on an element that holds the table's own scroll container.
+ * Which sides of a scrolling table hide columns or rows, plus sticky header/footer heights for vertical
+ * progressive blur edges, kept up to date on scroll and resize.
  */
-function useMoreColumns() {
+function useScrollEdges() {
   const ref = React.useRef<HTMLDivElement>(null)
-  const [more, setMore] = React.useState<MoreColumns>("none")
+  const [edges, setEdges] = React.useState<ScrollEdges>({
+    more: "none",
+    verticalMore: "none",
+    headerHeight: 0,
+    footerHeight: 0,
+  })
   React.useEffect(() => {
     const scroller = ref.current?.querySelector<HTMLElement>("[data-slot=table-container]")
     if (!scroller) return
     const update = () => {
-      const start = scroller.scrollLeft > 1
-      const end = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 1
-      setMore(start && end ? "both" : start ? "start" : end ? "end" : "none")
+      const hStart = scroller.scrollLeft > 1
+      const hEnd = scroller.scrollLeft + scroller.clientWidth < scroller.scrollWidth - 1
+      const vStart = scroller.scrollTop > 1
+      const vEnd = scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 1
+      const more: ScrollMore = hStart && hEnd ? "both" : hStart ? "start" : hEnd ? "end" : "none"
+      const verticalMore: ScrollMore = vStart && vEnd ? "both" : vStart ? "start" : vEnd ? "end" : "none"
+      const headerHeight = scroller.querySelector<HTMLElement>("thead")?.offsetHeight ?? 0
+      const footerHeight = scroller.querySelector<HTMLElement>("tfoot")?.offsetHeight ?? 0
+      setEdges((current) =>
+        current.more === more &&
+        current.verticalMore === verticalMore &&
+        current.headerHeight === headerHeight &&
+        current.footerHeight === footerHeight
+          ? current
+          : { more, verticalMore, headerHeight, footerHeight }
+      )
     }
     update()
     scroller.addEventListener("scroll", update, { passive: true })
@@ -450,7 +476,7 @@ function useMoreColumns() {
       observer.disconnect()
     }
   }, [])
-  return [ref, more] as const
+  return [ref, edges] as const
 }
 
 /** The name of a column in the column menu: its string header, else its id. */
@@ -803,7 +829,7 @@ function DataTable<TData extends RowData>({
   ...props
 }: DataTableProps<TData>) {
   const pageSizeLabel = React.useId()
-  const [regionRef, more] = useMoreColumns()
+  const [regionRef, { more, verticalMore, headerHeight, footerHeight }] = useScrollEdges()
   const [view, setView, replaceView] = useView(viewProp, { ...freshView(pageSize), ...defaultView }, onViewChange)
   const [rowSelection, setRowSelection] = useControllable(rowSelectionProp, defaultRowSelection, onRowSelectionChange)
   const [expanded, setExpanded] = React.useState<ExpandedState>(defaultExpanded ?? {})
@@ -1321,28 +1347,60 @@ function DataTable<TData extends RowData>({
         style={virtualize ? ({ "--data-table-height": typeof height === "number" ? `${height}px` : height } as React.CSSProperties) : undefined}
         className={cn(
           "@container relative overflow-hidden rounded-lg border",
-          // Virtualized, the table's own container scrolls both ways, under a header that stays on top.
+          // Virtualized, the table's own container scrolls both ways, under a frosted header that stays on top.
           virtualize &&
-            "[&_[data-slot=table-container]]:max-h-(--data-table-height) [&_[data-slot=table-container]]:overflow-y-auto [&_thead]:sticky [&_thead]:top-0 [&_thead]:z-[3] [&_thead]:bg-background [&_tfoot]:sticky [&_tfoot]:bottom-0 [&_tfoot]:z-[3] [&_tfoot]:bg-muted"
+            "[&_[data-slot=table-container]]:max-h-(--data-table-height) [&_[data-slot=table-container]]:overflow-y-auto [&_thead]:sticky [&_thead]:top-0 [&_thead]:z-[3] [&_thead]:bg-background supports-backdrop-filter:[&_thead]:bg-background/80 supports-backdrop-filter:[&_thead]:backdrop-blur-md [&_tfoot]:sticky [&_tfoot]:bottom-0 [&_tfoot]:z-[3] [&_tfoot]:bg-muted"
         )}
       >
-        {/* The fades sit beside the pinned columns, over the ones that scroll. */}
-        <div
-          aria-hidden
+        {/* Progressive blur edges sit beside pinned columns and under the sticky header while rows scroll. */}
+        <ProgressiveBlur
+          side="left"
+          size="2rem"
+          blur={6}
+          tint
           style={{ left: table.getStartTotalSize() }}
           className={cn(
-            "pointer-events-none absolute inset-y-0 z-10 w-8 bg-linear-to-r from-background to-transparent transition-opacity",
+            "z-10 transition-opacity duration-200 motion-reduce:transition-none",
             more === "start" || more === "both" ? "opacity-100" : "opacity-0"
           )}
         />
-        <div
-          aria-hidden
+        <ProgressiveBlur
+          side="right"
+          size="2rem"
+          blur={6}
+          tint
           style={{ right: table.getEndTotalSize() }}
           className={cn(
-            "pointer-events-none absolute inset-y-0 z-10 w-8 bg-linear-to-l from-background to-transparent transition-opacity",
+            "z-10 transition-opacity duration-200 motion-reduce:transition-none",
             more === "end" || more === "both" ? "opacity-100" : "opacity-0"
           )}
         />
+        {virtualize && (
+          <>
+            <ProgressiveBlur
+              side="top"
+              size="2rem"
+              blur={8}
+              tint
+              style={{ top: headerHeight }}
+              className={cn(
+                "z-[2] transition-opacity duration-200 motion-reduce:transition-none",
+                verticalMore === "start" || verticalMore === "both" ? "opacity-100" : "opacity-0"
+              )}
+            />
+            <ProgressiveBlur
+              side="bottom"
+              size="2rem"
+              blur={8}
+              tint
+              style={{ bottom: footerHeight }}
+              className={cn(
+                "z-[2] transition-opacity duration-200 motion-reduce:transition-none",
+                verticalMore === "end" || verticalMore === "both" ? "opacity-100" : "opacity-0"
+              )}
+            />
+          </>
+        )}
         {/* The first and last columns sit 16px inside the rounded border, not 8px; the empty message's
             single spanning cell keeps no padding, so it centers in the visible table. */}
         <Table

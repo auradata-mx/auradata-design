@@ -1,0 +1,42 @@
+---
+title: Shimmer button
+description: "Destaca la llamada principal a la acción en una página de presentación."
+---
+
+El botón de AuraData deja pasar un brillo por debajo de la etiqueta. Es decorativo y desaparece mientras carga o si el usuario prefiere reducir el movimiento.
+
+<ComponentPreview name="shimmer-button/demo" />
+
+## Instalación
+
+<ComponentInstall item="shimmer-button" />
+
+## Uso
+
+```tsx
+import { ShimmerButton } from '@/components/ui/shimmer-button';
+
+<ShimmerButton>Solicitar una demo</ShimmerButton>;
+```
+
+## Ejemplos
+
+### Mientras se envía
+
+El estado `loading` usa el spinner de `Button`, impide otro envío y oculta el brillo. Cambia también la etiqueta.
+
+<ComponentPreview name="shimmer-button/loading" />
+
+## Props
+
+<ComponentProps file="shimmer-button" type="Pick<React.ComponentProps<typeof ShimmerButton>, 'size' | 'variant' | 'loading' | 'disabled' | 'render' | 'children'>" baseUi="button" />
+
+## Cuándo usarlo
+
+- Para una sola llamada principal en una página de presentación. Para navegar, usa `render` con un enlace y conserva su semántica.
+
+## Cuándo no
+
+- En menús, formularios o tablas, usa `Button` sin brillo para no competir con la tarea principal.
+
+<StorybookLink stories="ShimmerButton" story="Default" />

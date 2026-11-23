@@ -1,4 +1,4 @@
-// registry: auradata (shadcn button group whose separator between two solid buttons is a full-height hairline of the fill; beside a text field every part takes the field's 3:1 border)
+// registry: auradata (shadcn button group whose separator between two solid buttons is a full-height hairline of the fill; beside a text field every part takes the field's soft border)
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 // AuraData: a group joined to an input (or input group) draws one border: its buttons and text addons take the
 // field's 3:1 control border instead of their paler one; the field keeps its own (and its invalid red).
 const buttonGroupVariants = cva(
-  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 [&:has(>[data-slot=input],>[data-slot=input-group])>:not([data-slot=input],[data-slot=input-group])]:border-[color:var(--control-border,var(--input))]",
+  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1 [&:has(>[data-slot=input],>[data-slot=input-group])>:not([data-slot=input],[data-slot=input-group])]:border-[color:var(--field-border,var(--input))]",
   {
     variants: {
       orientation: {

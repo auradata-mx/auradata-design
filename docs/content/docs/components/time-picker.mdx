@@ -1,0 +1,50 @@
+---
+title: Time picker
+description: "Una hora de una lista: 24 horas, cada 30 minutos."
+---
+
+Un selector de hora de AuraData sobre nuestro `Select`: horas de 24 horas cada 30 minutos por omisión, como las escribe la marca («14:30»), igual en todos los navegadores e idiomas, con un ícono de reloj. Escribir «14» salta a las 14:00 y las flechas recorren la lista.
+
+<ComponentPreview name="time-picker/demo" />
+
+## Instalación
+
+<ComponentInstall item="time-picker" />
+
+## Uso
+
+```tsx
+import { TimePicker } from '@/components/ui/time-picker';
+
+<TimePicker id="send-time" value={time} onValueChange={setTime} />;
+```
+
+El valor es un texto `"HH:mm"`, o `null` sin hora.
+
+## Ejemplos
+
+### Horario laboral
+
+Cada 15 minutos (`step`), de `min` a `max`.
+
+<ComponentPreview name="time-picker/working-hours" />
+
+## Props
+
+<ComponentProps
+  file="time-picker"
+  type="Pick<React.ComponentProps<typeof TimePicker>, 'value' | 'defaultValue' | 'onValueChange' | 'step' | 'min' | 'max' | 'placeholder' | 'name' | 'disabled' | 'defaultOpen' | 'aria-invalid'>"
+/>
+
+Acepta además las props de `SelectTrigger` (`size`, `className`…).
+
+## Cuándo usarlo
+
+- **Una hora sola**: la hora de envío de un informe, el inicio de una actualización.
+
+## Cuándo no
+
+- **Un día y una hora**: `DateTimePicker`, un solo valor para los dos.
+- **Una duración** (minutos, horas): `NumberInput`.
+
+<StorybookLink stories="DatePicker" story="Time" />

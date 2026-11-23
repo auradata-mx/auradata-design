@@ -1,0 +1,50 @@
+---
+title: Notification center
+description: "Reúne las notificaciones que llegaron mientras no estabas."
+---
+
+La campana de AuraData muestra el conteo sin leer. Abre un popover en escritorio y un panel desde abajo en el teléfono, con las notificaciones separadas en «Sin leer» y «Leídas».
+
+<ComponentPreview name="notification-center/demo" />
+
+## Instalación
+
+<ComponentInstall item="notification-center" />
+
+## Uso
+
+```tsx
+import { NotificationCenter } from '@/components/ui/notification-center';
+
+<NotificationCenter
+  notifications={[{ id: 'export', title: 'Tu exportación está lista', time: 'Hace 5 min' }]}
+/>;
+```
+
+## Ejemplos
+
+### Sin notificaciones
+
+Si no hay notificaciones, el panel explica qué aparecerá aquí. Mientras se consultan, pasa `loading` para mostrar el estado de carga.
+
+<ComponentPreview name="notification-center/empty" />
+
+## Props
+
+### NotificationCenter
+
+<ComponentProps file="notification-center" type="Pick<React.ComponentProps<typeof NotificationCenter>, 'notifications' | 'loading' | 'onMarkAllRead' | 'onSelect' | 'open' | 'defaultOpen' | 'onOpenChange' | 'title' | 'emptyTitle' | 'emptyDescription' | 'footer'>" />
+
+### Notification
+
+<ComponentProps file="notification-center" name="Notification" />
+
+## Cuándo usarlo
+
+- En la barra superior. Actualiza `notifications` desde la app al marcar como leído, y usa `onSelect` si una fila lleva a su informe o exportación.
+
+## Cuándo no
+
+- Para mantenimiento o cambios que afectan a toda la app, usa `AnnouncementBanner`. Para la confirmación inmediata de una acción, usa un toast de `Sonner`.
+
+<StorybookLink stories="NotificationCenter" story="Default" />

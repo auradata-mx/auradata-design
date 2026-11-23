@@ -61,7 +61,7 @@ function DatePicker({
             data-slot="date-picker"
             variant="outline"
             className={cn(
-              "w-full justify-start border-[color:var(--control-border,var(--input))] px-2.5 font-normal text-foreground tabular-nums dark:border-[color:var(--control-border,var(--input))]",
+              "w-full justify-start border-[color:var(--field-border,var(--input))] px-2.5 font-normal text-foreground tabular-nums dark:border-[color:var(--field-border,var(--input))]",
               !date && "text-muted-foreground",
               className
             )}

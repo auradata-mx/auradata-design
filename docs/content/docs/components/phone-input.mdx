@@ -1,0 +1,54 @@
+---
+title: Phone input
+description: "Un teléfono de México: 10 dígitos agrupados al escribir, con +52 opcional."
+---
+
+Un campo de teléfono de AuraData: agrupa los 10 dígitos al escribir (`55 1234 5678` o `999 123 4567`), muestra y acepta +52 sin pedirlo, y deja el cursor en su dígito. Pegar `+52 1 55 1234 5678` conserva los 10 dígitos.
+
+<ComponentPreview name="phone-input/demo" />
+
+## Instalación
+
+<ComponentInstall item="phone-input" />
+
+## Uso
+
+```tsx
+import { PhoneInput } from '@/components/ui/phone-input';
+
+<PhoneInput id="phone" name="phone" value={digits} onValueChange={setDigits} />;
+```
+
+El valor son los dígitos, sin +52 ni espacios. Con `name`, un input oculto envía el número como `+525512345678` cuando está completo.
+
+## Ejemplos
+
+### Sin lada de país
+
+`showCountryCode={false}` quita el «+52», para formularios donde todos los números son de México.
+
+<ComponentPreview name="phone-input/without-country-code" />
+
+### Validación
+
+Se valida al salir del campo con `isValidPhoneMx` de `lib/phone`; un número incompleto muestra cómo escribirlo. Entra al campo y sal para verlo.
+
+<ComponentPreview name="phone-input/validation" />
+
+## Props
+
+<ComponentProps
+  file="phone-input"
+  type="Pick<PhoneInputProps, 'value' | 'defaultValue' | 'onValueChange' | 'showCountryCode' | 'groupClassName' | 'name' | 'disabled' | 'aria-invalid'>"
+/>
+
+## Cuándo usarlo
+
+- **Un teléfono de México**, en un formulario de contacto o de cuenta.
+- **Con su etiqueta** y la ayuda «10 dígitos, con lada.»
+
+## Cuándo no
+
+- **Números de otros países**: un `Input` con `type="tel"` y `autoComplete="tel"`.
+
+<StorybookLink stories="PhoneInput" />

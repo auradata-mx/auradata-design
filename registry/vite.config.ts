@@ -20,7 +20,7 @@ export default defineConfig({
         // The scripts that build the registry and the plain helpers of src/lib.
         test: {
           name: "unit",
-          include: ["scripts/**/*.test.mjs", "src/**/*.test.ts"],
+          include: ["scripts/**/*.test.mjs", "src/**/*.test.ts", ".storybook/**/*.test.ts"],
           environment: "node",
         },
       },

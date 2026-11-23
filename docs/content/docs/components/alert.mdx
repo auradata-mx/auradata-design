@@ -1,0 +1,58 @@
+---
+title: Alert
+description: "Muestra un aviso que sigue siendo relevante para la página."
+---
+
+Las variantes de AuraData tiñen el fondo y el ícono, no el texto. Si agregas una acción, ocupa su propia columna o baja debajo del texto cuando el espacio es estrecho.
+
+<ComponentPreview name="alert/demo" />
+
+## Instalación
+
+<ComponentInstall item="alert" />
+
+## Uso
+
+```tsx
+import { Alert, AlertTitle } from '@/components/ui/alert';
+
+<Alert variant="info">
+  <AlertTitle>El informe se actualiza cada hora</AlertTitle>
+</Alert>;
+```
+
+## Ejemplos
+
+### Con una acción
+
+En un espacio estrecho, la acción queda debajo de la descripción sin quitarle ancho al texto.
+
+<ComponentPreview name="alert/with-action" />
+
+## Props
+
+### Alert
+
+<ComponentProps file="alert" type="Pick<React.ComponentProps<typeof Alert>, 'variant' | 'role'>" />
+
+### AlertTitle
+
+<ComponentProps file="alert" type="Pick<React.ComponentProps<typeof AlertTitle>, 'children'>" />
+
+### AlertDescription
+
+<ComponentProps file="alert" type="Pick<React.ComponentProps<typeof AlertDescription>, 'children'>" />
+
+### AlertAction
+
+<ComponentProps file="alert" type="Pick<React.ComponentProps<typeof AlertAction>, 'children'>" />
+
+## Cuándo usarlo
+
+- Mantén visible algo que afecta a la página hasta que cambie la causa. Nombra qué pasó y, si hay un paso útil, ponle un verbo.
+
+## Cuándo no
+
+- Para un aviso de toda la app, usa `AnnouncementBanner`; para confirmar una acción, un toast de `Sonner`.
+
+<StorybookLink stories="Alert" story="Default" />

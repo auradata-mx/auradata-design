@@ -1,4 +1,4 @@
-// registry: auradata (shadcn select whose long value ends in an ellipsis and whose long options wrap; it opens below the trigger with padding around its rows; the brand focus outline alone, no border change; the value keeps the text color in an invalid field; its border reads 3:1 against the page, light and dark (--control-border; fills keep --input); a disabled trigger takes the input's muted fill)
+// registry: auradata (shadcn select whose long value ends in an ellipsis and whose long options wrap; it opens below the trigger with padding around its rows; the value keeps the text color in an invalid field; a soft border (--field-border; fills keep --input) that turns Azul Aura with a glow on focus; a disabled trigger takes the input's muted fill)
 "use client"
 
 import * as React from "react"
@@ -41,7 +41,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-fit items-center justify-between gap-1.5 rounded-lg border border-[color:var(--control-border,var(--input))] bg-transparent shadow-(--elevation-sunken) disabled:shadow-none py-2 pr-2 pl-2.5 text-sm whitespace-nowrap text-foreground transition-colors outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:bg-input/50 data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:block *:data-[slot=select-value]:truncate dark:bg-input/30 dark:hover:bg-input/50 dark:disabled:bg-input/80 dark:data-disabled:bg-input/80 dark:aria-invalid:ring-destructive/25 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "flex w-fit items-center justify-between gap-1.5 rounded-lg border border-[color:var(--field-border,var(--input))] bg-transparent shadow-(--elevation-sunken) disabled:shadow-none py-2 pr-2 pl-2.5 text-sm whitespace-nowrap text-foreground transition-colors outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 data-disabled:cursor-not-allowed data-disabled:bg-input/50 data-disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 data-[size=sm]:rounded-[min(var(--radius-md),10px)] *:data-[slot=select-value]:block *:data-[slot=select-value]:truncate dark:bg-input/30 dark:hover:bg-input/50 dark:disabled:bg-input/80 dark:data-disabled:bg-input/80 dark:aria-invalid:ring-destructive/25 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -117,7 +117,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex w-full cursor-default items-center gap-1.5 rounded-[calc(var(--radius)-4px)] py-1 pr-8 pl-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className
       )}
       {...props}

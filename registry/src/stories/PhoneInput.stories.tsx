@@ -5,7 +5,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { PhoneInput } from '@/components/ui/phone-input'
 import { isValidPhoneMx } from '@/lib/phone'
-import { blur, expectBorderReads, expectDestructiveBorder } from './play-helpers'
+import { blur, expectSoftFieldBorder, expectDestructiveBorder } from './play-helpers'
 
 const meta = {
   title: 'AuraData/Phone input',
@@ -28,7 +28,7 @@ export const Default: Story = {
   args: { id: 'phone', defaultValue: '5512345678' },
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('textbox')).toHaveValue('55 1234 5678')
-    await expectBorderReads(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
+    await expectSoftFieldBorder(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
   },
 }
 

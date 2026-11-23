@@ -52,7 +52,7 @@ export const ChooseDark: Story = {
     const body = within(canvasElement.ownerDocument.body)
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Cambiar tema' }))
     await userEvent.click(await body.findByRole('menuitemradio', { name: 'Oscuro' }))
-    await expect(args.onThemeChange).toHaveBeenCalledWith('dark')
+    await waitFor(() => expect(args.onThemeChange).toHaveBeenCalledWith('dark'))
     // A radio item keeps the menu open; Escape closes it.
     await userEvent.keyboard('{Escape}')
     await waitFor(() => expect(body.queryByRole('menu')).toBeNull())

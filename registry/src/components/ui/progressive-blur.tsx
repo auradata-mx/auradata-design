@@ -77,7 +77,13 @@ function ProgressiveBlur({
         )
       })}
       {tint && (
-        <div data-slot="progressive-blur-tint" className={cn("absolute inset-0 from-background/85 to-transparent", TINT[side])} />
+        <div
+          data-slot="progressive-blur-tint"
+          className={cn(
+            "absolute inset-0 from-[color-mix(in_oklab,var(--blur-tint,var(--background))_85%,transparent)] to-transparent",
+            TINT[side]
+          )}
+        />
       )}
     </div>
   )
@@ -138,14 +144,14 @@ function ScrollBlur({
   const edge = "z-10 transition-opacity duration-200 motion-reduce:transition-none"
   const show = (side: "start" | "end") => (more === side || more === "both" ? "opacity-100" : "opacity-0")
   return (
-    <div data-slot="scroll-blur" data-more={more} className={cn("relative isolate overflow-hidden", className)}>
+    <div data-slot="scroll-blur" data-more={more} className={cn("relative isolate flex flex-col overflow-hidden", className)}>
       <div
         ref={viewport}
         data-slot="scroll-blur-viewport"
         role="region"
         tabIndex={0}
         className={cn(
-          "size-full overscroll-contain rounded-[inherit] focus-visible:outline-offset-[-2px]",
+          "min-h-0 min-w-0 flex-1 size-full overscroll-contain rounded-[inherit] focus-visible:outline-offset-[-2px]",
           vertical ? "overflow-y-auto" : "overflow-x-auto",
           viewportClassName
         )}

@@ -1,0 +1,59 @@
+---
+title: Number input
+description: "Un número con botones − y +, y las flechas del teclado."
+---
+
+Un campo numérico de AuraData sobre `NumberField` de Base UI: es-MX por omisión, nombres en español para los botones («Disminuir», «Aumentar») y el borde y los estados de los campos de texto. Las flechas suben y bajan `step`, Shift con `largeStep`, y también Re Pág y Av Pág. El valor es un número.
+
+<ComponentPreview name="number-input/demo" />
+
+## Instalación
+
+<ComponentInstall item="number-input" />
+
+## Uso
+
+```tsx
+import { NumberInput } from '@/components/ui/number-input';
+
+<NumberInput id="port" defaultValue={5432} min={1} max={65535} format={{ useGrouping: false }} />;
+```
+
+## Ejemplos
+
+### Decimales
+
+`format` y `step` en es-MX; el valor sigue siendo un número (18.25).
+
+<ComponentPreview name="number-input/decimals" />
+
+### Inválido
+
+El número conserva el color del texto, con un borde rojo nítido.
+
+<ComponentPreview name="number-input/invalid" />
+
+### Deshabilitado
+
+<ComponentPreview name="number-input/disabled" />
+
+## Props
+
+<ComponentProps
+  file="number-input"
+  type="Pick<NumberInputProps, 'value' | 'defaultValue' | 'onValueChange' | 'min' | 'max' | 'step' | 'largeStep' | 'format' | 'locale' | 'disabled' | 'groupClassName' | 'decrementLabel' | 'incrementLabel'>"
+  baseUi="number-field"
+/>
+
+## Cuándo usarlo
+
+- **Un número con pasos**: un puerto, filas por página, una cantidad.
+- **En formularios**, con `react-hook-form`: no es un input nativo, así que va con `Controller` (`value` y `onValueChange`) y el `ref` en `inputRef`, para que el foco llegue al primer error.
+
+## Cuándo no
+
+- **Dinero**: `CurrencyInput`, que agrupa los miles al escribir.
+- **Un valor aproximado en una escala**: `Slider`.
+- **Un código o un número que no se suma** (un folio, un código postal): `Input`.
+
+<StorybookLink stories="NumberInput" />

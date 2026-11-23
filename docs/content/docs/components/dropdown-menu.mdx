@@ -1,0 +1,89 @@
+---
+title: Dropdown menu
+description: "Las acciones de un objeto detrás de un botón: editar, duplicar, exportar, eliminar."
+---
+
+El menú desplegable de shadcn con la elevación de los flotantes, 8 px de margen con el borde de la pantalla, la variante `destructive` para los ítems que borran y un submenú que, en el teléfono, se queda junto a su trigger con su primer ítem a la altura de él.
+
+<ComponentPreview name="dropdown-menu/demo" />
+
+## Instalación
+
+<ComponentInstall item="dropdown-menu" />
+
+## Uso
+
+```tsx
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+<DropdownMenu>
+  <DropdownMenuTrigger render={<Button variant="outline" />}>Acciones</DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem onClick={editar}>Editar</DropdownMenuItem>
+    <DropdownMenuItem onClick={duplicar}>Duplicar</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem variant="destructive" onClick={eliminar}>Eliminar</DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>;
+```
+
+Con el teclado: Enter o Espacio abre el menú, las flechas recorren los ítems, Enter elige y Escape cierra. `DropdownMenuLabel` va dentro de un `DropdownMenuGroup`, que es el grupo al que nombra.
+
+## Ejemplos
+
+### Submenú
+
+«Exportar» abre sus opciones a un lado; el ítem destructivo sigue al final.
+
+<ComponentPreview name="dropdown-menu/submenu" />
+
+### Casillas
+
+`DropdownMenuCheckboxItem` prende y apaga opciones sin cerrar el menú, como las columnas visibles de una tabla.
+
+<ComponentPreview name="dropdown-menu/checkboxes" />
+
+### Ítems deshabilitados
+
+Las acciones que no aplican se quedan, atenuadas, y las flechas se las saltan.
+
+<ComponentPreview name="dropdown-menu/disabled" />
+
+## Props
+
+### DropdownMenuContent
+
+<ComponentProps
+  file="dropdown-menu"
+  type="Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>"
+  baseUi="menu"
+/>
+
+### DropdownMenuItem
+
+<ComponentProps file="dropdown-menu" type="Pick<React.ComponentProps<typeof DropdownMenuItem>, 'variant' | 'inset' | 'disabled' | 'onClick'>" />
+
+### DropdownMenuCheckboxItem
+
+<ComponentProps file="dropdown-menu" type="Pick<MenuPrimitive.CheckboxItem.Props, 'checked' | 'defaultChecked' | 'onCheckedChange'>" />
+
+## Cuándo usarlo
+
+- **Las acciones de un objeto** (un informe, una fila, una gráfica) que no caben como botones.
+- **Verbos en los ítems**: «Editar», «Duplicar», «Descargar como PDF».
+- **Lo destructivo al final**, separado y con `variant="destructive"`; si no se puede deshacer, confirma con `AlertDialog`.
+
+## Cuándo no
+
+- **Elegir un valor de un formulario**: `Select`.
+- **La cuenta del usuario**: `UserMenu`, que ya trae espacio, tema, idioma, ayuda y «Cerrar sesión».
+- **Muchas acciones que se buscan por nombre**: `Command`.
+
+<StorybookLink stories="DropdownMenu" />

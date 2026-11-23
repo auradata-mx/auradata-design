@@ -1,0 +1,43 @@
+---
+title: CSV preview
+description: "Revisa el encabezado y las primeras filas de un CSV antes de importarlo."
+---
+
+`CsvPreview` muestra el encabezado y una muestra de las filas. Alinea números a la derecha y mantiene las celdas en una sola línea. Si el archivo es ancho, el recuadro se desplaza de lado y recibe el foco del teclado.
+
+<ComponentPreview name="csv-preview/demo" align="start" />
+
+## Instalación
+
+<ComponentInstall item="csv-preview" />
+
+## Uso
+
+```tsx
+import { CsvPreview } from '@/components/ui/csv-preview';
+import { parseCsv } from '@/lib/file-upload';
+
+<CsvPreview rows={parseCsv(texto, { maxRows: 6 })} totalRows={totalSinEncabezado} />;
+```
+
+## Ejemplos
+
+### Columnas fuera de pantalla
+
+Enfoca el recuadro y usa las flechas para ver las columnas ocultas. El borde atenuado indica por dónde sigue la tabla.
+
+<ComponentPreview name="csv-preview/wide" align="start" />
+
+## Props
+
+<ComponentProps file="csv-preview" type="Omit<CsvPreviewProps, keyof React.ComponentProps<'div'>>" />
+
+## Cuándo usarlo
+
+- Antes de importar, para confirmar que el encabezado y los datos se interpretaron como esperabas. Pasa `totalRows` sin contar el encabezado.
+
+## Cuándo no
+
+- No sustituye la validación del archivo. Para ordenar o filtrar un conjunto ya importado, usa `DataTable`.
+
+<StorybookLink stories="FileDropzone" story="WidePreview" />

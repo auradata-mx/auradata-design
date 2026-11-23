@@ -6,7 +6,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui/input-otp'
-import { blur, expectBorderReads, expectDestructiveBorder } from './play-helpers'
+import { blur, expectSoftFieldBorder, expectDestructiveBorder } from './play-helpers'
 
 type CodeProps = Omit<Extract<React.ComponentProps<typeof InputOTP>, { children: React.ReactNode }>, 'children'>
 
@@ -49,11 +49,11 @@ const slots = (canvasElement: HTMLElement) => [
   ...canvasElement.querySelectorAll<HTMLElement>('[data-slot=input-otp-slot]'),
 ]
 
-/** Six digits in two groups of three. Each box reads 3:1 against the page, as the text controls. */
+/** Six digits in two groups of three. Each box has the soft field border, as the text controls. */
 export const Default: Story = {
   args: { id: 'otp' },
   play: async ({ canvasElement }) => {
-    await expectBorderReads(slots(canvasElement)[0])
+    await expectSoftFieldBorder(slots(canvasElement)[0])
     // The browser and the phone offer the code from a text message.
     await expect(within(canvasElement).getByRole('textbox', { name: 'Código de verificación' })).toHaveAttribute(
       'autocomplete',
@@ -65,7 +65,7 @@ export const Default: Story = {
 export const Filled: Story = { args: { id: 'otp-filled', defaultValue: '482913' } }
 
 /**
- * Typing fills the boxes one by one and the box being typed in carries the brand outline, not a new border; letters
+ * Typing fills the boxes one by one and the box being typed in turns Azul Aura with a glow; letters
  * are ignored; the sixth digit calls `onComplete`.
  */
 export const Typing: Story = {
@@ -76,8 +76,12 @@ export const Typing: Story = {
     const resting = getComputedStyle(second).borderTopColor
     await userEvent.click(input)
     await waitFor(() => expect(first).toHaveAttribute('data-active', 'true'))
-    await expect(getComputedStyle(first).borderTopColor).toBe(resting)
-    await expect(getComputedStyle(first).outlineStyle).toBe('solid')
+    await expect(resting).toBe('rgb(196, 196, 204)')
+    // After the color transition: an Azul Aura border and a 3px glow.
+    await waitFor(() => {
+      expect(getComputedStyle(first).borderTopColor).toBe('rgb(37, 99, 235)')
+      expect(getComputedStyle(first).boxShadow).toMatch(/0px 0px 0px 3px/)
+    })
     await userEvent.keyboard('48a2913')
     await expect(input).toHaveValue('482913')
     await expect(args.onComplete).toHaveBeenCalledWith('482913')

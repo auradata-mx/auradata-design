@@ -1,9 +1,10 @@
-// registry: auradata (shadcn dialog in Spanish, the close button centered on the title, a scrim that reads in dark, 40 px stacked footer buttons on a phone like the alert dialog)
+// registry: auradata (shadcn dialog in Spanish, the close button centered on the title, a scrim that reads in dark, 40 px stacked footer buttons on a phone like the alert dialog, and `DialogBody` with progressive scroll blur)
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
+import { ScrollBlur } from "@/components/ui/progressive-blur"
 import { XIcon } from "lucide-react"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
@@ -52,7 +53,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground shadow-(--elevation-modal) ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-2rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground shadow-(--elevation-modal) ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm has-data-[slot=dialog-body]:flex has-data-[slot=dialog-body]:flex-col data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
@@ -83,9 +84,35 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("flex shrink-0 flex-col gap-2", className)}
       {...props}
     />
+  )
+}
+
+/** A scrolling dialog body whose edges blur progressively when more content lies beyond them. */
+function DialogBody({
+  className,
+  viewportClassName,
+  size = "2.5rem",
+  blur = 10,
+  "aria-label": ariaLabel = "Contenido del diálogo",
+  ...props
+}: React.ComponentProps<typeof ScrollBlur>) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn("-mx-4 flex min-h-0 flex-1 flex-col [--blur-tint:var(--popover)]", className)}
+    >
+      <ScrollBlur
+        size={size}
+        blur={blur}
+        aria-label={ariaLabel}
+        className="min-h-0 flex-1"
+        viewportClassName={cn("px-4 py-1", viewportClassName)}
+        {...props}
+      />
+    </div>
   )
 }
 
@@ -101,7 +128,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 max-sm:*:data-[slot=button]:h-10 sm:flex-row sm:justify-end",
+        "-mx-4 -mb-4 flex shrink-0 flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 max-sm:*:data-[slot=button]:h-10 sm:flex-row sm:justify-end",
         className
       )}
       {...props}
@@ -147,6 +174,7 @@ function DialogDescription({
 
 export {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,

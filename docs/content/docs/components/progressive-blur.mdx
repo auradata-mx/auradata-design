@@ -1,0 +1,51 @@
+---
+title: Progressive blur
+description: "Suaviza el borde de un encabezado fijo o una lista desplazable."
+---
+
+AuraData superpone capas de desenfoque: el efecto es más fuerte en el borde y disminuye hacia dentro. Es decorativo y no intercepta el puntero.
+
+<ComponentPreview name="progressive-blur/demo" />
+
+## Instalación
+
+<ComponentInstall item="progressive-blur" />
+
+## Uso
+
+```tsx
+import { ProgressiveBlur } from '@/components/ui/progressive-blur';
+
+<div className="relative overflow-hidden">
+  {/* Contenido detrás del borde */}
+  <ProgressiveBlur side="bottom" tint />
+</div>;
+```
+
+## Ejemplos
+
+### Bordes al desplazar una lista
+
+`ScrollBlur` muestra el efecto solo en los bordes por donde queda contenido. Desplaza la lista para ver cómo cambia.
+
+<ComponentPreview name="progressive-blur/scroll" />
+
+## Props
+
+### ProgressiveBlur
+
+<ComponentProps file="progressive-blur" type="Pick<React.ComponentProps<typeof ProgressiveBlur>, 'side' | 'size' | 'blur' | 'layers' | 'tint'>" />
+
+### ScrollBlur
+
+<ComponentProps file="progressive-blur" type="Pick<React.ComponentProps<typeof ScrollBlur>, 'orientation' | 'size' | 'blur' | 'viewportClassName' | 'children'>" />
+
+## Cuándo usarlo
+
+- Para distinguir un encabezado fijo del contenido que pasa por detrás, o para insinuar que hay más elementos al desplazar una lista.
+
+## Cuándo no
+
+- No lo uses como única señal de desplazamiento ni encima de texto que deba leerse siempre. Conserva el acceso al contenido sin el efecto.
+
+<StorybookLink stories="ProgressiveBlur" story="ScrollEdges" />

@@ -16,7 +16,7 @@ import {
   useComboboxAnchor,
 } from '@/components/ui/combobox'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
-import { blur, expectBorderReads, expectDestructiveBorder } from './play-helpers'
+import { blur, expectSoftFieldBorder, expectDestructiveBorder } from './play-helpers'
 
 const DATASETS = [
   'Pedidos 2026',
@@ -219,7 +219,7 @@ export const Multiple: Story = {
     const canvas = within(canvasElement)
     await expect(canvas.getByRole('button', { name: 'Quitar Pedidos 2026' })).toBeInTheDocument()
     const chips = canvasElement.querySelector<HTMLElement>('[data-slot=combobox-chips]')!
-    await expectBorderReads(chips)
+    await expectSoftFieldBorder(chips)
     // Focused, the field keeps its border: the brand outline alone marks the focus.
     const before = getComputedStyle(chips).borderTopColor
     canvas.getByRole('combobox', { name: 'Datasets' }).focus()

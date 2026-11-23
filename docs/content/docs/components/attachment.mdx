@@ -1,0 +1,78 @@
+---
+title: Attachment
+description: "Muestra los archivos adjuntos y el estado de cada uno."
+---
+
+En AuraData, el grupo se desvanece en el borde donde hay más archivos. El botón de quitar se alinea en la tarjeta y, si falla la carga, la descripción usa el color de error con contraste AA.
+
+<ComponentPreview name="attachment/demo" />
+
+## Instalación
+
+<ComponentInstall item="attachment" />
+
+## Uso
+
+```tsx
+import { Attachment, AttachmentContent, AttachmentTitle } from '@/components/ui/attachment';
+
+<Attachment>
+  <AttachmentContent><AttachmentTitle>ventas.xlsx</AttachmentTitle></AttachmentContent>
+</Attachment>;
+```
+
+## Ejemplos
+
+### Error de carga
+
+Indica qué pasó y qué puede hacer el usuario; no dejes que el tinte sea la única señal.
+
+<ComponentPreview name="attachment/error" />
+
+## Props
+
+### Attachment
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof Attachment>, 'state' | 'size' | 'orientation'>" />
+
+### AttachmentMedia
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentMedia>, 'variant'>" />
+
+### AttachmentAction
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentAction>, 'size' | 'variant' | 'aria-label' | 'onClick'>" />
+
+### AttachmentTrigger
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentTrigger>, 'render' | 'children'>" />
+
+### AttachmentGroup
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentGroup>, 'children'>" />
+
+### AttachmentContent
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentContent>, 'children'>" />
+
+### AttachmentTitle
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentTitle>, 'children'>" />
+
+### AttachmentDescription
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentDescription>, 'children'>" />
+
+### AttachmentActions
+
+<ComponentProps file="attachment" type="Pick<React.ComponentProps<typeof AttachmentActions>, 'children'>" />
+
+## Cuándo usarlo
+
+- Muestra el nombre, el estado y las acciones de cada archivo ya seleccionado. Incluye el nombre del archivo en la etiqueta de «Quitar».
+
+## Cuándo no
+
+- Para seleccionar o arrastrar archivos, usa `FileDropzone`; `Attachment` no sube los archivos por su cuenta.
+
+<StorybookLink stories="Attachment" story="Default" />

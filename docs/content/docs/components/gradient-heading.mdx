@@ -1,0 +1,50 @@
+---
+title: Gradient heading
+description: "Destaca unas palabras del encabezado con el degradado de marca."
+---
+
+El degradado azul, violeta y verde termina en la última letra resaltada, no en el borde de la página. El nivel del encabezado es independiente de su tamaño visual.
+
+<ComponentPreview name="gradient-heading/demo" />
+
+## Instalación
+
+<ComponentInstall item="gradient-heading" />
+
+## Uso
+
+```tsx
+import { GradientHeading } from '@/components/ui/gradient-heading';
+
+<GradientHeading as="h2" size="section" highlight="en un solo lugar">
+  Tus datos,
+</GradientHeading>;
+```
+
+## Ejemplos
+
+### En la misma línea
+
+`inline` evita el salto forzado antes de las palabras resaltadas; el texto aún puede ajustarse al ancho disponible.
+
+<ComponentPreview name="gradient-heading/inline" />
+
+## Props
+
+### GradientHeading
+
+<ComponentProps file="gradient-heading" type="Pick<React.ComponentProps<typeof GradientHeading>, 'as' | 'size' | 'highlight' | 'inline' | 'children'>" />
+
+### GradientText
+
+<ComponentProps file="gradient-heading" type="Pick<React.ComponentProps<typeof GradientText>, 'children' | 'className'>" />
+
+## Cuándo usarlo
+
+- Para un encabezado de presentación que necesita destacar unas palabras. Elige `as` según la jerarquía de la página, no el tamaño.
+
+## Cuándo no
+
+- Para texto corrido, etiquetas de controles o estados, conserva el color de texto de la interfaz.
+
+<StorybookLink stories="GradientHeading" story="Default" />

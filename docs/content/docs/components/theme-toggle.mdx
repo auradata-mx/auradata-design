@@ -1,0 +1,42 @@
+---
+title: Theme toggle
+description: "Cambia el tema de la app entre claro, oscuro y el del sistema."
+---
+
+El botón abre el menú de tema de AuraData, con las mismas opciones que el menú de usuario. No guarda ni aplica el ajuste por su cuenta: eso corresponde a la app.
+
+<ComponentPreview name="theme-toggle/demo" />
+
+## Instalación
+
+<ComponentInstall item="theme-toggle" />
+
+## Uso
+
+```tsx
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+
+<ThemeToggle theme={theme} onThemeChange={setTheme} />;
+```
+
+## Ejemplos
+
+### Selección controlada
+
+El componente emite el valor elegido. Este ejemplo actualiza la selección local sin cambiar el tema de la página.
+
+<ComponentPreview name="theme-toggle/controlled" />
+
+## Props
+
+<ComponentProps file="theme-toggle" type="Pick<React.ComponentProps<typeof ThemeToggle>, 'theme' | 'onThemeChange' | 'defaultOpen'>" />
+
+## Cuándo usarlo
+
+- En la barra superior si es útil cambiar de tema desde cualquier pantalla. Conecta `onThemeChange` al proveedor que aplica y guarda el ajuste.
+
+## Cuándo no
+
+- Para cambiar cómo se ve un informe, no el tema de la app, usa `Tabs` o `ToggleGroup`.
+
+<StorybookLink stories="ThemeToggle" story="Default" />

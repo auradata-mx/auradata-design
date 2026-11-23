@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, within } from 'storybook/test'
+import { expect, waitFor, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui/page-header'
@@ -47,5 +47,32 @@ export const LongTitle: Story = {
     const wide = header.clientWidth >= 640
     const beside = actions.getBoundingClientRect().left >= title.getBoundingClientRect().right
     await expect(beside).toBe(wide)
+  },
+}
+
+/** `sticky`: sticks to the top of its scroll container and progressively blurs content passing behind it. */
+export const Sticky: Story = {
+  parameters: { themeFrame: { padded: false } },
+  render: (args) => (
+    <div data-testid="page" tabIndex={0} aria-label="Informes" className="h-96 overflow-y-auto px-6 pb-6">
+      <PageHeader {...args} sticky />
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        {Array.from({ length: 8 }, (_, index) => (
+          <article key={index} className="rounded-xl border bg-card p-4">
+            <div className={index % 2 ? 'h-16 rounded-lg bg-chart-2/35' : 'h-16 rounded-lg bg-chart-1/35'} />
+            <h2 className="mt-3 font-medium">Informe {index + 1}</h2>
+            <p className="text-sm text-muted-foreground">Actualizado hoy</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const page = within(canvasElement).getByTestId('page')
+    page.scrollTop = 120
+    await waitFor(() => expect(page.scrollTop).toBe(120))
+    const header = canvasElement.querySelector('[data-slot="page-header"]')!
+    await expect(header).toHaveAttribute('data-sticky', 'true')
+    await expect(header.querySelector('[data-slot="progressive-blur"]')).not.toBeNull()
   },
 }

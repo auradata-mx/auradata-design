@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { expect } from 'storybook/test'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -64,4 +65,37 @@ export const LongTitle: Story = {
       </CardContent>
     </Card>
   ),
+}
+
+/** A card nested inside another steps its corner radius down concentrically (`rounded-xl` → `rounded-lg`). */
+export const Nested: Story = {
+  render: () => (
+    <Card className="max-w-md" data-testid="outer-card">
+      <CardHeader>
+        <CardTitle>Resumen del trimestre</CardTitle>
+        <CardDescription>Métricas agrupadas en tarjetas internas.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-3 sm:grid-cols-2">
+        <Card size="sm" data-testid="inner-card" className="shadow-none">
+          <CardHeader>
+            <CardTitle>Ingresos</CardTitle>
+          </CardHeader>
+          <CardContent className="text-xl font-semibold tabular-nums">{formatCurrency(842000)}</CardContent>
+        </Card>
+        <Card size="sm" className="shadow-none">
+          <CardHeader>
+            <CardTitle>Pedidos</CardTitle>
+          </CardHeader>
+          <CardContent className="text-xl font-semibold tabular-nums">{formatNumber(3140)}</CardContent>
+        </Card>
+      </CardContent>
+    </Card>
+  ),
+  play: async ({ canvasElement }) => {
+    const outer = canvasElement.querySelector<HTMLElement>('[data-testid="outer-card"]')!
+    const inner = canvasElement.querySelector<HTMLElement>('[data-testid="inner-card"]')!
+    const outerRadius = Number.parseFloat(getComputedStyle(outer).borderTopLeftRadius)
+    const innerRadius = Number.parseFloat(getComputedStyle(inner).borderTopLeftRadius)
+    await expect(innerRadius).toBeLessThan(outerRadius)
+  },
 }

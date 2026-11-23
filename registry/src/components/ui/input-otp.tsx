@@ -1,4 +1,4 @@
-// registry: auradata (shadcn input OTP: boxes with the 3:1 text-control border, the box being typed in marked by the brand focus outline instead of a new border, a crisp red border on every box when invalid with the digits in the text color, 40 px boxes for a finger)
+// registry: auradata (shadcn input OTP: boxes with the soft field border, the box being typed in marked by an Azul Aura border and glow, a crisp red border on every box when invalid with the digits in the text color, 40 px boxes for a finger)
 "use client"
 
 import * as React from "react"
@@ -57,7 +57,7 @@ function InputOTPSlot({
       className={cn(
         // The real input is hidden behind the boxes: the box being typed in carries the brand outline (2 px,
         // 2 px away) that a focused control would. An invalid code (aria-invalid on InputOTP) reddens every box.
-        "relative flex size-10 items-center justify-center border-y border-r border-[color:var(--control-border,var(--input))] text-base font-medium text-foreground tabular-nums transition-colors first:rounded-l-lg first:border-l last:rounded-r-lg data-[active=true]:z-10 data-[active=true]:outline-2 data-[active=true]:outline-offset-2 data-[active=true]:outline-solid data-[active=true]:outline-ring group-has-[input[aria-invalid=true]]/input-otp:border-destructive dark:bg-input/30",
+        "relative flex size-10 items-center justify-center border-y border-r border-[color:var(--field-border,var(--input))] text-base font-medium text-foreground tabular-nums transition-colors first:rounded-l-lg first:border-l last:rounded-r-lg data-[active=true]:z-10 data-[active=true]:border-ring data-[active=true]:ring-ring/25 data-[active=true]:ring-3 group-has-[input[aria-invalid=true]]/input-otp:border-destructive dark:bg-input/30",
         className
       )}
       {...props}

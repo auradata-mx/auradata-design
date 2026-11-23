@@ -51,10 +51,10 @@ const preview: Preview = {
     layout: 'fullscreen',
     docs: { theme: auradata },
     viewport: { options: VIEWPORTS },
-    // The brand first, then what apps install, then the stock shadcn components.
+    // Inicio (the pointer to the docs site) first, then what apps install, then the stock shadcn components.
     options: {
       storySort: {
-        order: ['Brand', ['01 Identidad', '02 Logotipo', '03 Tipografía', '04 Color', '05 Voz', '06 Iconografía', '07 Espaciado, radios, sombras y movimiento', '08 Layout y grilla', '09 Estados y accesibilidad', '10 Visualización de datos', '11 Patrones', 'Tokens'], 'Guides', 'AuraData', 'Blocks', 'Components'],
+        order: ['Inicio', 'AuraData', 'Blocks', 'Components'],
       },
     },
     controls: {

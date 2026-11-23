@@ -1,0 +1,75 @@
+---
+title: Radio group
+description: "Elige una sola opción de una lista corta, todas a la vista."
+---
+
+El radio group de shadcn sobre Base UI: los círculos se atenúan al deshabilitarse (Base UI marca `data-disabled`), el foco es solo el contorno de la marca, el borde contrasta 3:1 con la página y, inválido, toma el borde destructivo completo.
+
+<ComponentPreview name="radio-group/demo" />
+
+## Instalación
+
+<ComponentInstall item="radio-group" />
+
+## Uso
+
+```tsx
+import { Field, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
+<FieldSet>
+  <FieldLegend variant="label">Enviar el informe</FieldLegend>
+  <RadioGroup defaultValue="semanal">
+    <Field orientation="horizontal">
+      <RadioGroupItem id="diario" value="diario" />
+      <FieldLabel htmlFor="diario">Diario</FieldLabel>
+    </Field>
+    <Field orientation="horizontal">
+      <RadioGroupItem id="semanal" value="semanal" />
+      <FieldLabel htmlFor="semanal">Cada lunes</FieldLabel>
+    </Field>
+  </RadioGroup>
+</FieldSet>;
+```
+
+## Ejemplos
+
+### Inválido
+
+Sin valor elegido: `aria-invalid` en el grupo y en cada opción, `data-invalid` en el `FieldSet` y el `FieldError` dice qué falta.
+
+<ComponentPreview name="radio-group/invalid" />
+
+### Deshabilitado
+
+`disabled` en el grupo; `data-disabled` en cada `Field` atenúa también las etiquetas.
+
+<ComponentPreview name="radio-group/disabled" />
+
+## Props
+
+### RadioGroup
+
+<ComponentProps
+  file="radio-group"
+  type="Pick<React.ComponentProps<typeof RadioGroup>, 'value' | 'defaultValue' | 'onValueChange' | 'disabled'>"
+  baseUi="radio"
+/>
+
+### RadioGroupItem
+
+<ComponentProps file="radio-group" type="Pick<React.ComponentProps<typeof RadioGroupItem>, 'value' | 'disabled'>" />
+
+## Cuándo usarlo
+
+- **Una opción de pocas (de 2 a 5)** que conviene ver todas a la vez, con su texto completo.
+- **Siempre en un `FieldSet`** con un `FieldLegend` que nombra la pregunta; cada opción lleva su `FieldLabel`.
+
+## Cuándo no
+
+- **Una lista larga o que no cabe**: `Select`.
+- **Cambiar de vista** (Tabla | Gráfica): `Tabs` o `ToggleGroup`.
+- **Varias opciones a la vez**: `Checkbox`.
+- **Encender o apagar un ajuste**: `Switch`.
+
+<StorybookLink stories="RadioGroup" />

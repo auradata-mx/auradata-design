@@ -1,0 +1,48 @@
+---
+title: Kbd
+description: "Identifica la tecla o combinación que dispara un atajo."
+---
+
+`Kbd` dibuja una tecla con un borde visible también sobre superficies claras. Sirve para enseñar el atajo; no registra teclas ni dispara acciones por sí mismo.
+
+<ComponentPreview name="kbd/demo" />
+
+## Instalación
+
+<ComponentInstall item="kbd" />
+
+## Uso
+
+```tsx
+import { Kbd } from '@/components/ui/kbd';
+
+<Kbd>Esc</Kbd>;
+```
+
+## Ejemplos
+
+### Teclas simultáneas
+
+Agrupa las teclas con `KbdGroup` y explica qué hace la combinación.
+
+<ComponentPreview name="kbd/group" />
+
+## Props
+
+### Kbd
+
+<ComponentProps file="kbd" type="Pick<React.ComponentProps<typeof Kbd>, 'children' | 'className'>" />
+
+### KbdGroup
+
+<ComponentProps file="kbd" type="Pick<React.ComponentProps<typeof KbdGroup>, 'children' | 'className'>" />
+
+## Cuándo usarlo
+
+- Junto a una instrucción o en la ayuda de atajos. Muestra la combinación que corresponde a la plataforma.
+
+## Cuándo no
+
+- Si la persona tiene que hacer clic para disparar una acción, usa `Button`. `Kbd` solo muestra una tecla.
+
+<StorybookLink stories="Kbd" story="Group" />

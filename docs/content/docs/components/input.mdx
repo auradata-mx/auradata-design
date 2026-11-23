@@ -1,0 +1,68 @@
+---
+title: Input
+description: "Un campo de texto corto: un nombre, un correo, una búsqueda."
+---
+
+El input de shadcn con el contorno de foco de la marca, un borde que contrasta 3:1 con la página en claro y oscuro, y un estado inválido con el borde destructivo completo. Va hundido (`--elevation-sunken`), como todos los campos.
+
+<ComponentPreview name="input/demo" />
+
+## Instalación
+
+<ComponentInstall item="input" />
+
+## Uso
+
+```tsx
+import { Input } from '@/components/ui/input';
+
+<Input placeholder="Buscar informes…" aria-label="Buscar informes" />;
+```
+
+## Ejemplos
+
+### Con etiqueta y ayuda
+
+Dentro de un formulario, cada input va en un `Field` con su `FieldLabel`; la ayuda va debajo, en una línea, con `FieldDescription`.
+
+<ComponentPreview name="input/field" />
+
+### Inválido
+
+Marca el input con `aria-invalid`, el `Field` con `data-invalid`, y explica en `FieldError` cómo corregirlo.
+
+<ComponentPreview name="input/invalid" />
+
+### Deshabilitado
+
+<ComponentPreview name="input/disabled" />
+
+## Props
+
+<ComponentProps
+  file="input"
+  type="Pick<React.ComponentProps<typeof Input>, 'type' | 'placeholder' | 'disabled' | 'aria-invalid'>"
+  baseUi="input"
+/>
+
+## Cuándo usarlo
+
+- **Texto corto**: el campo de siempre para un nombre, un correo o una búsqueda.
+- **Siempre con nombre**: un `FieldLabel` visible o, si no hay espacio (una búsqueda en una barra), un `aria-label`. El placeholder no reemplaza a la etiqueta.
+- **Valida al salir del campo o al enviar**, no mientras se escribe.
+
+## Cuándo no
+
+Hay un control para cada dato:
+
+| Dato | Control |
+| --- | --- |
+| Un número con pasos | `NumberInput` |
+| Dinero | `CurrencyInput` |
+| Teléfono | `PhoneInput` |
+| Contraseña nueva | `PasswordInput` |
+| Código de verificación | `InputOTP` |
+| Un día o una hora | `DatePicker`, `TimePicker` |
+| Texto largo | `Textarea` |
+
+<StorybookLink stories="Input" />

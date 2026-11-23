@@ -1,0 +1,60 @@
+---
+title: Stepper
+description: "Dónde va la persona en un asistente de varios pasos, y cuáles ya terminó."
+---
+
+Un componente de AuraData: los pasos de un asistente, en horizontal o en vertical, cada uno completado, actual, con errores o pendiente. El estado también se dice con palabras para los lectores de pantalla («Credenciales (completado)») y el paso actual lleva `aria-current="step"`. En el teléfono, el stepper horizontal deja solo el título del paso actual; los demás conservan su número.
+
+<ComponentPreview name="stepper/demo" />
+
+## Instalación
+
+<ComponentInstall item="stepper" />
+
+## Uso
+
+```tsx
+import { Stepper } from '@/components/ui/stepper';
+
+const steps = [
+  { title: 'Base de datos', description: 'PostgreSQL, MySQL o BigQuery' },
+  { title: 'Credenciales', description: 'Servidor, usuario y contraseña' },
+  { title: 'Probar conexión' },
+];
+
+<Stepper steps={steps} current={1} />;
+```
+
+El stepper muestra dónde vas; el formulario de cada paso y sus botones son tuyos (ver «Asistente»).
+
+## Ejemplos
+
+### Vertical y con errores
+
+Con `orientation="vertical"`, para una columna lateral. `errors` marca los pasos con algo que corregir, estén donde estén.
+
+<ComponentPreview name="stepper/vertical" />
+
+### Asistente
+
+«Nueva conexión»: «Siguiente» avanza y, con `onStepClick`, un paso completado se vuelve un botón que lo abre otra vez. Los pasos pendientes no se pueden abrir.
+
+<ComponentPreview name="stepper/wizard" />
+
+## Props
+
+<ComponentProps file="stepper" type="Pick<StepperProps, 'steps' | 'current' | 'errors' | 'orientation' | 'onStepClick' | 'aria-label'>" />
+
+## Cuándo usarlo
+
+- **Un formulario largo**: pocos campos por paso, y dónde vas.
+- **Pasos en orden** con un nombre corto cada uno: «Base de datos», «Credenciales», «Probar conexión».
+- **Volver a un paso hecho** con `onStepClick`, sin perder lo que ya se escribió.
+
+## Cuándo no
+
+- **Secciones que se recorren en cualquier orden**: `Tabs`.
+- **Los primeros pasos de una cuenta**: `OnboardingChecklist`.
+- **Un formulario corto**: todos los campos en una sola página.
+
+<StorybookLink stories="Stepper" story="Horizontal" />
