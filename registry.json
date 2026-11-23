@@ -183,7 +183,18 @@
           "destructive-600": "#DC2626",
           "destructive-700": "#B91C1C",
           "destructive-800": "#991B1B",
-          "destructive-900": "#7F1D1D"
+          "destructive-900": "#7F1D1D",
+          "elevation-raised": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 2px rgb(15 23 42 / 0.08), 0 12px 32px -12px rgb(15 23 42 / 0.22)",
+          "elevation-raised-hover": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 2px 4px rgb(15 23 42 / 0.08), 0 20px 40px -14px rgb(15 23 42 / 0.28)",
+          "elevation-control": "inset 0 1px 0 rgb(255 255 255 / 0.25), 0 1px 2px rgb(15 23 42 / 0.1)",
+          "elevation-control-hover": "inset 0 1px 0 rgb(255 255 255 / 0.25), 0 2px 4px rgb(15 23 42 / 0.1), 0 6px 14px -6px rgb(15 23 42 / 0.25)",
+          "elevation-pressed": "inset 0 1px 2px rgb(15 23 42 / 0.2)",
+          "elevation-sunken": "inset 0 1px 2px rgb(15 23 42 / 0.07)",
+          "elevation-overlay": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 2px 4px rgb(15 23 42 / 0.06), 0 16px 40px -12px rgb(15 23 42 / 0.24)",
+          "elevation-modal": "0 2px 6px rgb(15 23 42 / 0.08), 0 32px 64px -16px rgb(15 23 42 / 0.32)",
+          "surface-raised": "linear-gradient(180deg, rgb(255 255 255 / 0) 0%, rgb(15 23 42 / 0.025) 100%)",
+          "surface-filled": "linear-gradient(180deg, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0) 50%, rgb(0 0 0 / 0.08) 100%)",
+          "surface-grain": "none"
         },
         "dark": {
           "background": "#111117",
@@ -287,7 +298,18 @@
           "destructive-600": "#EF4444",
           "destructive-700": "#F87171",
           "destructive-800": "#FCA5A5",
-          "destructive-900": "#FECACA"
+          "destructive-900": "#FECACA",
+          "elevation-raised": "inset 0 1px 0 rgb(255 255 255 / 0.08), 0 1px 2px rgb(0 0 0 / 0.4), 0 16px 40px -16px rgb(0 0 0 / 0.8)",
+          "elevation-raised-hover": "inset 0 1px 0 rgb(255 255 255 / 0.1), 0 2px 4px rgb(0 0 0 / 0.45), 0 24px 48px -16px rgb(0 0 0 / 0.85)",
+          "elevation-control": "inset 0 1px 0 rgb(255 255 255 / 0.12), 0 1px 2px rgb(0 0 0 / 0.4)",
+          "elevation-control-hover": "inset 0 1px 0 rgb(255 255 255 / 0.16), 0 2px 4px rgb(0 0 0 / 0.45), 0 8px 18px -8px rgb(0 0 0 / 0.7)",
+          "elevation-pressed": "inset 0 1px 2px rgb(0 0 0 / 0.5)",
+          "elevation-sunken": "inset 0 1px 2px rgb(0 0 0 / 0.5)",
+          "elevation-overlay": "inset 0 1px 0 rgb(255 255 255 / 0.08), 0 2px 6px rgb(0 0 0 / 0.5), 0 20px 48px -12px rgb(0 0 0 / 0.75)",
+          "elevation-modal": "inset 0 1px 0 rgb(255 255 255 / 0.08), 0 32px 72px -16px rgb(0 0 0 / 0.85)",
+          "surface-raised": "linear-gradient(180deg, rgb(255 255 255 / 0.04) 0%, rgb(255 255 255 / 0.01) 100%)",
+          "surface-filled": "linear-gradient(180deg, rgb(255 255 255 / 0.14) 0%, rgb(255 255 255 / 0) 50%, rgb(0 0 0 / 0.06) 100%)",
+          "surface-grain": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")"
         }
       },
       "css": {
@@ -304,6 +326,11 @@
           },
           "[data-density=\"normal\"]": {
             "--spacing": "0.25rem"
+          },
+          ":where([data-slot=\"card\"])": {
+            "--tw-shadow": "var(--elevation-raised)",
+            "box-shadow": "var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)",
+            "background-image": "var(--surface-raised)"
           }
         },
         ":where([class*=\"focus-visible:ring-\"]:not([class~=\"focus-visible:ring-0\"], [data-slot=\"field-label\"]:has(> [data-slot=\"field\"]) *)):focus-visible,\n:where([class*=\"focus-visible:ring-\"]):has(> input:focus-visible),\n:where([class*=\"focus-within:ring-\"]:not([class*=\"focus-within:ring-0\"])):has(:focus-visible),\n:where([data-slot=\"input-group\"]:not([data-slot=\"combobox-content\"] *)):has([data-slot=\"input-group-control\"]:focus-visible),\n:where([data-slot=\"code-block\"]):has(> [data-slot=\"code-block-content\"]:focus-visible),\n:where([data-slot=\"field-label\"]:has(> [data-slot=\"field\"])):has(:focus-visible)": {
@@ -418,7 +445,18 @@
             "--destructive-600": "#DC2626",
             "--destructive-700": "#B91C1C",
             "--destructive-800": "#991B1B",
-            "--destructive-900": "#7F1D1D"
+            "--destructive-900": "#7F1D1D",
+            "--elevation-raised": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 2px rgb(15 23 42 / 0.08), 0 12px 32px -12px rgb(15 23 42 / 0.22)",
+            "--elevation-raised-hover": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 2px 4px rgb(15 23 42 / 0.08), 0 20px 40px -14px rgb(15 23 42 / 0.28)",
+            "--elevation-control": "inset 0 1px 0 rgb(255 255 255 / 0.25), 0 1px 2px rgb(15 23 42 / 0.1)",
+            "--elevation-control-hover": "inset 0 1px 0 rgb(255 255 255 / 0.25), 0 2px 4px rgb(15 23 42 / 0.1), 0 6px 14px -6px rgb(15 23 42 / 0.25)",
+            "--elevation-pressed": "inset 0 1px 2px rgb(15 23 42 / 0.2)",
+            "--elevation-sunken": "inset 0 1px 2px rgb(15 23 42 / 0.07)",
+            "--elevation-overlay": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 2px 4px rgb(15 23 42 / 0.06), 0 16px 40px -12px rgb(15 23 42 / 0.24)",
+            "--elevation-modal": "0 2px 6px rgb(15 23 42 / 0.08), 0 32px 64px -16px rgb(15 23 42 / 0.32)",
+            "--surface-raised": "linear-gradient(180deg, rgb(255 255 255 / 0) 0%, rgb(15 23 42 / 0.025) 100%)",
+            "--surface-filled": "linear-gradient(180deg, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0) 50%, rgb(0 0 0 / 0.08) 100%)",
+            "--surface-grain": "none"
           },
           "html": {
             "-webkit-print-color-adjust": "exact",
@@ -461,6 +499,11 @@
         "@media screen": {
           "[data-print=\"only\"]": {
             "display": "none"
+          }
+        },
+        "@media (forced-colors: active)": {
+          ":where([data-slot=\"card\"], [class*=\"--elevation-raised)\"], [class*=\"--elevation-overlay)\"], [class*=\"--elevation-modal)\"])": {
+            "outline": "1px solid CanvasText"
           }
         }
       }
