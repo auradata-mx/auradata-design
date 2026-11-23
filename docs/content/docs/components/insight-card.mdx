@@ -1,0 +1,44 @@
+---
+title: Insight card
+description: "Cuenta qué pasó en los datos y abre el detalle del hallazgo."
+---
+
+La tarjeta de «Hallazgo» encabeza con una frase, no con el nombre de una métrica. La cifra y su cambio respaldan lo que pasó; una descripción breve explica por qué y «Ver detalle» lleva a la evidencia.
+
+<ComponentPreview name="insight-card/demo" />
+
+## Instalación
+
+<ComponentInstall item="insight-card" />
+
+## Uso
+
+```tsx
+import { InsightCard } from '@/components/ui/insight-card';
+import { formatCompact } from '@/lib/format';
+
+<InsightCard title="El Norte creció más que ninguna región" value={formatCompact(1390000, { currency: 'MXN' })} />;
+```
+
+## Ejemplos
+
+### Un cambio desfavorable
+
+Explica el motivo con texto y configura la dirección según la métrica. Un alza en costos no es buena noticia.
+
+<ComponentPreview name="insight-card/costs" />
+
+## Props
+
+<ComponentProps file="insight-card" type="Omit<InsightCardProps, keyof Omit<React.ComponentProps<'div'>, 'title'>>" />
+
+## Cuándo usarlo
+
+- Cuando el dato permite decir **qué pasó y por qué** en un informe o respuesta de chat.
+- Usa `action.href` para navegar a la evidencia y `action.onClick` si el detalle se abre en el lugar.
+
+## Cuándo no
+
+- Para un indicador que aparece siempre con el mismo nombre, sin un hallazgo que contar, usa `KpiCard`.
+
+<StorybookLink stories="InsightCard" />

@@ -1,0 +1,42 @@
+---
+title: Number ticker
+description: "Anima una cifra al entrar en pantalla o cuando cambia su valor."
+---
+
+`NumberTicker` cuenta desde `from` cuando entra en pantalla. Mantiene el ancho con cifras tabulares, entrega el valor final al lector de pantalla de inmediato y lo muestra sin animación con movimiento reducido.
+
+<ComponentPreview name="number-ticker/demo" />
+
+## Instalación
+
+<ComponentInstall item="number-ticker" />
+
+## Uso
+
+```tsx
+import { NumberTicker } from '@/components/ui/number-ticker';
+
+<NumberTicker value={1284} />;
+```
+
+## Ejemplos
+
+### Actualizar una cifra
+
+Cuando cambia `value`, el conteo continúa desde la cifra que se ve en ese momento. Da un `format` para escribir cada paso en la unidad correcta.
+
+<ComponentPreview name="number-ticker/update" />
+
+## Props
+
+<ComponentProps file="number-ticker" type="Omit<NumberTickerProps, keyof React.ComponentProps<'span'>>" />
+
+## Cuándo usarlo
+
+- Para destacar una cifra que aparece en una vista o que cambia tras elegir otro periodo. Dale formato con `lib/format`.
+
+## Cuándo no
+
+- Para explicar cuánto subió o bajó frente a otro periodo, usa `Delta`: la animación solo muestra el valor actual.
+
+<StorybookLink stories="NumberTicker" story="ValueChange" />
