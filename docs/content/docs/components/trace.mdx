@@ -1,0 +1,66 @@
+---
+title: Trace
+description: "Muestra un paso de una operación y deja abrir su detalle."
+---
+
+`Trace` agrupa los pasos de una operación, como una consulta del chat. El disparador de un paso desplegable tiene al menos 24 px de alto. Los estados `running`, `error` y `pending` cambian el aspecto de la línea.
+
+<ComponentPreview name="trace/demo" />
+
+## Instalación
+
+<ComponentInstall item="trace" />
+
+## Uso
+
+```tsx
+import { Trace, TraceLine, TraceTitle } from '@/components/ui/trace';
+
+<Trace>
+  <TraceLine status="running"><TraceTitle>Consultando ventas…</TraceTitle></TraceLine>
+</Trace>;
+```
+
+## Ejemplos
+
+### Un paso que falló
+
+Nombra la falla con palabras, no solo con el color. Al abrir el paso, explica qué pasó y qué puede hacer la persona.
+
+<ComponentPreview name="trace/error" />
+
+## Props
+
+### Trace
+
+<ComponentProps file="trace" type="Pick<React.ComponentProps<typeof Trace>, 'children' | 'className'>" />
+
+### TraceLine
+
+<ComponentProps file="trace" type="Pick<React.ComponentProps<typeof TraceLine>, 'status' | 'children'>" />
+
+### TraceIcon, TraceTitle y TraceDescription
+
+<ComponentProps file="trace" type="Pick<React.ComponentProps<typeof TraceTitle>, 'children' | 'className'>" />
+
+### TraceCollapsible
+
+<ComponentProps file="trace" type="Pick<React.ComponentProps<typeof TraceCollapsible>, 'open' | 'defaultOpen' | 'onOpenChange' | 'children'>" />
+
+### TraceCollapsibleTrigger
+
+<ComponentProps file="trace" type="Pick<React.ComponentProps<typeof TraceCollapsibleTrigger>, 'children' | 'disabled'>" />
+
+### TraceCollapsibleContent
+
+<ComponentProps file="trace" type="Pick<React.ComponentProps<typeof TraceCollapsibleContent>, 'children' | 'className'>" />
+
+## Cuándo usarlo
+
+- Para mostrar cómo avanzó una operación y dejar sus detalles técnicos bajo demanda. Usa `TraceIcon` solo como apoyo del texto.
+
+## Cuándo no
+
+- Para mostrar código sin un paso asociado, usa `CodeBlock`. Si falla toda la vista, usa `ErrorState` con un siguiente paso claro.
+
+<StorybookLink stories="Blocks" story="ChatWithSql" />
