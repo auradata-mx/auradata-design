@@ -1,0 +1,76 @@
+---
+title: Empty
+description: "Explica qué falta y cuál es el primer paso."
+---
+
+AuraData da más peso al título que a la descripción. El borde discontinuo opcional se distingue también en modo oscuro.
+
+<ComponentPreview name="empty/demo" />
+
+## Instalación
+
+<ComponentInstall item="empty" />
+
+## Uso
+
+```tsx
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
+
+<Empty>
+  <EmptyHeader>
+    <EmptyTitle>Aún no hay informes</EmptyTitle>
+    <EmptyDescription>Crea el primero desde un dataset.</EmptyDescription>
+  </EmptyHeader>
+</Empty>;
+```
+
+## Ejemplos
+
+### Sin resultados
+
+La lista existe, pero la búsqueda no encontró coincidencias. Sugiere ajustar la búsqueda o quitar los filtros.
+
+<ComponentPreview name="empty/no-results" />
+
+## Props
+
+### Empty
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof Empty>, 'className' | 'children'>" />
+
+### EmptyHeader
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyHeader>, 'children'>" />
+
+### EmptyMedia
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyMedia>, 'variant' | 'children'>" />
+
+### EmptyTitle
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyTitle>, 'children'>" />
+
+### EmptyDescription
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyDescription>, 'children'>" />
+
+### EmptyContent
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyContent>, 'children'>" />
+
+## Cuándo usarlo
+
+- Cuando todavía no hay informes, datos o resultados. Escribe qué falta y ofrece el primer paso cuando exista.
+
+## Cuándo no
+
+- Si la consulta falló, usa `ErrorState`. Mientras carga contenido, usa un `Skeleton` con la forma del contenido.
+
+<StorybookLink stories="Empty" story="Default" />

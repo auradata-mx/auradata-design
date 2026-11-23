@@ -1,0 +1,45 @@
+---
+title: Error state
+description: "Reemplaza el contenido que no se pudo cargar y ofrece cómo recuperarlo."
+---
+
+Construido sobre `Empty`, se anuncia como alerta, ofrece un botón para reintentar y deja el detalle técnico plegado.
+
+<ComponentPreview name="error-state/demo" />
+
+## Instalación
+
+<ComponentInstall item="error-state" />
+
+## Uso
+
+```tsx
+import { ErrorState } from '@/components/ui/error-state';
+
+<ErrorState
+  title="No se pudo cargar el informe"
+  description="Revisa la conexión en Ajustes e inténtalo de nuevo."
+/>;
+```
+
+## Ejemplos
+
+### Con detalle técnico
+
+Empieza por el mensaje útil para la persona; deja el código para soporte dentro de «Detalle técnico».
+
+<ComponentPreview name="error-state/detail" />
+
+## Props
+
+<ComponentProps file="error-state" type="Pick<React.ComponentProps<typeof ErrorState>, 'title' | 'description' | 'onRetry' | 'retryLabel' | 'detail' | 'children'>" />
+
+## Cuándo usarlo
+
+- Úsalo donde debía aparecer el contenido si un error lo bloqueó. Explica qué pasó sin culpar a la persona y da un siguiente paso.
+
+## Cuándo no
+
+- Si no hubo error y simplemente no hay datos, usa `Empty`. Para un aviso al lado de contenido que sigue disponible, usa `Alert`.
+
+<StorybookLink stories="Errorstate" story="Default" />
