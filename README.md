@@ -6,7 +6,7 @@ The AuraData brand for every product, in one private repository.
 | --- | --- | --- |
 | `packages/tokens` (`@auradata/tokens`, published as `@cristianruben-dev/auradata-tokens`) | The brand as data (colors light and dark, fonts, radii, shadows, motion, chart palette), built by Style Dictionary | Every product |
 | `registry` | A shadcn registry: components on Base UI and Tailwind 4, themed by the tokens | New React apps, React islands of auradata.mx |
-| `registry` (Storybook) | The workshop and catalog of the registry components | People building components |
+| `registry` (Storybook) | The workbench: every state of every component and block, with the visual and accessibility tests. The brand guide and usage live in `docs` | People building components |
 | `docs` | The public docs site (Fumadocs on Next.js, a static export): install, brand guide, components, blocks | People adopting AuraData |
 
 ## What each product reads
@@ -56,7 +56,7 @@ major for a renamed or removed one) and write one line. The release workflow ope
 ```bash
 npm install
 npm test                                # tokens tests
-npm run build                           # tokens, registry app and registry items (/registry.json, registry/public/r)
+npm run build                           # tokens, registry app, registry items (/registry.json, registry/public/r) and docs
 npm run storybook -w registry           # catalog on http://localhost:6006
 npm run dev -w docs                     # docs site on http://localhost:3000
 npm run build -w docs                   # docs as static files in docs/out
@@ -65,14 +65,22 @@ npm run build -w docs                   # docs as static files in docs/out
 The docs render the registry components themselves: in `docs`, `@/` resolves to `registry/src` (the docs' own code uses
 `@docs/`), and the docs stylesheet imports `registry/src/index.css`, so the site wears the same tokens.
 
-## The hosted Storybook
+## The hosted site
 
-The catalog and brand guide are public at https://design.auradata.mx, deployed by Coolify from `storybook.Dockerfile`
-(nginx, unprivileged, port 8080, health check on `/healthz`). The same site serves the registry items as JSON under
-`/r/`: `npx shadcn add https://design.auradata.mx/r/kpi-card.json`. Try the image locally:
+https://design.auradata.mx is one image, deployed by Coolify from `storybook.Dockerfile` (nginx, unprivileged, port 8080,
+health check on `/healthz`; nginx config in `registry/deploy/nginx.conf`):
+
+| Path | What it serves |
+| --- | --- |
+| `/` | The docs site (`docs/out`) |
+| `/storybook/` | The Storybook workbench (`registry/storybook-static`) |
+| `/r/` | The registry items as JSON: `npx shadcn add https://design.auradata.mx/r/kpi-card.json` |
+
+Links from before the docs site (`/?path=/story/...`, `/iframe.html?id=...`) redirect under `/storybook/` with the same
+query. Try the image locally:
 
 ```bash
-docker build -f storybook.Dockerfile -t auradata-storybook . && docker run --rm -p 6006:8080 auradata-storybook
+docker build -f storybook.Dockerfile -t auradata-site . && docker run --rm -p 8080:8080 auradata-site
 ```
 
 ## Changing the brand

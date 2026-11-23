@@ -9,9 +9,9 @@ export const docsRoute = '/docs';
 export const registryUrl = 'https://design.auradata.mx/r';
 /**
  * The Storybook workbench, where every component state is tested. The one base every Storybook link uses (the
- * nav and each component page's «Ver en Storybook»): when Storybook moves to `/storybook/` (deploy, D7), change it here.
+ * nav and each component page's «Ver en Storybook»). The same nginx serves it beside the docs, under `/storybook/`.
  */
-export const storybookUrl = 'https://design.auradata.mx';
+export const storybookUrl = '/storybook/';
 
 /** The URL of one story, `components-button--primary`, under `storybookUrl`. */
 export function storybookStoryUrl(storyId: string): string {
