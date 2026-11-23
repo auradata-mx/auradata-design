@@ -6,7 +6,6 @@
  * site builds, so a preview never drifts from its code and a typo fails the build instead of shipping a dead link.
  */
 import type { ComponentType } from 'react';
-import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 import { ServerCodeBlock } from 'fumadocs-ui/components/codeblock.rsc';
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
@@ -116,10 +115,11 @@ export async function StorybookLink({ stories, story = 'Default' }: { stories: s
   const href = await getStoryUrl(stories, story);
   return (
     <div className="not-prose my-4">
-      <Link href={href} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'outline' })}>
+      {/* A plain link: Storybook is served beside the site (/storybook/), not a Next.js route. */}
+      <a href={href} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'outline' })}>
         Ver en Storybook
         <ExternalLink data-icon="inline-end" aria-hidden />
-      </Link>
+      </a>
     </div>
   );
 }

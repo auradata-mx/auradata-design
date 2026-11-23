@@ -69,18 +69,22 @@ export default function HomePage() {
           Explora
         </h2>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {sections.map(({ title, href, description, icon: Icon }) => (
+          {sections.map(({ title, href, description, icon: Icon }) => {
+            const LinkTag = href.startsWith(storybookUrl) ? 'a' : Link;
+            return (
             <li key={title}>
-              <Link
+              {/* Storybook is served beside the site (/storybook/), not a Next.js route: a plain link loads it. */}
+              <LinkTag
                 href={href}
                 className="flex h-full flex-col gap-3 rounded-xl border bg-card p-5 text-card-foreground transition-colors hover:bg-accent"
               >
                 <Icon aria-hidden className="size-5 text-primary" />
                 <span className="font-medium">{title}</span>
                 <span className="text-sm text-muted-foreground">{description}</span>
-              </Link>
+              </LinkTag>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
     </div>
