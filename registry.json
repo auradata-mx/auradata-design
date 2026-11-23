@@ -321,12 +321,6 @@
           ":where([data-slot=\"checkbox\"], [data-slot=\"radio-group-item\"])": {
             "--input": "var(--control-border)"
           },
-          "[data-density=\"compact\"]": {
-            "--spacing": "0.21875rem"
-          },
-          "[data-density=\"normal\"]": {
-            "--spacing": "0.25rem"
-          },
           ":where([data-slot=\"card\"])": {
             "--tw-shadow": "var(--elevation-raised)",
             "box-shadow": "var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)",
@@ -340,166 +334,6 @@
         },
         ":where([data-slot$=\"viewport\"]):focus-visible": {
           "outline-offset": "-2px"
-        },
-        "@media print": {
-          ":root:root, .dark.dark": {
-            "color-scheme": "light",
-            "--background": "#FFFFFF",
-            "--foreground": "#0A0A0F",
-            "--card": "#FFFFFF",
-            "--card-foreground": "#0A0A0F",
-            "--popover": "#FFFFFF",
-            "--popover-foreground": "#0A0A0F",
-            "--primary": "#2563EB",
-            "--primary-foreground": "#FFFFFF",
-            "--secondary": "#F5F5F5",
-            "--secondary-foreground": "#0A0A0F",
-            "--muted": "#F5F5F5",
-            "--muted-foreground": "#666666",
-            "--accent": "#EFEFF2",
-            "--accent-foreground": "#0A0A0F",
-            "--destructive": "#DC2626",
-            "--destructive-foreground": "#FFFFFF",
-            "--success": "#059669",
-            "--success-foreground": "#0A0A0F",
-            "--warning": "#D97706",
-            "--warning-foreground": "#0A0A0F",
-            "--info": "#2563EB",
-            "--info-foreground": "#FFFFFF",
-            "--border": "#E5E5E5",
-            "--input": "#E5E5E5",
-            "--control-border": "#858585",
-            "--ring": "#181818",
-            "--chart-1": "#2563EB",
-            "--chart-2": "#7C3AED",
-            "--chart-3": "#10B981",
-            "--chart-4": "#F59E0B",
-            "--chart-5": "#EC4899",
-            "--chart-6": "#06B6D4",
-            "--chart-7": "#F97316",
-            "--chart-8": "#64748B",
-            "--gradient-brand": "linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%)",
-            "--radius": "8px",
-            "--sidebar": "#FFFFFF",
-            "--sidebar-foreground": "#0A0A0F",
-            "--sidebar-primary": "#2563EB",
-            "--sidebar-primary-foreground": "#FFFFFF",
-            "--sidebar-accent": "#F5F5F5",
-            "--sidebar-accent-foreground": "#0A0A0F",
-            "--sidebar-border": "#E5E5E5",
-            "--sidebar-ring": "#181818",
-            "--sequential-1": "#DBEAFE",
-            "--sequential-2": "#BFDBFE",
-            "--sequential-3": "#93C5FD",
-            "--sequential-4": "#60A5FA",
-            "--sequential-5": "#3B82F6",
-            "--sequential-6": "#2563EB",
-            "--sequential-7": "#1D4ED8",
-            "--sequential-8": "#1E40AF",
-            "--sequential-9": "#1E3A8A",
-            "--diverging-1": "#991B1B",
-            "--diverging-2": "#DC2626",
-            "--diverging-3": "#F87171",
-            "--diverging-4": "#FECACA",
-            "--diverging-5": "#E5E5E5",
-            "--diverging-6": "#BFDBFE",
-            "--diverging-7": "#60A5FA",
-            "--diverging-8": "#2563EB",
-            "--diverging-9": "#1E40AF",
-            "--success-50": "#ECFDF5",
-            "--success-100": "#D1FAE5",
-            "--success-200": "#A7F3D0",
-            "--success-300": "#6EE7B7",
-            "--success-400": "#34D399",
-            "--success-500": "#10B981",
-            "--success-600": "#059669",
-            "--success-700": "#047857",
-            "--success-800": "#065F46",
-            "--success-900": "#064E3B",
-            "--warning-50": "#FFFBEB",
-            "--warning-100": "#FEF3C7",
-            "--warning-200": "#FDE68A",
-            "--warning-300": "#FCD34D",
-            "--warning-400": "#FBBF24",
-            "--warning-500": "#F59E0B",
-            "--warning-600": "#D97706",
-            "--warning-700": "#B45309",
-            "--warning-800": "#92400E",
-            "--warning-900": "#78350F",
-            "--info-50": "#EFF6FF",
-            "--info-100": "#DBEAFE",
-            "--info-200": "#BFDBFE",
-            "--info-300": "#93C5FD",
-            "--info-400": "#60A5FA",
-            "--info-500": "#3B82F6",
-            "--info-600": "#2563EB",
-            "--info-700": "#1D4ED8",
-            "--info-800": "#1E40AF",
-            "--info-900": "#1E3A8A",
-            "--destructive-50": "#FEF2F2",
-            "--destructive-100": "#FEE2E2",
-            "--destructive-200": "#FECACA",
-            "--destructive-300": "#FCA5A5",
-            "--destructive-400": "#F87171",
-            "--destructive-500": "#EF4444",
-            "--destructive-600": "#DC2626",
-            "--destructive-700": "#B91C1C",
-            "--destructive-800": "#991B1B",
-            "--destructive-900": "#7F1D1D",
-            "--elevation-raised": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 1px 2px rgb(15 23 42 / 0.08), 0 12px 32px -12px rgb(15 23 42 / 0.22)",
-            "--elevation-raised-hover": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 2px 4px rgb(15 23 42 / 0.08), 0 20px 40px -14px rgb(15 23 42 / 0.28)",
-            "--elevation-control": "inset 0 1px 0 rgb(255 255 255 / 0.25), 0 1px 2px rgb(15 23 42 / 0.1)",
-            "--elevation-control-hover": "inset 0 1px 0 rgb(255 255 255 / 0.25), 0 2px 4px rgb(15 23 42 / 0.1), 0 6px 14px -6px rgb(15 23 42 / 0.25)",
-            "--elevation-pressed": "inset 0 1px 2px rgb(15 23 42 / 0.2)",
-            "--elevation-sunken": "inset 0 1px 2px rgb(15 23 42 / 0.07)",
-            "--elevation-overlay": "inset 0 1px 0 rgb(255 255 255 / 0.9), 0 2px 4px rgb(15 23 42 / 0.06), 0 16px 40px -12px rgb(15 23 42 / 0.24)",
-            "--elevation-modal": "0 2px 6px rgb(15 23 42 / 0.08), 0 32px 64px -16px rgb(15 23 42 / 0.32)",
-            "--surface-raised": "linear-gradient(180deg, rgb(255 255 255 / 0) 0%, rgb(15 23 42 / 0.025) 100%)",
-            "--surface-filled": "linear-gradient(180deg, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0) 50%, rgb(0 0 0 / 0.08) 100%)",
-            "--surface-grain": "none"
-          },
-          "html": {
-            "-webkit-print-color-adjust": "exact",
-            "print-color-adjust": "exact"
-          },
-          "*, ::before, ::after": {
-            "--tw-shadow": "0 0 #0000 !important",
-            "--tw-inset-shadow": "0 0 #0000 !important",
-            "text-shadow": "none !important",
-            "animation": "none !important",
-            "transition": "none !important"
-          },
-          "nav, [role=\"navigation\"], [data-slot=\"sidebar\"], [data-slot=\"sidebar-trigger\"], [data-slot=\"sidebar-rail\"], header:has([data-slot=\"sidebar-trigger\"]), [data-sonner-toaster], [data-print=\"hide\"]": {
-            "display": "none !important"
-          },
-          "[data-slot=\"table-container\"], [data-slot=\"scroll-area-viewport\"]": {
-            "overflow": "visible !important"
-          },
-          "h1, h2, h3, h4": {
-            "break-after": "avoid"
-          },
-          "tr, img, svg, figure, pre, blockquote, [data-slot=\"card\"], [data-slot=\"chart\"], [data-slot=\"kpi-card\"], [data-slot=\"alert\"]": {
-            "break-inside": "avoid"
-          },
-          "thead": {
-            "display": "table-header-group"
-          },
-          "p, li": {
-            "orphans": "3",
-            "widows": "3"
-          },
-          "a[href^=\"http\"]:not([data-slot=\"button\"])::after": {
-            "content": "\" (\" attr(href) \")\"",
-            "font-size": "0.875em",
-            "font-weight": "normal",
-            "color": "var(--muted-foreground)",
-            "overflow-wrap": "anywhere"
-          }
-        },
-        "@media screen": {
-          "[data-print=\"only\"]": {
-            "display": "none"
-          }
         },
         "@media (forced-colors: active)": {
           ":where([data-slot=\"card\"], [class*=\"--elevation-raised)\"], [class*=\"--elevation-overlay)\"], [class*=\"--elevation-modal)\"])": {
@@ -941,20 +775,6 @@
       ]
     },
     {
-      "name": "dashboard-grid",
-      "type": "registry:ui",
-      "title": "Dashboard grid",
-      "dependencies": [
-        "cn"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/dashboard-grid.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "data-table-selection-bar",
       "type": "registry:ui",
       "title": "Data table selection bar",
@@ -1376,20 +1196,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/gauge.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "gradient-border",
-      "type": "registry:ui",
-      "title": "Gradient border",
-      "dependencies": [
-        "cn"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/gradient-border.tsx",
           "type": "registry:ui"
         }
       ]
@@ -2182,23 +1988,6 @@
       ]
     },
     {
-      "name": "spotlight-card",
-      "type": "registry:ui",
-      "title": "Spotlight card",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "card"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/spotlight-card.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "stepper",
       "type": "registry:ui",
       "title": "Stepper",
@@ -2243,20 +2032,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/tabs.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "text-reveal",
-      "type": "registry:ui",
-      "title": "Text reveal",
-      "dependencies": [
-        "cn"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/text-reveal.tsx",
           "type": "registry:ui"
         }
       ]
@@ -2468,44 +2243,6 @@
       ]
     },
     {
-      "name": "benefits-grid",
-      "type": "registry:block",
-      "title": "Benefits grid",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "card",
-        "cristianruben-dev/auradata-design/section-header"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/benefits-grid.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "changelog",
-      "type": "registry:block",
-      "title": "Changelog",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/badge",
-        "cristianruben-dev/auradata-design/format",
-        "cristianruben-dev/auradata-design/section-header"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/changelog.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
       "name": "chat",
       "type": "registry:block",
       "title": "Chat",
@@ -2566,25 +2303,6 @@
       ]
     },
     {
-      "name": "cta-band",
-      "type": "registry:block",
-      "title": "Cta band",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/aura-background",
-        "cristianruben-dev/auradata-design/eyebrow",
-        "cristianruben-dev/auradata-design/gradient-heading"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/cta-band.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
       "name": "dashboard",
       "type": "registry:block",
       "title": "Dashboard",
@@ -2595,7 +2313,6 @@
         "card",
         "cristianruben-dev/auradata-design/cartesian-chart",
         "cristianruben-dev/auradata-design/chart-card",
-        "cristianruben-dev/auradata-design/dashboard-grid",
         "cristianruben-dev/auradata-design/data-table",
         "cristianruben-dev/auradata-design/date-range-filter",
         "cristianruben-dev/auradata-design/delta",
@@ -2608,62 +2325,6 @@
       "files": [
         {
           "path": "registry/src/components/blocks/dashboard.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "faq",
-      "type": "registry:block",
-      "title": "Faq",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/accordion",
-        "cristianruben-dev/auradata-design/section-header"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/faq.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "feature-tabs",
-      "type": "registry:block",
-      "title": "Feature tabs",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/section-header",
-        "cristianruben-dev/auradata-design/tabs"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/feature-tabs.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "hero",
-      "type": "registry:block",
-      "title": "Hero",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/aura-background",
-        "cristianruben-dev/auradata-design/eyebrow",
-        "cristianruben-dev/auradata-design/gradient-heading"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/hero.tsx",
           "type": "registry:block"
         }
       ]
@@ -2691,23 +2352,6 @@
       ]
     },
     {
-      "name": "logo-cloud",
-      "type": "registry:block",
-      "title": "Logo cloud",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/marquee"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/logo-cloud.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
       "name": "not-found",
       "type": "registry:block",
       "title": "Not found",
@@ -2719,49 +2363,6 @@
       "files": [
         {
           "path": "registry/src/components/blocks/not-found.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "plan-comparison",
-      "type": "registry:block",
-      "title": "Plan comparison",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/badge",
-        "cristianruben-dev/auradata-design/section-header",
-        "table"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/plan-comparison.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "pricing",
-      "type": "registry:block",
-      "title": "Pricing",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "card",
-        "cristianruben-dev/auradata-design/badge",
-        "cristianruben-dev/auradata-design/format",
-        "cristianruben-dev/auradata-design/gradient-border",
-        "cristianruben-dev/auradata-design/section-header",
-        "cristianruben-dev/auradata-design/toggle-group"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/pricing.tsx",
           "type": "registry:block"
         }
       ]
@@ -2783,42 +2384,6 @@
       "files": [
         {
           "path": "registry/src/components/blocks/settings.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "site-footer",
-      "type": "registry:block",
-      "title": "Site footer",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/logo"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/site-footer.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "testimonials",
-      "type": "registry:block",
-      "title": "Testimonials",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/avatar",
-        "cristianruben-dev/auradata-design/initials",
-        "cristianruben-dev/auradata-design/section-header"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/testimonials.tsx",
           "type": "registry:block"
         }
       ]
