@@ -43,11 +43,21 @@ El valor es un `Date`, o `undefined` sin día. Con el teclado: Enter abre en hoy
 
 ### DatePicker
 
-<ComponentProps file="date-picker" name="DatePickerProps" />
+<ComponentProps
+  file="date-picker"
+  type="Pick<React.ComponentProps<typeof DatePicker>, 'value' | 'defaultValue' | 'onValueChange' | 'placeholder' | 'disabledDays' | 'today' | 'locale' | 'defaultOpen' | 'disabled' | 'aria-invalid'>"
+/>
+
+Acepta además las props de `Button` (variante, tamaño, `className`…).
 
 ### DateTimePicker
 
-<ComponentProps file="date-picker" name="DateTimePickerProps" />
+<ComponentProps
+  file="date-picker"
+  type="Pick<React.ComponentProps<typeof DateTimePicker>, 'value' | 'defaultValue' | 'onValueChange' | 'placeholder' | 'disabledDays' | 'today' | 'locale' | 'defaultOpen' | 'step' | 'timeLabel' | 'disabled' | 'aria-invalid'>"
+/>
+
+Acepta además las props de `Button` (variante, tamaño, `className`…).
 
 ## Cuándo usarlo
 

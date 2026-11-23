@@ -31,7 +31,12 @@ Cada 15 minutos (`step`), de `min` a `max`.
 
 ## Props
 
-<ComponentProps file="time-picker" name="TimePickerProps" />
+<ComponentProps
+  file="time-picker"
+  type="Pick<React.ComponentProps<typeof TimePicker>, 'value' | 'defaultValue' | 'onValueChange' | 'step' | 'min' | 'max' | 'placeholder' | 'name' | 'disabled' | 'defaultOpen' | 'aria-invalid'>"
+/>
+
+Acepta además las props de `SelectTrigger` (`size`, `className`…).
 
 ## Cuándo usarlo
 

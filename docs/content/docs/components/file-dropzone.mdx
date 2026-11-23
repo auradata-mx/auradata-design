@@ -49,7 +49,12 @@ La zona y la lista: uno subiendo, uno listo. Suelta o elige otro archivo; uno qu
 
 ### FileUploadItem
 
-<ComponentProps file="file-dropzone" name="FileUploadItemProps" />
+<ComponentProps
+  file="file-dropzone"
+  type="Pick<React.ComponentProps<typeof FileUploadItem>, 'name' | 'size' | 'progress' | 'error' | 'onRemove' | 'removeLabel'>"
+/>
+
+Acepta además las props de un `li` (`className`, `aria-*`…).
 
 ## Cuándo usarlo
 
