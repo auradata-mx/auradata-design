@@ -1,6 +1,6 @@
 // Build-time access to the repository the component pages document: the registry items, the example sources and
 // the Storybook stories. Every page is statically generated, so these read real files with `fs` while building.
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { createFileSystemGeneratorCache, createGenerator } from 'fumadocs-typescript';
 import type { AutoTypeTableProps } from 'fumadocs-typescript/ui';
@@ -18,6 +18,7 @@ const examplesDir = path.join(docsRoot, 'src/examples');
 type RegistryItem = { name: string; type: string; title?: string; description?: string };
 
 let registryItems: Promise<RegistryItem[]> | undefined;
+let storyFiles: Promise<Set<string>> | undefined;
 
 /** A registry item by name; a typo fails the build instead of publishing a command that installs nothing. */
 export async function getRegistryItem(name: string): Promise<RegistryItem> {
@@ -39,10 +40,16 @@ export async function readExampleSource(name: string): Promise<string> {
  * `components-button--primary`. A story that does not exist fails the build, so a page never links to nothing.
  */
 export async function getStoryUrl(stories: string, story: string): Promise<string> {
-  const source = await readFile(path.join(storiesDir, `${stories}.stories.tsx`), 'utf8');
+  const fileName = `${stories}.stories.tsx`;
+  // Check the exact directory entry name so macOS's case-insensitive FS cannot mask a Linux build failure.
+  storyFiles ??= readdir(storiesDir).then((entries) => new Set(entries));
+  if (!(await storyFiles).has(fileName)) {
+    throw new Error(`registry/src/stories has no file named «${fileName}» (case-sensitive check).`);
+  }
+  const source = await readFile(path.join(storiesDir, fileName), 'utf8');
   const { title, stories: exports } = parseStoriesFile(source);
   if (!exports.includes(story)) {
-    throw new Error(`${stories}.stories.tsx has no story «${story}». Its stories: ${exports.join(', ')}.`);
+    throw new Error(`${fileName} has no story «${story}». Its stories: ${exports.join(', ')}.`);
   }
   return storybookStoryUrl(storyIdFor(title, story));
 }
