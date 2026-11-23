@@ -130,12 +130,8 @@ Screenshot baselines live in `registry/tests/__screenshots__` and are Linux only
 
 ## Installing from an app
 
-The repository is the registry: the shadcn CLI reads the `registry.json` at its root straight from GitHub. It is
-private, so the CLI needs read access to `cristianruben-dev/auradata-design`:
-
-- locally, `gh` logged in with an account that can read it. When the active `gh` account is another one, pass its token:
-  `GH_TOKEN=$(gh auth token --user cristianruben-dev) npx shadcn add ...`;
-- in CI, `GH_TOKEN` with a fine-grained token of this repository, **Contents: Read-only**.
+The repository is the registry: the shadcn CLI reads the `registry.json` at its root straight from GitHub. The
+repository is public, so no token is needed.
 
 ```bash
 npx shadcn init -b base                                          # Base UI, as this registry
