@@ -1,7 +1,7 @@
-// registry: auradata (shadcn accordion whose disabled item dims, keyed on the data-disabled Base UI sets; the chevron centers on the first text line, a gap keeps long text off it, and only the brand focus outline shows)
+// registry: auradata (shadcn accordion whose disabled item dims, keyed on the data-disabled Base UI sets; the chevron centers on the first text line and rotates smoothly, a gap keeps long text off it, panels open with ease-fluid height+opacity, and only the brand focus outline shows)
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
 import { cn } from "cn"
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+import { ChevronDownIcon } from "lucide-react"
 
 function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
   return (
@@ -39,8 +39,10 @@ function AccordionTrigger({
         {...props}
       >
         {children}
-        <ChevronDownIcon data-slot="accordion-trigger-icon" className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
-        <ChevronUpIcon data-slot="accordion-trigger-icon" className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" />
+        <ChevronDownIcon
+          data-slot="accordion-trigger-icon"
+          className="pointer-events-none shrink-0 transition-transform duration-200 ease-(--ease-fluid) group-aria-expanded/accordion-trigger:rotate-180 motion-reduce:transition-none"
+        />
       </AccordionPrimitive.Trigger>
     </AccordionPrimitive.Header>
   )
@@ -54,12 +56,12 @@ function AccordionContent({
   return (
     <AccordionPrimitive.Panel
       data-slot="accordion-content"
-      className="overflow-hidden text-sm data-open:animate-accordion-down data-closed:animate-accordion-up"
+      className="h-(--accordion-panel-height) overflow-hidden text-sm transition-[height,opacity] duration-200 ease-(--ease-fluid) data-ending-style:h-0 data-ending-style:opacity-0 data-starting-style:h-0 data-starting-style:opacity-0 motion-reduce:transition-none"
       {...props}
     >
       <div
         className={cn(
-          "h-(--accordion-panel-height) pt-0 pb-2.5 data-ending-style:h-0 data-starting-style:h-0 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          "pt-0 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
           className
         )}
       >

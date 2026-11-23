@@ -413,4 +413,19 @@ test('gives the theme frosted floating surfaces, concentric radii, trigger-origi
   expect(
     Object.keys(theme.css).some((key) => key.includes(':root[data-theme-transition]::view-transition-new(root)'))
   ).toBe(true)
+  expect(theme.cssVars.light.selection).toBe('#DBEAFE')
+  expect(theme.css['@layer base']['::selection']).toEqual({
+    'background-color': 'var(--selection)',
+    color: 'var(--foreground)',
+  })
+  expect(theme.css[':where([data-slot="skeleton"])'].animation).toContain('aura-skeleton-shimmer')
+  expect(theme.css['@layer base'][':where([data-slot="collapsible-content"])'].height).toBe(
+    'var(--collapsible-panel-height)'
+  )
+})
+
+test('publishes the reusable copy button and wires it into code-block', () => {
+  expect(item('copy-button')?.type).toBe('registry:ui')
+  expect(item('copy-button').registryDependencies).toContain(`${GITHUB}/button`)
+  expect(item('code-block').registryDependencies).toContain(`${GITHUB}/copy-button`)
 })

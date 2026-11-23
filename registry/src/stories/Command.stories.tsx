@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, within } from 'storybook/test'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import {
   Command,
@@ -47,5 +47,24 @@ export const Default: Story = {
     // The whole search box takes the tap, not a 20px line inside it.
     const input = within(canvasElement).getByRole('combobox')
     await expect(input.getBoundingClientRect().height).toBeGreaterThanOrEqual(28)
+  },
+}
+
+/** Moving down with the keyboard slides the active row highlight to the next item. */
+export const Navigation: Story = {
+  ...Default,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    const input = canvas.getByRole('combobox')
+    await waitFor(() => expect(canvasElement.querySelector('[data-slot="command-active-indicator"]')).not.toBeNull())
+    const indicator = canvasElement.querySelector<HTMLElement>('[data-slot="command-active-indicator"]')!
+    const firstTop = indicator.getBoundingClientRect().top
+    await userEvent.click(input)
+    await userEvent.keyboard('{ArrowDown}')
+    await waitFor(() =>
+      expect(canvas.getByRole('option', { name: 'Margen por producto' })).toHaveAttribute('data-selected', 'true')
+    )
+    await waitFor(() => expect(indicator.getBoundingClientRect().top).toBeGreaterThan(firstTop))
+    input.blur()
   },
 }
