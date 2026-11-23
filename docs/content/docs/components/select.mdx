@@ -1,0 +1,82 @@
+---
+title: Select
+description: "Elige un valor de una lista corta: un periodo, un espacio, cuántas filas por página."
+---
+
+El select de Base UI con el estilo de AuraData: un valor largo termina en «…» sin mover la flecha, las opciones largas se leen completas en la lista, abre debajo del trigger y su borde contrasta 3:1 con la página.
+
+<ComponentPreview name="select/demo" />
+
+## Instalación
+
+<ComponentInstall item="select" />
+
+## Uso
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const PERIODS = [
+  { value: 'month', label: 'Este mes' },
+  { value: 'year', label: 'Este año' },
+];
+
+<Select items={PERIODS} defaultValue="month">
+  <SelectTrigger aria-label="Periodo">
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    {PERIODS.map((period) => (
+      <SelectItem key={period.value} value={period.value}>
+        {period.label}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>;
+```
+
+Pasa `items` al `Select`: así el trigger muestra la etiqueta del valor («Este mes») y no su clave (`month`).
+
+## Ejemplos
+
+### Con etiqueta y placeholder
+
+Sin valor, el trigger muestra el placeholder en el color atenuado.
+
+<ComponentPreview name="select/field" />
+
+### Inválido
+
+<ComponentPreview name="select/invalid" />
+
+### Chico
+
+El trigger `sm`, como el de filas por página de la tabla de datos.
+
+<ComponentPreview name="select/small" />
+
+## Props
+
+### Select
+
+<ComponentProps
+  file="select"
+  type="Pick<React.ComponentProps<typeof Select>, 'items' | 'value' | 'defaultValue' | 'onValueChange' | 'disabled'>"
+/>
+
+### SelectTrigger
+
+<ComponentProps file="select" type="Pick<React.ComponentProps<typeof SelectTrigger>, 'size'>" baseUi="select" />
+
+## Cuándo usarlo
+
+- **Un valor de una lista corta** que se conoce de antemano.
+- **En formularios**, con `react-hook-form`: el `Select` no es un input nativo, así que va con `Controller` (`value` y `onValueChange`) y el `ref` en el `SelectTrigger`, para que el foco llegue al primer error.
+
+## Cuándo no
+
+- **Varios valores o una lista larga que hay que buscar**: `Combobox` (con `multiple`, cada valor es un chip).
+- **En el teléfono**, donde el selector del sistema es lo mejor: `NativeSelect`.
+- **Ver lo mismo de otra forma** (Tabla | Gráfica): `SegmentedControl`.
+
+<StorybookLink stories="Select" />

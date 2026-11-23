@@ -1,0 +1,76 @@
+---
+title: Dialog
+description: "Una tarea corta encima de la página: renombrar, compartir, editar un detalle."
+---
+
+El diálogo de shadcn en español: el botón de cerrar («Cerrar») centrado con el título, un velo que se lee en oscuro, la elevación modal y, en el teléfono, los botones del pie apilados a 40 px.
+
+<ComponentPreview name="dialog/demo" />
+
+## Instalación
+
+<ComponentInstall item="dialog" />
+
+## Uso
+
+```tsx
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+
+<Dialog>
+  <DialogTrigger render={<Button variant="outline" />}>Renombrar informe</DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Renombrar informe</DialogTitle>
+      <DialogDescription>El nombre nuevo se ve en la lista.</DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <DialogClose render={<Button variant="outline" />}>Cancelar</DialogClose>
+      <Button>Guardar cambios</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>;
+```
+
+El trigger y los botones del pie son el `Button` del registro, pasado en `render`.
+
+## Ejemplos
+
+### Sin botón de cerrar
+
+Con `showCloseButton={false}` el diálogo se cierra con su botón del pie, con Escape o al hacer clic fuera.
+
+<ComponentPreview name="dialog/no-close-button" />
+
+## Props
+
+### Dialog
+
+<ComponentProps file="dialog" type="Pick<React.ComponentProps<typeof Dialog>, 'open' | 'defaultOpen' | 'onOpenChange'>" />
+
+### DialogContent
+
+<ComponentProps file="dialog" type="Pick<React.ComponentProps<typeof DialogContent>, 'showCloseButton'>" baseUi="dialog" />
+
+## Cuándo usarlo
+
+- **Una tarea corta** que no merece su propia página y que se termina o se cancela.
+- **Con título y descripción** siempre: `DialogTitle` nombra el diálogo para los lectores de pantalla.
+- **Verbos en los botones**: «Guardar cambios», «Cancelar»; nunca «Aceptar» ni «OK».
+
+## Cuándo no
+
+- **Confirmar algo destructivo**: `AlertDialog`, que nombra el objeto y la consecuencia («¿Eliminar «Ventas 2026»? Se borran sus gráficas y filtros. No se puede deshacer.»).
+- **Confirmar que algo salió bien**: un toast de `Sonner`, no un diálogo.
+- **Un formulario largo**: un `Stepper`, con pocos campos por paso.
+
+<StorybookLink stories="Dialog" />

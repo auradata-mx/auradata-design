@@ -1,0 +1,71 @@
+---
+title: Data table
+description: "El detalle de un informe: filas que se ordenan, se filtran, se seleccionan y se exportan."
+---
+
+Una tabla sobre TanStack Table, en español: orden por columna, búsqueda, columnas visibles y paginación de serie; y, cuando hacen falta, selección con acciones en bloque, filtros por columna, filas compactas, columnas fijas, exportar a CSV o Excel, vistas guardadas y miles de filas virtualizadas. En pantallas angostas se desplaza de lado dentro de su borde.
+
+<ComponentPreview name="data-table/demo" align="start" />
+
+## Instalación
+
+<ComponentInstall item="data-table" />
+
+## Uso
+
+```tsx
+import { DataTable, type DataTableColumn } from '@/components/ui/data-table';
+
+type Informe = { nombre: string; espacio: string };
+
+const columns: DataTableColumn<Informe, string>[] = [
+  { accessorKey: 'nombre', header: 'Nombre' },
+  { accessorKey: 'espacio', header: 'Espacio' },
+];
+
+<DataTable columns={columns} data={informes} filterPlaceholder="Buscar informes…" />;
+```
+
+## Ejemplos
+
+### Selección y acciones en bloque
+
+Con `selectable`, cada fila lleva una casilla y una barra flota con el conteo y las acciones de `bulkActions`. `rowLabel` le da nombre a cada casilla.
+
+<ComponentPreview name="data-table/selection" align="start" />
+
+### Cargando
+
+Filas esqueleto para una página completa, la región con `aria-busy` y el paginador deshabilitado.
+
+<ComponentPreview name="data-table/loading" align="start" />
+
+### Vacía
+
+`emptyMessage` dice qué falta y cuál es el primer paso.
+
+<ComponentPreview name="data-table/empty" align="start" />
+
+Hay muchos más estados (filtros por columna, filtro avanzado, edición en la celda, totales, vistas guardadas, estado en la URL) en su Storybook.
+
+## Props
+
+<ComponentProps
+  file="data-table"
+  type="Omit<DataTableProps<unknown>, keyof React.ComponentProps<'div'>>"
+/>
+
+Acepta además las props de un `div` (`className`, `aria-*`…).
+
+## Cuándo usarlo
+
+- **El detalle que explica los números**: en un tablero va al final, debajo de los KPI y las gráficas.
+- **Cuando la pregunta es «¿cuál es el detalle?»**: a veces la respuesta no es una gráfica, es una tabla.
+- **Cifras con `tabular-nums`**, para que las columnas se alineen.
+
+## Cuándo no
+
+- **Una lista de cosas para abrir** (informes, conexiones) sin columnas que comparar: `MasterDetail`, una lista y su detalle.
+- **Una tendencia o una comparación**: una gráfica (`Chart`).
+
+<StorybookLink stories="DataTable" />
