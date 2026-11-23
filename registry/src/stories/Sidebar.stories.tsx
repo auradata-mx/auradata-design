@@ -114,7 +114,7 @@ export const Mobile: Story = {
     const body = within(canvasElement.ownerDocument.body)
     const drawer = await body.findByRole('dialog', { name: 'Barra lateral' })
     await expect(drawer).toHaveAttribute('data-swipe-direction', 'down')
-    // Print hides the sidebar by its slot, on a phone too.
+    // The panel keeps the sidebar slot on a phone too.
     await expect(drawer).toHaveAttribute('data-slot', 'sidebar')
     await waitFor(() => expect(within(drawer).getByRole('button', { name: 'Informes' })).toBeVisible())
     // Base UI focuses the drawer on open; keep the first item unfocused so the screenshot is steady.

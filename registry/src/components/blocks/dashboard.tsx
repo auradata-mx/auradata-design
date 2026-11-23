@@ -1,4 +1,4 @@
-// registry: auradata (a sales dashboard block: period filter, KPI row, trend against last year, channel mix, best sellers, funnel and top customers on the dashboard grid)
+// registry: auradata (a sales dashboard block: period filter, KPI row, trend against last year, channel mix, best sellers, funnel and top customers in a grid that follows its own width, not the screen's)
 "use client"
 
 import * as React from "react"
@@ -7,7 +7,6 @@ import type { DateRange } from "react-day-picker"
 import { BarChart, LineChart } from "@/components/ui/cartesian-chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartCard } from "@/components/ui/chart-card"
-import { DashboardGrid, DashboardGridItem } from "@/components/ui/dashboard-grid"
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
 import { DateRangeFilter, presetRange } from "@/components/ui/date-range-filter"
 import { Delta } from "@/components/ui/delta"
@@ -106,13 +105,14 @@ function Dashboard({
           today={today}
         />
       </div>
-      <DashboardGrid>
+      <div className="@container/dashboard">
+        <div className="grid grid-cols-1 gap-4 @xl/dashboard:grid-cols-6 @3xl/dashboard:grid-cols-12">
         {kpis.map((kpi, index) => (
-          <DashboardGridItem key={index} span="kpi">
+          <div key={index} className="min-w-0 *:h-full @xl/dashboard:col-span-3 @3xl/dashboard:col-span-3">
             <KpiCard {...kpi} loading={loading} />
-          </DashboardGridItem>
+          </div>
         ))}
-        <DashboardGridItem span="two-thirds">
+        <div className="min-w-0 *:h-full @xl/dashboard:col-span-6 @3xl/dashboard:col-span-8">
           <ChartCard
             title="Ventas por mes"
             description="Este año contra el anterior"
@@ -136,8 +136,8 @@ function Dashboard({
               animate={animate}
             />
           </ChartCard>
-        </DashboardGridItem>
-        <DashboardGridItem span="third">
+        </div>
+        <div className="min-w-0 *:h-full @xl/dashboard:col-span-6 @3xl/dashboard:col-span-4">
           <ChartCard
             title="Ventas por canal"
             description="Del periodo"
@@ -157,8 +157,8 @@ function Dashboard({
               animate={animate}
             />
           </ChartCard>
-        </DashboardGridItem>
-        <DashboardGridItem span="half">
+        </div>
+        <div className="min-w-0 *:h-full @xl/dashboard:col-span-6 @3xl/dashboard:col-span-6">
           <ChartCard
             title="Productos más vendidos"
             description="Ventas del periodo"
@@ -180,8 +180,8 @@ function Dashboard({
               animate={animate}
             />
           </ChartCard>
-        </DashboardGridItem>
-        <DashboardGridItem span="half">
+        </div>
+        <div className="min-w-0 *:h-full @xl/dashboard:col-span-6 @3xl/dashboard:col-span-6">
           <ChartCard
             title="Embudo de conversión"
             description="De la visita al pago"
@@ -195,8 +195,8 @@ function Dashboard({
           >
             <FunnelChart data={funnel} index="etapa" value="personas" />
           </ChartCard>
-        </DashboardGridItem>
-        <DashboardGridItem span="full">
+        </div>
+        <div className="min-w-0 *:h-full @xl/dashboard:col-span-6 @3xl/dashboard:col-span-12">
           <Card>
             <CardHeader>
               <CardTitle>Clientes principales</CardTitle>
@@ -212,8 +212,9 @@ function Dashboard({
               />
             </CardContent>
           </Card>
-        </DashboardGridItem>
-      </DashboardGrid>
+        </div>
+      </div>
+      </div>
     </div>
   )
 }

@@ -20,37 +20,6 @@ Una grilla de 4 px, los mismos pasos de Tailwind y de antd: `--aura-space-4` es
 | Bloques de una página y su margen (encabezado, KPI, gráficas) | `space-6` |
 | Secciones de una página de marketing | `space-16` arriba y abajo, `py-24` desde `md` |
 
-## Densidad compacta
-
-Las pantallas de BI con muchas cifras pueden ir más apretadas. Pon `data-density="compact"` en `<html>` (toda la app) o en una sección: los controles, las filas de tabla y los ítems de menú se hacen un 12.5 % más chicos y el texto no cambia.
-
-| Qué | Normal | Compacta |
-| --- | --- | --- |
-| Botón, campo y select | 32 px | 28 px |
-| Botón `sm` | 28 px | 24.5 px |
-| Fila de tabla | 37 px | 35 px |
-| Encabezado de tabla | 40 px | 35 px |
-| Paso de la grilla (`--spacing`) | 4 px | 3.5 px |
-
-No es otro componente: el tema escala el paso de Tailwind (`--spacing`, del que salen `h-8`, `p-2` y `gap-2`) con `--aura-density-compact` (0.875). Funciona con cualquier componente de shadcn, también los que no son de AuraData.
-
-```html
-<!-- Toda la app -->
-<html data-density="compact">
-
-<!-- Solo un tablero -->
-<section data-density="compact">
-
-<!-- Normal otra vez, dentro de una sección compacta -->
-<div data-density="normal">
-```
-
-- Los menús, selects y diálogos se abren fuera de la sección, bajo `<body>`: toman la densidad de `<html>`. Si la app entera es compacta, ponla en `<html>`.
-- Evita el tamaño `xs` en compacta: queda por debajo de 24 px, el mínimo para tocar.
-- Para marketing y formularios largos, la normal.
-
-Compáralas en [Density](?path=/story/auradata-density--comparison).
-
 ## Radios
 
 <RadiusScale />
@@ -81,7 +50,7 @@ La profundidad imita la luz que cae desde arriba: un borde superior iluminado, u
 
 **Los botones responden.** Al pasar el mouse suben 1 px y su sombra crece (`--elevation-control-hover`); al presionarlos se hunden con una sombra interior (`--elevation-pressed`); deshabilitados quedan planos. Con `prefers-reduced-motion` el cambio no se anima, y en colores forzados (Windows) las tarjetas, los menús y los diálogos llevan un contorno, porque ahí las sombras desaparecen.
 
-En oscuro las sombras casi no se ven sobre el fondo de noche, así que la profundidad la lleva el borde superior iluminado (8 a 16 % de blanco) y una superficie apenas más clara. Cada `--aura-shadow-*` y `--aura-surface-*` tiene su valor en `.dark`, y al imprimir todo queda plano.
+En oscuro las sombras casi no se ven sobre el fondo de noche, así que la profundidad la lleva el borde superior iluminado (8 a 16 % de blanco) y una superficie apenas más clara. Cada `--aura-shadow-*` y `--aura-surface-*` tiene su valor en `.dark`.
 
 | Token | Dónde |
 | --- | --- |

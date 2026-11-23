@@ -329,51 +329,16 @@ test('shadcn gets the status scales as variables and Tailwind colors, destructiv
   expect(theme.dark).toMatchObject({ 'success-700': '#34D399', 'info-900': '#BFDBFE' });
 });
 
-// Compact density for BI: every shadcn size comes from Tailwind's --spacing (h-8 is calc(var(--spacing) * 8)), so
-// one variable on an ancestor shrinks controls, table rows and menu items without copying a component.
-test('the theme gives data-density="compact" a smaller Tailwind spacing', () => {
-  const css = read('tokens.css');
-  expect(css).toContain('--aura-density-compact: 0.875;');
+// Removed on purpose: the theme has no global compact density (the data table keeps its own) and no print styles.
+test('the theme carries no global density and no print styles', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
-  expect(theme.css['@layer base']['[data-density="compact"]']).toEqual({ '--spacing': '0.21875rem' });
-  // A normal section inside a compact one gets the stock step back.
-  expect(theme.css['@layer base']['[data-density="normal"]']).toEqual({ '--spacing': '0.25rem' });
-  expect(read('shadcn.css')).toMatch(/@layer base \{[^@]*\[data-density="compact"\] \{\s*--spacing: 0\.21875rem;/s);
-});
-
-// A report printed from any app with the theme: light colors (even from dark), no shadows or motion, no navigation,
-// sensible page breaks and the address of each link.
-test('the theme prints reports light, flat, without navigation and with link addresses', () => {
-  const theme = JSON.parse(read('shadcn-theme.json'));
-  const print = theme.css['@media print'];
-  expect(print).toBeDefined();
-  // Dark mode prints with the light values of every shadcn variable.
-  expect(print[':root:root, .dark.dark']['color-scheme']).toBe('light');
-  expect(print[':root:root, .dark.dark']['--background']).toBe('#FFFFFF');
-  expect(print[':root:root, .dark.dark']['--foreground']).toBe('#0A0A0F');
-  expect(print[':root:root, .dark.dark']['--sequential-9']).toBe(theme.light['sequential-9']);
-  expect(Object.keys(print[':root:root, .dark.dark']).filter((key) => key.startsWith('--'))).toHaveLength(Object.keys(theme.light).length);
-  expect(print['*, ::before, ::after']).toMatchObject({
-    '--tw-shadow': '0 0 #0000 !important',
-    'text-shadow': 'none !important',
-    animation: 'none !important',
-    transition: 'none !important',
-  });
-  const hidden = Object.entries(print).find(([, rule]) => rule.display === 'none !important')[0];
-  for (const selector of ['nav', '[data-slot="sidebar"]', '[data-slot="sidebar-trigger"]', '[data-print="hide"]']) {
-    expect(hidden).toContain(selector);
+  for (const file of ['tokens.css', 'shadcn.css']) {
+    expect(read(file)).not.toContain('@media print');
+    expect(read(file)).not.toContain('data-density');
+    expect(read(file)).not.toContain('density-compact');
   }
-  expect(Object.entries(print).find(([selector]) => selector.includes('thead'))[1]).toEqual({ display: 'table-header-group' });
-  const avoid = Object.entries(print).find(([, rule]) => rule['break-inside'] === 'avoid')[0];
-  for (const selector of ['tr', '[data-slot="card"]', '[data-slot="chart"]']) expect(avoid).toContain(selector);
-  const link = Object.entries(print).find(([selector]) => selector.includes('::after') && selector.includes('a[href^="http"]'));
-  expect(link[1].content).toBe('" (" attr(href) ")"');
-  expect(theme.css['@media screen']['[data-print="only"]']).toEqual({ display: 'none' });
-  expect(read('shadcn.css')).toMatch(/@media print \{\s*:root:root, \.dark\.dark \{\s*color-scheme: light;/);
-});
-
-test('tokens.css prints the dark theme with its light values', () => {
-  expect(read('tokens.css')).toMatch(/@media print \{\s*\.dark\.dark \{[^}]*--aura-color-bg-container: #FFFFFF;[^}]*--aura-color-text: #0A0A0F;/s);
+  expect(Object.keys(theme.css)).not.toContain('@media print');
+  expect(Object.keys(theme.css)).not.toContain('@media screen');
 });
 
 const ELEVATION = ['raised', 'raised-hover', 'control', 'control-hover', 'pressed', 'sunken', 'overlay', 'modal'];
@@ -382,7 +347,7 @@ const SURFACES = ['raised', 'filled', 'grain'];
 // Depth from the Kepler kiosk app: a top-edge highlight, a contact and an ambient shadow, a soft surface gradient.
 test('tokens.css carries the elevation scale and the surfaces in light and dark', () => {
   const css = read('tokens.css');
-  const [root, dark] = [css.split('\n.dark {')[0], css.split('\n.dark {')[1].split('@media print')[0]];
+  const [root, dark] = css.split('\n.dark {');
   for (const block of [root, dark]) {
     for (const name of ELEVATION) expect(block).toMatch(new RegExp(`--aura-shadow-${name}: [^;]+;`));
     for (const name of SURFACES) expect(block).toMatch(new RegExp(`--aura-surface-${name}: [^;]+;`));
@@ -401,8 +366,6 @@ test('tokens.css carries the elevation scale and the surfaces in light and dark'
   // AuraData BI reads shadow-card and shadow-float through antd.json: they keep their values.
   expect(root).toContain('--aura-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.08);');
   expect(dark).toContain('--aura-shadow-float: 0 16px 40px -12px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.4);');
-  // Paper prints flat and light.
-  expect(css.split('@media print')[1]).toContain('--aura-surface-grain: none;');
 });
 
 test('shadcn gets the elevation and the surfaces as variables', () => {
@@ -426,7 +389,7 @@ test('the theme raises the stock card through --tw-shadow in the base layer', ()
       'var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)',
     'background-image': 'var(--surface-raised)',
   });
-  // Focus and density stay in the same base layer.
+  // The focus ring stays in the same base layer.
   expect(theme.css['@layer base'][':focus-visible']).toBeDefined();
 });
 

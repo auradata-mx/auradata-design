@@ -163,9 +163,8 @@ test('gives the theme the brand focus ring as css, apart from its variables', ()
   expect(Object.keys(theme.cssVars).sort()).toEqual(['dark', 'light', 'theme'])
 })
 
-// Apps that install the theme get the data palettes, the status scales, compact density and print styles (T59).
-// No @page: the shadcn CLI cannot write declarations inside it ("Unknown word 16mm").
-test('gives the theme the data palettes, status scales, compact density and print styles', () => {
+// Apps that install the theme get the data palettes and the status scales (T59); no global density or print styles.
+test('gives the theme the data palettes and status scales, without density or print styles', () => {
   const theme = item('auradata-theme')
   for (const mode of ['light', 'dark']) {
     expect(theme.cssVars[mode]).toHaveProperty('sequential-9')
@@ -173,12 +172,10 @@ test('gives the theme the data palettes, status scales, compact density and prin
     expect(theme.cssVars[mode]).toHaveProperty('destructive-700')
   }
   expect(theme.cssVars.theme['color-success-50']).toBe('var(--success-50)')
-  expect(theme.css['@layer base']['[data-density="compact"]']).toEqual({ '--spacing': '0.21875rem' })
-  expect(theme.css['@media print'][':root:root, .dark.dark']['--background']).toBe('#FFFFFF')
-  expect(Object.keys(theme.css)).not.toContain('@page')
+  expect(theme.css['@layer base']).not.toHaveProperty('[data-density="compact"]')
+  expect(Object.keys(theme.css)).not.toContain('@media print')
 })
 
-// T60: notifications.
 // One panel component: the responsive drawer comes up from the bottom on a phone and from a side on a wide screen.
 test('has no sheet: the sidebar and the notification center open a drawer on a phone', () => {
   expect(registry.items.map((entry) => entry.name)).not.toContain('sheet')
@@ -188,6 +185,7 @@ test('has no sheet: the sidebar and the notification center open a drawer on a p
   )
 })
 
+// T60: notifications.
 test('publishes the announcement banner and the notification center, and gives the app shell the bell', () => {
   expect(item('announcement-banner').registryDependencies).toEqual(['cristianruben-dev/auradata-design/button'])
   expect(item('notification-center').registryDependencies).toEqual(
@@ -373,12 +371,12 @@ test('publishes the heatmaps on the sequential and diverging palettes', () => {
   ])
 })
 
-test('publishes the dashboard grid and the dashboard block built on it', () => {
-  expect(item('dashboard-grid').type).toBe('registry:ui')
+// No dashboard-grid component: the dashboard block lays itself out with a container-query grid.
+test('publishes the dashboard block without a dashboard grid', () => {
+  expect(registry.items.map((entry) => entry.name)).not.toContain('dashboard-grid')
   expect(item('dashboard').type).toBe('registry:block')
   expect(item('dashboard').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/dashboard-grid',
       'cristianruben-dev/auradata-design/kpi-card',
       'cristianruben-dev/auradata-design/chart-card',
       'cristianruben-dev/auradata-design/cartesian-chart',
