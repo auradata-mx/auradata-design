@@ -22,13 +22,21 @@ function sanitize(value: string) {
     .replace(/^-+|-+$/g, '')
 }
 
+/** Story titles whose page is a section of the brand guide, not a component page. */
+const BRAND_PAGES: Record<string, string> = {
+  // "Depth is the theme, not a component": the elevation guide lives in Espaciado.
+  'AuraData/Depth': '/docs/brand/espaciado/#sombras-y-elevación',
+}
+
 /**
  * The docs page of a stories file, from its title: `AuraData/KPI card` -> `/docs/components/kpi-card/`.
- * Blocks go to the blocks gallery; a title with no registry item (stock shadcn parts, showcases) goes to
- * the components index.
+ * Blocks go to the blocks gallery; a brand guide section goes to its page; a title with no registry
+ * item (stock shadcn parts, showcases) goes to the components index.
  */
 export function docsUrlForTitle(title: string): string {
   if (title.startsWith('Blocks/')) return `${DOCS_ORIGIN}/docs/blocks/`
+  const brandPage = BRAND_PAGES[title]
+  if (brandPage) return `${DOCS_ORIGIN}${brandPage}`
   const name = ALIASES[title] ?? sanitize(title.split('/').pop() ?? '')
   return ITEMS.has(name) ? `${DOCS_ORIGIN}/docs/components/${name}/` : `${DOCS_ORIGIN}/docs/components/`
 }
