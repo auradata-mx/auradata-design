@@ -40,12 +40,21 @@ export async function inBothThemes(element: HTMLElement, check: (dark: boolean) 
   }
 }
 
-/** WCAG 1.4.11: the edge of a control reads 3:1 against the page, light and dark. */
-export async function expectBorderReads(element: HTMLElement) {
+/**
+ * A field's edge is the theme's soft `--field-border`, light and dark: visible against the page (1.5:1 or more)
+ * but quiet; the label and the sunken shadow identify the field, and focus turns the edge Azul Aura.
+ */
+export async function expectSoftFieldBorder(element: HTMLElement) {
   await inBothThemes(element, async (dark) => {
+    const probe = document.createElement('span')
+    probe.style.color = getComputedStyle(document.documentElement).getPropertyValue('--field-border').trim()
+    document.body.append(probe)
+    const field = getComputedStyle(probe).color
+    probe.remove()
+    await expect(getComputedStyle(element).borderTopColor, dark ? 'dark' : 'light').toBe(field)
     const background = paint(getComputedStyle(document.body).getPropertyValue('--background'), '#fff')
     const border = paint(getComputedStyle(element).borderTopColor, `rgb(${background.join(' ')})`)
-    await expect(contrast(border, background), dark ? 'dark' : 'light').toBeGreaterThanOrEqual(3)
+    await expect(contrast(border, background), dark ? 'dark' : 'light').toBeGreaterThanOrEqual(1.5)
   })
 }
 

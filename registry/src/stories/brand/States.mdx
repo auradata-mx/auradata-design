@@ -30,10 +30,10 @@ Un componente no está terminado hasta que cubre sus estados: cargando, vacío, 
 
 ## Foco visible
 
-El foco se ve solo al usar el teclado (`focus-visible`), nunca se quita. El token `--aura-color-focus-ring` es el contorno de auradata.mx: `--aura-focus-width` de 2 px a `--aura-focus-offset` de 2 px. El tema de AuraData (`shadcn.css` o `auradata-theme`) se lo da a todos los componentes en lugar del anillo de shadcn, sin copiar ninguno: los campos oscurecen además su borde, en un grupo el contorno rodea al grupo y en un área con scroll queda por dentro. El hueco de 2 px separa el contorno de la sombra del botón, así que la profundidad nunca lo tapa.
+El foco se ve solo al usar el teclado (`focus-visible`), nunca se quita. Es un **halo** en Azul Aura (`--aura-color-focus-ring`): un borde de 1 px, que pasa 3:1 (5.2:1 en claro, 7.4:1 en oscuro), dentro de un resplandor suave de 3 px. El tema de AuraData (`shadcn.css` o `auradata-theme`) se lo da a todos los componentes en lugar del anillo de shadcn, sin copiar ninguno, y lo suma a su sombra de elevación. Un campo ya tiene borde: al recibir el foco, ese borde se vuelve azul y solo el resplandor lo rodea. En un campo inválido el halo es rojo. En un grupo rodea al grupo; un link y un área con scroll llevan un contorno azul. En colores forzados (Windows) aparece un contorno del sistema.
 
 <div className="sb-unstyled my-6 flex flex-wrap items-center gap-6">
-  <button type="button" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground" style={{ outline: 'var(--aura-focus-width) solid var(--aura-color-focus-ring)', outlineOffset: 'var(--aura-focus-offset)' }}>
+  <button type="button" className="rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground" style={{ boxShadow: '0 0 0 1px var(--aura-color-focus-ring), 0 0 0 4px color-mix(in oklab, var(--aura-color-focus-ring) 25%, transparent)' }}>
     Con foco de teclado
   </button>
   <Button variant="outline" disabled>Deshabilitado</Button>
@@ -107,7 +107,7 @@ Un estado vacío dice qué falta y ofrece el primer paso. Un error dice qué pas
 
 ## Las reglas de accesibilidad
 
-- **Contraste WCAG AA:** 4.5:1 en texto, en claro y en oscuro: `contrast.test.mjs` de `@auradata/tokens` lo comprueba en cada par de tokens y axe en cada story. Íconos y bordes de controles, 3:1.
+- **Contraste WCAG AA:** 4.5:1 en texto, en claro y en oscuro: `contrast.test.mjs` de `@auradata/tokens` lo comprueba en cada par de tokens y axe en cada story. Íconos y bordes que muestran un estado (checkbox, radio, switch, pasos), 3:1. Los campos llevan un borde suave (`--field-border`): los identifican su label y su sombra hundida, y el foco los pinta de azul.
 - **Teclado:** todo lo que se hace con el mouse se hace con `Tab`, `Enter`, `Espacio`, flechas y `Esc`. Los componentes de Base UI ya lo resuelven; no los reemplaces con un `div` con `onClick`.
 - **Regiones vivas:** lo que cambia sin que el usuario mueva el foco se anuncia: `role="alert"` para errores, `role="status"` o `aria-live="polite"` para resultados y conteos.
 - **Nombres:** todo control tiene un nombre visible o un `aria-label`; los íconos decorativos llevan `aria-hidden`.

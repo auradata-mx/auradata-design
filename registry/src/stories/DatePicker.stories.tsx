@@ -4,7 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { DatePicker, DateTimePicker } from '@/components/ui/date-picker'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { TimePicker } from '@/components/ui/time-picker'
-import { blur, expectBorderReads } from './play-helpers'
+import { blur, expectSoftFieldBorder } from './play-helpers'
 
 const TODAY = new Date(2026, 10, 21)
 
@@ -29,7 +29,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const field = within(canvasElement).getByRole('button', { name: 'Fecha de entrega' })
     await expect(field).toHaveTextContent('28 nov 2026')
-    await expectBorderReads(field)
+    await expectSoftFieldBorder(field)
   },
 }
 

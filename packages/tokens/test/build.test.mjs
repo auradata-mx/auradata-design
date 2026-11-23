@@ -114,8 +114,12 @@ test('tokens.css carries the full scale: space, type, z-index and focus', () => 
   expect(css).toContain('--aura-z-index-modal: 1050;');
   expect(css).toContain('--aura-focus-width: 2px;');
   expect(css).toContain('--aura-focus-offset: 2px;');
-  expect(css).toMatch(/:root \{[^}]*--aura-color-focus-ring: #181818;/s);
-  expect(css).toMatch(/\.dark \{[^}]*--aura-color-focus-ring: #F5F5F7;/s);
+  // Azul Aura: 5.2:1 on white, 7.4:1 on the night container.
+  expect(css).toMatch(/:root \{[^}]*--aura-color-focus-ring: #2563EB;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-focus-ring: #60A5FA;/s);
+  // Fields take a soft edge; checkboxes and radios keep the 3:1 control border.
+  expect(css).toMatch(/:root \{[^}]*--aura-color-border-field: #C4C4CC;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-border-field: #3B3B47;/s);
   expect(css).toMatch(/:root \{[^}]*--aura-color-success-foreground: #0A0A0F;/s);
 });
 
@@ -131,7 +135,7 @@ test('shadcn.css adds success, warning and info with foregrounds, and the focus 
 
 test('shadcn-theme.json exposes the status colors to Tailwind', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
-  expect(theme.light).toMatchObject({ success: '#059669', 'success-foreground': '#0A0A0F', ring: '#181818' });
+  expect(theme.light).toMatchObject({ success: '#059669', 'success-foreground': '#0A0A0F', ring: '#2563EB' });
   expect(theme.dark).toMatchObject({ warning: '#F5B544', 'warning-foreground': '#0A0A0F' });
   expect(theme.theme).toMatchObject({
     'color-success': 'var(--success)',
@@ -234,24 +238,56 @@ test('echarts.json themes ECharts in light and dark from the tokens', () => {
   expect(dark.valueAxis.splitLine.lineStyle.color[0]).not.toBe(light.valueAxis.splitLine.lineStyle.color[0]);
 });
 
-// The focus outline of auradata.mx (focus-width, focus-offset, color-focus-ring) on every component
-// a shadcn app installs: the stock 3px ring at 50% gives way to it, without copying any component.
-test('shadcn.css gives every component the brand focus ring', () => {
+// A halo in the brand blue on every component a shadcn app installs: a solid 1px edge of --ring (3:1 and more)
+// inside a soft 3px glow of it, composed with the elevation shadow; a transparent outline shows in forced colors.
+const HALO = '0 0 0 1px var(--ring), 0 0 0 4px color-mix(in oklab, var(--ring) 25%, transparent)';
+
+test('shadcn.css gives every component the focus halo', () => {
   const css = read('shadcn.css');
+  // Plain elements (a link) keep an outline, in the brand blue.
   expect(css).toMatch(/@layer base \{\s*:focus-visible \{\s*outline: 2px solid var\(--ring\);\s*outline-offset: 2px;\s*\}/);
   // Unlayered, so it wins over the stock `outline-none` and `ring-*` utilities.
-  expect(css).toMatch(/^:where\(\[class\*="focus-visible:ring-"\][^{]*:focus-visible[^{]*\{[^}]*outline: 2px solid var\(--ring\);[^}]*outline-offset: 2px;[^}]*--tw-ring-shadow: 0 0 #0000;/m);
-  // Scrolling viewports clip anything outside them: their ring goes inside.
+  const rule = css.match(/^:where\(\[class\*="focus-visible:ring-"\][^{]*:focus-visible[^{]*\{([^}]*)\}/m)[1];
+  expect(rule).toContain('outline: 2px solid transparent;');
+  expect(rule).toContain(`--tw-ring-shadow: ${HALO};`);
+  expect(rule).toContain('box-shadow: var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000);');
+  // Scrolling viewports clip anything outside them: their outline goes inside.
   expect(css).toMatch(/:where\(\[data-slot\$="viewport"\]\):focus-visible \{\s*outline-offset: -2px;/);
 });
 
-test('shadcn-theme.json carries the same focus ring as the css of a registry theme item', () => {
+test('shadcn-theme.json carries the same focus halo, red on an invalid field', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   expect(theme.css['@layer base'][':focus-visible']).toEqual({ outline: '2px solid var(--ring)', 'outline-offset': '2px' });
-  const rings = Object.entries(theme.css).filter(([, rule]) => rule['--tw-ring-shadow'] === '0 0 #0000');
+  const rings = Object.entries(theme.css).filter(([, rule]) => rule['--tw-ring-shadow'] === HALO);
   expect(rings).toHaveLength(1);
-  expect(rings[0][1]).toMatchObject({ outline: '2px solid var(--ring)', 'outline-offset': '2px' });
   expect(read('shadcn.css')).toContain(rings[0][0]);
+  expect(theme.css['@layer base'][':where([aria-invalid="true"]):focus-visible, :where([aria-invalid="true"]):focus-within']).toEqual({
+    '--ring': 'var(--destructive)',
+  });
+});
+
+// A focused field turns its own border blue and glows: no second edge outside the border.
+test('the theme gives a focused field a blue border and the glow alone', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  const [selector, rule] = Object.entries(theme.css).find(([key]) => key.includes('[data-slot="input"]'));
+  for (const slot of ['textarea', 'select-trigger', 'native-select', 'input-group', 'combobox-chips']) {
+    expect(selector).toContain(`[data-slot="${slot}"]`);
+  }
+  expect(rule).toEqual({
+    'border-color': 'var(--ring)',
+    '--tw-ring-shadow': '0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent)',
+  });
+  // After the halo, so a field wins over it.
+  const keys = Object.keys(theme.css);
+  expect(keys.indexOf(selector)).toBeGreaterThan(keys.findIndex((key) => key.includes('focus-visible:ring-')));
+});
+
+test('the theme gives fields a soft border', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.light['field-border']).toBe('#C4C4CC');
+  expect(theme.dark['field-border']).toBe('#3B3B47');
+  expect(read('shadcn.css')).toContain('--field-border: var(--aura-color-border-field);');
+  expect(theme.theme['color-field-border']).toBe('var(--field-border)');
 });
 
 // Unchecked checkbox and radio borders read 1.26:1 with --input; they take --control-border instead.

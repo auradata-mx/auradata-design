@@ -130,10 +130,12 @@ test('installs the stock spinner with the button, for its loading state', () => 
 })
 
 // Apps that install the theme inherit the brand focus ring, without copying any component (T51).
-test('gives the theme the brand focus ring as css, apart from its variables', () => {
+test('gives the theme the focus halo and the soft field border, apart from its variables', () => {
   const theme = item('auradata-theme')
   expect(theme.css['@layer base'][':focus-visible']).toEqual({ outline: '2px solid var(--ring)', 'outline-offset': '2px' })
-  expect(Object.values(theme.css).some((rule) => rule['--tw-ring-shadow'] === '0 0 #0000')).toBe(true)
+  expect(Object.values(theme.css).some((rule) => String(rule['--tw-ring-shadow']).startsWith('0 0 0 1px var(--ring)'))).toBe(true)
+  expect(theme.cssVars.light['field-border']).toBe('#C4C4CC')
+  expect(theme.cssVars.theme['color-field-border']).toBe('var(--field-border)')
   expect(Object.keys(theme.cssVars).sort()).toEqual(['dark', 'light', 'theme'])
 })
 

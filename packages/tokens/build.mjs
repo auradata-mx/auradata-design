@@ -5,8 +5,8 @@
  * below turns the resolved tokens into the shape one consumer reads:
  *
  *   tokens.css    --aura-* variables, light on :root and dark on .dark
- *   shadcn.css    the shadcn semantic variables, pointing at --aura-*, the brand focus ring and depth
- *   shadcn-theme.json  the same mapping with raw values and the focus ring (`css`), for a shadcn
+ *   shadcn.css    the shadcn semantic variables, pointing at --aura-*, the focus halo and depth
+ *   shadcn-theme.json  the same mapping with raw values and the focus halo (`css`), for a shadcn
  *                 registry theme item
  *   tailwind.css  a Tailwind 4 @theme with the brand
  *   infima.css    Docusaurus (Infima) variables, light and [data-theme='dark']
@@ -103,6 +103,7 @@ const SHADCN = {
   border: 'color-border',
   input: 'color-border',
   'control-border': 'color-border-control',
+  'field-border': 'color-border-field',
   ring: 'color-focus-ring',
   'chart-1': 'chart-1',
   'chart-2': 'chart-2',
@@ -129,14 +130,15 @@ const SHADCN = {
 };
 
 /**
- * The focus outline of auradata.mx on every component: focus-width of --ring, focus-offset away from
- * the element, only for the keyboard (:focus-visible). Rules as a registry item's `css` takes them.
+ * The focus halo on every component, only for the keyboard (:focus-visible): a 1px edge of --ring (Azul Aura,
+ * 3:1 and more) inside a soft 3px glow of it, red on an invalid field. Rules as a registry item's `css` takes them.
  *
- *   - @layer base: plain elements (links, native controls) get it instead of the browser's outline.
+ *   - @layer base: plain elements (links, native controls) get a focus-width outline of --ring, focus-offset away,
+ *     instead of the browser's.
  *   - Unlayered: stock shadcn components hide the outline (`outline-none`, a utility, which beats any
  *     base rule) and draw a 3px box-shadow ring at 50% through `focus-visible:ring-*`. Those classes
- *     are the signal: where shadcn draws a focus ring, the brand outline replaces it and the ring
- *     shadow goes. Popups, menu items and inner inputs take focus too, but without a ring class, so
+ *     are the signal: where shadcn draws a focus ring, the halo replaces its ring shadow, composed with the
+ *     elevation shadow. Popups, menu items and inner inputs take focus too, but without a ring class, so
  *     they keep their stock look. The ring of a field group lands on the group, as shadcn's does:
  *     `focus-within:ring-*`, an input group, a code block, a choice card (field label around a
  *     field, whose control then drops its own), and a control whose focus lands on a native input
@@ -144,7 +146,7 @@ const SHADCN = {
  *     app's own rule can still win.
  *   - Scrolling viewports clip what lies outside them: their outline goes inside.
  *
- * Forced colors: the outline takes the system color, where the stock box-shadow ring vanished.
+ * Forced colors drop box-shadows: the transparent outline under the halo then shows in the system color.
  */
 function focusCss(tokens) {
   const width = tokens['focus-width'];
@@ -159,14 +161,33 @@ function focusCss(tokens) {
     ':where([data-slot="code-block"]):has(> [data-slot="code-block-content"]:focus-visible)',
     `:where(${card}):has(:focus-visible)`,
   ];
+  const halo = '0 0 0 1px var(--ring), 0 0 0 4px color-mix(in oklab, var(--ring) 25%, transparent)';
+  const fields = [
+    ':where([data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"], [data-slot="native-select"]):focus-visible',
+    ':where([data-slot="input-group"]:not([data-slot="combobox-content"] *)):has([data-slot="input-group-control"]:focus-visible)',
+    ':where([data-slot="combobox-chips"]):has(:focus-visible)',
+  ];
   return {
     '@layer base': {
       ':focus-visible': outline,
       // WCAG 1.4.11: the --input border of an unchecked checkbox or radio reads 1.26:1; theirs reads 3:1.
       // Only --input changes on them, so the checked, invalid and focused borders stay shadcn's.
       ':where([data-slot="checkbox"], [data-slot="radio-group-item"])': { '--input': 'var(--control-border)' },
+      // An invalid field glows red, not blue.
+      ':where([aria-invalid="true"]):focus-visible, :where([aria-invalid="true"]):focus-within': { '--ring': 'var(--destructive)' },
     },
-    [rings.join(',\n')]: { ...outline, '--tw-ring-shadow': '0 0 #0000' },
+    // The halo replaces the stock ring; the transparent outline is what forced colors (no box-shadow) still draw.
+    [rings.join(',\n')]: {
+      outline: `${width} solid transparent`,
+      'outline-offset': offset,
+      '--tw-ring-shadow': halo,
+      'box-shadow': TW_BOX_SHADOW,
+    },
+    // A field already has an edge: it turns blue and only the glow goes around it.
+    [fields.join(',\n')]: {
+      'border-color': 'var(--ring)',
+      '--tw-ring-shadow': '0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent)',
+    },
     ':where([data-slot$="viewport"]):focus-visible': { 'outline-offset': `-${width}` },
   };
 }
@@ -228,13 +249,14 @@ function shadcnCss(light) {
     HEADER +
     "/* Import after tokens.css and shadcn's own theme, so these win. */\n" +
     block(':root, .dark', entries) +
-    '\n/* The brand focus ring on every component and depth. */\n' +
+    '\n/* The focus halo on every component and depth. */\n' +
     cssOf(themeCss(light))
   );
 }
 
 /** shadcn variables a stock shadcn theme lacks: the registry theme item maps them into Tailwind. */
 const SHADCN_EXTRA = [
+  'field-border',
   'destructive-foreground',
   'success',
   'success-foreground',

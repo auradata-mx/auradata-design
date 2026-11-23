@@ -4,7 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { PasswordInput, PasswordStrength } from '@/components/ui/password-input'
-import { blur, expectBorderReads, expectDestructiveBorder } from './play-helpers'
+import { blur, expectSoftFieldBorder, expectDestructiveBorder } from './play-helpers'
 
 const meta = {
   title: 'AuraData/Password input',
@@ -23,7 +23,7 @@ export const Default: Story = {
     </Field>
   ),
   play: async ({ canvasElement }) => {
-    await expectBorderReads(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
+    await expectSoftFieldBorder(canvasElement.querySelector<HTMLElement>('[data-slot=input-group]')!)
   },
 }
 

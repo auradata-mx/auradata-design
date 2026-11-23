@@ -106,17 +106,20 @@ export const WithIcon: Story = {
   ),
 }
 
-/** Reached with the keyboard (Tab): `:focus-visible` shows the focus ring, as in the screenshot. */
+/** Reached with the keyboard (Tab): `:focus-visible` shows the focus halo, as in the screenshot. */
 export const Focus: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.tab()
     const control = within(canvasElement).getByRole('button', { name: 'Guardar informe' })
     await expect(document.activeElement).toBe(control)
-    // The brand focus ring of the AuraData theme: 2px of --ring, 2px away, no stock box-shadow ring.
+    // The focus halo of the AuraData theme: a 1px edge of Azul Aura inside a soft 4px glow of it, over the
+    // button's own elevation; a transparent outline remains for forced colors.
     await waitFor(() => {
       const style = getComputedStyle(control)
-      expect([style.outlineStyle, style.outlineWidth, style.outlineOffset]).toEqual(['solid', '2px', '2px'])
-      expect(style.boxShadow).not.toMatch(/ 3px(,|$)/)
+      expect(style.boxShadow).toContain('rgb(37, 99, 235) 0px 0px 0px 1px')
+      expect(style.boxShadow).toMatch(/0px 0px 0px 4px/)
+      expect(style.boxShadow).toMatch(/inset/)
+      expect([style.outlineStyle, style.outlineColor]).toEqual(['solid', 'rgba(0, 0, 0, 0)'])
     })
   },
 }

@@ -1,4 +1,4 @@
-// registry: auradata (the list button has a name and leaves the tab order, as axe requires; the popup's edge is a border inside its box, like the select's, not a ring 1 px outside the trigger; multiple: the chips field reads 3:1, keeps its border on focus (the brand outline alone), turns a crisp red when invalid, and each chip's remove button says «Quitar <chip>»)
+// registry: auradata (the list button has a name and leaves the tab order, as axe requires; the popup's edge is a border inside its box, like the select's, not a ring 1 px outside the trigger; multiple: the chips field takes the soft field border, turns its border Azul Aura with a glow on focus, turns a crisp red when invalid, and each chip's remove button says «Quitar <chip>»)
 "use client"
 
 import * as React from "react"
@@ -230,7 +230,7 @@ function ComboboxChips({
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
       className={cn(
-        "flex min-h-8 flex-wrap items-center gap-1 rounded-lg border border-[color:var(--control-border,var(--input))] bg-transparent px-2.5 py-1 text-sm transition-colors focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-2 has-aria-invalid:ring-destructive/20 has-data-[slot=combobox-chip]:px-1 has-disabled:cursor-not-allowed has-disabled:bg-input/50 has-disabled:opacity-50 dark:bg-input/30 dark:has-aria-invalid:ring-destructive/25 dark:has-disabled:bg-input/80",
+        "flex min-h-8 flex-wrap items-center gap-1 rounded-lg border border-[color:var(--field-border,var(--input))] bg-transparent px-2.5 py-1 text-sm transition-colors focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-2 has-aria-invalid:ring-destructive/20 has-data-[slot=combobox-chip]:px-1 has-disabled:cursor-not-allowed has-disabled:bg-input/50 has-disabled:opacity-50 dark:bg-input/30 dark:has-aria-invalid:ring-destructive/25 dark:has-disabled:bg-input/80",
         className
       )}
       {...props}
