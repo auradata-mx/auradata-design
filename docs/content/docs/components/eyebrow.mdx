@@ -1,0 +1,42 @@
+---
+title: Eyebrow
+description: "Identifica una sección antes de su encabezado."
+---
+
+Es la etiqueta de sección de AuraData: una píldora monoespaciada con un punto en los colores de la marca. Se renderiza como párrafo, no como encabezado.
+
+<ComponentPreview name="eyebrow/demo" />
+
+## Instalación
+
+<ComponentInstall item="eyebrow" />
+
+## Uso
+
+```tsx
+import { Eyebrow } from '@/components/ui/eyebrow';
+
+<Eyebrow>Inteligencia de negocios</Eyebrow>;
+```
+
+## Ejemplos
+
+### Etiqueta corta
+
+Una o dos palabras pueden bastar si el título ya explica la sección.
+
+<ComponentPreview name="eyebrow/compact" />
+
+## Props
+
+<ComponentProps file="eyebrow" type="Pick<React.ComponentProps<typeof Eyebrow>, 'children' | 'className'>" />
+
+## Cuándo usarlo
+
+- Encima de un título, cuando una etiqueta breve aporta contexto, como «Conexiones» o «Inteligencia de negocios».
+
+## Cuándo no
+
+- No reemplaza el encabezado de la sección. Para un estado del producto, como «Publicado», usa `Badge`.
+
+<StorybookLink stories="Eyebrow" story="Default" />
