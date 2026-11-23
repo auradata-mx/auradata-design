@@ -115,6 +115,7 @@ const SHADCN = {
   'chart-8': 'chart-8',
   'gradient-brand': 'gradient-brand',
   'ease-fluid': 'ease-fluid',
+  selection: 'color-selection',
   radius: 'radius-md',
   sidebar: 'color-bg-container',
   'sidebar-foreground': 'color-text',
@@ -210,11 +211,12 @@ const TRIGGER_POPUPS = [
   '[data-slot="combobox-content"]',
 ];
 
-/** Floating surfaces that take the frosted glass layer: every trigger popup plus chart tooltips and floating toolbars. */
+/** Floating surfaces that take the frosted glass layer: every trigger popup, chart tooltips, floating toolbars and neutral toasts. */
 const GLASS_SURFACES = [
   ...TRIGGER_POPUPS,
   '[data-slot="chart-tooltip"]',
   '[data-slot="data-table-selection-bar"]',
+  '[data-sonner-toast]:not([data-rich-colors="true"])',
 ];
 
 /**
@@ -256,6 +258,7 @@ function glassCss() {
       '@layer base': {
         [glass]: {
           '--popover': 'var(--surface-glass)',
+          '--normal-bg': 'var(--surface-glass)',
           'backdrop-filter': 'blur(14px) saturate(1.6)',
           '-webkit-backdrop-filter': 'blur(14px) saturate(1.6)',
         },
@@ -342,6 +345,76 @@ function viewTransitionCss() {
   };
 }
 
+/**
+ * Synchronized skeleton shimmer, brand text selection, subtle themed scrollbars, smooth collapsible panels
+ * and checkbox stroke-draw keyframes — all delivered through the theme so stock shadcn `skeleton` and
+ * `collapsible` stay stock.
+ */
+function polishCss() {
+  const scrollbars = [
+    '[data-slot="table-container"]',
+    '[data-slot="scroll-blur-viewport"]',
+    '[data-slot="command-list"]',
+    '[data-slot="code-block-content"]',
+    '[data-slot="sidebar-content"]',
+  ].join(', ');
+  return {
+    '@keyframes aura-skeleton-shimmer': {
+      from: { 'background-position': '200% 0' },
+      to: { 'background-position': '-200% 0' },
+    },
+    '@keyframes aura-check-draw': {
+      from: { 'stroke-dashoffset': '24' },
+      to: { 'stroke-dashoffset': '0' },
+    },
+    '@layer base': {
+      '::selection': {
+        'background-color': 'var(--selection)',
+        color: 'var(--foreground)',
+      },
+      [`:where(${scrollbars})`]: {
+        'scrollbar-width': 'thin',
+        'scrollbar-color': 'color-mix(in oklab, var(--foreground) 18%, transparent) transparent',
+      },
+      ':where([data-slot="collapsible-content"])': {
+        overflow: 'hidden',
+        height: 'var(--collapsible-panel-height)',
+        transition:
+          'height 200ms var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1)), opacity 180ms var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1))',
+      },
+      ':where([data-slot="collapsible-content"])[data-starting-style],\n:where([data-slot="collapsible-content"])[data-ending-style]':
+        {
+          height: '0',
+          opacity: '0',
+        },
+    },
+    // Unlayered with `:where()` so the synchronized sweep replaces stock `animate-pulse` while keeping 0 specificity.
+    ':where([data-slot="skeleton"])': {
+      'background-image':
+        'linear-gradient(100deg, transparent 25%, color-mix(in oklab, var(--foreground) 7%, transparent) 50%, transparent 75%)',
+      'background-size': '200% 100%',
+      'background-attachment': 'fixed',
+      animation: 'aura-skeleton-shimmer 1.8s var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1)) infinite',
+    },
+    '@media (prefers-reduced-motion: reduce)': {
+      ':where([data-slot="skeleton"])': {
+        animation: 'none',
+        'background-image': 'none',
+      },
+      ':where([data-slot="collapsible-content"])': {
+        transition: 'none',
+      },
+    },
+    '@media (forced-colors: active)': {
+      ':where([data-slot="skeleton"])': {
+        animation: 'none',
+        'background-image': 'none',
+        border: '1px solid CanvasText',
+      },
+    },
+  };
+}
+
 /** Recursively merges nested at-rules so each @layer / @media / @supports appears once. */
 function mergeCss(target, source) {
   for (const [selector, body] of Object.entries(source)) {
@@ -364,6 +437,7 @@ function themeCss(tokens) {
     concentricCss(),
     popupMotionCss(),
     viewTransitionCss(),
+    polishCss(),
   ]) {
     mergeCss(merged, rules);
   }

@@ -487,3 +487,21 @@ test('the theme carries the view-transition rules for theme switching', () => {
   expect(css).toContain(':root[data-theme-transition]::view-transition-new(root)');
   expect(css).toContain('mix-blend-mode: normal;');
 });
+
+// Skeleton shimmer, brand text selection, discrete scrollbars and smooth collapsible panels from the theme.
+test('the theme carries skeleton shimmer, brand selection, discrete scrollbars and collapsible transitions', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  const css = read('shadcn.css');
+  expect(theme.light.selection).toBe('#DBEAFE');
+  expect(theme.dark.selection).toBe('#1E3A8A');
+  expect(theme.css['@layer base']['::selection']).toEqual({
+    'background-color': 'var(--selection)',
+    color: 'var(--foreground)',
+  });
+  expect(theme.css[':where([data-slot="skeleton"])'].animation).toContain('aura-skeleton-shimmer');
+  expect(theme.css['@media (prefers-reduced-motion: reduce)'][':where([data-slot="skeleton"])'].animation).toBe('none');
+  expect(theme.css['@layer base'][':where([data-slot="collapsible-content"])'].height).toBe('var(--collapsible-panel-height)');
+  expect(css).toContain('@keyframes aura-skeleton-shimmer');
+  expect(css).toContain('@keyframes aura-check-draw');
+  expect(css).toContain('scrollbar-width: thin;');
+});
