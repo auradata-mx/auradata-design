@@ -81,46 +81,20 @@ test('installs the workspace switcher and the theme toggle with the app shell', 
   expect(item('workspace-switcher').registryDependencies).toContain('cristianruben-dev/auradata-design/initials')
 })
 
-test('publishes the marketing blocks with the eyebrow, the gradient heading and the aura', () => {
-  for (const name of ['hero', 'cta-band', 'benefits-grid', 'faq', 'site-footer']) {
-    expect(item(name)?.type).toBe('registry:block')
-  }
-  expect(item('hero').registryDependencies).toEqual(
-    expect.arrayContaining([
-      'cristianruben-dev/auradata-design/aura-background',
-      'cristianruben-dev/auradata-design/eyebrow',
-      'cristianruben-dev/auradata-design/gradient-heading',
-    ]),
-  )
-  // The FAQ takes AuraData's accordion (its disabled item dims, T52).
-  expect(item('faq').registryDependencies).toEqual([
-    'cristianruben-dev/auradata-design/accordion',
-    'cristianruben-dev/auradata-design/section-header',
-  ])
-  expect(item('site-footer').registryDependencies).toEqual(['cristianruben-dev/auradata-design/logo'])
-})
-
-// T64: the effects are components; the new marketing blocks build on them.
-test('publishes the effects and the new marketing blocks on top of them', () => {
+// No marketing blocks (hero, pricing, FAQ…) and no spotlight card, gradient border or text reveal: the effects
+// that stay are components of their own.
+test('publishes the effects without the marketing blocks', () => {
   const ours = (name) => `cristianruben-dev/auradata-design/${name}`
-  for (const name of ['progressive-blur', 'marquee', 'number-ticker', 'spotlight-card', 'gradient-border', 'shimmer-button', 'text-reveal']) {
+  const names = registry.items.map((entry) => entry.name)
+  const removed = ['hero', 'logo-cloud', 'benefits-grid', 'feature-tabs', 'testimonials', 'pricing', 'plan-comparison',
+    'faq', 'changelog', 'cta-band', 'site-footer', 'spotlight-card', 'gradient-border', 'text-reveal']
+  for (const name of removed) expect(names).not.toContain(name)
+  for (const name of ['progressive-blur', 'marquee', 'number-ticker', 'shimmer-button', 'aura-background', 'eyebrow', 'gradient-heading', 'section-header']) {
     expect(item(name)?.type).toBe('registry:ui')
   }
-  for (const name of ['pricing', 'plan-comparison', 'testimonials', 'logo-cloud', 'feature-tabs', 'changelog']) {
-    expect(item(name)?.type).toBe('registry:block')
-  }
-  // Effects that wrap a component take ours (button) or shadcn's (card); the ticker writes with lib/format.
+  // Effects that wrap a component take ours (button); the ticker writes with lib/format.
   expect(item('shimmer-button').registryDependencies).toEqual([ours('button')])
-  expect(item('spotlight-card').registryDependencies).toEqual(['card'])
   expect(item('number-ticker').registryDependencies).toEqual([ours('format')])
-  // The recommended plan wears the gradient border; prices in MXN come from lib/format.
-  expect(item('pricing').registryDependencies).toEqual(
-    expect.arrayContaining([ours('gradient-border'), ours('format'), ours('toggle-group'), ours('section-header')]),
-  )
-  expect(item('logo-cloud').registryDependencies).toEqual([ours('marquee')])
-  expect(item('plan-comparison').registryDependencies).toEqual([ours('badge'), ours('section-header'), 'table'])
-  expect(item('testimonials').registryDependencies).toEqual([ours('avatar'), ours('initials'), ours('section-header')])
-  expect(item('changelog').registryDependencies).toEqual(expect.arrayContaining([ours('format')]))
 })
 
 test('publishes the chat block with the KPI card and the chart palette', () => {

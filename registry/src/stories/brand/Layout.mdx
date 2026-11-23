@@ -64,26 +64,3 @@ Los textos largos no pasan de unos 70 caracteres: el hero y los encabezados de s
 | Detalle | [`DataTable`](?path=/story/auradata-data-table--default) | Al final: el detalle que explica los números |
 
 Entre bloques, `gap-6`; dentro de una fila, `gap-4`.
-
-## Una página de marketing
-
-<div className="sb-unstyled my-6 grid gap-3 rounded-2xl bg-muted p-4" role="img" aria-label="Diagrama: hero, beneficios, banda de llamada a la acción, preguntas frecuentes y footer, de arriba abajo">
-  <Box label="Hero: eyebrow, título con degradado, párrafo, acciones" className="h-20" />
-  <div className="grid grid-cols-5 gap-3">
-    <Box label="Beneficio" className="col-span-3 h-14" /><Box label="Beneficio" className="col-span-2 h-14" />
-    <Box label="Beneficio" className="col-span-2 h-14" /><Box label="Beneficio" className="col-span-3 h-14" />
-  </div>
-  <Box label="Banda de CTA" className="h-12" />
-  <Box label="Preguntas frecuentes" className="h-14" />
-  <Box label="Footer: logo, enlaces, legal" />
-</div>
-
-| Sección | Bloque | Regla |
-| --- | --- | --- |
-| Hero | [`Hero`](?path=/story/blocks-marketing--hero-section) | Una promesa y una acción principal; el fondo `aura-background` |
-| Beneficios | [`BenefitsGrid`](?path=/story/blocks-marketing--benefits) | Bento de 3/2 y 2/3 desde `md`, una columna en móvil |
-| Llamada a la acción | [`CtaBand`](?path=/story/blocks-marketing--cta) | Una sola por página, antes del FAQ |
-| Preguntas | [`Faq`](?path=/story/blocks-marketing--faq-section) | La primera abierta |
-| Footer | [`SiteFooter`](?path=/story/blocks-marketing--footer) | Columnas de enlaces como `<nav>` |
-
-La página completa está en [Landing](?path=/story/blocks-marketing--landing).
