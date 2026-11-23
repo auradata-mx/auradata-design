@@ -1,4 +1,18 @@
 {
   "title": "Marca",
-  "pages": ["index", "..."]
+  "pages": [
+    "index",
+    "identidad",
+    "logotipo",
+    "tipografia",
+    "color",
+    "voz",
+    "iconografia",
+    "espaciado",
+    "layout",
+    "estados",
+    "visualizacion-de-datos",
+    "patrones",
+    "tokens"
+  ]
 }

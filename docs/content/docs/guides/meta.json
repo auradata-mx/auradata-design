@@ -1,4 +1,7 @@
 {
   "title": "Guías",
-  "pages": ["index", "..."]
+  "pages": [
+    "index",
+    "agregar-un-componente"
+  ]
 }

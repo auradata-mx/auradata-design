@@ -1,0 +1,85 @@
+---
+title: Color
+---
+
+import { ColorPalette, ColorItem } from '@docs/components/brand/ColorPalette'
+import theme from '@auradata/tokens/shadcn-theme.json'
+import brand from '../../../../packages/tokens/src/tokens/brand.json'
+import { Ramps, steps } from '@docs/components/brand/TokenSwatches'
+import { StatusScaleExample } from '@docs/components/brand/PaletteExamples'
+
+## Energía en el acento. Claridad en la base
+
+Azul, violeta y verde identifican la marca. Los neutros sostienen la lectura y dejan espacio al contenido.
+
+## La marca
+
+<ColorPalette>
+  <ColorItem title="Azul Aura" subtitle="--aura-brand-blue · el primario" colors={{ blue: brand.brand.blue.$value }} />
+  <ColorItem title="Violeta Aura" subtitle="--aura-brand-violet" colors={{ violet: brand.brand.violet.$value }} />
+  <ColorItem title="Verde Aura" subtitle="--aura-brand-green" colors={{ green: brand.brand.green.$value }} />
+  <ColorItem title="Noche" subtitle="--aura-brand-night · el fondo oscuro" colors={{ night: brand.brand.night.$value, border: brand.brand['night-border'].$value }} />
+</ColorPalette>
+
+## El degradado
+
+<div className="not-prose my-6">
+  <p className="w-fit bg-(image:--gradient-brand) bg-clip-text text-4xl leading-tight font-semibold tracking-tight text-transparent">
+    Claramente imaginado. Precisamente construido.
+  </p>
+</div>
+
+100°, azul al 0 %, violeta al 55 % y verde al 100 % (`--aura-gradient-brand`). Solo como acento: el tag del producto, una palabra de un titular o el borde fino (`gradient-border`) del único elemento que una vista recomienda, como el plan destacado. Nunca de fondo de un bloque de texto ni en botones.
+
+## La interfaz
+
+Los productos usan los colores por su función, nunca por su valor: `primary`, `muted-foreground`, `destructive`… La tabla completa, en claro y oscuro, está en [Tokens](/docs/brand/tokens/).
+
+<ColorPalette>
+  <ColorItem title="Texto, en claro" subtitle="foreground · muted-foreground" colors={{ principal: theme.light.foreground, secundario: theme.light['muted-foreground'] }} />
+  <ColorItem title="Texto, en oscuro" subtitle="foreground · muted-foreground" colors={{ principal: theme.dark.foreground, secundario: theme.dark['muted-foreground'] }} />
+  <ColorItem title="Superficies" subtitle="background · muted · border" colors={{ background: theme.light.background, muted: theme.light.muted, border: theme.light.border }} />
+  <ColorItem title="Estados" subtitle="success · warning · info · destructive" colors={{ success: theme.light.success, warning: theme.light.warning, info: theme.light.info, destructive: theme.light.destructive }} />
+  <ColorItem title="Gráficas, 1 a 4" subtitle="--chart-1 … --chart-4, en este orden" colors={[1, 2, 3, 4].map((n) => theme.light[`chart-${n}`])} />
+  <ColorItem title="Gráficas, 5 a 8" subtitle="--chart-5 … --chart-8" colors={[5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])} />
+</ColorPalette>
+
+## Escalas de estado
+
+Cada estado tiene una escala de 50 a 900 para tintes, bordes y texto: toasts de color, celdas condicionales y badges suaves. El relleno sólido sigue siendo `success` con `success-foreground` encima.
+
+| Uso | Clase |
+| --- | --- |
+| Fondo tenue | `bg-success-50` |
+| Fondo al pasar el cursor o seleccionado | `bg-success-100` |
+| Borde | `border-success-200`, o `-300` si necesita más fuerza |
+| Texto e ícono | `text-success-700` sobre 50, 100 y cualquier superficie; `text-success-800` sobre 200 |
+
+En oscuro la escala se invierte: el 50 sigue siendo el tinte más tenue y el 700 el texto que se lee. Una sola clase sirve en los dos temas. Los pasos de texto pasan WCAG AA en claro y en oscuro; lo comprueban los tests de `@auradata/tokens`.
+
+<StatusScaleExample />
+
+### Éxito
+
+<Ramps names={steps('success', 'status')} />
+
+### Advertencia
+
+<Ramps names={steps('warning', 'status')} />
+
+### Información
+
+<Ramps names={steps('info', 'status')} />
+
+### Error
+
+<Ramps names={steps('destructive', 'status')} />
+
+Las escalas son para estados, no para datos: una gráfica o un mapa de calor usa las paletas de [Visualización de datos](/docs/brand/visualizacion-de-datos/).
+
+## El color acompaña al mensaje
+
+- Para textos de lectura, negro y gris oscuro sobre superficies claras.
+- El verde y los tonos suaves son acentos: nunca la única señal de un estado. Un estado lleva también un ícono o una palabra.
+- Todo texto pasa WCAG AA (4.5:1) en claro y en oscuro: lo comprueban los tests de `@auradata/tokens` y de cada story.
+- Para texto de un estado usa su paso 700, o el 800 sobre el 200: pasan AA. El color base (`success`, `warning`…) como texto no siempre llega: úsalo en íconos o de relleno, con su `-foreground` encima.

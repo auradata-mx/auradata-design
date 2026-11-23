@@ -1,0 +1,57 @@
+---
+title: Tokens de AuraData
+---
+
+import { ColorPalette, ColorItem } from '@docs/components/brand/ColorPalette'
+import { TypeScale } from '@docs/components/brand/TypeScale'
+import theme from '@auradata/tokens/shadcn-theme.json'
+
+export const pairs = (mode) =>
+  Object.entries(theme[mode]).filter(
+    ([name]) =>
+      !/^(chart|sequential|diverging)-|-\d{2,3}$/.test(name) && !['radius', 'gradient-brand'].includes(name),
+  )
+
+
+
+Cada valor de esta página sale de `@auradata/tokens`. Cambia `packages/tokens/src/tokens` y vuelve a compilar; nunca escribas un color en un componente.
+
+## Claro
+
+<ColorPalette>
+  {pairs('light').map(([name, value]) => (
+    <ColorItem key={name} title={`--${name}`} colors={{ [name]: value }} />
+  ))}
+</ColorPalette>
+
+## Oscuro
+
+<ColorPalette>
+  {pairs('dark').map(([name, value]) => (
+    <ColorItem key={name} title={`--${name}`} colors={{ [name]: value }} />
+  ))}
+</ColorPalette>
+
+## Paleta de gráficas
+
+{/* Two rows of four: eight swatches in one row run their hex labels together. */}
+
+<ColorPalette>
+  <ColorItem
+    title="1 a 4"
+    subtitle="--chart-1 … --chart-4"
+    colors={[1, 2, 3, 4].map((n) => theme.light[`chart-${n}`])}
+  />
+  <ColorItem
+    title="5 a 8"
+    subtitle="--chart-5 … --chart-8"
+    colors={[5, 6, 7, 8].map((n) => theme.light[`chart-${n}`])}
+  />
+</ColorPalette>
+
+Las paletas secuencial y divergente están en [Visualización de datos](/docs/brand/visualizacion-de-datos/); las escalas de estado, de 50 a 900, en [Color](/docs/brand/color/).
+
+## Tipografía
+
+<TypeScale font="sans" sizes={[38, 30, 24, 20, 16, 14, 12]} sample="Informes que se entienden" />
+<TypeScale font="mono" sizes={[18, 14, 12]} sample="$1,284,500 · 12.4 %" />
