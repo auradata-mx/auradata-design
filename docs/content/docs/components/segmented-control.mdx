@@ -1,0 +1,65 @@
+---
+title: Segmented control
+description: "Una opción entre pocas vistas de lo mismo: Tabla | Gráfica."
+---
+
+Un control de AuraData para elegir una vista entre pocas: un radio group que se ve como pestañas. Las flechas mueven la elección y Tab sale del grupo.
+
+<ComponentPreview name="segmented-control/demo" />
+
+## Instalación
+
+<ComponentInstall item="segmented-control" />
+
+## Uso
+
+```tsx
+import { SegmentedControl, SegmentedControlItem } from '@/components/ui/segmented-control';
+
+<SegmentedControl defaultValue="table" aria-label="Vista">
+  <SegmentedControlItem value="table">Tabla</SegmentedControlItem>
+  <SegmentedControlItem value="chart">Gráfica</SegmentedControlItem>
+</SegmentedControl>;
+```
+
+Nómbralo con `aria-label` («Vista»), como cualquier radio group.
+
+## Ejemplos
+
+### Chico
+
+Tres vistas en el tamaño `sm`, como en el encabezado de una tarjeta.
+
+<ComponentPreview name="segmented-control/small" />
+
+### Solo íconos y deshabilitado
+
+Un elemento solo con ícono lleva su nombre en `aria-label`; una vista que aún no está lista va deshabilitada.
+
+<ComponentPreview name="segmented-control/icons" />
+
+## Props
+
+### SegmentedControl
+
+<ComponentProps
+  file="segmented-control"
+  type="Pick<React.ComponentProps<typeof SegmentedControl>, 'size' | 'value' | 'defaultValue' | 'onValueChange' | 'disabled'>"
+  baseUi="radio"
+/>
+
+### SegmentedControlItem
+
+<ComponentProps file="segmented-control" type="Pick<React.ComponentProps<typeof SegmentedControlItem>, 'value' | 'disabled'>" />
+
+## Cuándo usarlo
+
+- **Ver lo mismo de otra forma**: una sola opción a la vez (Tabla | Gráfica, Semana | Mes | Año).
+
+## Cuándo no
+
+- **Cada opción muestra contenido distinto**: son pestañas, `Tabs`.
+- **Varias opciones a la vez**: `ToggleGroup` con `multiple`.
+- **Una opción en un formulario**: `RadioGroup`.
+
+<StorybookLink stories="SegmentedControl" />
