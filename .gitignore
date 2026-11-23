@@ -5,3 +5,6 @@ registry/login-dist/
 registry/public/r/
 .DS_Store
 *.log
+
+# Local planning notes (feature documents), kept out of the public repository
+odd/
