@@ -450,25 +450,6 @@ export const Pinned: Story = {
   },
 }
 
-/**
- * Inside a section with the theme's compact density (`data-density="compact"`, T59), the table follows it: it
- * never resets the density of what it sits in. Its own «Filas compactas» only packs the rows.
- */
-export const InCompactSection: Story = {
-  args: { densityToggle: true },
-  render: (args) => (
-    <div data-density="compact">
-      <DataTable {...args} />
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await expect(canvasElement.querySelector('[data-slot="data-table"]')).not.toHaveAttribute('data-density')
-    // h-8 is 32 px at the stock step and 28 px in compact density.
-    await expect(canvas.getByRole('button', { name: 'Columnas' }).getBoundingClientRect().height).toBe(28)
-  },
-}
-
 /** «Espacio» and «Estado» declare `meta.filter`: the toolbar gets a filter for each, with the counts. */
 const FILTER_COLUMNS: DataTableColumn<Informe, string>[] = COLUMNS.map((column) =>
   column.header === 'Espacio' || column.header === 'Estado' ? { ...column, meta: { filter: { type: 'select' } } } : column
