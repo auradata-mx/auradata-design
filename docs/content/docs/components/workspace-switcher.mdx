@@ -1,0 +1,49 @@
+---
+title: Workspace switcher
+description: "El espacio de trabajo actual, arriba del sidebar, y un menú para cambiarlo o crear otro."
+---
+
+Un componente de AuraData sobre `DropdownMenu` y las piezas del `Sidebar`: el espacio actual con sus iniciales, su nombre y una segunda línea (el plan o los miembros), y un menú con «Espacios de trabajo», el actual marcado, y «Nuevo espacio» al final. Un nombre largo se corta con puntos suspensivos, en el sidebar y en el menú, y su nombre completo queda en el `title`.
+
+<ComponentPreview name="workspace-switcher/demo" />
+
+## Instalación
+
+<ComponentInstall item="workspace-switcher" />
+
+## Uso
+
+```tsx
+import { WorkspaceSwitcher, type Workspace } from '@/components/ui/workspace-switcher';
+
+const workspaces: Workspace[] = [
+  { id: 'ventas', name: 'Ventas', description: '12 miembros' },
+  { id: 'finanzas', name: 'Finanzas', description: '5 miembros' },
+];
+
+<SidebarHeader>
+  <WorkspaceSwitcher workspaces={workspaces} current={espacio} onSelect={setEspacio} onCreate={abrirNuevoEspacio} />
+</SidebarHeader>;
+```
+
+Va dentro de un `Sidebar` (usa su `SidebarMenu`), así que necesita su `SidebarProvider`. «Nuevo espacio» aparece solo si pasas `onCreate`.
+
+## Props
+
+<ComponentProps file="workspace-switcher" type="Omit<React.ComponentProps<typeof WorkspaceSwitcher>, 'defaultOpen'>" />
+
+### Workspace
+
+<ComponentProps file="workspace-switcher" name="Workspace" />
+
+## Cuándo usarlo
+
+- **Arriba del sidebar**, cuando una persona trabaja en varios espacios: el espacio decide qué informes y datasets ve.
+- **Con una segunda línea útil**: los miembros o el plan.
+
+## Cuándo no
+
+- **Fuera de un sidebar**: el cambio de espacio va en el `UserMenu` («Espacio de trabajo»).
+- **Elegir un espacio en un formulario**: `Select` o `Combobox`.
+
+<StorybookLink stories="WorkspaceSwitcher" />

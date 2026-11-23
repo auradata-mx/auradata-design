@@ -1,0 +1,52 @@
+---
+title: Hover card
+description: "Un vistazo a lo que hay detrás de un enlace, sin abrirlo."
+---
+
+La tarjeta flotante de shadcn con espacio por dentro, la elevación de los flotantes y 8 px de margen con el borde de la pantalla, para que nunca quede pegada ni cortada.
+
+<ComponentPreview name="hover-card/demo" />
+
+## Instalación
+
+<ComponentInstall item="hover-card" />
+
+## Uso
+
+```tsx
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+
+<HoverCard>
+  <HoverCardTrigger href="/datasets/pedidos-2026">Pedidos 2026</HoverCardTrigger>
+  <HoverCardContent>PostgreSQL · ventas.pedidos · 1.2 M filas</HoverCardContent>
+</HoverCard>;
+```
+
+El trigger es un enlace: se abre al pasar el mouse o al enfocarlo con el teclado, y el clic sigue llevando a su página.
+
+## Props
+
+### HoverCard
+
+<ComponentProps file="hover-card" type="Pick<PreviewCardPrimitive.Root.Props, 'open' | 'defaultOpen' | 'onOpenChange'>" />
+
+### HoverCardContent
+
+<ComponentProps
+  file="hover-card"
+  type="Pick<PreviewCardPrimitive.Positioner.Props, 'side' | 'sideOffset' | 'align' | 'alignOffset'>"
+  baseUi="preview-card"
+/>
+
+## Cuándo usarlo
+
+- **Un enlace a un objeto** (un dataset, un informe, una persona) cuyo resumen ayuda a decidir si abrirlo: su fuente, sus filas, su última actualización.
+- **Información de más**: lo que dice la tarjeta también está en la página a la que lleva el enlace.
+
+## Cuándo no
+
+- **Nombrar un botón de solo ícono**: `Tooltip`, con el mismo texto que su `aria-label`.
+- **Contenido con controles** (campos, botones): `Popover`, que se abre con clic.
+- **En el teléfono, lo único que explica algo**: allí no hay mouse; déjalo a la vista.
+
+<StorybookLink stories="HoverCard" />

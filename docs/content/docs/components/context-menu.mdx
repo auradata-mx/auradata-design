@@ -1,0 +1,59 @@
+---
+title: Context menu
+description: "Las acciones de un área con clic derecho, o manteniendo presionado en el teléfono."
+---
+
+El menú contextual de shadcn con las mismas piezas que `DropdownMenu`: la elevación de los flotantes, la variante `destructive` y un submenú que, en el teléfono, se queda junto a su trigger con su primer ítem a la altura de él.
+
+<ComponentPreview name="context-menu/demo" />
+
+## Instalación
+
+<ComponentInstall item="context-menu" />
+
+## Uso
+
+```tsx
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
+
+<ContextMenu>
+  <ContextMenuTrigger>{/* la gráfica */}</ContextMenuTrigger>
+  <ContextMenuContent>
+    <ContextMenuItem>Ver como tabla</ContextMenuItem>
+    <ContextMenuItem>Descargar CSV</ContextMenuItem>
+    <ContextMenuSeparator />
+    <ContextMenuItem variant="destructive">Quitar del informe</ContextMenuItem>
+  </ContextMenuContent>
+</ContextMenu>;
+```
+
+El menú se abre donde está el puntero. Dentro, el teclado funciona igual que en `DropdownMenu`: flechas, Enter y Escape.
+
+## Props
+
+### ContextMenu
+
+<ComponentProps file="context-menu" type="Pick<ContextMenuPrimitive.Root.Props, 'open' | 'defaultOpen' | 'onOpenChange'>" />
+
+### ContextMenuItem
+
+<ComponentProps file="context-menu" type="Pick<React.ComponentProps<typeof ContextMenuItem>, 'variant' | 'inset' | 'disabled' | 'onClick'>" baseUi="context-menu" />
+
+## Cuándo usarlo
+
+- **Un atajo** a las acciones de un área grande, como una gráfica o una fila: quien lo conoce va más rápido.
+- **Las mismas acciones** que el área ofrece en otra parte, con sus mismos nombres.
+- **Lo destructivo al final**, separado y con `variant="destructive"`.
+
+## Cuándo no
+
+- **El único camino a una acción**: un clic derecho no se descubre y no se alcanza con el teclado. Pon las acciones también en un `DropdownMenu` (un botón «Más acciones»).
+- **Un botón con opciones**: `DropdownMenu`.
+
+<StorybookLink stories="ContextMenu" />

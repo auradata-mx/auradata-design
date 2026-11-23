@@ -1,0 +1,67 @@
+---
+title: Accordion
+description: "Preguntas y secciones que se abren una a una, sin salir de la página."
+---
+
+El acordeón de shadcn con un ítem deshabilitado que se atenúa y muestra el cursor de no permitido, un chevron centrado en la primera línea del texto aunque la pregunta ocupe varias, espacio entre el texto y el chevron, y solo el contorno de foco de la marca.
+
+<ComponentPreview name="accordion/demo" />
+
+## Instalación
+
+<ComponentInstall item="accordion" />
+
+## Uso
+
+```tsx
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+
+<Accordion defaultValue={['sources']}>
+  <AccordionItem value="sources">
+    <AccordionTrigger>¿Qué fuentes de datos puedo conectar?</AccordionTrigger>
+    <AccordionContent>PostgreSQL, MySQL, SQL Server, BigQuery y archivos de Excel o CSV.</AccordionContent>
+  </AccordionItem>
+</Accordion>;
+```
+
+## Ejemplos
+
+### Varios abiertos
+
+Con `multiple` se abren varias respuestas a la vez; sin él, abrir una cierra la anterior.
+
+<ComponentPreview name="accordion/multiple" />
+
+### Ítem deshabilitado
+
+Con `disabled` en el `AccordionItem`, su pregunta se atenúa y no se abre.
+
+<ComponentPreview name="accordion/disabled" />
+
+## Props
+
+### Accordion
+
+<ComponentProps
+  file="accordion"
+  type="Pick<AccordionPrimitive.Root.Props, 'multiple' | 'defaultValue' | 'value' | 'onValueChange' | 'disabled'>"
+  baseUi="accordion"
+/>
+
+### AccordionItem
+
+<ComponentProps file="accordion" type="Pick<AccordionPrimitive.Item.Props, 'value' | 'disabled'>" baseUi="accordion" />
+
+## Cuándo usarlo
+
+- **Preguntas frecuentes** y ayuda: cada pregunta es el nombre del botón que la abre.
+- **Detalles que no todos necesitan**, debajo de lo principal, cuando la página se lee de arriba abajo.
+- **Preguntas completas** como título: «¿Cada cuánto se actualizan los informes?», con sus signos de apertura.
+
+## Cuándo no
+
+- **Una sola sección que se muestra u oculta**: `Collapsible`.
+- **Secciones que se comparan o entre las que se salta**: `Tabs`.
+- **Lo que todos tienen que leer**: déjalo a la vista; un acordeón esconde.
+
+<StorybookLink stories="Accordion" />

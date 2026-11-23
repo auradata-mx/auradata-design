@@ -1,0 +1,74 @@
+---
+title: Breadcrumb
+description: "Dónde está la página dentro del espacio, y el camino de vuelta."
+---
+
+La ruta de navegación de shadcn en español («Ruta de navegación» como nombre del `nav`, «Más» en los puntos suspensivos), con separadores que se quedan junto al ítem anterior cuando la ruta salta de línea, así un chevron nunca empieza solo la línea siguiente.
+
+<ComponentPreview name="breadcrumb/demo" />
+
+## Instalación
+
+<ComponentInstall item="breadcrumb" />
+
+## Uso
+
+```tsx
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+
+<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/informes">Informes</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Ventas 2026</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>;
+```
+
+El último ítem es `BreadcrumbPage`, la página actual (`aria-current="page"`), sin enlace. Para un `Link` de tu router, pásalo en `render` de `BreadcrumbLink`.
+
+## Ejemplos
+
+### Ruta colapsada
+
+En una ruta profunda, `BreadcrumbEllipsis` toma el lugar de las carpetas de en medio.
+
+<ComponentPreview name="breadcrumb/collapsed" />
+
+### Ruta larga
+
+En una columna angosta la ruta salta de línea; ningún ítem se corta y cada separador sigue a su ítem.
+
+<ComponentPreview name="breadcrumb/long-trail" />
+
+## Props
+
+### BreadcrumbLink
+
+<ComponentProps file="breadcrumb" type="Pick<useRender.ComponentProps<'a'>, 'href' | 'render'>" />
+
+Las demás partes son elementos de HTML (`nav`, `ol`, `li`, `span`) y aceptan sus atributos.
+
+## Cuándo usarlo
+
+- **En la barra superior** de la app, a la izquierda de las acciones: dice en qué espacio y carpeta está el informe.
+- **Páginas anidadas** a dos niveles o más, donde volver a un nivel intermedio es algo que se hace.
+
+## Cuándo no
+
+- **Pasos de un proceso** («Datos», «Revisión», «Listo»): `Stepper`.
+- **Las secciones principales de la app**: el `Sidebar`.
+- **Una página de primer nivel**: su título en `PageHeader` basta.
+
+<StorybookLink stories="Breadcrumb" />

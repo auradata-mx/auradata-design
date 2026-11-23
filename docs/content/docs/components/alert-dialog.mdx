@@ -1,0 +1,88 @@
+---
+title: Alert dialog
+description: "Confirmar algo que no se puede deshacer, nombrando el objeto y la consecuencia."
+---
+
+El diálogo de alerta de shadcn con un velo que se lee en oscuro, la elevación modal, un ícono (`AlertDialogMedia`) cuyo fondo también se lee en oscuro y, en el teléfono, botones del pie apilados a 40 px. A diferencia de `Dialog`, no se cierra al hacer clic fuera: hay que elegir.
+
+<ComponentPreview name="alert-dialog/demo" />
+
+## Instalación
+
+<ComponentInstall item="alert-dialog" />
+
+## Uso
+
+```tsx
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Button } from '@/components/ui/button';
+
+<AlertDialog>
+  <AlertDialogTrigger render={<Button variant="destructive" />}>Eliminar informe</AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>¿Eliminar informe?</AlertDialogTitle>
+      <AlertDialogDescription>Se borran «Ventas 2026», sus 12 gráficas y sus filtros. No se puede deshacer.</AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+      <AlertDialogAction variant="destructive">Eliminar</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>;
+```
+
+`AlertDialogCancel` cierra el diálogo; `AlertDialogAction` es un `Button` que no lo cierra solo: corre tu acción y ciérralo tú (ver «Con la acción conectada»).
+
+## Ejemplos
+
+### Pequeño
+
+Con `size="sm"`, para una pregunta corta: el texto centrado y los dos botones lado a lado.
+
+<ComponentPreview name="alert-dialog/small" />
+
+### Con la acción conectada
+
+Como se usa en una app: el diálogo es controlado (`open` y `onOpenChange`) y «Eliminar» corre la acción y lo cierra. «Cancelar» no borra nada.
+
+<ComponentPreview name="alert-dialog/confirm" />
+
+## Props
+
+### AlertDialog
+
+<ComponentProps file="alert-dialog" type="Pick<AlertDialogPrimitive.Root.Props, 'open' | 'defaultOpen' | 'onOpenChange'>" />
+
+### AlertDialogContent
+
+<ComponentProps file="alert-dialog" type="Pick<React.ComponentProps<typeof AlertDialogContent>, 'size'>" baseUi="alert-dialog" />
+
+### AlertDialogAction y AlertDialogCancel
+
+<ComponentProps file="alert-dialog" type="Pick<React.ComponentProps<typeof AlertDialogCancel>, 'variant' | 'size'>" />
+
+`AlertDialogAction` acepta todas las props de `Button`.
+
+## Cuándo usarlo
+
+- **Antes de borrar o de algo que no se puede deshacer**: el título pregunta («¿Eliminar informe?») y la descripción nombra el objeto y la consecuencia («Se borran sus gráficas y filtros. No se puede deshacer.»).
+- **Verbos en los botones**: «Eliminar», «Cancelar», «Seguir editando»; nunca «Aceptar» ni «OK».
+- **La acción destructiva** con `variant="destructive"`, en el trigger y en el botón que confirma.
+
+## Cuándo no
+
+- **Una tarea corta** (renombrar, compartir): `Dialog`.
+- **Avisar que algo salió bien**: un toast de `Sonner`, no un diálogo.
+
+<StorybookLink stories="AlertDialog" />

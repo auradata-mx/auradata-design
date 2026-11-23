@@ -1,0 +1,81 @@
+---
+title: Tabs
+description: "Secciones de una misma página, una a la vez, con su conteo si hace falta."
+---
+
+Las pestañas de shadcn con la variante `line` pegada al contenido (sin un borde transparente que mueva la etiqueta), espacio en la pestaña activa, el panel vertical alineado con la primera pestaña y solo el contorno de foco de la marca. Suma `TabsCount`, que cuenta lo que tiene cada pestaña.
+
+<ComponentPreview name="tabs/demo" />
+
+## Instalación
+
+<ComponentInstall item="tabs" />
+
+## Uso
+
+```tsx
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+<Tabs defaultValue="summary">
+  <TabsList>
+    <TabsTrigger value="summary">Resumen</TabsTrigger>
+    <TabsTrigger value="regions">Regiones</TabsTrigger>
+  </TabsList>
+  <TabsContent value="summary">Las ventas crecieron 6 % contra septiembre.</TabsContent>
+  <TabsContent value="regions">El Centro concentra la mitad de las ventas.</TabsContent>
+</Tabs>;
+```
+
+Con el teclado, Tab llega a la pestaña activa, las flechas pasan a la siguiente y Enter o Espacio muestran su panel.
+
+## Ejemplos
+
+### Línea
+
+`variant="line"` quita el fondo de la lista y subraya la pestaña activa: para las secciones de una página.
+
+<ComponentPreview name="tabs/line" />
+
+### Con conteo
+
+`TabsCount` escribe el número con los miles de es-MX («1,284») y «99+» pasado `max`. Es parte del nombre de la pestaña («Míos 12»), así que los lectores de pantalla también lo oyen.
+
+<ComponentPreview name="tabs/counts" />
+
+### Vertical y deshabilitada
+
+Con `orientation="vertical"` las pestañas van a la izquierda de su panel. Una pestaña con `disabled` se atenúa y las flechas se la saltan.
+
+<ComponentPreview name="tabs/vertical" />
+
+## Props
+
+### Tabs
+
+<ComponentProps
+  file="tabs"
+  type="Pick<TabsPrimitive.Root.Props, 'defaultValue' | 'value' | 'onValueChange' | 'orientation'>"
+  baseUi="tabs"
+/>
+
+### TabsList
+
+<ComponentProps file="tabs" type="VariantProps<typeof tabsListVariants>" />
+
+### TabsCount
+
+<ComponentProps file="tabs" type="Pick<React.ComponentProps<typeof TabsCount>, 'value' | 'max'>" />
+
+## Cuándo usarlo
+
+- **Secciones de una página** que se ven una a la vez: «Resumen», «Regiones», «Productos».
+- **Con su conteo**, cuando ayuda a elegir: «Míos 12», «Compartidos 99+».
+- **Cada pestaña muestra contenido distinto**; si es lo mismo visto de otra forma, es un `SegmentedControl`.
+
+## Cuándo no
+
+- **Ver lo mismo de otra forma** (Tabla | Gráfica): `SegmentedControl`.
+- **Pasos en orden**: `Stepper`.
+- **Ir a otra página**: enlaces, en el `Sidebar` o el `NavigationMenu`.
+
+<StorybookLink stories="Tabs" />

@@ -1,0 +1,77 @@
+---
+title: Command
+description: "Una lista que se filtra al escribir, para elegir un informe o correr una acción."
+---
+
+El menú de comandos de shadcn (sobre [cmdk](https://cmdk.paco.me)) con la fila resaltada en `--accent`, distinta del fondo del popover; toda la caja de búsqueda recibe el clic, no solo la línea del texto; el mensaje de vacío va atenuado, y el separador es tan ancho como las filas.
+
+<ComponentPreview name="command/demo" />
+
+## Instalación
+
+<ComponentInstall item="command" />
+
+## Uso
+
+```tsx
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+
+<Command>
+  <CommandInput placeholder="Busca un informe…" aria-label="Buscar informes" />
+  <CommandList>
+    <CommandEmpty>Sin resultados</CommandEmpty>
+    <CommandGroup heading="Informes">
+      <CommandItem onSelect={() => abrir('ventas')}>Ventas por región</CommandItem>
+    </CommandGroup>
+  </CommandList>
+</Command>;
+```
+
+Entre grupos, una línea fina con `before:` en el `CommandGroup` (como en los ejemplos) y no un `CommandSeparator`: un separador no puede ir dentro de la lista (`listbox`), y axe lo marca.
+
+## Ejemplos
+
+### En un diálogo
+
+`CommandDialog` pone el comando en un diálogo, más arriba que el centro. Su `title` y su `description` no se ven pero nombran el diálogo: escríbelos en español.
+
+<ComponentPreview name="command/dialog" />
+
+## Props
+
+### Command
+
+<ComponentProps file="command" type="Pick<React.ComponentProps<typeof Command>, 'value' | 'onValueChange' | 'filter' | 'shouldFilter' | 'loop'>" />
+
+### CommandDialog
+
+<ComponentProps
+  file="command"
+  type="Pick<React.ComponentProps<typeof CommandDialog>, 'title' | 'description' | 'showCloseButton' | 'open' | 'onOpenChange'>"
+  baseUi="dialog"
+/>
+
+### CommandItem
+
+<ComponentProps file="command" type="Pick<React.ComponentProps<typeof CommandItem>, 'value' | 'keywords' | 'onSelect' | 'disabled'>" />
+
+## Cuándo usarlo
+
+- **Elegir entre muchos objetos** por su nombre: informes, datasets, espacios.
+- **Correr acciones** desde el teclado, con su atajo en `CommandShortcut`.
+- **Grupos con encabezado** («Informes», «Datasets», «Acciones») y «Sin resultados» cuando nada coincide.
+
+## Cuándo no
+
+- **La búsqueda de toda la app con ⌘K**: `SearchCommand`, que ya trae el botón, el atajo y la fila de «Buscando…».
+- **Un valor de un formulario**: `Combobox` (o `Select` con pocas opciones).
+- **Pocas acciones de un objeto**: `DropdownMenu`.
+
+<StorybookLink stories="Command" />

@@ -1,0 +1,56 @@
+---
+title: User menu
+description: "El menú de la cuenta: espacio, tema, idioma, ayuda y «Cerrar sesión» al final."
+---
+
+Un componente de AuraData sobre `DropdownMenu`: el nombre y el correo arriba; «Mi cuenta» y «Ajustes»; el espacio de trabajo, el tema y el idioma en submenús; la ayuda y los atajos; y «Cerrar sesión» al final. Cada sección aparece cuando la app la pasa. El botón de avatar se nombra «Cuenta de Ana López» y los idiomas se escriben en su propio idioma.
+
+<ComponentPreview name="user-menu/demo" />
+
+## Instalación
+
+<ComponentInstall item="user-menu" />
+
+## Uso
+
+```tsx
+import { UserMenu } from '@/components/ui/user-menu';
+
+<UserMenu
+  user={{ name: 'Ana López', email: 'ana@empresa.mx' }}
+  theme={{ theme, onThemeChange: setTheme }}
+  onSettings={() => router.push('/ajustes')}
+  onShortcuts={() => setShortcutsOpen(true)}
+  onSignOut={signOut}
+/>;
+```
+
+La app es dueña del tema, del idioma y del espacio actual: el menú los muestra y avisa cuando cambian. «Atajos de teclado» abre tu `ShortcutsDialog`.
+
+## Ejemplos
+
+### Completo
+
+`variant="full"` muestra el nombre y el correo junto al avatar, para el pie del `Sidebar`. Ahí el menú abre hacia arriba (`side="top"`). Dentro del sidebar, pasa su `SidebarMenuButton` en `trigger`.
+
+<ComponentPreview name="user-menu/full" />
+
+## Props
+
+<ComponentProps
+  file="user-menu"
+  type="Pick<UserMenuProps, 'user' | 'variant' | 'trigger' | 'workspaces' | 'theme' | 'language' | 'onAccount' | 'onSettings' | 'onHelp' | 'onShortcuts' | 'onSignOut' | 'side' | 'align'>"
+/>
+
+## Cuándo usarlo
+
+- **La cuenta del usuario**, una vez por app: el avatar en la barra superior, o completo en el pie del sidebar.
+- **En este orden**: la cuenta; espacio, tema e idioma; ayuda; «Cerrar sesión» al final.
+
+## Cuándo no
+
+- **Cambiar de espacio** como acción principal de la navegación: `WorkspaceSwitcher`, arriba del sidebar.
+- **Las acciones de un objeto**: `DropdownMenu`.
+- **Solo el tema**: `ThemeToggle`.
+
+<StorybookLink stories="UserMenu" story="Open" />
