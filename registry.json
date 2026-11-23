@@ -12,6 +12,7 @@
         "theme": {
           "font-sans": "Outfit, -apple-system, 'Segoe UI', sans-serif",
           "font-mono": "'Geist Mono', ui-monospace, SFMono-Regular, monospace",
+          "color-field-border": "var(--field-border)",
           "color-destructive-foreground": "var(--destructive-foreground)",
           "color-success": "var(--success)",
           "color-success-foreground": "var(--success-foreground)",
@@ -107,7 +108,8 @@
           "border": "#E5E5E5",
           "input": "#E5E5E5",
           "control-border": "#858585",
-          "ring": "#181818",
+          "field-border": "#C4C4CC",
+          "ring": "#2563EB",
           "chart-1": "#2563EB",
           "chart-2": "#7C3AED",
           "chart-3": "#10B981",
@@ -125,7 +127,7 @@
           "sidebar-accent": "#F5F5F5",
           "sidebar-accent-foreground": "#0A0A0F",
           "sidebar-border": "#E5E5E5",
-          "sidebar-ring": "#181818",
+          "sidebar-ring": "#2563EB",
           "sequential-1": "#DBEAFE",
           "sequential-2": "#BFDBFE",
           "sequential-3": "#93C5FD",
@@ -222,7 +224,8 @@
           "border": "#26262F",
           "input": "#26262F",
           "control-border": "#6B6B76",
-          "ring": "#F5F5F7",
+          "field-border": "#3B3B47",
+          "ring": "#60A5FA",
           "chart-1": "#2563EB",
           "chart-2": "#7C3AED",
           "chart-3": "#10B981",
@@ -240,7 +243,7 @@
           "sidebar-accent": "#1C1C24",
           "sidebar-accent-foreground": "#F5F5F7",
           "sidebar-border": "#26262F",
-          "sidebar-ring": "#F5F5F7",
+          "sidebar-ring": "#60A5FA",
           "sequential-1": "#172554",
           "sequential-2": "#1E3A8A",
           "sequential-3": "#1E40AF",
@@ -321,6 +324,9 @@
           ":where([data-slot=\"checkbox\"], [data-slot=\"radio-group-item\"])": {
             "--input": "var(--control-border)"
           },
+          ":where([aria-invalid=\"true\"]):focus-visible, :where([aria-invalid=\"true\"]):focus-within": {
+            "--ring": "var(--destructive)"
+          },
           ":where([data-slot=\"card\"])": {
             "--tw-shadow": "var(--elevation-raised)",
             "box-shadow": "var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)",
@@ -328,9 +334,14 @@
           }
         },
         ":where([class*=\"focus-visible:ring-\"]:not([class~=\"focus-visible:ring-0\"], [data-slot=\"field-label\"]:has(> [data-slot=\"field\"]) *)):focus-visible,\n:where([class*=\"focus-visible:ring-\"]):has(> input:focus-visible),\n:where([class*=\"focus-within:ring-\"]:not([class*=\"focus-within:ring-0\"])):has(:focus-visible),\n:where([data-slot=\"input-group\"]:not([data-slot=\"combobox-content\"] *)):has([data-slot=\"input-group-control\"]:focus-visible),\n:where([data-slot=\"code-block\"]):has(> [data-slot=\"code-block-content\"]:focus-visible),\n:where([data-slot=\"field-label\"]:has(> [data-slot=\"field\"])):has(:focus-visible)": {
-          "outline": "2px solid var(--ring)",
+          "outline": "2px solid transparent",
           "outline-offset": "2px",
-          "--tw-ring-shadow": "0 0 #0000"
+          "--tw-ring-shadow": "0 0 0 1px var(--ring), 0 0 0 4px color-mix(in oklab, var(--ring) 25%, transparent)",
+          "box-shadow": "var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)"
+        },
+        ":where([data-slot=\"input\"], [data-slot=\"textarea\"], [data-slot=\"select-trigger\"], [data-slot=\"native-select\"]):focus-visible,\n:where([data-slot=\"input-group\"]:not([data-slot=\"combobox-content\"] *)):has([data-slot=\"input-group-control\"]:focus-visible),\n:where([data-slot=\"combobox-chips\"]):has(:focus-visible)": {
+          "border-color": "var(--ring)",
+          "--tw-ring-shadow": "0 0 0 3px color-mix(in oklab, var(--ring) 25%, transparent)"
         },
         ":where([data-slot$=\"viewport\"]):focus-visible": {
           "outline-offset": "-2px"
