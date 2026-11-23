@@ -1856,22 +1856,6 @@
       ]
     },
     {
-      "name": "segmented-control",
-      "type": "registry:ui",
-      "title": "Segmented control",
-      "dependencies": [
-        "@base-ui/react",
-        "class-variance-authority",
-        "cn"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/segmented-control.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "select",
       "type": "registry:ui",
       "title": "Select",
