@@ -101,19 +101,23 @@ export const Collapsed: Story = {
 }
 
 /**
- * On a phone (under 768 px) the sidebar is a sheet: the play opens it with the trigger, as the `mobile`
- * Playwright project shows at 390×844. On a wide screen it stays the normal sidebar.
+ * On a phone (under 768 px) the sidebar is a drawer that comes up from the bottom: the play opens it with the
+ * trigger, as the `mobile` Playwright project shows at 390×844. On a wide screen it stays the normal sidebar.
  */
 export const Mobile: Story = {
   ...Default,
   tags: ['mobile'],
+  globals: { viewport: { value: 'mobile', isRotated: false } },
   play: async ({ canvasElement }) => {
     if (!window.matchMedia('(max-width: 767px)').matches) return
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Mostrar u ocultar la barra lateral' }))
     const body = within(canvasElement.ownerDocument.body)
-    const sheet = await body.findByRole('dialog')
-    await waitFor(() => expect(within(sheet).getByRole('button', { name: 'Informes' })).toBeVisible())
-    // Base UI focuses the sheet on open; keep the first item unfocused so the screenshot is steady.
+    const drawer = await body.findByRole('dialog', { name: 'Barra lateral' })
+    await expect(drawer).toHaveAttribute('data-swipe-direction', 'down')
+    // Print hides the sidebar by its slot, on a phone too.
+    await expect(drawer).toHaveAttribute('data-slot', 'sidebar')
+    await waitFor(() => expect(within(drawer).getByRole('button', { name: 'Informes' })).toBeVisible())
+    // Base UI focuses the drawer on open; keep the first item unfocused so the screenshot is steady.
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }

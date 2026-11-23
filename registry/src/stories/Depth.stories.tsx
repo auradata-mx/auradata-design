@@ -11,7 +11,7 @@ import { formatCurrency } from '@/lib/format'
  * Depth is the theme, not a component: the elevation scale (`shadow-(--elevation-raised)`, `shadow-(--elevation-control)`, `shadow-(--elevation-sunken)`,
  * `shadow-(--elevation-overlay)`, `shadow-(--elevation-modal)`) gives each surface a top-edge highlight, a contact and an ambient shadow.
  * Level 0 stays flat (rows, list items, charts inside a card), cards and buttons sit at 1, menus and popovers
- * float at 2, dialogs and sheets at 3. Buttons lift on hover, sink when pressed and go flat when disabled.
+ * float at 2, dialogs and drawers at 3. Buttons lift on hover, sink when pressed and go flat when disabled.
  */
 const meta = {
   title: 'AuraData/Depth',

@@ -1,7 +1,11 @@
-// registry: auradata (shadcn drawer: the header reads left-aligned like its body, a bottom drawer shows a visible grab handle, a scrim that reads in dark)
+// registry: auradata (shadcn drawer, responsive: on a phone it always comes up from the bottom, on a wide screen from the side of swipeDirection, the right by default; a close button lined up with the title, edges keep the safe area, 40 px footer buttons on a phone; the header reads left-aligned like its body, a bottom drawer shows a visible grab handle, a scrim that reads in dark)
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
+import { XIcon } from "lucide-react"
 import { cn } from "cn"
+
+import { Button } from "@/components/ui/button"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 type DrawerContextProps = {
   hasSnapPoints: boolean
@@ -24,14 +28,19 @@ function useDrawer() {
 
 function Drawer({
   modal = true,
-  swipeDirection = "down",
-  // AuraData: a bottom drawer shows its grab handle unless told otherwise.
-  showSwipeHandle = swipeDirection === "down",
+  swipeDirection: wideDirection = "right",
+  showSwipeHandle: showHandle,
   snapPoints,
   ...props
 }: DrawerPrimitive.Root.Props & {
   showSwipeHandle?: boolean
 }) {
+  // AuraData: responsive. On a phone (under 768 px) a drawer always comes up from the bottom, within thumb
+  // reach; on a wide screen it slides in from the side of swipeDirection.
+  const isMobile = useIsMobile()
+  const swipeDirection = isMobile ? "down" : wideDirection
+  // A bottom drawer shows its grab handle unless told otherwise.
+  const showSwipeHandle = showHandle ?? swipeDirection === "down"
   const hasSnapPoints = snapPoints != null && snapPoints.length > 0
   const contextValue = React.useMemo(
     () => ({ hasSnapPoints, modal, showSwipeHandle, swipeDirection }),
@@ -99,8 +108,11 @@ function DrawerSwipeHandle({
 function DrawerContent({
   className,
   children,
+  showCloseButton = true,
   ...props
-}: DrawerPrimitive.Popup.Props) {
+}: DrawerPrimitive.Popup.Props & {
+  showCloseButton?: boolean
+}) {
   const { hasSnapPoints, modal, showSwipeHandle, swipeDirection } = useDrawer()
   const swipeAxis =
     swipeDirection === "down" || swipeDirection === "up" ? "y" : "x"
@@ -136,6 +148,8 @@ function DrawerContent({
             "data-[swipe-axis=y]:inset-x-0 data-[swipe-axis=y]:data-nested-drawer-open:h-(--stack-height)",
             // Axis: x.
             "data-[swipe-axis=x]:inset-y-0 data-[swipe-axis=x]:flex-row",
+            // Safe area: the content clears the notch and the home indicator on the edges the drawer touches.
+            "data-[swipe-direction=down]:pb-[env(safe-area-inset-bottom)] data-[swipe-direction=up]:pt-[env(safe-area-inset-top)] data-[swipe-axis=x]:py-[env(safe-area-inset-top)_env(safe-area-inset-bottom)]",
             // Direction: down.
             "data-[swipe-direction=down]:bottom-0 data-[swipe-direction=down]:origin-bottom data-[swipe-direction=down]:[--closed-transform:translate3d(0,calc(100%+var(--drawer-inset,0px)+2px),0)] data-[swipe-direction=down]:[--translate-y:calc(var(--drawer-snap-point-offset,0px)+var(--drawer-swipe-movement-y)-var(--stack-peek-offset)-(var(--stack-shrink)*var(--stack-height)))]",
             // Direction: up.
@@ -152,10 +166,25 @@ function DrawerContent({
           <DrawerPrimitive.Content
             data-slot="drawer-content"
             className={cn(
-              "flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)] select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-swiping/drawer-popup:select-none"
+              "relative flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] has-data-[slot=drawer-close-button]:*:data-[slot=drawer-header]:pr-12 transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)] select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-swiping/drawer-popup:select-none"
             )}
           >
             {children}
+            {showCloseButton && (
+              <DrawerPrimitive.Close
+                data-slot="drawer-close-button"
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="absolute top-3 right-3"
+                  />
+                }
+              >
+                <XIcon />
+                <span className="sr-only">Cerrar</span>
+              </DrawerPrimitive.Close>
+            )}
           </DrawerPrimitive.Content>
         </DrawerPrimitive.Popup>
       </DrawerPrimitive.Viewport>
@@ -180,7 +209,10 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="drawer-footer"
-      className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0", className)}
+      className={cn(
+        "mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0 max-sm:*:data-[slot=button]:h-10",
+        className
+      )}
       {...props}
     />
   )

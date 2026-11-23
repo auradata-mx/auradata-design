@@ -1,4 +1,4 @@
-// registry: auradata (a notification center: a bell with the unread count that opens the list, unread and read, in a popover or, on a phone, a bottom sheet)
+// registry: auradata (a notification center: a bell with the unread count that opens the list, unread and read, in a popover or, on a phone, a drawer from the bottom)
 "use client"
 
 import * as React from "react"
@@ -6,9 +6,9 @@ import { BellIcon, BellOffIcon, CheckCheckIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useIsMobile } from "@/hooks/use-mobile"
 
@@ -103,20 +103,20 @@ function NotificationCenter({
 
   if (isMobile) {
     return (
-      <Sheet {...state}>
+      <Drawer {...state}>
         <span data-slot="notification-center" className={cn("relative inline-flex", className)}>
-          <SheetTrigger render={trigger} />
+          <DrawerTrigger render={trigger} />
           {count}
         </span>
-        <SheetContent side="bottom" className="max-h-[85dvh] gap-0">
-          <SheetHeader className="flex-row items-center justify-between gap-3 border-b py-3 pr-14">
-            <SheetTitle>{title}</SheetTitle>
+        <DrawerContent className="max-h-[85dvh]">
+          <DrawerHeader className="flex-row items-center justify-between gap-3 border-b py-3 pr-14">
+            <DrawerTitle>{title}</DrawerTitle>
             {markAll}
-          </SheetHeader>
+          </DrawerHeader>
           <div className="min-h-0 flex-1 overflow-y-auto">{body}</div>
           {footer && <div className="border-t p-2">{footer}</div>}
-        </SheetContent>
-      </Sheet>
+        </DrawerContent>
+      </Drawer>
     )
   }
 

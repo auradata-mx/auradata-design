@@ -1150,7 +1150,12 @@
       "title": "Drawer",
       "dependencies": [
         "@base-ui/react",
-        "cn"
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/use-mobile"
       ],
       "files": [
         {
@@ -1757,8 +1762,8 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/drawer",
         "cristianruben-dev/auradata-design/empty",
-        "cristianruben-dev/auradata-design/sheet",
         "cristianruben-dev/auradata-design/use-mobile",
         "popover",
         "skeleton"
@@ -2066,25 +2071,6 @@
       ]
     },
     {
-      "name": "sheet",
-      "type": "registry:ui",
-      "title": "Sheet",
-      "dependencies": [
-        "@base-ui/react",
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/sheet.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "shimmer-button",
       "type": "registry:ui",
       "title": "Shimmer button",
@@ -2130,8 +2116,8 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/drawer",
         "cristianruben-dev/auradata-design/input",
-        "cristianruben-dev/auradata-design/sheet",
         "cristianruben-dev/auradata-design/tooltip",
         "cristianruben-dev/auradata-design/use-mobile",
         "separator",

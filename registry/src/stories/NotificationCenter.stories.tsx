@@ -168,7 +168,7 @@ export const Loading: Story = {
   },
 }
 
-/** On a phone the list opens in a sheet from the bottom. */
+/** On a phone the list opens in a drawer from the bottom. */
 export const OnPhone: Story = {
   tags: ['mobile'],
   globals: ON_PHONE,
@@ -176,8 +176,8 @@ export const OnPhone: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body)
     const panel = await body.findByRole('dialog', { name: 'Notificaciones' })
-    await expect(panel).toHaveAttribute('data-slot', 'sheet-content')
-    await expect(panel).toHaveAttribute('data-side', 'bottom')
+    await expect(panel).toHaveAttribute('data-slot', 'drawer-popup')
+    await expect(panel).toHaveAttribute('data-swipe-direction', 'down')
   },
 }
 
