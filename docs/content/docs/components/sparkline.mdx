@@ -1,0 +1,42 @@
+---
+title: Sparkline
+description: "Añade la forma de una tendencia junto a su cifra en una fila o en un KPI."
+---
+
+`Sparkline` muestra los valores del más antiguo al más reciente, sin ejes ni leyenda. Es decorativo por omisión: si es el único lugar que cuenta la tendencia, dale un `label` que la describa.
+
+<ComponentPreview name="sparkline/demo" />
+
+## Instalación
+
+<ComponentInstall item="sparkline" />
+
+## Uso
+
+```tsx
+import { Sparkline } from '@/components/ui/sparkline';
+
+<Sparkline values={[1150, 1210, 1284]} />;
+```
+
+## Ejemplos
+
+### Área y último punto
+
+Con `area` sombreas bajo la línea y con `showEnd` marcas el valor más reciente.
+
+<ComponentPreview name="sparkline/end" />
+
+## Props
+
+<ComponentProps file="sparkline" type="Pick<React.ComponentProps<typeof Sparkline>, 'values' | 'tone' | 'area' | 'showEnd' | 'label'>" />
+
+## Cuándo usarlo
+
+- Cuando la pregunta es «¿cómo va?» y la cifra ya está a la vista, en una tabla o en `KpiCard`.
+
+## Cuándo no
+
+- Para leer cada valor o comparar periodos y series en un eje, usa `LineChart`.
+
+<StorybookLink stories="Sparkline" story="AreaAndEnd" />

@@ -1,0 +1,25 @@
+---
+title: Página no encontrada
+description: "Explica qué ocurrió y ofrece una salida clara cuando una página no existe."
+full: true
+---
+
+import { BlockPreview } from '@docs/components/blocks/block-preview';
+
+Usa esta pantalla si no se encuentra una dirección. Distingue el error 404 de un fallo temporal y ofrece una acción: volver al inicio.
+
+<BlockPreview name="not-found" />
+
+## Instalación
+
+<ComponentInstall item="not-found" />
+
+## Componentes del registro
+
+`Logo` mantiene la identidad de la app. `Button` se renderiza como enlace porque la acción cambia de página.
+
+## Cómo adaptarlo
+
+Registra `NotFound` como la pantalla 404 de tu enrutador. El enlace usa `/` por defecto; pasa `homeHref` si la ruta de inicio es otra. En la vista previa, el enlace lleva a un inicio simulado.
+
+<StorybookLink stories="Blocks" story="NotFoundPage" />

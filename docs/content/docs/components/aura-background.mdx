@@ -1,0 +1,42 @@
+---
+title: Aura background
+description: "Da a una sección un fondo decorativo con los colores de AuraData."
+---
+
+El aura de marca va detrás del contenido. La variante `hero` se desplaza lentamente y se queda quieta cuando el usuario prefiere reducir el movimiento; la cuadrícula es opcional.
+
+<ComponentPreview name="aura-background/demo" />
+
+## Instalación
+
+<ComponentInstall item="aura-background" />
+
+## Uso
+
+```tsx
+import { AuraBackground } from '@/components/ui/aura-background';
+
+<div className="relative isolate"><AuraBackground grid />{/* Contenido de la sección */}</div>;
+```
+
+## Ejemplos
+
+### Franja estática
+
+`band` deja un solo resplandor quieto, centrado detrás del contenido.
+
+<ComponentPreview name="aura-background/band" />
+
+## Props
+
+<ComponentProps file="aura-background" type="Pick<React.ComponentProps<typeof AuraBackground>, 'grid' | 'variant'>" />
+
+## Cuándo usarlo
+
+- Úsalo detrás del encabezado de una página de presentación o de una franja con una llamada a la acción. Mantén el mensaje en primer plano.
+
+## Cuándo no
+
+- Para distinguir estados o categorías en un informe, usa texto y los tokens de estado, no un fondo decorativo.
+
+<StorybookLink stories="AuraBackground" story="Default" />

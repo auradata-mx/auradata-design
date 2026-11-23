@@ -1,0 +1,85 @@
+---
+title: Input group
+description: "Un campo con texto, íconos o botones dentro de su borde: un «$», una lupa, un botón de copiar."
+---
+
+El input group de shadcn con la prop `disabled`: deshabilita sus controles y marca el grupo `aria-disabled`, así sus textos atenuados («$», «MXN») cuentan como deshabilitados. El foco es solo el contorno de la marca, sin cambio de borde; el halo de inválido es más suave, y el borde contrasta 3:1 con la página en claro y oscuro. Solo un control deshabilitado atenúa el grupo, no un botón deshabilitado dentro (un − en su límite).
+
+<ComponentPreview name="input-group/demo" />
+
+## Instalación
+
+<ComponentInstall item="input-group" />
+
+## Uso
+
+```tsx
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
+
+<InputGroup>
+  <InputGroupAddon>
+    <InputGroupText>$</InputGroupText>
+  </InputGroupAddon>
+  <InputGroupInput aria-label="Meta de ventas" />
+  <InputGroupAddon align="inline-end">
+    <InputGroupText>MXN</InputGroupText>
+  </InputGroupAddon>
+</InputGroup>;
+```
+
+## Ejemplos
+
+### Con botón
+
+Un botón dentro del grupo, al final. Solo con ícono, lleva `aria-label`.
+
+<ComponentPreview name="input-group/with-button" />
+
+### Con textarea
+
+Addons arriba y abajo del campo (`block-start`, `block-end`).
+
+<ComponentPreview name="input-group/with-textarea" />
+
+### Inválido
+
+<ComponentPreview name="input-group/invalid" />
+
+### Deshabilitado
+
+`disabled` en el grupo, no en el input.
+
+<ComponentPreview name="input-group/disabled" />
+
+## Props
+
+### InputGroup
+
+<ComponentProps file="input-group" type="Pick<React.ComponentProps<typeof InputGroup>, 'disabled'>" />
+
+### InputGroupAddon
+
+<ComponentProps file="input-group" type="Pick<React.ComponentProps<typeof InputGroupAddon>, 'align'>" />
+
+### InputGroupButton
+
+<ComponentProps file="input-group" type="Pick<React.ComponentProps<typeof InputGroupButton>, 'variant' | 'size'>" />
+
+## Cuándo usarlo
+
+- **Un campo con algo pegado a él**: la lupa de una búsqueda, la moneda de un monto, el botón de copiar un enlace.
+- **El ícono junto al campo es decorativo** (`aria-hidden`); el campo lleva su propia etiqueta o `aria-label`.
+
+## Cuándo no
+
+Antes de armar uno, revisa si ya hay un control para ese dato:
+
+| Dato | Control |
+| --- | --- |
+| Dinero | `CurrencyInput` |
+| Un número con pasos | `NumberInput` |
+| Teléfono | `PhoneInput` |
+| Contraseña | `PasswordInput` |
+| Texto corto sin nada dentro | `Input` |
+
+<StorybookLink stories="InputGroup" />

@@ -1,0 +1,55 @@
+---
+title: Heatmap
+description: "Compara valores en dos dimensiones o muestra una actividad día a día."
+---
+
+`Heatmap` dibuja una tabla con el valor en cada celda, incluso si no distingues el color. Usa la rampa secuencial para magnitud o la divergente para diferencias respecto a un centro. `CalendarHeatmap` muestra la actividad por día.
+
+<ComponentPreview name="heatmap/demo" />
+
+## Instalación
+
+<ComponentInstall item="heatmap" />
+
+## Uso
+
+```tsx
+import { Heatmap } from '@/components/ui/heatmap';
+
+<Heatmap rows={regiones} columns={meses} values={consultas} caption="Consultas por región y mes" />;
+```
+
+## Ejemplos
+
+### De qué lado de la meta
+
+El gris marca el centro (la meta); rojo y azul indican por debajo o por encima. Conserva el signo junto al color.
+
+<ComponentPreview name="heatmap/diverging" />
+
+### Actividad por día
+
+Usa fechas `YYYY-MM-DD`. Cada día con datos tiene su valor disponible en el tooltip.
+
+<ComponentPreview name="heatmap/calendar" />
+
+## Props
+
+### Heatmap
+
+<ComponentProps file="heatmap" type="Omit<HeatmapProps, keyof React.ComponentProps<'div'>>" />
+
+### CalendarHeatmap
+
+<ComponentProps file="heatmap" type="Omit<CalendarHeatmapProps, keyof React.ComponentProps<'div'>>" />
+
+## Cuándo usarlo
+
+- **¿Cuánto hay en cada cruce?** Usa secuencial. Si importa de qué lado de la meta está el valor, usa divergente.
+- Para actividad por día usa el calendario. Para datos faltantes en la tabla, pasa `null`: no equivale a cero.
+
+## Cuándo no
+
+- Si lo que importa es el cambio en el tiempo de una serie, usa una línea; si solo son categorías, usa etiquetas, no una rampa de magnitud.
+
+<StorybookLink stories="Heatmap" story="Sequential" />

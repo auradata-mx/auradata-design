@@ -1,0 +1,56 @@
+---
+title: Button group
+description: "Agrupa acciones o controles que pertenecen a una misma tarea."
+---
+
+El grupo de AuraData une los bordes de sus partes. Entre dos botones sólidos, el separador ocupa toda la altura; junto a un campo, las partes comparten su borde de contraste 3:1.
+
+<ComponentPreview name="button-group/demo" />
+
+## Instalación
+
+<ComponentInstall item="button-group" />
+
+## Uso
+
+```tsx
+import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
+
+<ButtonGroup aria-label="Acciones del informe">
+  <Button variant="outline">Publicar</Button>
+  <Button variant="outline">Compartir</Button>
+</ButtonGroup>;
+```
+
+## Ejemplos
+
+### Junto a un campo
+
+Agrupa el campo con la acción que usa su valor y conserva una etiqueta para el input.
+
+<ComponentPreview name="button-group/with-input" />
+
+## Props
+
+### ButtonGroup
+
+<ComponentProps file="button-group" type="Pick<React.ComponentProps<typeof ButtonGroup>, 'orientation' | 'children'>" />
+
+### ButtonGroupText
+
+<ComponentProps file="button-group" type="Pick<React.ComponentProps<typeof ButtonGroupText>, 'render' | 'children'>" />
+
+### ButtonGroupSeparator
+
+<ComponentProps file="button-group" type="Pick<React.ComponentProps<typeof ButtonGroupSeparator>, 'orientation'>" />
+
+## Cuándo usarlo
+
+- Agrupa acciones estrechamente relacionadas, o un campo y su acción. Etiqueta el grupo según lo que se hace con él.
+
+## Cuándo no
+
+- Para elegir una sola vista o un valor persistente, usa `Tabs` o `ToggleGroup`; agrupar botones no los vuelve opciones.
+
+<StorybookLink stories="ButtonGroup" story="Default" />

@@ -1,0 +1,4 @@
+{
+  "title": "Bloques",
+  "pages": ["index", "app-shell", "dashboard", "chat", "connection-form", "login", "settings", "not-found"]
+}

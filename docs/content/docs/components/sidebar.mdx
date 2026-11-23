@@ -1,0 +1,83 @@
+---
+title: Sidebar
+description: "La navegación de la app: logo, espacio, secciones y usuario, colapsable a íconos."
+---
+
+El sidebar de shadcn con sus textos en español («Mostrar u ocultar la barra lateral», «Barra lateral») y, en el teléfono, dentro de un `Drawer` que sube desde abajo. En una pantalla ancha se colapsa a íconos, cada botón conserva su nombre y muestra un tooltip, y ⌘B o Ctrl+B lo abre y lo cierra.
+
+<ComponentPreview name="sidebar/demo" align="start" />
+
+El ejemplo vive en una caja para esta página. En una app, el sidebar ocupa todo el alto de la pantalla: quita `relative` del provider y `absolute h-full` del sidebar, y pon el contenido en `SidebarInset` (el `main` de la página). Debajo de 768 px el trigger lo abre como drawer.
+
+## Instalación
+
+<ComponentInstall item="sidebar" />
+
+## Uso
+
+```tsx
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
+
+<SidebarProvider>
+  <Sidebar collapsible="icon">
+    <SidebarContent>
+      <SidebarGroup>
+        <SidebarGroupLabel>Explorar</SidebarGroupLabel>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton isActive tooltip="Informes" render={<a href="/informes" />}>
+              <LayoutDashboardIcon aria-hidden />
+              <span>Informes</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarGroup>
+    </SidebarContent>
+  </Sidebar>
+  <SidebarInset>
+    <SidebarTrigger />
+    {/* la página */}
+  </SidebarInset>
+</SidebarProvider>;
+```
+
+`SidebarProvider` guarda si está abierto en una cookie (`sidebar_state`), para que la página lo recuerde. Arriba va el `WorkspaceSwitcher`; abajo, el `UserMenu` con `variant="full"`.
+
+## Props
+
+### SidebarProvider
+
+<ComponentProps file="sidebar" type="Pick<React.ComponentProps<typeof SidebarProvider>, 'defaultOpen' | 'open' | 'onOpenChange'>" />
+
+### Sidebar
+
+<ComponentProps file="sidebar" type="Pick<React.ComponentProps<typeof Sidebar>, 'side' | 'variant' | 'collapsible'>" />
+
+### SidebarMenuButton
+
+<ComponentProps file="sidebar" type="Pick<React.ComponentProps<typeof SidebarMenuButton>, 'isActive' | 'tooltip' | 'variant' | 'size' | 'render'>" />
+
+## Cuándo usarlo
+
+- **El shell de la app**: el sidebar a la izquierda con el logo, el espacio de trabajo, la navegación y el usuario; a la derecha, la barra superior de 56 px y el contenido con `p-6`.
+- **Colapsable a íconos** (`collapsible="icon"`), con un `tooltip` en cada botón para cuando solo se ve el ícono.
+- **Íconos de 16 px** (`size-4`), como en el resto de la UI densa.
+
+## Cuándo no
+
+- **Un sitio de marketing**: `NavigationMenu` en el encabezado.
+- **Secciones de una sola página**: `Tabs`.
+- **Un panel temporal** (filtros, detalle): `Drawer`.
+
+<StorybookLink stories="Sidebar" />

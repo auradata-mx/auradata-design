@@ -1,0 +1,59 @@
+---
+title: Chart
+description: "Arma una gráfica Recharts propia con los colores, la leyenda y el tooltip de AuraData."
+---
+
+`ChartContainer` adapta Recharts a los tokens de AuraData, incluido el color del texto de los ejes en claro y oscuro. `ChartTooltipContent` muestra primero el valor en es-MX y `ChartLegendContent` ofrece botones de serie cuando lo conectas con `useChartSeries`.
+
+<ComponentPreview name="chart/demo" />
+
+## Instalación
+
+<ComponentInstall item="chart" />
+
+## Uso
+
+```tsx
+import { Bar, BarChart } from 'recharts';
+import { ChartContainer } from '@/components/ui/chart';
+import { chartConfig } from '@/lib/chart-palette';
+
+<ChartContainer config={chartConfig({ consultas: 'Consultas' })} className="h-64 w-full">
+  <BarChart data={datos} accessibilityLayer>
+    <Bar dataKey="consultas" fill="var(--color-consultas)" />
+  </BarChart>
+</ChartContainer>;
+```
+
+## Ejemplos
+
+### Leyenda interactiva
+
+Conecta `isHidden` a cada serie y `toggle` a su leyenda. La serie conserva su color cuando la vuelves a mostrar.
+
+<ComponentPreview name="chart/legend" />
+
+## Props
+
+### ChartContainer
+
+<ComponentProps file="chart" type="Pick<React.ComponentProps<typeof ChartContainer>, 'config' | 'children' | 'initialDimension'>" />
+
+### ChartTooltipContent
+
+<ComponentProps file="chart" type="Pick<React.ComponentProps<typeof ChartTooltipContent>, 'indicator' | 'hideLabel' | 'hideIndicator' | 'valueFormatter' | 'showPercent' | 'percentTotal' | 'previousKey' | 'comparison' | 'goodDirection' | 'locale'>" />
+
+### ChartLegendContent
+
+<ComponentProps file="chart" type="Pick<React.ComponentProps<typeof ChartLegendContent>, 'hideIcon' | 'nameKey' | 'hiddenSeries' | 'onSeriesToggle'>" />
+
+## Cuándo usarlo
+
+- Necesitas componer marcas o ejes de Recharts y conservar los tokens del tema. Usa `chartConfig()` para tomar la paleta en orden.
+- Da nombre a las series y deja los valores disponibles también sin el mouse, por ejemplo en «Ver datos».
+
+## Cuándo no
+
+- Para líneas, áreas o barras de uso común elige `Cartesian chart`: ya incluye los ejes, el formato y la leyenda.
+
+<StorybookLink stories="Chart" story="InteractiveLegend" />

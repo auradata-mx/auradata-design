@@ -1,0 +1,80 @@
+---
+title: Message scroller
+description: "Mantiene el historial de mensajes navegable mientras llegan nuevas respuestas."
+---
+
+La versión de AuraData del scroller de shadcn etiqueta en español los botones para ir al inicio y al final. El proveedor comparte el estado de desplazamiento entre la lista y sus controles.
+
+<ComponentPreview name="message-scroller/demo" align="start" />
+
+## Instalación
+
+<ComponentInstall item="message-scroller" />
+
+## Uso
+
+```tsx
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from '@/components/ui/message-scroller';
+
+<MessageScrollerProvider>
+  <MessageScroller className="h-64">
+    <MessageScrollerViewport aria-label="Mensajes">
+      <MessageScrollerContent aria-live="polite">
+        <MessageScrollerItem messageId="1">El informe está listo.</MessageScrollerItem>
+      </MessageScrollerContent>
+    </MessageScrollerViewport>
+    <MessageScrollerButton behavior="instant" />
+  </MessageScroller>
+</MessageScrollerProvider>;
+```
+
+## Ejemplos
+
+### Mensajes nuevos
+
+Con identificadores estables, puedes agregar mensajes sin recrear los anteriores. La región viva anuncia nuevas respuestas.
+
+<ComponentPreview name="message-scroller/append" align="start" />
+
+## Props
+
+### MessageScrollerProvider
+
+<ComponentProps file="message-scroller" type="Pick<React.ComponentProps<typeof MessageScrollerProvider>, 'autoScroll' | 'defaultScrollPosition' | 'scrollEdgeThreshold' | 'scrollPreviousItemPeek' | 'scrollMargin'>" />
+
+### MessageScroller
+
+<ComponentProps file="message-scroller" type="Pick<React.ComponentProps<typeof MessageScroller>, 'className' | 'children'>" />
+
+### MessageScrollerViewport
+
+<ComponentProps file="message-scroller" type="Pick<React.ComponentProps<typeof MessageScrollerViewport>, 'preserveScrollOnPrepend' | 'aria-label'>" />
+
+### MessageScrollerContent
+
+<ComponentProps file="message-scroller" type="Pick<React.ComponentProps<typeof MessageScrollerContent>, 'spacerClassName' | 'aria-live'>" />
+
+### MessageScrollerItem
+
+<ComponentProps file="message-scroller" type="Pick<React.ComponentProps<typeof MessageScrollerItem>, 'messageId' | 'scrollAnchor'>" />
+
+### MessageScrollerButton
+
+<ComponentProps file="message-scroller" type="Pick<React.ComponentProps<typeof MessageScrollerButton>, 'direction' | 'behavior' | 'variant' | 'size'>" />
+
+## Cuándo usarlo
+
+- En chats o históricos de conversación, da altura al contenedor y una identidad estable a cada mensaje.
+
+## Cuándo no
+
+- Para una región desplazable sin comportamiento de chat, usa `ScrollArea`. Usa `Bubble` para el contenido de un turno, no para el historial.
+
+<StorybookLink stories="Blocks" story="ChatConversation" />

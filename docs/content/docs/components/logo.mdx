@@ -1,0 +1,51 @@
+---
+title: Logo
+description: "Muestra el logotipo Continua y, si hace falta, la etiqueta del producto."
+---
+
+El componente conserva las proporciones de Continua y elige la versión a color en claro y la blanca en oscuro con `variant="auto"`. `ProductTag` se coloca junto al logotipo, no dentro del archivo de marca.
+
+<ComponentPreview name="logo/demo" />
+
+## Instalación
+
+<ComponentInstall item="logo" />
+
+## Uso
+
+```tsx
+import { Logo, ProductTag } from '@/components/ui/logo';
+
+<div className="flex items-center gap-2">
+  <Logo className="h-8 w-auto" />
+  <ProductTag>BI</ProductTag>
+</div>;
+```
+
+## Ejemplos
+
+### Composición vertical e isotipo
+
+Cambia el alto y deja el ancho proporcional. Deja espacio libre alrededor de cada composición.
+
+<ComponentPreview name="logo/layouts" />
+
+## Props
+
+### Logo
+
+<ComponentProps file="logo" type="Pick<React.ComponentProps<typeof Logo>, 'layout' | 'variant' | 'basePath' | 'alt' | 'className'>" />
+
+### ProductTag
+
+<ComponentProps file="logo" type="Pick<React.ComponentProps<typeof ProductTag>, 'children' | 'className'>" />
+
+## Cuándo usarlo
+
+- Identifica a AuraData o AuraData BI en el encabezado o al iniciar sesión. En fondos fijos, usa la versión blanca sobre oscuro y la negra sobre claro. Consulta la [guía del logotipo](/docs/brand/logotipo/) para el espacio libre.
+
+## Cuándo no
+
+- No estires, recortes ni agregues sombras al logotipo. Para el ícono de la pestaña usa los favicons indicados en la guía.
+
+<StorybookLink stories="Logo" story="WithProductTag" />

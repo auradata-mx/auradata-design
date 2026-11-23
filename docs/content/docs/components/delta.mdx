@@ -1,0 +1,42 @@
+---
+title: Delta
+description: "Escribe el cambio contra otro periodo con flecha y porcentaje con signo."
+---
+
+`Delta` comparte el indicador de cambio entre tarjetas KPI y tooltips de gráficas. Da el porcentaje en formato es-MX y mantiene junta la comparación si pasa a otra línea. La dirección de la flecha no depende de si el cambio es buena noticia.
+
+<ComponentPreview name="delta/demo" />
+
+## Instalación
+
+<ComponentInstall item="delta" />
+
+## Uso
+
+```tsx
+import { Delta } from '@/components/ui/delta';
+
+<Delta change={0.062} comparison="vs. septiembre" />;
+```
+
+## Ejemplos
+
+### Cuando bajar es buena noticia
+
+En costos, `goodDirection="down"` cambia el tono, no el signo ni la dirección de la flecha.
+
+<ComponentPreview name="delta/costs" />
+
+## Props
+
+<ComponentProps file="delta" type="Omit<DeltaProps, keyof React.ComponentProps<'div'>>" />
+
+## Cuándo usarlo
+
+- Ponlo junto a la cifra que cambió, con una comparación concreta. Pasa una fracción: `0.062` es +6.2 %.
+
+## Cuándo no
+
+- Si no existe un periodo de comparación, muestra solo la cifra. No uses un cambio de cero para representar un dato faltante.
+
+<StorybookLink stories="KpiCard" story="CostsRising" />

@@ -1,0 +1,66 @@
+---
+title: Input OTP
+description: "Un código de verificación de seis dígitos, una casilla por dígito."
+---
+
+El input OTP de shadcn con casillas de 40 px, para un dedo, y el borde de 3:1 de los campos de texto. La casilla donde se escribe lleva el contorno de foco de la marca en lugar de un borde nuevo; inválido, todas toman un borde rojo nítido y los dígitos conservan el color del texto.
+
+<ComponentPreview name="input-otp/demo" />
+
+## Instalación
+
+<ComponentInstall item="input-otp" />
+
+## Uso
+
+```tsx
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui/input-otp';
+
+<InputOTP id="otp" maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
+  <InputOTPGroup>
+    <InputOTPSlot index={0} />
+    <InputOTPSlot index={1} />
+    <InputOTPSlot index={2} />
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
+    <InputOTPSlot index={3} />
+    <InputOTPSlot index={4} />
+    <InputOTPSlot index={5} />
+  </InputOTPGroup>
+</InputOTP>;
+```
+
+Dos grupos de tres, como los muestran las apps de autenticación. `REGEXP_ONLY_DIGITS` ignora las letras, y el campo pide `autocomplete="one-time-code"`, así el teléfono ofrece el código del SMS. El sexto dígito llama a `onComplete`.
+
+## Ejemplos
+
+### Inválido
+
+<ComponentPreview name="input-otp/invalid" />
+
+### Paso de verificación
+
+El código, cómo conseguirlo y las acciones; en el teléfono, los botones se apilan.
+
+<ComponentPreview name="input-otp/two-factor" />
+
+## Props
+
+<ComponentProps
+  file="input-otp"
+  type="Pick<React.ComponentProps<typeof InputOTP>, 'maxLength' | 'pattern' | 'value' | 'onChange' | 'onComplete' | 'disabled' | 'containerClassName'>"
+/>
+
+## Cuándo usarlo
+
+- **Un código de verificación**: el segundo paso del inicio de sesión, confirmar un correo o un teléfono.
+- **Con su etiqueta** («Código de verificación») y una línea que dice de dónde sale el código.
+
+## Cuándo no
+
+- **Una contraseña**: `PasswordInput`.
+- **Un número cualquiera**: `Input` o `NumberInput`.
+
+<StorybookLink stories="InputOTP" />

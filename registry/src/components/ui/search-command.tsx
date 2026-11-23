@@ -52,12 +52,22 @@ type SearchCommandProps = Omit<
   loadingText?: React.ReactNode
 }
 
+const subscribeNoop = () => () => {}
+
 /** "⌘K" on Apple devices, "Ctrl K" elsewhere: also for the shortcuts of the items. */
 function shortcutLabel(hotkey: string) {
   const apple =
     typeof navigator !== "undefined" &&
     /Mac|iPhone|iPad/.test(navigator.userAgent)
   return apple ? `⌘${hotkey.toUpperCase()}` : `Ctrl ${hotkey.toUpperCase()}`
+}
+
+function useShortcutLabel(hotkey: string | null | undefined) {
+  return React.useSyncExternalStore(
+    subscribeNoop,
+    () => (hotkey ? shortcutLabel(hotkey) : ""),
+    () => (hotkey ? `Ctrl ${hotkey.toUpperCase()}` : "")
+  )
 }
 
 /**
@@ -90,6 +100,7 @@ function SearchCommand({
   ...props
 }: SearchCommandProps) {
   const [uncontrolled, setUncontrolled] = React.useState(defaultOpen)
+  const shortcut = useShortcutLabel(hotkey)
   const open = openProp ?? uncontrolled
   const setOpen = React.useCallback(
     (next: boolean) => {
@@ -129,7 +140,7 @@ function SearchCommand({
         {children}
         {hotkey && (
           // Phones have no keyboard shortcut to show.
-          <Kbd className="ml-auto max-sm:hidden">{shortcutLabel(hotkey)}</Kbd>
+          <Kbd className="ml-auto max-sm:hidden">{shortcut}</Kbd>
         )}
       </Button>
       <CommandDialog

@@ -1,0 +1,58 @@
+---
+title: Calendar
+description: "Un calendario en español para elegir un día o un rango."
+---
+
+El calendar de shadcn sobre react-day-picker, en español por omisión, con los nombres para lectores de pantalla incluidos (el `es` de react-day-picker, no el de date-fns, que solo nombra los días). Los días miden 36 px en el teléfono, el título del mes va con mayúscula, un rango se pinta solo en su propio mes, hoy se marca con un anillo en lugar del relleno del rango y el foco es solo el contorno de la marca. Las flechas mueven el foco entre los días.
+
+<ComponentPreview name="calendar/demo" />
+
+## Instalación
+
+<ComponentInstall item="calendar" />
+
+## Uso
+
+```tsx
+import { Calendar } from '@/components/ui/calendar';
+
+const [date, setDate] = useState<Date | undefined>();
+
+<Calendar mode="single" selected={date} onSelect={setDate} className="rounded-lg border" />;
+```
+
+## Ejemplos
+
+### Rango
+
+Un rango en dos meses, como lo muestra el filtro de periodo.
+
+<ComponentPreview name="calendar/range" />
+
+### Días deshabilitados
+
+Los fines de semana y todo lo que va después de hoy se atenúan y el teclado los salta.
+
+<ComponentPreview name="calendar/disabled-days" />
+
+## Props
+
+<ComponentProps
+  file="calendar"
+  type="Pick<React.ComponentProps<typeof Calendar>, 'mode' | 'selected' | 'onSelect' | 'numberOfMonths' | 'disabled' | 'defaultMonth' | 'today' | 'buttonVariant'>"
+/>
+
+Las demás props son las de [react-day-picker](https://daypicker.dev/api/type-aliases/DayPickerProps).
+
+## Cuándo usarlo
+
+- **Un calendario siempre a la vista**: dentro de un panel, de un popover propio o de una vista de agenda.
+- **Fechas como las escribe la marca**: «21 nov 2026», nunca «11/21/2026».
+
+## Cuándo no
+
+- **Un día en un formulario**: `DatePicker`, que abre este calendario desde un campo.
+- **Un día y una hora**: `DateTimePicker`.
+- **El periodo de un informe**: `DateRangeFilter`, con los periodos de siempre (Hoy, Este mes…).
+
+<StorybookLink stories="Calendar" />

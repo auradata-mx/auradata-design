@@ -1,0 +1,43 @@
+---
+title: Empty illustration
+description: "Acompaña un estado vacío con una ilustración de marca."
+---
+
+Los dibujos lineales de AuraData usan los colores del tema y son decorativos; el título sigue diciendo qué falta.
+
+<ComponentPreview name="empty-illustration/demo" />
+
+## Instalación
+
+<ComponentInstall item="empty-illustration" />
+
+## Uso
+
+```tsx
+import { EmptyMedia } from '@/components/ui/empty';
+import { EmptyIllustration } from '@/components/ui/empty-illustration';
+
+<EmptyMedia><EmptyIllustration name="reports" /></EmptyMedia>;
+```
+
+## Ejemplos
+
+### Sin coincidencias en un espacio compacto
+
+Usa `size="sm"` para una vista más compacta. `name` también admite `data` y `offline`.
+
+<ComponentPreview name="empty-illustration/small" />
+
+## Props
+
+<ComponentProps file="empty-illustration" type="Pick<React.ComponentProps<typeof EmptyIllustration>, 'name' | 'size'>" />
+
+## Cuándo usarlo
+
+- Dentro de `EmptyMedia`, elige el dibujo que acompañe la causa: sin informes, sin datos, sin resultados o sin conexión.
+
+## Cuándo no
+
+- No sustituye el texto de `EmptyTitle` ni de `EmptyDescription`; la ilustración se oculta de las tecnologías de asistencia.
+
+<StorybookLink stories="EmptyIllustration" story="Reports" />

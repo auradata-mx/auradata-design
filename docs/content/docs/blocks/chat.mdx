@@ -1,0 +1,25 @@
+---
+title: Chat
+description: "Pregunta por tus datos y muestra junto a cada respuesta cómo se obtuvo."
+full: true
+---
+
+import { BlockPreview } from '@docs/components/blocks/block-preview';
+
+El panel reúne el historial, las preguntas sugeridas y el campo para escribir. Las respuestas pueden incluir gráficas, indicadores, fuentes o el SQL que se ejecutó. La vista previa responde con datos de ejemplo; no ejecuta consultas.
+
+<BlockPreview name="chat" />
+
+## Instalación
+
+<ComponentInstall item="chat" />
+
+## Componentes del registro
+
+`Message`, `MessageScroller` y `Bubble` componen el historial. `Textarea` y las piezas de `Attachment` componen el envío. `KpiCard`, `Chart`, `InsightCard`, `Trace`, `CodeBlock` y `MessageFeedback` muestran la evidencia y recogen valoraciones.
+
+## Cómo adaptarlo
+
+Mantén `messages` en tu aplicación y conecta `onSend` a tu servicio. Adjunta la evidencia a cada respuesta con `embeds`, `sources` o `sql`. Cuando recibas texto en partes, actualiza el mensaje y su estado `streaming`; conecta `onStop`, `onRetry` y `onFeedback` cuando los necesites.
+
+<StorybookLink stories="Blocks" story="ChatConversation" />

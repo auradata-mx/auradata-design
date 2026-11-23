@@ -1,0 +1,50 @@
+---
+title: Date range filter
+description: "El periodo de un informe: los periodos de siempre y un calendario para cualquier rango."
+---
+
+Un filtro de periodo de AuraData: un botón que abre los periodos que usan los informes (Hoy, Últimos 7 días, Este mes, Este trimestre, Este año), en español y con nombres para lectores de pantalla, y un calendario de dos meses para cualquier rango. El botón escribe el periodo: «1 nov 2026 – 21 nov 2026».
+
+<ComponentPreview name="date-range-filter/demo" />
+
+## Instalación
+
+<ComponentInstall item="date-range-filter" />
+
+## Uso
+
+```tsx
+import { DateRangeFilter, presetRange } from '@/components/ui/date-range-filter';
+
+<DateRangeFilter defaultValue={presetRange('this-month')} onValueChange={setRange} />;
+```
+
+`presetRange` da el rango de un periodo, del primer día a hoy: `'today'`, `'last-7-days'`, `'this-month'`, `'this-quarter'` o `'this-year'`.
+
+## Ejemplos
+
+### Sin periodo
+
+Sin rango, el botón lo pide.
+
+<ComponentPreview name="date-range-filter/empty" />
+
+## Props
+
+<ComponentProps
+  file="date-range-filter"
+  type="Pick<DateRangeFilterProps, 'value' | 'defaultValue' | 'onValueChange' | 'placeholder' | 'today' | 'locale' | 'defaultOpen'>"
+/>
+
+## Cuándo usarlo
+
+- **El periodo de un informe**, arriba de todo lo que filtra: quien lee sabe de qué periodo son los números antes de verlos.
+- **El periodo siempre visible**: el botón dice las fechas, no solo «Este mes».
+- **Primero el periodo**; luego los segmentos (`FacetedFilter`) y los rangos (`RangeFilter`), y los chips (`FilterChips`) debajo.
+
+## Cuándo no
+
+- **Un día en un formulario**: `DatePicker`.
+- **Un calendario siempre a la vista**: `Calendar`.
+
+<StorybookLink stories="DateRangeFilter" />

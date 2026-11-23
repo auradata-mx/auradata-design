@@ -1,0 +1,48 @@
+---
+title: Data table views
+description: "Guarda, vuelve a aplicar o elimina una vista por nombre."
+---
+
+El menú «Vistas» indica qué vista está aplicada, y el diálogo de guardado pide un nombre. Es solo la interfaz: la tabla o el tablero conserva qué se guarda y dónde. `DataTable` lo conecta por ti con `savedViews`.
+
+<ComponentPreview name="data-table-views/demo" />
+
+## Instalación
+
+<ComponentInstall item="data-table-views" />
+
+## Uso
+
+```tsx
+import { DataTableViews } from '@/components/ui/data-table-views';
+
+<DataTableViews
+  views={vistas}
+  activeId={vistaActiva}
+  onApply={aplicarVista}
+  onSave={guardarVista}
+  onDelete={eliminarVista}
+/>;
+```
+
+## Ejemplos
+
+### Aplicar una vista guardada
+
+Elige otra vista en el menú y el botón muestra su nombre. Este ejemplo conserva las vistas en memoria: al recargar se restablecen.
+
+<ComponentPreview name="data-table-views/saved" />
+
+## Props
+
+<ComponentProps file="data-table-views" type="Pick<DataTableViewsProps, 'views' | 'activeId' | 'onApply' | 'onSave' | 'onDelete'>" />
+
+## Cuándo usarlo
+
+- Cuando alguien necesita recuperar su combinación de filtros, orden o columnas. Reemplaza la vista si guarda de nuevo con el mismo nombre.
+
+## Cuándo no
+
+- Si las alternativas son fijas y no se guardan, usa un selector. Para la tabla integrada, configura `savedViews` en vez de duplicar el menú.
+
+<StorybookLink stories="DataTable" story="SavedViews" />

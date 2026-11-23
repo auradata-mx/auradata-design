@@ -1,0 +1,72 @@
+---
+title: Navigation menu
+description: "La navegación principal de un sitio, con submenús de enlaces que se abren al pasar el mouse o con el teclado."
+---
+
+El menú de navegación de shadcn cuyos resaltados usan `--accent`, distinto de la superficie del popup, con la elevación de los flotantes. Es la barra de auradata.mx: enlaces directos y, donde hace falta, un submenú con su descripción.
+
+<ComponentPreview name="navigation-menu/demo" />
+
+## Instalación
+
+<ComponentInstall item="navigation-menu" />
+
+## Uso
+
+```tsx
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
+
+<NavigationMenu aria-label="Principal">
+  <NavigationMenuList>
+    <NavigationMenuItem>
+      <NavigationMenuLink href="/precios" className={navigationMenuTriggerStyle()}>
+        Precios
+      </NavigationMenuLink>
+    </NavigationMenuItem>
+    <NavigationMenuItem value="docs">
+      <NavigationMenuTrigger>Docs</NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <NavigationMenuLink href="/docs/sql-lab">SQL Lab</NavigationMenuLink>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+  </NavigationMenuList>
+</NavigationMenu>;
+```
+
+Un enlace directo usa `navigationMenuTriggerStyle()` para verse como los triggers. Con el teclado, Enter abre el submenú, Tab recorre sus enlaces y Escape lo cierra.
+
+## Props
+
+### NavigationMenu
+
+<ComponentProps
+  file="navigation-menu"
+  type="Pick<NavigationMenuPrimitive.Root.Props & Pick<NavigationMenuPrimitive.Positioner.Props, 'align'>, 'align' | 'value' | 'defaultValue' | 'onValueChange'>"
+  baseUi="navigation-menu"
+/>
+
+### NavigationMenuLink
+
+<ComponentProps file="navigation-menu" type="Pick<NavigationMenuPrimitive.Link.Props, 'href' | 'active' | 'render'>" />
+
+## Cuándo usarlo
+
+- **El encabezado de un sitio** (auradata.mx): pocas secciones y, en «Docs», un submenú con la descripción de cada enlace.
+- **Con nombre**: `aria-label="Principal"` en el `nav`, para distinguirlo de otros.
+- **En el teléfono**, los enlaces se pliegan en un botón «Menú»; el menú de navegación es para pantallas anchas.
+
+## Cuándo no
+
+- **La navegación de la app** (informes, datasets, conexiones): `Sidebar`.
+- **Las acciones de un objeto**: `DropdownMenu`; un menú de navegación solo lleva enlaces.
+- **Secciones de una misma página**: `Tabs`.
+
+<StorybookLink stories="NavigationMenu" />

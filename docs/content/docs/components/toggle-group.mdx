@@ -1,0 +1,71 @@
+---
+title: Toggle group
+description: "Un grupo de toggles: elige una opción, o varias, desde una barra."
+---
+
+El toggle group de shadcn sobre Base UI; sus elementos solo con ícono son cuadrados, como el `Toggle`. Con `spacing={0}` se unen en una sola barra.
+
+<ComponentPreview name="toggle-group/demo" />
+
+## Instalación
+
+<ComponentInstall item="toggle-group" />
+
+## Uso
+
+```tsx
+import { ChartColumnIcon, ChartLineIcon } from 'lucide-react';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+
+<ToggleGroup defaultValue={['barras']} aria-label="Tipo de gráfica">
+  <ToggleGroupItem value="barras" aria-label="Barras">
+    <ChartColumnIcon aria-hidden />
+  </ToggleGroupItem>
+  <ToggleGroupItem value="lineas" aria-label="Líneas">
+    <ChartLineIcon aria-hidden />
+  </ToggleGroupItem>
+</ToggleGroup>;
+```
+
+El valor es siempre un arreglo (`['barras']`), aun con una sola opción.
+
+## Ejemplos
+
+### Outline unido
+
+`variant="outline"` y `spacing={0}`: una sola barra con texto.
+
+<ComponentPreview name="toggle-group/outline" />
+
+### Varios a la vez
+
+Con `multiple`, cada elemento se presiona aparte: las regiones que muestra la gráfica.
+
+<ComponentPreview name="toggle-group/multiple" />
+
+## Props
+
+### ToggleGroup
+
+<ComponentProps
+  file="toggle-group"
+  type="Pick<React.ComponentProps<typeof ToggleGroup>, 'variant' | 'size' | 'spacing' | 'orientation' | 'multiple' | 'value' | 'defaultValue' | 'onValueChange' | 'disabled'>"
+  baseUi="toggle-group"
+/>
+
+### ToggleGroupItem
+
+<ComponentProps file="toggle-group" type="Pick<React.ComponentProps<typeof ToggleGroupItem>, 'value' | 'disabled'>" />
+
+## Cuándo usarlo
+
+- **Opciones de una barra de herramientas**: el tipo de gráfica, la alineación, las series visibles.
+- **El grupo lleva `aria-label`** («Tipo de gráfica») y cada elemento solo con ícono, el suyo.
+
+## Cuándo no
+
+- **Cambiar entre secciones con su propio panel de contenido**: `Tabs`.
+- **Secciones con contenido distinto**: `Tabs`.
+- **Una opción en un formulario**: `RadioGroup` o `Select`.
+
+<StorybookLink stories="ToggleGroup" />

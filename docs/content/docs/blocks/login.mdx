@@ -1,0 +1,25 @@
+---
+title: Inicio de sesión
+description: "Acceso por correo y contraseña, con estados de espera y error."
+full: true
+---
+
+import { BlockPreview } from '@docs/components/blocks/block-preview';
+
+Usa esta pantalla para iniciar sesión con una cuenta de empresa. El bloque muestra la marca, el formulario y un aviso cuando el servicio no puede iniciar la sesión. Usa credenciales ficticias en la vista previa: no se envía ningún dato.
+
+<BlockPreview name="login" />
+
+## Instalación
+
+<ComponentInstall item="login" />
+
+## Componentes del registro
+
+`Logo` y `ProductTag` identifican el producto. `Card` contiene el formulario; `Field` e `Input` presentan los campos, `Button` inicia el envío y `Alert` muestra el error.
+
+## Cómo adaptarlo
+
+Lee `email` y `password` con `FormData` en `onSubmit`. Activa `pending` mientras esperas una respuesta y pasa el mensaje en `error` si falla. Al adoptar el bloque, cambia el enlace de recuperación por la ruta de tu aplicación.
+
+<StorybookLink stories="Blocks" story="SignIn" />

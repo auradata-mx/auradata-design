@@ -7,3 +7,6 @@ registry/test-results
 registry/playwright-report
 .atl
 registry/login-dist
+docs/.next
+docs/out
+docs/.source

@@ -1,0 +1,45 @@
+---
+title: Copy button
+description: "Copia texto al portapapeles con transición suave hacia palomita y anuncio para lectores de pantalla."
+---
+
+Un botón compacto que copia `value` al portapapeles, transforma el ícono de portapapeles en una palomita verde (`text-success-700`) durante un momento y anuncia «Copiado» mediante una región `aria-live`. `CodeBlockCopyButton` lo usa internamente.
+
+<ComponentPreview name="copy-button/demo" />
+
+## Instalación
+
+<ComponentInstall item="copy-button" />
+
+## Uso
+
+```tsx
+import { CopyButton } from '@/components/ui/copy-button';
+
+<CopyButton value="https://bi.auradata.mx/informes/ventas-2026" />;
+```
+
+## Ejemplos
+
+### Con etiqueta visible
+
+Pasa texto como `children` cuando el botón no va pegado a un campo o bloque de código.
+
+<ComponentPreview name="copy-button/with-label" />
+
+## Props
+
+<ComponentProps
+  file="copy-button"
+  type="Pick<React.ComponentProps<typeof CopyButton>, 'value' | 'label' | 'copiedLabel' | 'timeout' | 'onCopied' | 'variant' | 'size'>"
+/>
+
+## Cuándo usarlo
+
+- Junto a enlaces compartibles, identificadores, claves de API o bloques de código donde la persona necesita copiar sin seleccionar manualmente.
+
+## Cuándo no
+
+- Para duplicar un registro o informe dentro de la app (por ejemplo «Duplicar informe»): usa un `Button` o ítem de menú normal, ya que no copia al portapapeles.
+
+<StorybookLink stories="CopyButton" story="Default" />

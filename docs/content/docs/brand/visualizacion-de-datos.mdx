@@ -1,0 +1,183 @@
+---
+title: Visualización de datos
+---
+
+import { ChartExamples } from '@docs/components/brand/ChartExamples'
+import theme from '@auradata/tokens/shadcn-theme.json'
+import { DivergingExample, SequentialExample } from '@docs/components/brand/PaletteExamples'
+import { Ramps, steps } from '@docs/components/brand/TokenSwatches'
+import { formatCompact, formatCurrency, formatDate, formatNumber, formatPercent } from '@/lib/format'
+
+## Gráficas que se leen a la primera
+
+Una gráfica responde una pregunta. Elige la forma por la pregunta, usa la paleta en orden y escribe los números como en México.
+
+## La paleta, en orden
+
+La serie 1 siempre es Azul Aura. Cada serie nueva toma el siguiente color; nunca saltes ni elijas por gusto. `chartConfig()` de `lib/chart-palette` lo hace por ti.
+
+<div className="not-prose my-6 grid grid-cols-4 gap-4 md:grid-cols-8">
+  {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+    <div key={n} className="grid gap-1">
+      <div className="h-12 rounded-md" style={{ background: theme.light[`chart-${n}`] }} />
+      <code className="font-mono text-xs text-foreground">chart-{n}</code>
+      <span className="font-mono text-xs text-muted-foreground">{theme.light[`chart-${n}`]}</span>
+    </div>
+  ))}
+</div>
+
+Más de ocho series no se leen: agrupa el resto en «Otros».
+
+## Magnitud y polaridad
+
+La paleta categórica dice **quién** es cada serie. Para decir **cuánto** o **de qué lado**, como en un mapa de calor o una celda condicional, hay dos paletas más, de nueve pasos, en claro y oscuro.
+
+| La pregunta | Paleta | Variables |
+| --- | --- | --- |
+| ¿Cuánto? De cero a lo máximo | Secuencial: un solo tono, Azul Aura | `--sequential-*` |
+| ¿De qué lado de la meta, del cero o del promedio? | Divergente: rojo abajo, gris en el centro, azul arriba | `--diverging-*` |
+
+### Secuencial
+
+El 1 es casi cero y el 9 es lo máximo. En oscuro la rampa empieza cerca del fondo y se aclara: el 1 sigue siendo casi cero.
+
+<Ramps names={steps('sequential', 'nine')} />
+
+<SequentialExample />
+
+### Divergente
+
+El 5 es el centro: cero, la meta o el promedio. Del 4 al 1, cada vez más abajo, en rojo; del 6 al 9, cada vez más arriba, en azul. Rojo y azul, no rojo y verde, porque se distinguen también con daltonismo.
+
+<Ramps names={steps('diverging', 'nine')} />
+
+<DivergingExample />
+
+### Cómo usarlas
+
+`sequentialFill` y `divergingFill` de `lib/chart-palette` eligen el paso y un texto que pasa AA sobre él, en claro y en oscuro: el color del texto en los pasos claros, el del fondo en los fuertes.
+
+```tsx
+import { divergingFill, sequentialFill } from '@/lib/chart-palette'
+
+<td style={sequentialFill(consultas, [0, maximo])}>{formatNumber(consultas)}</td>
+<td style={divergingFill(contraMeta, 0.2)}>{formatPercent(contraMeta, { signDisplay: 'exceptZero' })}</td>
+```
+
+En Tailwind son clases como cualquier color: `bg-sequential-3`, `bg-diverging-8`.
+
+- Escribe el número en la celda, o dalo en el tooltip: el color muestra el patrón, el número da el valor.
+- Nunca pintes categorías con la secuencial ni magnitudes con la categórica.
+- Los colores de estado (`success`, `warning`…) se reservan para estados: no pintes datos con ellos.
+
+## Qué gráfica usar
+
+Empieza por la pregunta. La forma sale de ella, y a veces la respuesta no es una gráfica: es un número o una tabla.
+
+| Pregunta | Forma | Componente |
+| --- | --- | --- |
+| ¿Cuánto vale ahora y cómo va? | El número, su cambio y su tendencia | `KpiCard` con `trend` |
+| ¿Cuánto llevamos de la meta o del límite? | Anillo o medio gauge | `Gauge` (`thresholds` para un límite) |
+| ¿Cómo cambia en el tiempo? | Líneas; el periodo anterior, punteado | `LineChart` con `previousKey` |
+| ¿Cuánto se acumula en el tiempo? | Área; apilada para un total y sus partes | `AreaChart` (`stacked`) |
+| ¿Cuál es más grande? | Barras, de mayor a menor; horizontales si los nombres son largos | `BarChart` (`horizontal`) |
+| ¿Cómo se compara cada parte, periodo a periodo? | Barras agrupadas | `BarChart` |
+| ¿Cómo se forma el total? | Barras apiladas | `BarChart` (`stacked`) |
+| ¿Vamos contra la meta? | Barras y una línea de la misma unidad, en un solo eje | `ComboChart` |
+| ¿Qué parte del todo es cada una? | Dona con el total al centro, hasta seis partes; pastel con dos o tres | `DonutChart` |
+| ¿Dónde se pierde la gente? | Embudo con la conversión de cada paso | `FunnelChart` |
+| ¿Cuánto, en dos dimensiones? | Mapa de calor secuencial | `Heatmap` |
+| ¿De qué lado de la meta, en dos dimensiones? | Mapa de calor divergente | `Heatmap` divergente |
+| ¿Cómo se reparte en el año, día a día? | Calendario | `CalendarHeatmap` |
+| ¿Cómo va, en una fila o un texto? | Sparkline junto a su número | `Sparkline` |
+| ¿Cuál es el detalle? | Tabla | `DataTable` |
+
+Todas toman la paleta en orden, escriben ejes y tooltips con `lib/format` y se ven en claro, oscuro y teléfono. Tú solo das los datos:
+
+```tsx
+<LineChart data={ventas} index="mes" series={{ norte: 'Norte', sur: 'Sur' }} valueFormatter={formatCurrency} />
+```
+
+<ChartExamples />
+
+### Reglas que no cambian
+
+- **Un solo eje de valores.** Dos medidas de distinta unidad van en dos gráficas: con dos ejes, cualquier cruce de las líneas es casualidad.
+- **Barras y áreas empiezan en cero**: su largo y su área son el valor. Una línea puede ajustar su eje a los datos (`startAtZero={false}`) cuando importa el cambio más que el tamaño.
+- **Seis partes como máximo** en una dona: el resto se junta en «Otros», al final. Con más partes, o para comparar unas con otras, usa barras.
+- **Una serie no lleva leyenda**: el título ya dice qué es. Con dos o más, la leyenda siempre está.
+- Nada de 3D ni de pasteles con más de tres partes: comparar ángulos y volúmenes es difícil.
+
+## Leyenda, tooltip y periodo anterior
+
+- **La leyenda oculta y muestra series.** Cada nombre es un botón; una serie oculta conserva su color y el eje se ajusta a lo que queda. `useChartSeries` lo resuelve en las gráficas que armes tú.
+- **El tooltip pone el valor primero** y el nombre después. Con `showPercent` suma el porcentaje del total; con `previousKey` y `comparison`, el cambio contra el periodo anterior con la flecha del KPI (`Delta`).
+- Lo que dice el tooltip también está sin el mouse: en «Ver datos» de la tarjeta, o en una tabla.
+
+## La tarjeta y el dashboard
+
+Cada gráfica va en una `ChartCard`:
+
+- **Título** que dice qué se ve («Ventas por canal») y **descripción** con la unidad y el periodo («Miles de pesos, julio a octubre»).
+- **Filtro** solo si cambia esa gráfica (su medida, su agrupación). Los filtros de toda la página van en **una fila arriba del grid**, con el rango de fechas primero.
+- **Menú** con «Exportar PNG» (título, gráfica y leyenda, al doble de resolución) y «Ver datos» (la tabla, en es-MX).
+- **Estados**: `loading` (skeleton con forma de barras), `refreshing` (la gráfica anterior atenuada mientras llegan datos nuevos: nada salta), `empty` y `error` con «Reintentar».
+
+El bloque `dashboard` arma uno completo (KPI, tendencia, canales, productos, embudo y clientes): cópialo y cambia los datos.
+
+## El color nunca es la única señal
+
+- Cada serie tiene **leyenda o etiqueta** con su nombre.
+- Un cambio lleva **flecha y signo**, no solo verde o rojo: `KpiCard` pinta solo la flecha.
+- Bueno y malo dependen de la métrica: más costos es malo (`goodDirection="down"`).
+- El tooltip repite el valor con su formato.
+
+## Números y fechas
+
+Siempre con `lib/format` (es-MX). Estos ejemplos los escribe la librería, no esta página:
+
+| Qué | Función | Resultado |
+| --- | --- | --- |
+| Dinero | `formatCurrency(1284500)` | {formatCurrency(1284500)} |
+| Dinero corto, en KPI | `formatCompact(4160000, { currency: 'MXN' })` | {formatCompact(4160000, { currency: 'MXN' })} |
+| Cantidad corta | `formatCompact(1284)` | {formatCompact(1284)} |
+| Número | `formatNumber(1284500.75)` | {formatNumber(1284500.75)} |
+| Porcentaje | `formatPercent(0.124)` | {formatPercent(0.124)} |
+| Cambio | `formatPercent(0.062, { signDisplay: 'exceptZero' })` | {formatPercent(0.062, { signDisplay: 'exceptZero' })} |
+| Caída | `formatPercent(-0.021, { signDisplay: 'exceptZero' })` | {formatPercent(-0.021, { signDisplay: 'exceptZero' })} |
+| Fecha | `formatDate('2026-11-21')` | {formatDate('2026-11-21')} |
+| Periodo | `DateRangeFilter` | {formatDate('2026-11-01')} – {formatDate('2026-11-21')} |
+
+Las cifras de tablas y KPI llevan `tabular-nums`, para que las columnas se alineen.
+
+## AuraData BI: ECharts
+
+Las gráficas de AuraData BI son de ECharts. Usan el tema de `@auradata/tokens/echarts.json`, con la misma paleta, la fuente Outfit y los colores de texto y ejes de los tokens, en claro y oscuro:
+
+```ts
+import * as echarts from 'echarts'
+import theme from '@auradata/tokens/echarts.json'
+
+echarts.registerTheme('auradata', theme.light)
+echarts.registerTheme('auradata-dark', theme.dark)
+const chart = echarts.init(element, 'auradata')
+```
+
+No escribas colores en la configuración de una gráfica: el tema ya los tiene.
+
+Para que una gráfica de AuraData BI se vea como su equivalente del registry:
+
+| Registry | ECharts | Para que se vean igual |
+| --- | --- | --- |
+| `LineChart` | `type: 'line'` | `smooth: true`, `showSymbol: false`, `lineStyle.width: 2`; el periodo anterior con `lineStyle.type: 'dashed'` y `opacity: 0.6` |
+| `AreaChart` | `type: 'line'` con `areaStyle` | `areaStyle.opacity: 0.1`; apilada, `stack: 'total'` y `0.3` |
+| `BarChart` | `type: 'bar'` | `barMaxWidth: 24`, `itemStyle.borderRadius: [4, 4, 0, 0]` (horizontal, `[0, 4, 4, 0]`); apiladas, `stack: 'total'`, `borderColor` del fondo y `borderWidth: 2`, y el radio solo en la serie de arriba |
+| `ComboChart` | `bar` y `line` con el mismo `yAxisIndex: 0` | Nunca un segundo `yAxis` |
+| `DonutChart` | `type: 'pie'` | `radius: ['62%', '88%']`, `itemStyle.borderRadius: 4`, `borderColor` del fondo, `borderWidth: 2`; el total con `graphic` al centro |
+| `FunnelChart` | `type: 'funnel'` | `sort: 'none'`, `gap: 8`, y la conversión de cada paso en `label.formatter`; los trapecios no se comparan tan bien: si puedes, usa barras horizontales |
+| `Gauge` | `type: 'gauge'` | `progress.show: true`, `axisLine.lineStyle.width: 10`, sin `pointer`, `axisTick`, `splitLine` ni `axisLabel`; medio gauge con `startAngle: 180` y `endAngle: 0` |
+| `Heatmap` | `type: 'heatmap'` con `visualMap` | `visualMap.inRange.color` con los nueve `sequential-*` (o `diverging-*`) de `@auradata/tokens/shadcn-theme.json`; `label.show: true` |
+| `CalendarHeatmap` | `calendar` y `heatmap` | `dayLabel.firstDay: 1`, `dayLabel.nameMap` y `monthLabel.nameMap` en español, los mismos `visualMap` |
+| `Sparkline` | `type: 'line'` sin ejes | `grid` en 0, `xAxis.show` y `yAxis.show` en `false`, `lineStyle.width: 2` |
+
+Los números, con `tooltip.valueFormatter` y `axisLabel.formatter` que escriban como `lib/format` (`Intl.NumberFormat('es-MX', …)`).

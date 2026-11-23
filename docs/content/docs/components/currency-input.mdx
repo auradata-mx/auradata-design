@@ -1,0 +1,57 @@
+---
+title: Currency input
+description: "Un monto en pesos que agrupa los miles mientras escribes."
+---
+
+Un campo de dinero de AuraData: «$» antes, «MXN» después, los miles agrupados al escribir (`1,284,500.5`) con el cursor en su dígito, y los centavos completos al salir del campo. El valor es un número; con `name`, un input oculto lo envía como dígitos (`1284500.5`).
+
+<ComponentPreview name="currency-input/demo" />
+
+## Instalación
+
+<ComponentInstall item="currency-input" />
+
+## Uso
+
+```tsx
+import { CurrencyInput } from '@/components/ui/currency-input';
+
+<CurrencyInput id="budget" value={amount} onValueChange={setAmount} />;
+```
+
+`onValueChange` recibe el número, o `null` cuando el campo queda vacío.
+
+## Ejemplos
+
+### Pesos enteros
+
+`maxFractionDigits={0}` ignora el punto.
+
+<ComponentPreview name="currency-input/whole-pesos" />
+
+### Inválido
+
+<ComponentPreview name="currency-input/invalid" />
+
+### Deshabilitado
+
+<ComponentPreview name="currency-input/disabled" />
+
+## Props
+
+<ComponentProps
+  file="currency-input"
+  type="Pick<CurrencyInputProps, 'value' | 'defaultValue' | 'onValueChange' | 'maxFractionDigits' | 'currency' | 'groupClassName' | 'name' | 'disabled' | 'aria-invalid'>"
+/>
+
+## Cuándo usarlo
+
+- **Dinero**: un presupuesto, una meta, un precio.
+- **Con su etiqueta**, y una ayuda si importa la base («Antes de IVA.»).
+
+## Cuándo no
+
+- **Un número que no es dinero**: `NumberInput`.
+- **Un rango de montos en un filtro**: `RangeFilter`.
+
+<StorybookLink stories="CurrencyInput" />

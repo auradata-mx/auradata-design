@@ -1,0 +1,73 @@
+---
+title: Carousel
+description: "Recorre una serie de tarjetas relacionadas con flechas o teclado."
+---
+
+El carrusel conserva el gesto de desplazamiento de Embla, actualiza el estado de sus flechas al siguiente cuadro y les da etiquetas en español.
+
+<ComponentPreview name="carousel/demo" />
+
+## Instalación
+
+<ComponentInstall item="carousel" />
+
+## Uso
+
+```tsx
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
+
+<Carousel aria-label="Vistas del producto">
+  <CarouselContent>
+    <CarouselItem>Tablero de ventas</CarouselItem>
+    <CarouselItem>SQL Lab</CarouselItem>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>;
+```
+
+## Ejemplos
+
+### Dos tarjetas en vistas anchas
+
+Cambia el ancho de las tarjetas con un breakpoint. Mantén las flechas debajo para que no se salgan de una vista estrecha.
+
+<ComponentPreview name="carousel/two-per-view" />
+
+## Props
+
+### Carousel
+
+<ComponentProps file="carousel" type="Pick<React.ComponentProps<typeof Carousel>, 'opts' | 'plugins' | 'orientation' | 'setApi' | 'aria-label'>" />
+
+### CarouselContent
+
+<ComponentProps file="carousel" type="Pick<React.ComponentProps<typeof CarouselContent>, 'className' | 'children'>" />
+
+### CarouselItem
+
+<ComponentProps file="carousel" type="Pick<React.ComponentProps<typeof CarouselItem>, 'className' | 'aria-label' | 'children'>" />
+
+### CarouselPrevious
+
+<ComponentProps file="carousel" type="Pick<React.ComponentProps<typeof CarouselPrevious>, 'variant' | 'size' | 'aria-label'>" />
+
+### CarouselNext
+
+<ComponentProps file="carousel" type="Pick<React.ComponentProps<typeof CarouselNext>, 'variant' | 'size' | 'aria-label'>" />
+
+## Cuándo usarlo
+
+- Para recorrer capturas o testimonios relacionados. Dale un nombre a la región, etiqueta las diapositivas y conserva los controles visibles.
+
+## Cuándo no
+
+- Para comparar filas de datos sin ocultarlas fuera de la vista, usa `DataTable`.
+
+<StorybookLink stories="Carousel" story="Default" />

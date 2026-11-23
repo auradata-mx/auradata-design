@@ -1,0 +1,56 @@
+---
+title: Textarea
+description: "Un campo para texto largo: una descripción, una nota, un comentario."
+---
+
+El textarea de shadcn que crece con su contenido (`field-sizing-content`), con el contorno de foco de la marca y sin cambio de borde, un borde que contrasta 3:1 con la página en claro y oscuro, y un estado inválido con el borde destructivo completo. Deshabilitado, pierde el tirador para redimensionar.
+
+<ComponentPreview name="textarea/demo" />
+
+## Instalación
+
+<ComponentInstall item="textarea" />
+
+## Uso
+
+```tsx
+import { Textarea } from '@/components/ui/textarea';
+
+<Textarea placeholder="Describe qué muestra el informe" aria-label="Descripción del informe" />;
+```
+
+## Ejemplos
+
+### Con etiqueta y ayuda
+
+<ComponentPreview name="textarea/field" />
+
+### Inválido
+
+El valor conserva el color del texto; el borde y el `FieldError` dicen qué corregir.
+
+<ComponentPreview name="textarea/invalid" />
+
+### Deshabilitado
+
+<ComponentPreview name="textarea/disabled" />
+
+## Props
+
+<ComponentProps
+  file="textarea"
+  type="Pick<React.ComponentProps<typeof Textarea>, 'placeholder' | 'rows' | 'disabled' | 'aria-invalid'>"
+/>
+
+## Cuándo usarlo
+
+- **Texto de más de una línea**: la descripción de un informe, una nota, un comentario.
+- **Siempre con nombre**: un `FieldLabel` visible o un `aria-label`; el placeholder no reemplaza a la etiqueta.
+- **Valida al salir del campo o al enviar**, no mientras se escribe.
+
+## Cuándo no
+
+- **Texto corto** (un nombre, un correo): `Input`.
+- **Un mensaje para la IA**, con adjuntos y envío: el bloque de chat.
+
+<StorybookLink stories="Textarea" />
