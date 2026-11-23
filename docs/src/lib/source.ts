@@ -6,6 +6,8 @@ import { metaSchema, pageSchema } from 'fumadocs-core/source/schema';
 const docs = defineDocs({
   dir: 'content/docs',
   docs: {
+    // Files that start with `_` are notes for authors (components/_template.md), not pages.
+    files: ['**/*.{md,mdx}', '!**/_*'],
     schema: pageSchema,
     postprocess: {
       includeProcessedMarkdown: true,
