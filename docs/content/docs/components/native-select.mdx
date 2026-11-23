@@ -1,0 +1,58 @@
+---
+title: Native select
+description: "El select del navegador con el estilo de AuraData: el mejor en el teléfono."
+---
+
+El native select de shadcn con el contorno de foco de la marca, sin cambio de borde; el valor conserva el color del texto en un campo inválido, con el borde destructivo completo; deshabilitado lleva el relleno atenuado del input, y su borde contrasta 3:1 con la página en claro y oscuro.
+
+<ComponentPreview name="native-select/demo" />
+
+## Instalación
+
+<ComponentInstall item="native-select" />
+
+## Uso
+
+```tsx
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+
+<NativeSelect id="region" defaultValue="bajio">
+  <NativeSelectOption value="bajio">Bajío</NativeSelectOption>
+  <NativeSelectOption value="occidente">Occidente</NativeSelectOption>
+</NativeSelect>;
+```
+
+Agrupa las opciones con `NativeSelectOptGroup` y su `label`.
+
+## Ejemplos
+
+### Chico
+
+<ComponentPreview name="native-select/small" />
+
+### Inválido
+
+<ComponentPreview name="native-select/invalid" />
+
+### Deshabilitado
+
+<ComponentPreview name="native-select/disabled" />
+
+## Props
+
+<ComponentProps
+  file="native-select"
+  type="Pick<React.ComponentProps<typeof NativeSelect>, 'size' | 'value' | 'defaultValue' | 'onChange' | 'disabled' | 'aria-invalid'>"
+/>
+
+## Cuándo usarlo
+
+- **En el teléfono**, donde el selector del sistema es lo mejor.
+- **En formularios con `register`**: es un `<select>` nativo, así que no necesita `Controller`.
+
+## Cuándo no
+
+- **En escritorio, con etiquetas largas o íconos en las opciones**: `Select`.
+- **Varios valores o una lista larga que hay que buscar**: `Combobox`.
+
+<StorybookLink stories="NativeSelect" />
