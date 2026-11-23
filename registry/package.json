@@ -14,8 +14,6 @@
     "registry": "node scripts/registry.mjs && shadcn build registry.json --cwd .. --output registry/public/r",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build:login": "vite build --config vite.login.config.ts",
-    "serve:storybook": "node server/index.mjs",
     "test:stories": "vitest run --project=storybook",
     "test:visual": "playwright test",
     "test:visual:docker": "docker run --rm --ipc=host -v \"$PWD/..\":/work -w /work/registry mcr.microsoft.com/playwright:v1.65.1-noble npx playwright test",

@@ -17,10 +17,10 @@ export default defineConfig({
   test: {
     projects: [
       {
-        // The scripts that build the registry, the sign-in server and the plain helpers of src/lib.
+        // The scripts that build the registry and the plain helpers of src/lib.
         test: {
           name: "unit",
-          include: ["scripts/**/*.test.mjs", "server/**/*.test.mjs", "src/**/*.test.ts"],
+          include: ["scripts/**/*.test.mjs", "src/**/*.test.ts"],
           environment: "node",
         },
       },

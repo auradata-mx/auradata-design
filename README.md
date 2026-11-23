@@ -61,26 +61,12 @@ npm run storybook -w registry           # catalog on http://localhost:6006
 
 ## The hosted Storybook
 
-The catalog and brand guide live at https://design.auradata.mx, deployed by Coolify from `storybook.Dockerfile`. They are
-private: open the URL, type the team password on the AuraData sign-in page and press «Entrar». The session lasts 30 days
-in that browser. Ask whoever administers AuraData for the password; it is never written in the repository.
-
-The image runs `registry/server/index.mjs` (Node, no dependencies): it serves the built Storybook only with a signed
-session cookie, and without it only the sign-in page (`registry/login`), `/robots.txt` and `/healthz`. Ten wrong
-passwords from one address (Cloudflare's `cf-connecting-ip`, else the last `x-forwarded-for` entry) lock it out for 15
-minutes, and 100 across all addresses lock the sign-in for everyone for 15 minutes. The container runs as the `node` user
-on port 8080, so Coolify's exposed port is 8080. Set two variables in Coolify:
-
-| Variable | What it is |
-| --- | --- |
-| `SITE_PASSWORD` | The team password. Changing it does not sign anyone out. |
-| `SESSION_SECRET` | 32 or more random characters (`openssl rand -base64 48`) that sign the cookie. Changing it signs everyone out. |
-
-To revoke access after rotating the password, change `SESSION_SECRET` too. Try it locally:
+The catalog and brand guide are public at https://design.auradata.mx, deployed by Coolify from `storybook.Dockerfile`
+(nginx, unprivileged, port 8080, health check on `/healthz`). The same site serves the registry items as JSON under
+`/r/`: `npx shadcn add https://design.auradata.mx/r/kpi-card.json`. Try the image locally:
 
 ```bash
-npm run build-storybook -w registry && npm run build:login -w registry
-SITE_PASSWORD=<a test password> SESSION_SECRET=$(openssl rand -base64 48) PORT=6006 npm run serve:storybook -w registry
+docker build -f storybook.Dockerfile -t auradata-storybook . && docker run --rm -p 6006:8080 auradata-storybook
 ```
 
 ## Changing the brand
@@ -120,7 +106,7 @@ items they import, so `registry.json` is never edited by hand.
 
 ```bash
 npm test                                # tokens: values, contrast, assets
-npm run test:unit -w registry           # the registry generator and the sign-in server
+npm run test:unit -w registry           # the registry generator and the helpers of src/lib
 npm run test:stories -w registry        # every story renders and passes axe (light)
 npm run build-storybook -w registry && npm run test:visual:docker -w registry   # screenshots and axe (dark), as CI
 ```

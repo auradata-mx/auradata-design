@@ -1,4 +1,0 @@
-/* The brand CSS of the registry. The Vite root of the sign-in page is login/, so Tailwind
-   is pointed at the components it composes, or their classes would be left out. */
-@import "../src/index.css";
-@source "../src/components";
