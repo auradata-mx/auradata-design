@@ -1,0 +1,44 @@
+---
+title: KPI card
+description: "Da una cifra clave, su cambio y la forma de su tendencia."
+---
+
+`KpiCard` reúne el valor ya formateado, la comparación con otro periodo y una línea de tendencia. La flecha y el signo expresan el cambio aunque no se distinga el color. La tarjeta también tiene un esqueleto de carga y un estado «Sin datos».
+
+<ComponentPreview name="kpi-card/demo" />
+
+## Instalación
+
+<ComponentInstall item="kpi-card" />
+
+## Uso
+
+```tsx
+import { KpiCard } from '@/components/ui/kpi-card';
+import { formatCompact } from '@/lib/format';
+
+<KpiCard label="Ventas de octubre" value={formatCompact(4161000, { currency: 'MXN' })} />;
+```
+
+## Ejemplos
+
+### Antes de recibir la cifra
+
+`loading` conserva la forma de la tarjeta y activa `aria-busy`. Cuando termina la carga, omite `value` si no hubo datos; cero es un resultado válido.
+
+<ComponentPreview name="kpi-card/loading" />
+
+## Props
+
+<ComponentProps file="kpi-card" type="Omit<KpiCardProps, keyof Omit<React.ComponentProps<typeof Card>, 'children'>>" />
+
+## Cuándo usarlo
+
+- **¿Cuánto vale ahora y cómo va?** Nombra la métrica y el periodo de comparación. Pasa `trend` del punto más antiguo al más reciente.
+- Para costos u otra métrica donde bajar sea buena noticia, usa `goodDirection="down"`.
+
+## Cuándo no
+
+- Para explicar qué produjo el cambio, usa `InsightCard`. Para leer todos los puntos, agrega una gráfica o tabla.
+
+<StorybookLink stories="KpiCard" story="WithTrend" />

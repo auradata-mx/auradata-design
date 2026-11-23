@@ -1,0 +1,63 @@
+---
+title: Master detail
+description: "Abre el detalle de un elemento sin perder de vista su lista."
+---
+
+`MasterDetail` muestra una lista y el elemento abierto en dos paneles. Por debajo de `md`, el detalle reemplaza a la lista. Al abrirlo recibe el foco y, al volver, el foco regresa a la fila que lo abrió.
+
+<ComponentPreview name="master-detail/demo" align="start" />
+
+## Instalación
+
+<ComponentInstall item="master-detail" />
+
+## Uso
+
+```tsx
+import { MasterDetail, MasterDetailList, MasterDetailPane } from '@/components/ui/master-detail';
+
+<MasterDetail showDetail={informe !== null}>
+  <MasterDetailList aria-label="Informes">{filas}</MasterDetailList>
+  <MasterDetailPane aria-label="Detalle del informe">{detalle}</MasterDetailPane>
+</MasterDetail>;
+```
+
+## Ejemplos
+
+### Un informe abierto
+
+La vista controla la selección. Marca la fila con `active` y nombra el botón de regreso por la lista que recupera: «Informes».
+
+<ComponentPreview name="master-detail/selected" align="start" />
+
+## Props
+
+### MasterDetail
+
+<ComponentProps file="master-detail" type="Pick<React.ComponentProps<typeof MasterDetail>, 'showDetail' | 'children'>" />
+
+### MasterDetailList
+
+<ComponentProps file="master-detail" type="Pick<React.ComponentProps<typeof MasterDetailList>, 'aria-label' | 'children'>" />
+
+### MasterDetailItem
+
+<ComponentProps file="master-detail" type="Pick<React.ComponentProps<typeof MasterDetailItem>, 'active' | 'onClick' | 'children'>" />
+
+### MasterDetailPane
+
+<ComponentProps file="master-detail" type="Pick<React.ComponentProps<typeof MasterDetailPane>, 'aria-label' | 'children'>" />
+
+### MasterDetailBack
+
+<ComponentProps file="master-detail" type="Pick<React.ComponentProps<typeof MasterDetailBack>, 'onClick' | 'children'>" />
+
+## Cuándo usarlo
+
+- Para navegar entre informes, conexiones u otros elementos cuando la lista da contexto al detalle. Nombra ambos paneles.
+
+## Cuándo no
+
+- Para comparar filas por columnas, usa `DataTable`. Para una acción breve que debe completarse antes de seguir, usa `Dialog`.
+
+<StorybookLink stories="MasterDetail" story="Phone" />

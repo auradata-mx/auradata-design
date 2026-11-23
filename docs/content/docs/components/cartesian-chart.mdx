@@ -1,0 +1,70 @@
+---
+title: Cartesian chart
+description: "Compara categorías y periodos con líneas, áreas, barras o una combinación."
+---
+
+`LineChart`, `AreaChart`, `BarChart` y `ComboChart` aplican la paleta Aura en orden, escriben ejes y tooltips en es-MX y dejan ocultar series desde la leyenda. Elige la forma según la pregunta; los datos conservan la misma estructura.
+
+<ComponentPreview name="cartesian-chart/demo" />
+
+## Instalación
+
+<ComponentInstall item="cartesian-chart" />
+
+## Uso
+
+```tsx
+import { LineChart } from '@/components/ui/cartesian-chart';
+
+<LineChart data={ventas} index="mes" series={{ norte: 'Norte', sur: 'Sur' }} />;
+```
+
+## Ejemplos
+
+### Periodo anterior
+
+Pasa `previousKey` para dibujar la serie anterior con el mismo color y trazo punteado. El tooltip muestra el cambio.
+
+<ComponentPreview name="cartesian-chart/previous" />
+
+### Barras apiladas
+
+Activa `stacked` cuando importen tanto el total como sus partes. La leyenda oculta una parte sin cambiarle el color.
+
+<ComponentPreview name="cartesian-chart/stacked" />
+
+### Ventas contra la meta
+
+Las barras y la línea comparten la unidad y el eje: ambas cifras están en pesos.
+
+<ComponentPreview name="cartesian-chart/target" />
+
+## Props
+
+### Props comunes
+
+<ComponentProps file="cartesian-chart" name="CartesianChartProps" />
+
+### AreaChart
+
+<ComponentProps file="cartesian-chart" type="Pick<React.ComponentProps<typeof AreaChart>, 'stacked'>" />
+
+### BarChart
+
+<ComponentProps file="cartesian-chart" type="Pick<React.ComponentProps<typeof BarChart>, 'stacked' | 'horizontal'>" />
+
+### ComboChart
+
+<ComponentProps file="cartesian-chart" type="Pick<React.ComponentProps<typeof ComboChart>, 'bars' | 'lines' | 'stacked'>" />
+
+## Cuándo usarlo
+
+- **¿Cómo cambia?** Usa líneas. Para acumulación elige área; para comparar categorías, barras. Barras y áreas siempre parten de cero.
+- **¿Vamos contra la meta?** Usa `ComboChart` con una sola unidad. Con dos o más series conserva la leyenda.
+
+## Cuándo no
+
+- Para dos unidades distintas usa dos gráficas, no dos ejes.
+- Para el detalle detrás de los puntos, ofrece «Ver datos» en `ChartCard` o una `DataTable`.
+
+<StorybookLink stories="Charts" story="LineWithPrevious" />

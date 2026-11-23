@@ -1,0 +1,43 @@
+---
+title: Gauge
+description: "Muestra cuánto llevas de una meta o qué tan cerca estás de un límite."
+---
+
+`Gauge` muestra un solo valor respecto de su máximo, en anillo o medio arco. Si marcas umbrales, el estado aparece escrito debajo de la cifra; no depende del color.
+
+<ComponentPreview name="gauge/demo" />
+
+## Instalación
+
+<ComponentInstall item="gauge" />
+
+## Uso
+
+```tsx
+import { Gauge } from '@/components/ui/gauge';
+
+<Gauge value={0.72} label="Meta del trimestre" />;
+```
+
+## Ejemplos
+
+### Consumo cerca del límite
+
+Con `max` explícito, `thresholds` usa la misma unidad que `value`. Aquí el límite del plan es de 50,000 consultas.
+
+<ComponentPreview name="gauge/limits" />
+
+## Props
+
+<ComponentProps file="gauge" type="Omit<GaugeProps, keyof React.ComponentProps<'div'>>" />
+
+## Cuándo usarlo
+
+- **¿Cuánto llevamos?** Ponle nombre a la medida y da el máximo si la escala no es una fracción.
+- Usa umbrales para avisar que un consumo se acerca a un límite.
+
+## Cuándo no
+
+- Para ver cómo llegaste al valor actual, usa una línea; para comparar varias categorías, usa barras.
+
+<StorybookLink stories="Gauge" story="HalfWithLimits" />
