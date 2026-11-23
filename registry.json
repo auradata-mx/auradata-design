@@ -121,6 +121,7 @@
           "chart-8": "#64748B",
           "gradient-brand": "linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%)",
           "ease-fluid": "cubic-bezier(0.32, 0.72, 0, 1)",
+          "selection": "#DBEAFE",
           "radius": "8px",
           "sidebar": "#FFFFFF",
           "sidebar-foreground": "#0A0A0F",
@@ -239,6 +240,7 @@
           "chart-8": "#64748B",
           "gradient-brand": "linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #10B981 100%)",
           "ease-fluid": "cubic-bezier(0.32, 0.72, 0, 1)",
+          "selection": "#1E3A8A",
           "radius": "8px",
           "sidebar": "#111117",
           "sidebar-foreground": "#F5F5F7",
@@ -340,6 +342,23 @@
           ":where([data-slot=\"popover-content\"])": {
             "--tw-shadow": "var(--elevation-overlay)",
             "box-shadow": "var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)"
+          },
+          "::selection": {
+            "background-color": "var(--selection)",
+            "color": "var(--foreground)"
+          },
+          ":where([data-slot=\"table-container\"], [data-slot=\"scroll-blur-viewport\"], [data-slot=\"command-list\"], [data-slot=\"code-block-content\"], [data-slot=\"sidebar-content\"])": {
+            "scrollbar-width": "thin",
+            "scrollbar-color": "color-mix(in oklab, var(--foreground) 18%, transparent) transparent"
+          },
+          ":where([data-slot=\"collapsible-content\"])": {
+            "overflow": "hidden",
+            "height": "var(--collapsible-panel-height)",
+            "transition": "height 200ms var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1)), opacity 180ms var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1))"
+          },
+          ":where([data-slot=\"collapsible-content\"])[data-starting-style],\n:where([data-slot=\"collapsible-content\"])[data-ending-style]": {
+            "height": "0",
+            "opacity": "0"
           }
         },
         ":where([class*=\"focus-visible:ring-\"]:not([class~=\"focus-visible:ring-0\"], [data-slot=\"field-label\"]:has(> [data-slot=\"field\"]) *)):focus-visible,\n:where([class*=\"focus-visible:ring-\"]):has(> input:focus-visible),\n:where([class*=\"focus-within:ring-\"]:not([class*=\"focus-within:ring-0\"])):has(:focus-visible),\n:where([data-slot=\"input-group\"]:not([data-slot=\"combobox-content\"] *)):has([data-slot=\"input-group-control\"]:focus-visible),\n:where([data-slot=\"code-block\"]):has(> [data-slot=\"code-block-content\"]:focus-visible),\n:where([data-slot=\"field-label\"]:has(> [data-slot=\"field\"])):has(:focus-visible)": {
@@ -359,15 +378,21 @@
           ":where([data-slot=\"card\"], [data-slot=\"popover-content\"], [class*=\"--elevation-raised)\"], [class*=\"--elevation-overlay)\"], [class*=\"--elevation-modal)\"])": {
             "outline": "1px solid CanvasText"
           },
-          ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"])": {
+          ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"], [data-sonner-toast]:not([data-rich-colors=\"true\"]))": {
             "backdrop-filter": "none",
             "-webkit-backdrop-filter": "none"
+          },
+          ":where([data-slot=\"skeleton\"])": {
+            "animation": "none",
+            "background-image": "none",
+            "border": "1px solid CanvasText"
           }
         },
         "@supports (backdrop-filter: blur(1px))": {
           "@layer base": {
-            ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"])": {
+            ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"], [data-sonner-toast]:not([data-rich-colors=\"true\"]))": {
               "--popover": "var(--surface-glass)",
+              "--normal-bg": "var(--surface-glass)",
               "backdrop-filter": "blur(14px) saturate(1.6)",
               "-webkit-backdrop-filter": "blur(14px) saturate(1.6)"
             }
@@ -403,6 +428,13 @@
         "@media (prefers-reduced-motion: reduce)": {
           ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"])[data-open], :where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"])[data-closed]": {
             "--tw-animation-duration": "0ms"
+          },
+          ":where([data-slot=\"skeleton\"])": {
+            "animation": "none",
+            "background-image": "none"
+          },
+          ":where([data-slot=\"collapsible-content\"])": {
+            "transition": "none"
           }
         },
         ":root[data-theme-transition]::view-transition-old(root),\n:root[data-theme-transition]::view-transition-new(root)": {
@@ -414,6 +446,28 @@
         },
         ":root[data-theme-transition]::view-transition-new(root)": {
           "z-index": "9999"
+        },
+        "@keyframes aura-skeleton-shimmer": {
+          "from": {
+            "background-position": "200% 0"
+          },
+          "to": {
+            "background-position": "-200% 0"
+          }
+        },
+        "@keyframes aura-check-draw": {
+          "from": {
+            "stroke-dashoffset": "24"
+          },
+          "to": {
+            "stroke-dashoffset": "0"
+          }
+        },
+        ":where([data-slot=\"skeleton\"])": {
+          "background-image": "linear-gradient(100deg, transparent 25%, color-mix(in oklab, var(--foreground) 7%, transparent) 50%, transparent 75%)",
+          "background-size": "200% 100%",
+          "background-attachment": "fixed",
+          "animation": "aura-skeleton-shimmer 1.8s var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1)) infinite"
         }
       }
     },
@@ -745,11 +799,10 @@
       "title": "Code block",
       "dependencies": [
         "class-variance-authority",
-        "cn",
-        "lucide-react"
+        "cn"
       ],
       "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
+        "cristianruben-dev/auradata-design/copy-button"
       ],
       "files": [
         {
@@ -810,6 +863,24 @@
       "files": [
         {
           "path": "registry/src/components/ui/context-menu.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "copy-button",
+      "type": "registry:ui",
+      "title": "Copy button",
+      "dependencies": [
+        "cn",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/button"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/copy-button.tsx",
           "type": "registry:ui"
         }
       ]
