@@ -221,9 +221,9 @@ test('installs the data table with its own parts (T61)', () => {
 })
 
 // T65: app patterns.
-test('publishes the segmented control on the Base UI radio group, and tabs with counts', () => {
-  expect(item('segmented-control')?.type).toBe('registry:ui')
-  expect(item('segmented-control').dependencies).toContain('@base-ui/react')
+// No segmented control: it looked like the tabs; one choice among views takes tabs or a toggle group.
+test('publishes tabs with counts and no segmented control', () => {
+  expect(registry.items.map((entry) => entry.name)).not.toContain('segmented-control')
   expect(item('tabs').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/format']))
 })
 
