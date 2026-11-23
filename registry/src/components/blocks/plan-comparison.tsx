@@ -79,7 +79,7 @@ function PlanComparison({
           tabIndex={0}
           // Relative: the sr-only «Incluido» labels are absolute; without it the frame would not clip them
           // and they would widen the page on a phone.
-          className="relative mt-12 overflow-x-auto rounded-(--aura-radius-card) border shadow-(--aura-shadow-card) focus-visible:outline-offset-[-2px]"
+          className="relative mt-12 overflow-x-auto rounded-(--aura-radius-card) border shadow-(--elevation-raised) focus-visible:outline-offset-[-2px]"
         >
           <table className="w-full min-w-[36rem] table-fixed text-sm">
             <caption id={captionId} className="sr-only">

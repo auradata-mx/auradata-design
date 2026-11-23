@@ -405,17 +405,29 @@ test('tokens.css carries the elevation scale and the surfaces in light and dark'
   expect(css.split('@media print')[1]).toContain('--aura-surface-grain: none;');
 });
 
-test('shadcn gets the elevation as variables and Tailwind shadow utilities', () => {
+test('shadcn gets the elevation and the surfaces as variables', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   const css = read('shadcn.css');
   for (const name of ELEVATION) {
     expect(css).toContain(`--elevation-${name}: var(--aura-shadow-${name});`);
-    expect(theme.theme[`shadow-${name}`]).toBe(`var(--elevation-${name})`);
     expect(theme.light[`elevation-${name}`]).toMatch(/\S/);
     expect(theme.dark[`elevation-${name}`]).not.toBe(theme.light[`elevation-${name}`]);
   }
   for (const name of SURFACES) expect(css).toContain(`--surface-${name}: var(--aura-surface-${name});`);
   expect(theme.light['surface-grain']).toBe('none');
+});
+
+// The stock shadcn card, left to shadcn, gets its depth from the theme; shadow-none on a card still wins.
+test('the theme raises the stock card through --tw-shadow in the base layer', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.css['@layer base'][':where([data-slot="card"])']).toEqual({
+    '--tw-shadow': 'var(--elevation-raised)',
+    'box-shadow':
+      'var(--tw-inset-shadow, 0 0 #0000), var(--tw-inset-ring-shadow, 0 0 #0000), var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow, 0 0 #0000)',
+    'background-image': 'var(--surface-raised)',
+  });
+  // Focus and density stay in the same base layer.
+  expect(theme.css['@layer base'][':focus-visible']).toBeDefined();
 });
 
 // Shadows vanish in forced colors: raised, floating and modal surfaces keep an edge.
@@ -424,7 +436,8 @@ test('the theme outlines elevated surfaces in forced colors', () => {
   const forced = theme.css['@media (forced-colors: active)'];
   expect(forced).toBeDefined();
   const [selector, rule] = Object.entries(forced)[0];
-  for (const name of ['shadow-raised', 'shadow-overlay', 'shadow-modal']) expect(selector).toContain(name);
+  expect(selector).toContain('[data-slot="card"]');
+  for (const name of ['raised', 'overlay', 'modal']) expect(selector).toContain(`[class*="--elevation-${name})"]`);
   expect(rule.outline).toBe('1px solid CanvasText');
   expect(read('shadcn.css')).toContain('@media (forced-colors: active)');
 });

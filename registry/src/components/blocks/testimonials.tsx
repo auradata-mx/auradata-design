@@ -51,7 +51,7 @@ function Testimonials({ eyebrow, title, highlight, description, items, className
           {items.map((item, index) => (
             <figure
               key={index}
-              className="flex flex-col justify-between gap-6 rounded-(--aura-radius-card) border bg-card p-6 text-card-foreground shadow-(--aura-shadow-card)"
+              className="flex flex-col justify-between gap-6 rounded-(--aura-radius-card) border bg-card p-6 text-card-foreground shadow-(--elevation-raised)"
             >
               <blockquote className="text-base leading-relaxed text-pretty">«{item.quote}»</blockquote>
               <figcaption className="flex items-center gap-3">

@@ -97,7 +97,7 @@ function Marquee({
         aria-label={paused ? resumeLabel : pauseLabel}
         onClick={() => setPaused((value) => !value)}
         className={cn(
-          "absolute top-1/2 right-0 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border bg-background text-foreground shadow-(--aura-shadow-card) motion-reduce:hidden",
+          "absolute top-1/2 right-0 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border bg-background text-foreground shadow-(--elevation-raised) motion-reduce:hidden",
           // Hidden until a keyboard reaches it; once it paused the row it stays, to resume it.
           !paused && "not-focus-visible:sr-only"
         )}

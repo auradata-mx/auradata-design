@@ -117,10 +117,10 @@ function Pricing({
           spacing={0}
           className="mt-10 rounded-full bg-muted p-1 *:rounded-full! *:border-0!"
         >
-          <ToggleGroupItem value="monthly" className="h-9 px-4 data-pressed:bg-background data-pressed:shadow-sm">
+          <ToggleGroupItem value="monthly" className="h-9 px-4 data-pressed:bg-background data-pressed:shadow-(--elevation-control)">
             {labels.monthly}
           </ToggleGroupItem>
-          <ToggleGroupItem value="annual" className="h-9 gap-2 px-4 data-pressed:bg-background data-pressed:shadow-sm">
+          <ToggleGroupItem value="annual" className="h-9 gap-2 px-4 data-pressed:bg-background data-pressed:shadow-(--elevation-control)">
             {labels.annual}
             {annualNote && (
               <Badge variant="success" className="h-5 px-1.5 text-[11px]">
@@ -160,7 +160,7 @@ function PlanCard({
     <Card
       className={cn(
         "h-full w-full gap-6 px-6 py-7 md:row-span-4 md:grid md:grid-rows-subgrid",
-        plan.featured ? "shadow-(--aura-shadow-float)" : "shadow-(--aura-shadow-card)"
+        plan.featured ? "shadow-(--elevation-raised-hover)" : "shadow-(--elevation-raised)"
       )}
     >
       <div className="flex flex-col gap-2">

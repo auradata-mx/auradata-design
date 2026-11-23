@@ -51,7 +51,7 @@ function DataTableSelectionBar({
           }}
           className={cn(
             // Above the home indicator on a phone; never wider than the screen.
-            "fixed inset-x-0 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 mx-auto flex w-fit max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl border bg-popover py-2 pr-2 pl-4 text-sm text-popover-foreground shadow-lg",
+            "fixed inset-x-0 bottom-[max(1rem,env(safe-area-inset-bottom))] z-40 mx-auto flex w-fit max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl border bg-popover py-2 pr-2 pl-4 text-sm text-popover-foreground shadow-(--elevation-overlay)",
             "animate-in duration-200 fade-in-0 slide-in-from-bottom-2 motion-reduce:animate-none",
             className
           )}

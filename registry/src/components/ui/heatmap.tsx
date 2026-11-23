@@ -269,7 +269,7 @@ function CalendarHeatmap({
         <div
           data-slot="calendar-heatmap-tooltip"
           aria-hidden
-          className="pointer-events-none absolute z-10 grid -translate-x-1/2 -translate-y-full gap-0.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs whitespace-nowrap shadow-xl"
+          className="pointer-events-none absolute z-10 grid -translate-x-1/2 -translate-y-full gap-0.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs whitespace-nowrap shadow-(--elevation-overlay)"
           style={{ left: active.left, top: active.top - 6 }}
         >
           <span className="font-mono font-medium text-foreground tabular-nums">

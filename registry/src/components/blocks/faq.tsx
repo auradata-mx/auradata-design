@@ -40,7 +40,7 @@ function Faq({ eyebrow, title, highlight, description, items, openFirst = true, 
             <AccordionItem
               key={index}
               value={index}
-              className="rounded-(--aura-radius-card) border border-border bg-card text-card-foreground shadow-(--aura-shadow-card) transition-shadow duration-500 ease-(--aura-ease-fluid) data-open:shadow-(--aura-shadow-float)"
+              className="rounded-(--aura-radius-card) border border-border bg-card text-card-foreground shadow-(--elevation-raised) transition-shadow duration-500 ease-(--aura-ease-fluid) data-open:shadow-(--elevation-raised-hover)"
             >
               {/* The padding lives in the trigger, so its focus ring frames the whole row inside the card; the
                   chevron sits on the first line of a question that wraps. */}

@@ -14,7 +14,7 @@ const segmentedControlItemVariants = cva(
     "relative inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-transparent font-medium whitespace-nowrap text-foreground/60 outline-none transition-[color,background-color,box-shadow] select-none hover:text-foreground motion-reduce:transition-none dark:text-muted-foreground dark:hover:text-foreground",
     // The brand outline comes from the theme on `focus-visible:ring-*`.
     "focus-visible:ring-3 focus-visible:ring-ring/50",
-    "data-checked:bg-background data-checked:text-foreground data-checked:shadow-sm dark:data-checked:border-input dark:data-checked:bg-input/30 dark:data-checked:text-foreground",
+    "data-checked:bg-background data-checked:text-foreground data-checked:shadow-(--elevation-control) dark:data-checked:border-input dark:data-checked:bg-input/30 dark:data-checked:text-foreground",
     // Base UI radios are spans: `disabled:` never matches.
     "data-disabled:pointer-events-none data-disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

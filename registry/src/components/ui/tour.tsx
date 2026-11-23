@@ -160,7 +160,7 @@ function Tour({ steps, open, onOpenChange, defaultStep = 0, onStepChange, onComp
             initialFocus={primary}
             finalFocus={false}
             className={cn(
-              "grid w-80 max-w-[calc(100vw-2rem)] gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground shadow-lg ring-1 ring-foreground/10 outline-none",
+              "grid w-80 max-w-[calc(100vw-2rem)] gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground shadow-(--elevation-overlay) ring-1 ring-foreground/10 outline-none",
               "origin-(--transform-origin) duration-150 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 motion-reduce:animate-none"
             )}
           >

@@ -25,7 +25,7 @@ function CtaBand({ eyebrow, title, highlight, description, actions, className, .
       className={cn("px-6 py-16 md:px-10 md:py-24", className)}
       {...props}
     >
-      <div className="relative isolate mx-auto flex max-w-6xl flex-col items-center overflow-hidden rounded-(--aura-radius-card) border border-border bg-card px-6 py-12 text-center text-card-foreground shadow-(--aura-shadow-float) sm:px-12 md:py-16">
+      <div className="relative isolate mx-auto flex max-w-6xl flex-col items-center overflow-hidden rounded-(--aura-radius-card) border border-border bg-card px-6 py-12 text-center text-card-foreground shadow-(--elevation-overlay) sm:px-12 md:py-16">
         <AuraBackground grid variant="band" />
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         <GradientHeading id={headingId} highlight={highlight} inline className="mt-6 max-w-180">

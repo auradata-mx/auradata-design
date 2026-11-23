@@ -44,7 +44,7 @@ function BenefitsGrid({ eyebrow, title, highlight, description, items, className
         <ul className="mt-14 grid gap-4 md:grid-cols-5">
           {items.map((item, index) => (
             <li key={index} className={cn("flex", wide(index) ? "md:col-span-3" : "md:col-span-2")}>
-              <Card className="w-full gap-4 py-6 shadow-(--aura-shadow-card) transition-[translate,box-shadow] duration-700 ease-(--aura-ease-fluid) hover:-translate-y-1 hover:shadow-(--aura-shadow-float) motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+              <Card className="w-full gap-4 py-6 shadow-(--elevation-raised) transition-[translate,box-shadow] duration-700 ease-(--aura-ease-fluid) hover:-translate-y-1 hover:shadow-(--elevation-raised-hover) motion-reduce:transition-none motion-reduce:hover:translate-y-0">
                 <CardHeader className="gap-4 px-6">
                   {item.icon && (
                     <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">

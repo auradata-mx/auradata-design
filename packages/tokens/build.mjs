@@ -78,7 +78,10 @@ const STATUS_SCALES = Object.fromEntries(
   ),
 );
 
-/** The elevation scale: --elevation-* variables, shadow-* Tailwind utilities. */
+/**
+ * The elevation scale: --elevation-* variables, used as shadow-(--elevation-raised). The arbitrary-variable form,
+ * not a theme utility, lets tailwind-merge drop it for a later shadow-none.
+ */
 const ELEVATION = ['raised', 'raised-hover', 'control', 'control-hover', 'pressed', 'sunken', 'overlay', 'modal'];
 /** Gradients laid over a surface color (bg-(image:--surface-raised)), and the opt-in grain. */
 const SURFACES = ['raised', 'filled', 'grain'];
@@ -266,19 +269,38 @@ function printCss(light) {
   };
 }
 
+/** Tailwind's box-shadow: insets, rings, then the shadow, so a card keeps its ring edge under the elevation. */
+const TW_BOX_SHADOW = ['inset-shadow', 'inset-ring-shadow', 'ring-offset-shadow', 'ring-shadow', 'shadow']
+  .map((name) => `var(--tw-${name}, 0 0 #0000)`)
+  .join(', ');
+
 /**
+ * Depth: the stock shadcn card (left to shadcn) sits at elevation 1, lit from above, through the theme. In the base
+ * layer and through --tw-shadow, so a shadow-none on a card still wins.
  * Forced colors drop every box-shadow: the raised, floating and modal surfaces, whose edge is a shadow or a ring,
- * get a system-color outline instead. `:where()` keeps it below the focus outline.
+ * get a system-color outline instead. `:where()` keeps both below the focus outline and any app rule.
  */
-function forcedColorsCss() {
-  const elevated = ['raised', 'overlay', 'modal'].map((name) => `[class*="shadow-${name}"]`).join(', ');
-  return { '@media (forced-colors: active)': { [`:where(${elevated})`]: { outline: '1px solid CanvasText' } } };
+function elevationCss() {
+  const elevated = [
+    '[data-slot="card"]',
+    ...['raised', 'overlay', 'modal'].map((name) => `[class*="--elevation-${name})"]`),
+  ].join(', ');
+  return {
+    '@layer base': {
+      ':where([data-slot="card"])': {
+        '--tw-shadow': 'var(--elevation-raised)',
+        'box-shadow': TW_BOX_SHADOW,
+        'background-image': 'var(--surface-raised)',
+      },
+    },
+    '@media (forced-colors: active)': { [`:where(${elevated})`]: { outline: '1px solid CanvasText' } },
+  };
 }
 
 /** Every rule the theme adds besides its variables, merged so each at-rule appears once. */
 function themeCss(tokens) {
   const merged = {};
-  for (const rules of [focusCss(tokens), densityCss(tokens), printCss(tokens), forcedColorsCss()]) {
+  for (const rules of [focusCss(tokens), densityCss(tokens), printCss(tokens), elevationCss()]) {
     for (const [selector, body] of Object.entries(rules)) {
       merged[selector] = selector.startsWith('@') ? { ...merged[selector], ...body } : body;
     }
@@ -304,7 +326,7 @@ function shadcnCss(light) {
     HEADER +
     "/* Import after tokens.css and shadcn's own theme, so these win. */\n" +
     block(':root, .dark', entries) +
-    '\n/* The brand focus ring on every component, the compact density, print and forced colors. */\n' +
+    '\n/* The brand focus ring on every component, the compact density, print and depth. */\n' +
     cssOf(themeCss(light))
   );
 }
@@ -334,7 +356,6 @@ function shadcnTheme(light, dark) {
       'font-sans': light['font-sans'],
       'font-mono': light['font-mono'],
       ...Object.fromEntries(SHADCN_EXTRA.map((name) => [`color-${name}`, `var(--${name})`])),
-      ...Object.fromEntries(ELEVATION.map((name) => [`shadow-${name}`, `var(--elevation-${name})`])),
     },
     light: resolved(light),
     dark: resolved(dark),
