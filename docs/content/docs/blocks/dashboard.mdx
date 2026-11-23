@@ -1,0 +1,25 @@
+---
+title: Dashboard
+description: "Indicadores, gráficas y detalle de ventas en un mismo lugar."
+full: true
+---
+
+import { BlockPreview } from '@docs/components/blocks/block-preview';
+
+El periodo aparece antes de los indicadores, la tendencia contra el año anterior y el desglose por canal. Al final, la tabla muestra los clientes principales.
+
+<BlockPreview name="dashboard" />
+
+## Instalación
+
+<ComponentInstall item="dashboard" />
+
+## Componentes del registro
+
+`PageHeader` y `DateRangeFilter` encabezan la vista. `KpiCard`, `ChartCard`, `LineChart`, `BarChart`, `DonutChart` y `FunnelChart` resumen los datos; `DataTable` y `Delta` muestran el detalle.
+
+## Cómo adaptarlo
+
+Pasa tus datos en `kpis`, `monthly`, `channels`, `products`, `funnel` y `customers`. Usa `onRangeChange` para volver a consultar todas las series con el mismo periodo y `loading` para mantener el espacio de las tarjetas durante la carga. El filtro del ejemplo cambia el periodo, pero las cifras son fijas.
+
+<StorybookLink stories="Dashboard" story="Sales" />

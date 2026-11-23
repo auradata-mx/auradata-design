@@ -1,0 +1,25 @@
+---
+title: App Shell
+description: "La navegación, el contexto y las acciones que se repiten en toda la app."
+full: true
+---
+
+import { BlockPreview } from '@docs/components/blocks/block-preview';
+
+Usa esta estructura para envolver las pantallas de una app. La barra lateral agrupa la navegación; la barra superior indica dónde estás y reúne las acciones de la página.
+
+<BlockPreview name="app-shell" />
+
+## Instalación
+
+<ComponentInstall item="app-shell" />
+
+## Componentes del registro
+
+`Sidebar` organiza la navegación y `Breadcrumb` muestra la ubicación. `Logo`, `ProductTag`, `WorkspaceSwitcher` y `UserMenu` identifican la app, el espacio y la cuenta. `ThemeToggle` y `NotificationCenter` son opcionales.
+
+## Cómo adaptarlo
+
+Pasa las secciones en `nav`, marca el enlace activo y asigna la vista actual a `children`. Conecta `workspaces.onSelect` a tu lógica de cambio de espacio y pasa las acciones propias de la página en `actions`. En el ejemplo puedes plegar la barra y cambiar de espacio sin salir de la vista.
+
+<StorybookLink stories="Blocks" story="Shell" />
