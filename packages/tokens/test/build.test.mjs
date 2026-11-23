@@ -375,3 +375,56 @@ test('the theme prints reports light, flat, without navigation and with link add
 test('tokens.css prints the dark theme with its light values', () => {
   expect(read('tokens.css')).toMatch(/@media print \{\s*\.dark\.dark \{[^}]*--aura-color-bg-container: #FFFFFF;[^}]*--aura-color-text: #0A0A0F;/s);
 });
+
+const ELEVATION = ['raised', 'raised-hover', 'control', 'control-hover', 'pressed', 'sunken', 'overlay', 'modal'];
+const SURFACES = ['raised', 'filled', 'grain'];
+
+// Depth from the Kepler kiosk app: a top-edge highlight, a contact and an ambient shadow, a soft surface gradient.
+test('tokens.css carries the elevation scale and the surfaces in light and dark', () => {
+  const css = read('tokens.css');
+  const [root, dark] = [css.split('\n.dark {')[0], css.split('\n.dark {')[1].split('@media print')[0]];
+  for (const block of [root, dark]) {
+    for (const name of ELEVATION) expect(block).toMatch(new RegExp(`--aura-shadow-${name}: [^;]+;`));
+    for (const name of SURFACES) expect(block).toMatch(new RegExp(`--aura-surface-${name}: [^;]+;`));
+  }
+  // The highlight: 90 % white in light, a 8-12 % white hairline in dark.
+  expect(root).toMatch(/--aura-shadow-raised: inset 0 1px 0 rgb\(255 255 255 \/ 0\.9\),/);
+  expect(dark).toMatch(/--aura-shadow-raised: inset 0 1px 0 rgb\(255 255 255 \/ 0\.08\),/);
+  // Pressed and sunken are inset only: the element sinks.
+  for (const block of [root, dark]) {
+    expect(block).toMatch(/--aura-shadow-pressed: inset [^,;]+;/);
+    expect(block).toMatch(/--aura-shadow-sunken: inset [^,;]+;/);
+  }
+  // The grain is opt-in and dark only.
+  expect(root).toContain('--aura-surface-grain: none;');
+  expect(dark).toMatch(/--aura-surface-grain: url\("data:image\/svg\+xml,/);
+  // AuraData BI reads shadow-card and shadow-float through antd.json: they keep their values.
+  expect(root).toContain('--aura-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.08);');
+  expect(dark).toContain('--aura-shadow-float: 0 16px 40px -12px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.4);');
+  // Paper prints flat and light.
+  expect(css.split('@media print')[1]).toContain('--aura-surface-grain: none;');
+});
+
+test('shadcn gets the elevation as variables and Tailwind shadow utilities', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  const css = read('shadcn.css');
+  for (const name of ELEVATION) {
+    expect(css).toContain(`--elevation-${name}: var(--aura-shadow-${name});`);
+    expect(theme.theme[`shadow-${name}`]).toBe(`var(--elevation-${name})`);
+    expect(theme.light[`elevation-${name}`]).toMatch(/\S/);
+    expect(theme.dark[`elevation-${name}`]).not.toBe(theme.light[`elevation-${name}`]);
+  }
+  for (const name of SURFACES) expect(css).toContain(`--surface-${name}: var(--aura-surface-${name});`);
+  expect(theme.light['surface-grain']).toBe('none');
+});
+
+// Shadows vanish in forced colors: raised, floating and modal surfaces keep an edge.
+test('the theme outlines elevated surfaces in forced colors', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  const forced = theme.css['@media (forced-colors: active)'];
+  expect(forced).toBeDefined();
+  const [selector, rule] = Object.entries(forced)[0];
+  for (const name of ['shadow-raised', 'shadow-overlay', 'shadow-modal']) expect(selector).toContain(name);
+  expect(rule.outline).toBe('1px solid CanvasText');
+  expect(read('shadcn.css')).toContain('@media (forced-colors: active)');
+});

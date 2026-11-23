@@ -44,8 +44,9 @@ const block = (selector, entries) =>
 const pick = (tokens, prefix) => Object.entries(tokens).filter(([name]) => name.startsWith(prefix));
 
 function tokensCss(light, dark) {
-  const themed = (tokens) => [...pick(tokens, 'color-'), ...pick(tokens, 'shadow-')];
-  const brand = Object.entries(light).filter(([name]) => !name.startsWith('color-') && !name.startsWith('shadow-'));
+  const THEMED = ['color-', 'shadow-', 'surface-'];
+  const themed = (tokens) => THEMED.flatMap((prefix) => pick(tokens, prefix));
+  const brand = Object.entries(light).filter(([name]) => !THEMED.some((prefix) => name.startsWith(prefix)));
   const aura = (entries) => entries.map(([name, value]) => [`--aura-${name}`, value]);
   // Doubled class: wins over the .dark block wherever a product's CSS puts it.
   const print = block('.dark.dark', aura(themed(light))).replace(/^(?=.)/gm, '  ');
@@ -76,6 +77,11 @@ const STATUS_SCALES = Object.fromEntries(
     [50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((step) => [`${name}-${step}`, `color-${aura}-${step}`]),
   ),
 );
+
+/** The elevation scale: --elevation-* variables, shadow-* Tailwind utilities. */
+const ELEVATION = ['raised', 'raised-hover', 'control', 'control-hover', 'pressed', 'sunken', 'overlay', 'modal'];
+/** Gradients laid over a surface color (bg-(image:--surface-raised)), and the opt-in grain. */
+const SURFACES = ['raised', 'filled', 'grain'];
 
 /** shadcn names → AuraData names. One block: the --aura-* variables already switch with .dark. */
 const SHADCN = {
@@ -125,6 +131,8 @@ const SHADCN = {
   'sidebar-ring': 'color-focus-ring',
   ...DATA_PALETTES,
   ...STATUS_SCALES,
+  ...Object.fromEntries(ELEVATION.map((name) => [`elevation-${name}`, `shadow-${name}`])),
+  ...Object.fromEntries(SURFACES.map((name) => [`surface-${name}`, `surface-${name}`])),
 };
 
 /**
@@ -258,10 +266,19 @@ function printCss(light) {
   };
 }
 
+/**
+ * Forced colors drop every box-shadow: the raised, floating and modal surfaces, whose edge is a shadow or a ring,
+ * get a system-color outline instead. `:where()` keeps it below the focus outline.
+ */
+function forcedColorsCss() {
+  const elevated = ['raised', 'overlay', 'modal'].map((name) => `[class*="shadow-${name}"]`).join(', ');
+  return { '@media (forced-colors: active)': { [`:where(${elevated})`]: { outline: '1px solid CanvasText' } } };
+}
+
 /** Every rule the theme adds besides its variables, merged so each at-rule appears once. */
 function themeCss(tokens) {
   const merged = {};
-  for (const rules of [focusCss(tokens), densityCss(tokens), printCss(tokens)]) {
+  for (const rules of [focusCss(tokens), densityCss(tokens), printCss(tokens), forcedColorsCss()]) {
     for (const [selector, body] of Object.entries(rules)) {
       merged[selector] = selector.startsWith('@') ? { ...merged[selector], ...body } : body;
     }
@@ -287,7 +304,7 @@ function shadcnCss(light) {
     HEADER +
     "/* Import after tokens.css and shadcn's own theme, so these win. */\n" +
     block(':root, .dark', entries) +
-    '\n/* The brand focus ring on every component, the compact density and print. */\n' +
+    '\n/* The brand focus ring on every component, the compact density, print and forced colors. */\n' +
     cssOf(themeCss(light))
   );
 }
@@ -317,6 +334,7 @@ function shadcnTheme(light, dark) {
       'font-sans': light['font-sans'],
       'font-mono': light['font-mono'],
       ...Object.fromEntries(SHADCN_EXTRA.map((name) => [`color-${name}`, `var(--${name})`])),
+      ...Object.fromEntries(ELEVATION.map((name) => [`shadow-${name}`, `var(--elevation-${name})`])),
     },
     light: resolved(light),
     dark: resolved(dark),
