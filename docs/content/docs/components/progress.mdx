@@ -1,0 +1,63 @@
+---
+title: Progress
+description: "Muestra cuánto avanzó una tarea con progreso medible."
+---
+
+La pista de AuraData se distingue sobre las superficies del tema y el indicador termina en bordes redondeados. El componente monta la pista y el indicador; agrega una etiqueta y, si sirve, el valor visible.
+
+<ComponentPreview name="progress/demo" />
+
+## Instalación
+
+<ComponentInstall item="progress" />
+
+## Uso
+
+```tsx
+import { Progress, ProgressLabel, ProgressValue } from '@/components/ui/progress';
+
+<Progress value={40}>
+  <ProgressLabel>Exportación de ventas</ProgressLabel>
+  <ProgressValue />
+</Progress>;
+```
+
+## Ejemplos
+
+### Avance en pasos
+
+Usa `max` para un total distinto de 100 y comunica el conteo en el valor visible y accesible.
+
+<ComponentPreview name="progress/step-count" />
+
+## Props
+
+### Progress
+
+<ComponentProps file="progress" type="Pick<React.ComponentProps<typeof Progress>, 'value' | 'min' | 'max' | 'getAriaValueText' | 'children'>" baseUi="progress" />
+
+### ProgressLabel
+
+<ComponentProps file="progress" type="Pick<React.ComponentProps<typeof ProgressLabel>, 'children'>" baseUi="progress" />
+
+### ProgressValue
+
+<ComponentProps file="progress" type="Pick<React.ComponentProps<typeof ProgressValue>, 'children'>" baseUi="progress" />
+
+### ProgressTrack
+
+<ComponentProps file="progress" type="Pick<React.ComponentProps<typeof ProgressTrack>, 'className'>" baseUi="progress" />
+
+### ProgressIndicator
+
+<ComponentProps file="progress" type="Pick<React.ComponentProps<typeof ProgressIndicator>, 'className'>" baseUi="progress" />
+
+## Cuándo usarlo
+
+- Muestra el avance de una exportación o de un conjunto de pasos cuando puedes medirlo. Nombra la tarea con `ProgressLabel` o un nombre accesible.
+
+## Cuándo no
+
+- Si no sabes cuánto falta, no inventes un porcentaje: para una acción usa el estado de carga del botón y para contenido usa `Skeleton`.
+
+<StorybookLink stories="Progress" story="Default" />

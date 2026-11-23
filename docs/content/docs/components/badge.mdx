@@ -1,0 +1,42 @@
+---
+title: Badge
+description: "Identifica un estado o una categoría con una etiqueta breve."
+---
+
+AuraData añade variantes sólidas de estado. Una etiqueta larga se trunca y, si la etiqueta es interactiva, el foco muestra el anillo de marca sin cambiar el borde.
+
+<ComponentPreview name="badge/demo" />
+
+## Instalación
+
+<ComponentInstall item="badge" />
+
+## Uso
+
+```tsx
+import { Badge } from '@/components/ui/badge';
+
+<Badge variant="success">Publicado</Badge>;
+```
+
+## Ejemplos
+
+### Estados del informe
+
+Escribe el estado: el color ayuda a distinguirlo, pero no lo reemplaza.
+
+<ComponentPreview name="badge/statuses" />
+
+## Props
+
+<ComponentProps file="badge" type="Pick<React.ComponentProps<typeof Badge>, 'variant' | 'render' | 'children'>" />
+
+## Cuándo usarlo
+
+- Ponlo junto al nombre de un informe o dataset para que su estado se pueda leer de un vistazo.
+
+## Cuándo no
+
+- Si hay que explicar qué pasó y qué hacer, usa `Alert`; si hay que iniciar una acción, usa `Button`.
+
+<StorybookLink stories="Badge" story="Status" />

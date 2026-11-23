@@ -1,0 +1,64 @@
+---
+title: Avatar
+description: "Identifica a una persona mediante su foto o sus iniciales."
+---
+
+El borde sigue la forma del avatar, incluso si es cuadrado. Las iniciales crecen con el tamaño y se mantienen legibles al apilar varios avatares.
+
+<ComponentPreview name="avatar/demo" />
+
+## Instalación
+
+<ComponentInstall item="avatar" />
+
+## Uso
+
+```tsx
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
+<Avatar aria-hidden><AvatarFallback>AL</AvatarFallback></Avatar>;
+```
+
+## Ejemplos
+
+### Grupo de miembros
+
+Muestra una muestra del equipo y un conteo de quienes no caben.
+
+<ComponentPreview name="avatar/group" />
+
+## Props
+
+### Avatar
+
+<ComponentProps file="avatar" type="Pick<React.ComponentProps<typeof Avatar>, 'size'>" baseUi="avatar" />
+
+### AvatarImage
+
+<ComponentProps file="avatar" type="Pick<React.ComponentProps<typeof AvatarImage>, 'src' | 'alt'>" baseUi="avatar" />
+
+### AvatarFallback
+
+<ComponentProps file="avatar" type="Pick<React.ComponentProps<typeof AvatarFallback>, 'delay' | 'children'>" baseUi="avatar" />
+
+### AvatarBadge
+
+<ComponentProps file="avatar" type="Pick<React.ComponentProps<typeof AvatarBadge>, 'children'>" />
+
+### AvatarGroup
+
+<ComponentProps file="avatar" type="Pick<React.ComponentProps<typeof AvatarGroup>, 'children'>" />
+
+### AvatarGroupCount
+
+<ComponentProps file="avatar" type="Pick<React.ComponentProps<typeof AvatarGroupCount>, 'children'>" />
+
+## Cuándo usarlo
+
+- Identifica a la persona que publicó un informe o a los miembros de un espacio. Si no hay nombre visible, asegúrate de que la foto o el avatar tenga un nombre accesible.
+
+## Cuándo no
+
+- Para comunicar el estado de un informe, usa `Badge` con texto; un avatar no sustituye una etiqueta de estado.
+
+<StorybookLink stories="Avatar" story="Default" />
