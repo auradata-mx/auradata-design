@@ -4,7 +4,8 @@
   "license": "MIT",
   "workspaces": [
     "packages/*",
-    "registry"
+    "registry",
+    "docs"
   ],
   "scripts": {
     "build": "npm run build -w @cristianruben-dev/auradata-tokens && npm run build -w registry",

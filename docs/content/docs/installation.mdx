@@ -1,0 +1,80 @@
+---
+title: Instalación
+description: Agrega la marca de AuraData y sus componentes a una app de React con el CLI de shadcn.
+---
+
+El registro de AuraData es público: el CLI de shadcn lee cada componente desde `https://design.auradata.mx/r/<item>.json` y lo copia a tu proyecto. No hace falta ningún token.
+
+<Steps>
+<Step>
+
+### Inicia shadcn con Base UI
+
+El registro está construido sobre Base UI, así que la app también.
+
+```bash
+npx shadcn init -b base
+```
+
+</Step>
+<Step>
+
+### Agrega la marca
+
+El tema `auradata-theme` trae los tokens de color en claro y oscuro, las tipografías, los radios y la profundidad.
+
+```bash
+npx shadcn add https://design.auradata.mx/r/auradata-theme.json
+```
+
+</Step>
+<Step>
+
+### Agrega componentes
+
+Los componentes de AuraData se instalan desde el registro:
+
+```bash
+npx shadcn add https://design.auradata.mx/r/kpi-card.json
+npx shadcn add https://design.auradata.mx/r/logo.json   # también copia los SVG de Continua a public/brand/continua
+```
+
+Los componentes de shadcn que AuraData no cambió llegan directo de shadcn y el tema ya les da la marca:
+
+```bash
+npx shadcn add card popover separator
+```
+
+</Step>
+</Steps>
+
+## Desde GitHub
+
+El mismo registro se puede leer del repositorio con la forma corta `cristianruben-dev/auradata-design/<item>`. Fija una versión con `#<tag o commit>`:
+
+```bash
+npx shadcn add cristianruben-dev/auradata-design/kpi-card#v0.1.0
+```
+
+## Solo los tokens
+
+Un producto que no usa React (Docusaurus, AuraData BI con antd, ECharts) toma solo los tokens del paquete `@auradata/tokens`. Es un paquete privado de GitHub Packages publicado como `@cristianruben-dev/auradata-tokens`; se instala con ese alias para que cada import diga `@auradata/tokens/...`:
+
+```ini title=".npmrc"
+@cristianruben-dev:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
+
+```bash
+export GITHUB_TOKEN=$(gh auth token --user cristianruben-dev)   # o un token clásico con read:packages
+npm install @auradata/tokens@npm:@cristianruben-dev/auradata-tokens
+```
+
+| Producto | Archivo |
+| --- | --- |
+| Cualquier CSS | `@auradata/tokens/tokens.css` (`--aura-*`, claro en `:root`, oscuro en `.dark`) |
+| Apps con shadcn | `@auradata/tokens/shadcn.css`, o el item `auradata-theme` del registro |
+| Sitios con Tailwind 4 | `@auradata/tokens/tailwind.css` |
+| Docusaurus | `@auradata/tokens/infima.css` |
+| AuraData BI (antd) | `@auradata/tokens/antd.json` |
+| ECharts | `@auradata/tokens/echarts.json` |

@@ -1,0 +1,23 @@
+/*
+ * The registry's stylesheet is the base: Tailwind, the fonts, the AuraData tokens (--aura-* and the shadcn variables
+ * in light and dark) and the theme the components read. Importing it keeps one source of truth for the brand.
+ */
+@import '../../../registry/src/index.css';
+
+/* Fumadocs UI, with its colors mapped onto the shadcn variables, so the docs chrome wears the brand too. */
+@import 'fumadocs-ui/css/shadcn.css';
+@import 'fumadocs-ui/css/preset.css';
+
+/* Generate the classes the registry components use, since the docs render them. */
+@source '../../../registry/src/components';
+@source '../../../registry/src/hooks';
+@source '../../../registry/src/lib';
+
+html {
+  scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+  margin-right: 0px !important;
+  --removed-body-scroll-bar-size: 0px !important;
+}
