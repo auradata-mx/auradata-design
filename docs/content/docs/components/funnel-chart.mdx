@@ -1,0 +1,42 @@
+---
+title: Funnel chart
+description: "Muestra en qué paso se pierde gente y cuántas personas llegan al final."
+---
+
+El embudo de AuraData usa barras centradas respecto al primer paso. Cada renglón da el conteo y, desde el segundo, la conversión respecto al paso anterior. Se lee como lista incluso sin ver las barras.
+
+<ComponentPreview name="funnel-chart/demo" />
+
+## Instalación
+
+<ComponentInstall item="funnel-chart" />
+
+## Uso
+
+```tsx
+import { FunnelChart } from '@/components/ui/funnel-chart';
+
+<FunnelChart data={etapas} index="etapa" value="personas" />;
+```
+
+## Ejemplos
+
+### Conversión total con nombre propio
+
+Con `totalLabel`, nombra el resultado del último paso respecto al primero, no el promedio de las conversiones.
+
+<ComponentPreview name="funnel-chart/total" />
+
+## Props
+
+<ComponentProps file="funnel-chart" type="Omit<FunnelChartProps, keyof React.ComponentProps<'div'>>" />
+
+## Cuándo usarlo
+
+- **¿Dónde se pierde la gente?** Pasa las etapas en el orden del recorrido. Mantén la misma unidad en todos los pasos.
+
+## Cuándo no
+
+- Para comparar categorías independientes que no son pasos de un recorrido, usa barras horizontales.
+
+<StorybookLink stories="FunnelChart" />
