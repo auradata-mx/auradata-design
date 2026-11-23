@@ -1,0 +1,47 @@
+---
+title: Label
+description: "El nombre visible de un control, unido a él con htmlFor."
+---
+
+El label de shadcn que se atenúa con un checkbox, radio o switch de Base UI deshabilitado que va antes que él: esos controles marcan `data-disabled`, no `:disabled`, y el label lo lee.
+
+<ComponentPreview name="label/demo" />
+
+## Instalación
+
+<ComponentInstall item="label" />
+
+## Uso
+
+```tsx
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+<Label htmlFor="report">Nombre del informe</Label>
+<Input id="report" />;
+```
+
+## Ejemplos
+
+### Junto a un control deshabilitado
+
+El control va antes que el `Label` (es su `peer`): al deshabilitarlo, la etiqueta se atenúa con él.
+
+<ComponentPreview name="label/control" />
+
+## Props
+
+<ComponentProps file="label" type="Pick<React.ComponentProps<typeof Label>, 'htmlFor'>" />
+
+## Cuándo usarlo
+
+- **Un control suelto** fuera de un formulario: un checkbox o un switch con su texto.
+- **El texto de la etiqueta nombra el dato**, en sentence case y sin dos puntos: «Nombre del informe».
+
+## Cuándo no
+
+- **Dentro de un formulario**: `FieldLabel` en un `Field`, que además junta la ayuda y el error.
+- **Un grupo de opciones** (radios, checkboxes): `FieldLegend` en un `FieldSet`.
+- **Un control sin espacio para texto** (una búsqueda en la barra): `aria-label`. El placeholder no reemplaza a la etiqueta.
+
+<StorybookLink stories="Label" />

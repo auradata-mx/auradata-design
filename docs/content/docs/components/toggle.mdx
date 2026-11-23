@@ -1,0 +1,58 @@
+---
+title: Toggle
+description: "Un botón que se queda presionado: favorito, negritas, mostrar u ocultar."
+---
+
+El toggle de shadcn sobre Base UI. Presionado toma `--accent`, distinto del hover (`--muted`), para que se lea aparte; el que solo lleva un ícono es cuadrado, como un botón de ícono, y el foco es solo el contorno de la marca.
+
+<ComponentPreview name="toggle/demo" />
+
+## Instalación
+
+<ComponentInstall item="toggle" />
+
+## Uso
+
+```tsx
+import { StarIcon } from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
+
+<Toggle>
+  <StarIcon aria-hidden /> Favorito
+</Toggle>;
+```
+
+## Ejemplos
+
+### Outline
+
+Sin presionar, presionado y deshabilitado.
+
+<ComponentPreview name="toggle/outline" />
+
+### Tamaños y solo ícono
+
+Tres tamaños. Un toggle solo con ícono necesita `aria-label`.
+
+<ComponentPreview name="toggle/sizes" />
+
+## Props
+
+<ComponentProps
+  file="toggle"
+  type="Pick<React.ComponentProps<typeof Toggle>, 'variant' | 'size' | 'pressed' | 'defaultPressed' | 'onPressedChange' | 'disabled'>"
+  baseUi="toggle"
+/>
+
+## Cuándo usarlo
+
+- **Un estado que se enciende y se apaga desde un botón**: marcar un informe como favorito, negritas en un editor.
+- **Junto a texto, el ícono es decorativo** (`aria-hidden`); solo con ícono, `aria-label`.
+
+## Cuándo no
+
+- **Un ajuste en un formulario**: `Switch`.
+- **Varios toggles relacionados** (tipo de gráfica, regiones): `ToggleGroup`.
+- **Una acción** que no queda presionada: `Button`.
+
+<StorybookLink stories="Toggle" />

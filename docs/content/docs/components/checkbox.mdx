@@ -1,0 +1,66 @@
+---
+title: Checkbox
+description: "Activa o desactiva una opción, o marca varias de una lista."
+---
+
+El checkbox de shadcn sobre Base UI con el estado indeterminado de AuraData: va relleno como el marcado y dibuja una raya, no la palomita. Se atenúa al deshabilitarse, muestra solo el contorno de foco de la marca y, inválido, toma el borde destructivo completo. Su borde contrasta 3:1 con la página en claro y oscuro.
+
+<ComponentPreview name="checkbox/demo" />
+
+## Instalación
+
+<ComponentInstall item="checkbox" />
+
+## Uso
+
+```tsx
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+
+<div className="flex items-center gap-2">
+  <Checkbox id="share" />
+  <Label htmlFor="share">Compartir con el equipo</Label>
+</div>;
+```
+
+## Ejemplos
+
+### Indeterminado
+
+Cuando solo algunas de las opciones están marcadas, el checkbox padre va `indeterminate` (`aria-checked="mixed"`). Un clic las marca todas; otro, ninguna.
+
+<ComponentPreview name="checkbox/indeterminate" />
+
+### Inválido
+
+Una casilla obligatoria sin marcar: `aria-invalid` pinta el borde y el `FieldError` dice qué hacer.
+
+<ComponentPreview name="checkbox/invalid" />
+
+### Deshabilitado
+
+Base UI marca la raíz con `data-disabled`, y la `Label` que la sigue se atenúa con ella.
+
+<ComponentPreview name="checkbox/disabled" />
+
+## Props
+
+<ComponentProps
+  file="checkbox"
+  type="Pick<React.ComponentProps<typeof Checkbox>, 'checked' | 'defaultChecked' | 'onCheckedChange' | 'indeterminate' | 'disabled'>"
+  baseUi="checkbox"
+/>
+
+## Cuándo usarlo
+
+- **Una opción que se marca y se confirma al enviar**, como «Acepto los términos de uso».
+- **Varias opciones de una lista corta**, en un `FieldSet` con su `FieldLegend`; con un padre `indeterminate` si hay «Todas».
+- **Siempre con etiqueta**: un `Label` o `FieldLabel` con `htmlFor`; toda la línea responde al clic.
+
+## Cuándo no
+
+- **Un ajuste que se aplica al instante** («Actualizar cada hora»): `Switch`.
+- **Una sola opción de varias**: `RadioGroup`.
+- **Varios valores de una lista larga que hay que buscar**: `Combobox` con `multiple`.
+
+<StorybookLink stories="Checkbox" />
