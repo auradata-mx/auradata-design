@@ -1,0 +1,50 @@
+---
+title: Scroll area
+description: "Una caja de alto o ancho fijo con su propia barra de desplazamiento, igual en todos los sistemas."
+---
+
+El área con scroll de shadcn con un thumb que se lee en oscuro y no toca las esquinas redondeadas. La barra es la misma en macOS, Windows y Linux, y la rueda del mouse, el touch y el teclado siguen funcionando como en un scroll nativo.
+
+<ComponentPreview name="scroll-area/demo" />
+
+## Instalación
+
+<ComponentInstall item="scroll-area" />
+
+## Uso
+
+```tsx
+import { ScrollArea } from '@/components/ui/scroll-area';
+
+<ScrollArea className="h-64 w-56 rounded-lg border">
+  <div className="p-4">{/* una lista larga */}</div>
+</ScrollArea>;
+```
+
+Dale un alto (o un ancho) fijo: sin él no hay nada que desplazar.
+
+## Ejemplos
+
+### Horizontal
+
+Agrega `<ScrollBar orientation="horizontal" />` para desplazar de lado, como una fila de tarjetas más ancha que la caja.
+
+<ComponentPreview name="scroll-area/horizontal" />
+
+## Props
+
+### ScrollBar
+
+<ComponentProps file="scroll-area" type="Pick<ScrollAreaPrimitive.Scrollbar.Props, 'orientation'>" baseUi="scroll-area" />
+
+## Cuándo usarlo
+
+- **Una lista larga dentro de un panel** de alto fijo: los datasets de un selector, el historial de un chat.
+- **Una fila más ancha que su caja**, con la barra horizontal.
+
+## Cuándo no
+
+- **La página entera**: deja que el navegador desplace; un scroll dentro de otro confunde.
+- **Una tabla de datos**: `DataTable`, que ya maneja su scroll y su paginación.
+
+<StorybookLink stories="ScrollArea" />

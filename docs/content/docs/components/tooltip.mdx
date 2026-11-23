@@ -1,0 +1,72 @@
+---
+title: Tooltip
+description: "El nombre de un botón de solo ícono, o una pista corta, al pasar el mouse o enfocar con el teclado."
+---
+
+El tooltip de shadcn con una flecha que no toca el trigger, 8 px de margen con el borde de la pantalla y espacio para un `Kbd` con el atajo. `TooltipProvider` lo abre sin espera (`delay={0}`) y, entre tooltips vecinos, salta de uno a otro sin volver a esperar.
+
+<ComponentPreview name="tooltip/demo" />
+
+## Instalación
+
+<ComponentInstall item="tooltip" />
+
+## Uso
+
+```tsx
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger render={<Button variant="outline" size="icon" aria-label="Actualizar datos" />}>
+      <RefreshCwIcon aria-hidden />
+    </TooltipTrigger>
+    <TooltipContent>Actualizar datos</TooltipContent>
+  </Tooltip>
+</TooltipProvider>;
+```
+
+Pon un `TooltipProvider` cerca de la raíz de la app; cada tooltip lo comparte. El tooltip se abre al pasar el mouse o al enfocar el trigger con Tab, y Escape lo cierra.
+
+## Ejemplos
+
+### Con atajo
+
+Un `Kbd` dentro del tooltip enseña el atajo de la acción.
+
+<ComponentPreview name="tooltip/with-kbd" />
+
+### Lados
+
+`side` elige dónde se abre: `top` (por omisión), `right`, `bottom` o `left`. Si no cabe, se voltea.
+
+<ComponentPreview name="tooltip/sides" />
+
+## Props
+
+### TooltipContent
+
+<ComponentProps
+  file="tooltip"
+  type="Pick<TooltipPrimitive.Positioner.Props, 'side' | 'sideOffset' | 'align' | 'alignOffset'>"
+  baseUi="tooltip"
+/>
+
+### TooltipProvider
+
+<ComponentProps file="tooltip" type="Pick<TooltipPrimitive.Provider.Props, 'delay' | 'closeDelay'>" />
+
+## Cuándo usarlo
+
+- **Un botón de solo ícono** siempre lleva un tooltip con el mismo texto que su `aria-label`, para quien usa el mouse.
+- **El atajo de una acción**, con `Kbd`.
+- **Una pista corta**, de una línea; un texto largo salta de línea al ancho máximo (`max-w-xs`), pero mejor acórtalo.
+
+## Cuándo no
+
+- **Lo único que explica algo**: en el teléfono no hay mouse. Si hay que leerlo, déjalo a la vista o en la descripción de un `Field`.
+- **Contenido con enlaces o controles**: `Popover`; para el resumen de un enlace, `HoverCard`.
+- **El valor de una gráfica**: el tooltip del `Chart`, que pone el valor primero.
+
+<StorybookLink stories="Tooltip" />

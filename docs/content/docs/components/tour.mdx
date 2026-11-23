@@ -1,0 +1,57 @@
+---
+title: Tour
+description: "Presentar una pantalla nueva en tres a cinco pasos, cada uno junto a su elemento."
+---
+
+Un componente de AuraData: una tarjeta junto al elemento de cada paso, con «Paso 1 de 3», «Anterior», «Siguiente» o «Terminar» y «Saltar tour». La página alrededor del elemento se oscurece y el elemento queda marcado con el color de la marca. El foco espera en el botón principal, así que Enter recorre el tour; Escape lo salta. Un clic fuera de la tarjeta no la cierra, y con movimiento reducido no hay animaciones.
+
+<ComponentPreview name="tour/demo" />
+
+## Instalación
+
+<ComponentInstall item="tour" />
+
+## Uso
+
+```tsx
+import { Tour, type TourStep } from '@/components/ui/tour';
+
+const steps: TourStep[] = [
+  { target: '#nuevo-informe', title: 'Crea un informe', description: 'Empieza desde un dataset o desde una plantilla.' },
+  { target: '#compartir', title: 'Comparte con tu equipo', description: 'Invita por correo o copia un enlace.', side: 'left' },
+];
+
+const [open, setOpen] = useState(!tourVisto);
+
+<Tour
+  steps={steps}
+  open={open}
+  onOpenChange={setOpen}
+  onComplete={() => marcarTourVisto()}
+  onSkip={() => marcarTourVisto()}
+/>;
+```
+
+La app es dueña de `open`: recuerda si el tour ya se vio, para que no vuelva a abrirse solo. `target` es un selector de CSS o una función que devuelve el elemento.
+
+## Props
+
+<ComponentProps file="tour" name="TourProps" />
+
+### TourStep
+
+<ComponentProps file="tour" name="TourStep" />
+
+## Cuándo usarlo
+
+- **Presentar una pantalla nueva** en tres a cinco pasos, cada uno en un elemento visible.
+- **Siempre se puede saltar** («Saltar tour» o Escape) y **no vuelve a abrirse solo**: guarda que se vio en `onComplete` y `onSkip`.
+- **Títulos con verbos** («Crea un informe», «Comparte con tu equipo») y una frase corta de descripción.
+
+## Cuándo no
+
+- **Los primeros pasos de una cuenta** (conectar datos, invitar): `OnboardingChecklist`, que se queda a la vista hasta terminarlos.
+- **Explicar un solo control**: su `Tooltip` o la descripción de su `Field`.
+- **Lo que hay que leer para usar la pantalla**: déjalo en la pantalla; un tour se salta.
+
+<StorybookLink stories="Tour" />
