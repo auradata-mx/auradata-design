@@ -73,8 +73,8 @@ const STATUS_SCALES = Object.fromEntries(
  * not a theme utility, lets tailwind-merge drop it for a later shadow-none.
  */
 const ELEVATION = ['raised', 'raised-hover', 'control', 'control-hover', 'pressed', 'sunken', 'overlay', 'modal'];
-/** Gradients laid over a surface color (bg-(image:--surface-raised)), and the opt-in grain. */
-const SURFACES = ['raised', 'filled', 'grain'];
+/** Gradients laid over a surface color (bg-(image:--surface-raised)), the opt-in grain and frosted glass. */
+const SURFACES = ['raised', 'filled', 'grain', 'glass'];
 
 /** shadcn names → AuraData names. One block: the --aura-* variables already switch with .dark. */
 const SHADCN = {
@@ -114,6 +114,7 @@ const SHADCN = {
   'chart-7': 'chart-7',
   'chart-8': 'chart-8',
   'gradient-brand': 'gradient-brand',
+  'ease-fluid': 'ease-fluid',
   radius: 'radius-md',
   sidebar: 'color-bg-container',
   'sidebar-foreground': 'color-text',
@@ -197,15 +198,35 @@ const TW_BOX_SHADOW = ['inset-shadow', 'inset-ring-shadow', 'ring-offset-shadow'
   .map((name) => `var(--tw-${name}, 0 0 #0000)`)
   .join(', ');
 
+/** Floating popups born from a trigger: menus, selects, popovers, hover cards, comboboxes. */
+const TRIGGER_POPUPS = [
+  '[data-slot="dropdown-menu-content"]',
+  '[data-slot="dropdown-menu-sub-content"]',
+  '[data-slot="context-menu-content"]',
+  '[data-slot="context-menu-sub-content"]',
+  '[data-slot="select-content"]',
+  '[data-slot="popover-content"]',
+  '[data-slot="hover-card-content"]',
+  '[data-slot="combobox-content"]',
+];
+
+/** Floating surfaces that take the frosted glass layer: every trigger popup plus chart tooltips and floating toolbars. */
+const GLASS_SURFACES = [
+  ...TRIGGER_POPUPS,
+  '[data-slot="chart-tooltip"]',
+  '[data-slot="data-table-selection-bar"]',
+];
+
 /**
- * Depth: the stock shadcn card (left to shadcn) sits at elevation 1, lit from above, through the theme. In the base
- * layer and through --tw-shadow, so a shadow-none on a card still wins.
+ * Depth: the stock shadcn card and popover (left to shadcn) get their elevation through the theme. In the base
+ * layer and through --tw-shadow, so a shadow-none on either still wins.
  * Forced colors drop every box-shadow: the raised, floating and modal surfaces, whose edge is a shadow or a ring,
  * get a system-color outline instead. `:where()` keeps both below the focus outline and any app rule.
  */
 function elevationCss() {
   const elevated = [
     '[data-slot="card"]',
+    '[data-slot="popover-content"]',
     ...['raised', 'overlay', 'modal'].map((name) => `[class*="--elevation-${name})"]`),
   ].join(', ');
   return {
@@ -215,18 +236,136 @@ function elevationCss() {
         'box-shadow': TW_BOX_SHADOW,
         'background-image': 'var(--surface-raised)',
       },
+      ':where([data-slot="popover-content"])': {
+        '--tw-shadow': 'var(--elevation-overlay)',
+        'box-shadow': TW_BOX_SHADOW,
+      },
     },
     '@media (forced-colors: active)': { [`:where(${elevated})`]: { outline: '1px solid CanvasText' } },
   };
 }
 
+/**
+ * Frosted glass on floating overlays: gently translucent --popover with backdrop blur and saturation, only when
+ * the browser supports backdrop-filter (older browsers keep solid --popover). Disabled in forced colors.
+ */
+function glassCss() {
+  const glass = `:where(${GLASS_SURFACES.join(', ')})`;
+  return {
+    '@supports (backdrop-filter: blur(1px))': {
+      '@layer base': {
+        [glass]: {
+          '--popover': 'var(--surface-glass)',
+          'backdrop-filter': 'blur(14px) saturate(1.6)',
+          '-webkit-backdrop-filter': 'blur(14px) saturate(1.6)',
+        },
+      },
+    },
+    '@media (forced-colors: active)': {
+      [glass]: {
+        'backdrop-filter': 'none',
+        '-webkit-backdrop-filter': 'none',
+      },
+    },
+  };
+}
+
+/**
+ * Concentric radii: inner containers sit inside their parent's rounded corners with matching curvature
+ * (nested cards step down from rounded-xl to rounded-lg and let their header/footer inherit; floating toolbars
+ * match their inner buttons to outer radius minus padding). Unlayered with `:where()` so they beat stock
+ * Tailwind `rounded-xl`/`rounded-lg` utilities while keeping zero specificity.
+ */
+function concentricCss() {
+  return {
+    ':where([data-slot="card"]) :where([data-slot="card"])': {
+      'border-radius': 'var(--radius-lg)',
+    },
+    ':where([data-slot="card"]) :where([data-slot="card"]) > :where([data-slot="card-header"])': {
+      'border-top-left-radius': 'inherit',
+      'border-top-right-radius': 'inherit',
+    },
+    ':where([data-slot="card"]) :where([data-slot="card"]) > :where([data-slot="card-footer"])': {
+      'border-bottom-left-radius': 'inherit',
+      'border-bottom-right-radius': 'inherit',
+    },
+    ':where([data-slot="data-table-selection-bar"]) :where([data-slot="button"])': {
+      'border-radius': 'max(var(--radius-sm), calc(var(--radius-xl) - 0.5rem))',
+    },
+  };
+}
+
+/**
+ * Trigger-born popups: scale out from Base UI's `--transform-origin` with AuraData's fluid curve on open,
+ * and leave faster than they enter. Reduced motion drops the duration to 0ms.
+ */
+function popupMotionCss() {
+  const popups = `:where(${TRIGGER_POPUPS.join(', ')})`;
+  return {
+    [popups]: {
+      'transform-origin': 'var(--transform-origin)',
+      '--tw-enter-scale': '0.94',
+      '--tw-exit-scale': '0.96',
+    },
+    [`${popups}[data-open]`]: {
+      '--tw-animation-duration': '160ms',
+      '--tw-ease': 'var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1))',
+    },
+    [`${popups}[data-closed]`]: {
+      '--tw-animation-duration': '90ms',
+      '--tw-ease': 'cubic-bezier(0.4, 0, 1, 1)',
+    },
+    '@media (prefers-reduced-motion: reduce)': {
+      [`${popups}[data-open], ${popups}[data-closed]`]: {
+        '--tw-animation-duration': '0ms',
+      },
+    },
+  };
+}
+
+/**
+ * Theme View Transitions: while `:root[data-theme-transition]` is active, turn off the browser's default
+ * cross-fade so the new theme can expand in a circle from the theme-toggle button.
+ */
+function viewTransitionCss() {
+  return {
+    ':root[data-theme-transition]::view-transition-old(root),\n:root[data-theme-transition]::view-transition-new(root)': {
+      animation: 'none',
+      'mix-blend-mode': 'normal',
+    },
+    ':root[data-theme-transition]::view-transition-old(root)': {
+      'z-index': '1',
+    },
+    ':root[data-theme-transition]::view-transition-new(root)': {
+      'z-index': '9999',
+    },
+  };
+}
+
+/** Recursively merges nested at-rules so each @layer / @media / @supports appears once. */
+function mergeCss(target, source) {
+  for (const [selector, body] of Object.entries(source)) {
+    if (selector.startsWith('@') && target[selector]) {
+      mergeCss(target[selector], body);
+    } else {
+      target[selector] = selector.startsWith('@') ? structuredClone(body) : body;
+    }
+  }
+  return target;
+}
+
 /** Every rule the theme adds besides its variables, merged so each at-rule appears once. */
 function themeCss(tokens) {
   const merged = {};
-  for (const rules of [focusCss(tokens), elevationCss()]) {
-    for (const [selector, body] of Object.entries(rules)) {
-      merged[selector] = selector.startsWith('@') ? { ...merged[selector], ...body } : body;
-    }
+  for (const rules of [
+    focusCss(tokens),
+    elevationCss(),
+    glassCss(),
+    concentricCss(),
+    popupMotionCss(),
+    viewTransitionCss(),
+  ]) {
+    mergeCss(merged, rules);
   }
   return merged;
 }
@@ -279,6 +418,7 @@ function shadcnTheme(light, dark) {
     theme: {
       'font-sans': light['font-sans'],
       'font-mono': light['font-mono'],
+      'ease-fluid': light['ease-fluid'],
       ...Object.fromEntries(SHADCN_EXTRA.map((name) => [`color-${name}`, `var(--${name})`])),
     },
     light: resolved(light),

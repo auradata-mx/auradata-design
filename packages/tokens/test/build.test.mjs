@@ -378,7 +378,7 @@ test('the theme carries no global density and no print styles', () => {
 });
 
 const ELEVATION = ['raised', 'raised-hover', 'control', 'control-hover', 'pressed', 'sunken', 'overlay', 'modal'];
-const SURFACES = ['raised', 'filled', 'grain'];
+const SURFACES = ['raised', 'filled', 'grain', 'glass'];
 
 // Depth from the Kepler kiosk app: a top-edge highlight, a contact and an ambient shadow, a soft surface gradient.
 test('tokens.css carries the elevation scale and the surfaces in light and dark', () => {
@@ -439,4 +439,51 @@ test('the theme outlines elevated surfaces in forced colors', () => {
   for (const name of ['raised', 'overlay', 'modal']) expect(selector).toContain(`[class*="--elevation-${name})"]`);
   expect(rule.outline).toBe('1px solid CanvasText');
   expect(read('shadcn.css')).toContain('@media (forced-colors: active)');
+});
+
+// Frosted glass on floating overlays: translucent --popover + backdrop-filter, gated on @supports and off in forced colors.
+test('the theme gives floating surfaces a frosted glass layer and disables it in forced colors', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  const css = read('shadcn.css');
+  expect(theme.light['surface-glass']).toBe('rgb(255 255 255 / 0.84)');
+  expect(theme.dark['surface-glass']).toBe('rgb(25 25 33 / 0.86)');
+  const supports = theme.css['@supports (backdrop-filter: blur(1px))']?.['@layer base'];
+  expect(supports).toBeDefined();
+  const [selector, rule] = Object.entries(supports)[0];
+  for (const slot of ['dropdown-menu-content', 'select-content', 'popover-content', 'chart-tooltip', 'data-table-selection-bar']) {
+    expect(selector).toContain(`[data-slot="${slot}"]`);
+  }
+  expect(rule['--popover']).toBe('var(--surface-glass)');
+  expect(rule['backdrop-filter']).toContain('blur(');
+  expect(rule['backdrop-filter']).toContain('saturate(');
+  expect(theme.css['@media (forced-colors: active)'][selector]['backdrop-filter']).toBe('none');
+  expect(css).toContain('@supports (backdrop-filter: blur(1px))');
+});
+
+// Concentric radii: nested cards step down cleanly and floating toolbars match inner buttons to outer radius minus padding.
+test('the theme sets concentric radii on nested cards and floating toolbars', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  expect(theme.css[':where([data-slot="card"]) :where([data-slot="card"])']).toEqual({ 'border-radius': 'var(--radius-lg)' });
+  expect(theme.css[':where([data-slot="data-table-selection-bar"]) :where([data-slot="button"])']['border-radius']).toContain('calc(var(--radius-xl)');
+});
+
+// Trigger-born popups enter smoothly from --transform-origin and exit faster; reduced motion drops duration to 0ms.
+test('the theme animates popups from --transform-origin with faster exits and reduced-motion support', () => {
+  const theme = JSON.parse(read('shadcn-theme.json'));
+  const openEntry = Object.entries(theme.css).find(([key]) => key.includes('[data-slot="dropdown-menu-content"]') && key.endsWith('[data-open]'));
+  const closedEntry = Object.entries(theme.css).find(([key]) => key.includes('[data-slot="dropdown-menu-content"]') && key.endsWith('[data-closed]'));
+  expect(openEntry).toBeDefined();
+  expect(closedEntry).toBeDefined();
+  expect(Number.parseInt(closedEntry[1]['--tw-animation-duration'], 10)).toBeLessThan(
+    Number.parseInt(openEntry[1]['--tw-animation-duration'], 10),
+  );
+  const reduced = theme.css['@media (prefers-reduced-motion: reduce)'];
+  expect(Object.values(reduced)[0]['--tw-animation-duration']).toBe('0ms');
+});
+
+// View Transitions for the theme toggle: disables default cross-fade only while data-theme-transition is active.
+test('the theme carries the view-transition rules for theme switching', () => {
+  const css = read('shadcn.css');
+  expect(css).toContain(':root[data-theme-transition]::view-transition-new(root)');
+  expect(css).toContain('mix-blend-mode: normal;');
 });
