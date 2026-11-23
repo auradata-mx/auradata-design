@@ -21,3 +21,25 @@ html > body[data-scroll-locked] {
   margin-right: 0px !important;
   --removed-body-scroll-bar-size: 0px !important;
 }
+
+/* Keep active sidebar links above WCAG AA (4.5:1) over their bg-fd-primary/10 tint in light mode. */
+:root:not(.dark) #nd-sidebar {
+  --color-fd-primary: color-mix(in srgb, var(--primary) 85%, black);
+}
+
+/* Tighten the github-light / github-dark Shiki tokens that dip below 4.5:1 on AuraData surfaces. */
+.shiki span[style*='--shiki-light:#E36209' i] {
+  --shiki-light: #b34700 !important;
+}
+.shiki span[style*='--shiki-light:#22863A' i] {
+  --shiki-light: #1b6e2e !important;
+}
+.shiki span[style*='--shiki-light:#6A737D' i] {
+  --shiki-light: #57606a !important;
+}
+.shiki span[style*='--shiki-light:#D73A49' i] {
+  --shiki-light: #bd2c3a !important;
+}
+.shiki span[style*='--shiki-dark:#6A737D' i] {
+  --shiki-dark: #8b949e !important;
+}

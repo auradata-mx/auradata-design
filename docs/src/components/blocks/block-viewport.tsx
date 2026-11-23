@@ -84,7 +84,12 @@ export function BlockViewport({
             </div>
             <span className="font-mono text-xs text-fd-muted-foreground">{viewport.width} × {viewport.height}</span>
           </div>
-          <div className="overflow-x-auto bg-fd-muted/50">
+          <div
+            tabIndex={0}
+            role="region"
+            aria-label={`Vista previa desplazable: ${title}`}
+            className="overflow-x-auto bg-fd-muted/50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-fd-primary"
+          >
             {mode === 'docs' ? (
               <iframe
                 title={`Vista previa: ${title}`}

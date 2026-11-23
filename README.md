@@ -1,6 +1,6 @@
 # AuraData design
 
-The AuraData brand for every product, in one private repository.
+The AuraData brand for every product, in one repository.
 
 | Part | What it is | Who uses it |
 | --- | --- | --- |
