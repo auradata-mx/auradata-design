@@ -101,6 +101,7 @@ export const Switching: Story = {
     await userEvent.keyboard('{Enter}')
     await waitFor(() => expect(canvas.getByRole('tab', { name: 'Productos' })).toHaveAttribute('aria-selected', 'true'))
     await waitFor(() => expect(canvas.getByRole('tabpanel')).toHaveTextContent('Tres productos suman el 70 %.'))
+    await expect(canvasElement.querySelector('[data-slot="tabs-indicator"]')).not.toBeNull()
     ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }

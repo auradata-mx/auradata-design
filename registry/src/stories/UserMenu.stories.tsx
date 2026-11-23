@@ -72,7 +72,7 @@ export const ChooseTheme: Story = {
     await userEvent.keyboard('{ArrowDown}')
     await expect(within(themes).getByRole('menuitemradio', { name: 'Oscuro' })).toHaveFocus()
     await userEvent.keyboard('{Enter}')
-    await expect(args.theme!.onThemeChange).toHaveBeenCalledWith('dark')
+    await waitFor(() => expect(args.theme!.onThemeChange).toHaveBeenCalledWith('dark'))
     await settle(canvasElement)
   },
 }

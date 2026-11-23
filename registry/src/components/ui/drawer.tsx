@@ -1,10 +1,11 @@
-// registry: auradata (shadcn drawer, responsive: on a phone it always comes up from the bottom, on a wide screen from the side of swipeDirection, the right by default; a close button lined up with the title, edges keep the safe area, 40 px footer buttons on a phone; the header reads left-aligned like its body, a bottom drawer shows a visible grab handle, a scrim that reads in dark)
+// registry: auradata (shadcn drawer, responsive: on a phone it always comes up from the bottom, on a wide screen from the side of swipeDirection, the right by default; a close button lined up with the title, edges keep the safe area, 40 px footer buttons on a phone; the header reads left-aligned like its body, a bottom drawer shows a visible grab handle, a scrim that reads in dark, and `DrawerBody` blurs scrolling content into the header and footer)
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
 import { XIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
+import { ScrollBlur } from "@/components/ui/progressive-blur"
 import { useIsMobile } from "@/hooks/use-mobile"
 
 type DrawerContextProps = {
@@ -166,7 +167,7 @@ function DrawerContent({
           <DrawerPrimitive.Content
             data-slot="drawer-content"
             className={cn(
-              "relative flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] has-data-[slot=drawer-close-button]:*:data-[slot=drawer-header]:pr-12 transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)] select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-swiping/drawer-popup:select-none"
+              "relative flex min-h-0 flex-1 flex-col overflow-hidden overscroll-contain rounded-[inherit] has-data-[slot=drawer-close-button]:*:data-[slot=drawer-header]:pr-12 has-data-[slot=drawer-body]:*:data-[slot=drawer-footer]:border-t has-data-[slot=drawer-body]:*:data-[slot=drawer-footer]:pt-4 transition-opacity duration-300 ease-[cubic-bezier(0.45,1.005,0,1.005)] select-text group-data-nested-drawer-open/drawer-popup:opacity-0 group-data-nested-drawer-swiping/drawer-popup:opacity-100 group-data-swiping/drawer-popup:select-none"
             )}
           >
             {children}
@@ -202,6 +203,32 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
       )}
       {...props}
     />
+  )
+}
+
+/** A scrolling drawer body whose edges blur progressively when more content lies beyond them. */
+function DrawerBody({
+  className,
+  viewportClassName,
+  size = "2.5rem",
+  blur = 10,
+  "aria-label": ariaLabel = "Contenido del panel",
+  ...props
+}: React.ComponentProps<typeof ScrollBlur>) {
+  return (
+    <div
+      data-slot="drawer-body"
+      className={cn("flex min-h-0 flex-1 flex-col [--blur-tint:var(--popover)]", className)}
+    >
+      <ScrollBlur
+        size={size}
+        blur={blur}
+        aria-label={ariaLabel}
+        className="min-h-0 flex-1"
+        viewportClassName={cn("px-4 py-4", viewportClassName)}
+        {...props}
+      />
+    </div>
   )
 }
 
@@ -246,6 +273,7 @@ function DrawerDescription({
 
 export {
   Drawer,
+  DrawerBody,
   DrawerPortal,
   DrawerOverlay,
   DrawerSwipeHandle,

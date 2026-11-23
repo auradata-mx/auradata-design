@@ -448,14 +448,102 @@ function SidebarGroupContent({
   )
 }
 
-function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
+function SidebarMenu({ className, children, ref, ...props }: React.ComponentProps<"ul">) {
+  const listRef = React.useRef<HTMLUListElement>(null)
+  const hasMeasured = React.useRef(false)
+  const [indicator, setIndicator] = React.useState<{
+    top: number
+    left: number
+    width: number
+    height: number
+    animate: boolean
+  } | null>(null)
+
+  const setRef = React.useCallback(
+    (node: HTMLUListElement | null) => {
+      listRef.current = node
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref]
+  )
+
+  React.useLayoutEffect(() => {
+    const list = listRef.current
+    if (!list) return
+    const measure = () => {
+      const active = list.querySelector<HTMLElement>(
+        ':scope > [data-slot="sidebar-menu-item"] > [data-sidebar="menu-button"][data-active]'
+      )
+      if (!active) {
+        setIndicator(null)
+        return
+      }
+      const listRect = list.getBoundingClientRect()
+      const activeRect = active.getBoundingClientRect()
+      if (activeRect.width === 0 || activeRect.height === 0) return
+      const next = {
+        top: Math.round((activeRect.top - listRect.top) * 10) / 10,
+        left: Math.round((activeRect.left - listRect.left) * 10) / 10,
+        width: Math.round(activeRect.width * 10) / 10,
+        height: Math.round(activeRect.height * 10) / 10,
+        animate: hasMeasured.current,
+      }
+      hasMeasured.current = true
+      setIndicator((current) =>
+        current &&
+        current.top === next.top &&
+        current.left === next.left &&
+        current.width === next.width &&
+        current.height === next.height
+          ? current
+          : next
+      )
+    }
+    measure()
+    const mutations = new MutationObserver(measure)
+    mutations.observe(list, {
+      attributes: true,
+      attributeFilter: ["data-active"],
+      childList: true,
+      subtree: true,
+    })
+    const resize = new ResizeObserver(measure)
+    resize.observe(list)
+    return () => {
+      mutations.disconnect()
+      resize.disconnect()
+    }
+  }, [])
+
   return (
     <ul
+      ref={setRef}
       data-slot="sidebar-menu"
       data-sidebar="menu"
-      className={cn("flex w-full min-w-0 flex-col gap-0", className)}
+      data-indicator-ready={indicator ? "true" : undefined}
+      className={cn("group/sidebar-menu relative flex w-full min-w-0 flex-col gap-0", className)}
       {...props}
-    />
+    >
+      {indicator && (
+        <li
+          aria-hidden="true"
+          role="presentation"
+          data-slot="sidebar-active-indicator"
+          style={{
+            transform: `translate3d(${indicator.left}px, ${indicator.top}px, 0)`,
+            width: indicator.width,
+            height: indicator.height,
+          }}
+          className={cn(
+            "pointer-events-none absolute top-0 left-0 z-0 rounded-md bg-sidebar-accent",
+            indicator.animate &&
+              "transition-[transform,width,height] duration-200 ease-(--ease-fluid) motion-reduce:transition-none"
+          )}
+        />
+      )}
+      {children}
+    </ul>
   )
 }
 
@@ -471,7 +559,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button group/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm ring-sidebar-ring outline-hidden transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-accent-foreground data-active:bg-sidebar-accent data-active:font-medium data-active:text-sidebar-accent-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate",
+  "peer/menu-button group/menu-button relative z-[1] flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm ring-sidebar-ring outline-hidden transition-[width,height,padding,color] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-sidebar-accent data-open:hover:text-sidebar-accent-foreground data-active:bg-sidebar-accent group-data-[indicator-ready=true]/sidebar-menu:data-active:bg-transparent data-active:font-medium data-active:text-sidebar-accent-foreground [&_svg]:size-4 [&_svg]:shrink-0 [&>span:last-child]:truncate",
   {
     variants: {
       variant: {

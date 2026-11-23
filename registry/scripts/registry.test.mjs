@@ -392,3 +392,25 @@ test('publishes the validated connection form with react-hook-form and zod (T63)
     expect.arrayContaining([`${GITHUB}/number-input`, `${GITHUB}/password-input`, `${GITHUB}/select`, `${GITHUB}/field`])
   )
 })
+
+test('wires progressive-blur into sticky headers, scrollable overlays and the data table', () => {
+  for (const name of ['page-header', 'dialog', 'drawer', 'data-table']) {
+    expect(item(name).registryDependencies).toContain(`${GITHUB}/progressive-blur`)
+  }
+})
+
+test('gives the theme frosted floating surfaces, concentric radii, trigger-origin popup motion and view transitions', () => {
+  const theme = item('auradata-theme')
+  expect(theme.cssVars.light['surface-glass']).toBeDefined()
+  expect(theme.cssVars.dark['surface-glass']).toBeDefined()
+  expect(theme.css['@supports (backdrop-filter: blur(1px))']).toBeDefined()
+  expect(theme.css[':where([data-slot="card"]) :where([data-slot="card"])']).toEqual({
+    'border-radius': 'var(--radius-lg)',
+  })
+  expect(
+    Object.keys(theme.css).some((key) => key.includes('[data-slot="popover-content"]') && key.endsWith('[data-closed]'))
+  ).toBe(true)
+  expect(
+    Object.keys(theme.css).some((key) => key.includes(':root[data-theme-transition]::view-transition-new(root)'))
+  ).toBe(true)
+})

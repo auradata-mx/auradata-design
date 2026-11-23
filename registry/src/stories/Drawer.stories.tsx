@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, within } from 'storybook/test'
+import { expect, waitFor, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
 import {
   Drawer,
+  DrawerBody,
   DrawerClose,
   DrawerContent,
   DrawerDescription,
@@ -95,5 +96,43 @@ export const OpenOnPhone: Story = {
     const drawer = await panel(canvasElement)
     await expect(drawer).toHaveAttribute('data-swipe-direction', 'down')
     await expect(drawer.querySelector('[data-slot="drawer-swipe-handle"]')).not.toBeNull()
+  },
+}
+
+/** `DrawerBody` wraps overflowing content in `ScrollBlur`, blurring softly above the pinned footer. */
+export const Scrollable: Story = {
+  args: { defaultOpen: true },
+  render: (args) => (
+    <Drawer {...args}>
+      <DrawerTrigger render={<Button variant="outline" />}>Columnas</DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Columnas del informe</DrawerTitle>
+          <DrawerDescription>Elige qué campos se incluyen en la exportación.</DrawerDescription>
+        </DrawerHeader>
+        <DrawerBody>
+          <ul className="grid gap-2">
+            {Array.from({ length: 18 }, (_, index) => (
+              <li key={index} className="rounded-lg border px-3 py-2">
+                Métrica {index + 1}
+              </li>
+            ))}
+          </ul>
+        </DrawerBody>
+        <DrawerFooter>
+          <Button>Guardar</Button>
+          <DrawerClose render={<Button variant="outline" />}>Cancelar</DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    const drawer = await body.findByRole('dialog', { name: 'Columnas del informe' })
+    const blur = drawer.querySelector('[data-slot="scroll-blur"]')!
+    const viewport = drawer.querySelector<HTMLElement>('[data-slot="scroll-blur-viewport"]')!
+    await waitFor(() => expect(blur).toHaveAttribute('data-more', 'end'))
+    viewport.scrollTop = 100
+    await waitFor(() => expect(blur).toHaveAttribute('data-more', 'both'))
   },
 }

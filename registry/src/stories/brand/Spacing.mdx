@@ -30,7 +30,7 @@ Una grilla de 4 px, los mismos pasos de Tailwind y de antd: `--aura-space-4` es
 | `radius-card` | Las tarjetas de marketing: CTA y preguntas frecuentes |
 | `radius-sm`, `radius-lg` | AuraData BI: `borderRadiusSM` y `borderRadiusLG` de antd |
 
-En shadcn no escribas un radio: usa `rounded-lg` o `rounded-xl` y deja que `--radius` lo decida.
+En shadcn no escribas un radio: usa `rounded-lg` o `rounded-xl` y deja que `--radius` lo decida. Cuando un elemento vive dentro de otro con borde redondeado, su radio es **concéntrico** (exterior menos el padding): los ítems de menús, selects y comboboxes usan `calc(var(--radius) - 4px)`, las pestañas `calc(var(--radius) - 3px)`, y una tarjeta dentro de otra baja de `rounded-xl` a `rounded-lg` desde el tema.
 
 ## Sombras y elevación
 
@@ -55,13 +55,14 @@ En oscuro las sombras casi no se ven sobre el fondo de noche, así que la profun
 | Token | Dónde |
 | --- | --- |
 | `shadow-card`, `shadow-float` | AuraData BI (`boxShadow` y `boxShadowSecondary` de antd). En shadcn usa la escala de elevación |
+| `surface-glass` | Capas flotantes tipo vidrio (`--popover` translúcido + `backdrop-filter: blur(14px) saturate(1.6)`): menús, selects, popovers, tooltips de gráficos y la barra de selección. Se desactiva sin soporte de `backdrop-filter` y en colores forzados |
 | `surface-grain` | Opcional: un ruido del 3 % sobre una portada o un fondo oscuro, `bg-(image:--surface-grain)`. En claro es `none`. Cuesta tiempo de pintado: no lo pongas detrás de un dashboard con muchos gráficos |
 
 ## Movimiento
 
 <EaseCurves />
 
-`ease-fluid` arranca rápido y aterriza suave: úsala para lo que se levanta o flota. No hay token de duración; usa las de Tailwind que ya usan los componentes:
+`ease-fluid` arranca rápido y aterriza suave: úsala para lo que se levanta o flota. Los menús, selects y popovers nacen escalando desde su trigger (`--transform-origin`) en 160 ms con `ease-fluid` y salen más rápido (90 ms); las pestañas (`Tabs.Indicator`) y el ítem activo de `Sidebar` deslizan su fondo entre opciones; y `ThemeToggle` / `UserMenu` expanden el cambio de tema en círculo con View Transitions desde el botón. Todo respeta `prefers-reduced-motion`. No hay token de duración; usa las de Tailwind que ya usan los componentes:
 
 | Duración | Para qué |
 | --- | --- |
@@ -81,4 +82,4 @@ En oscuro las sombras casi no se ven sobre el fondo de noche, así que la profun
 | `number-ticker` | Una cifra que cuenta al entrar en pantalla, con `lib/format` | La cifra final, sin contar |
 | `shimmer-button` | El llamado principal de la página | Sin destello |
 
-`progressive-blur` no se mueve solo (sigue al scroll): úsalo donde ayude, en la app también.
+`progressive-blur` no se mueve solo (sigue al scroll): ya viene integrado en `PageHeader` (`sticky`), `DialogBody`, `DrawerBody` y los bordes de `DataTable`.
