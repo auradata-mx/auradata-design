@@ -1,0 +1,81 @@
+---
+title: Drawer
+description: "Un panel que entra por un costado, o sube desde abajo en el teléfono, sin perder la página de vista."
+---
+
+El drawer de shadcn, responsivo: en el teléfono (menos de 768 px) siempre sube desde abajo, al alcance del pulgar y con un tirador visible; en una pantalla ancha entra por el lado de `swipeDirection`, la derecha por omisión. Lleva el botón de cerrar («Cerrar») alineado con el título, un encabezado alineado a la izquierda como su cuerpo, bordes que respetan el área segura, botones del pie a 40 px en el teléfono y un velo que se lee en oscuro.
+
+<ComponentPreview name="drawer/demo" />
+
+## Instalación
+
+<ComponentInstall item="drawer" />
+
+## Uso
+
+```tsx
+import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer';
+
+<Drawer>
+  <DrawerTrigger render={<Button variant="outline" />}>Filtros</DrawerTrigger>
+  <DrawerContent>
+    <DrawerHeader>
+      <DrawerTitle>Filtrar informe</DrawerTitle>
+      <DrawerDescription>Elige el periodo de «Ventas 2026».</DrawerDescription>
+    </DrawerHeader>
+    {/* el contenido */}
+    <DrawerFooter>
+      <Button>Aplicar</Button>
+      <DrawerClose render={<Button variant="outline" />}>Cancelar</DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>;
+```
+
+El drawer es un diálogo: `DrawerTitle` lo nombra, Escape lo cierra y el foco vuelve al trigger.
+
+## Ejemplos
+
+### Desde la izquierda
+
+Con `swipeDirection="left"` entra por la izquierda en una pantalla ancha. En el teléfono sigue subiendo desde abajo.
+
+<ComponentPreview name="drawer/left" />
+
+## Props
+
+### Drawer
+
+<ComponentProps
+  file="drawer"
+  type="Pick<React.ComponentProps<typeof Drawer>, 'swipeDirection' | 'showSwipeHandle' | 'open' | 'defaultOpen' | 'onOpenChange' | 'modal'>"
+  baseUi="drawer"
+/>
+
+### DrawerContent
+
+<ComponentProps file="drawer" type="Pick<React.ComponentProps<typeof DrawerContent>, 'showCloseButton'>" />
+
+## Cuándo usarlo
+
+- **Filtros y detalles** que se consultan sin dejar la página: el informe sigue detrás, bajo el velo.
+- **En el teléfono**, en lugar de un menú o un popover grande: sube desde abajo, al alcance del pulgar.
+- **Con título**, y los botones del pie con verbos («Aplicar», «Cancelar»).
+
+## Cuándo no
+
+- **Una tarea corta que pide toda la atención** (renombrar, compartir): `Dialog`.
+- **Confirmar algo destructivo**: `AlertDialog`.
+- **La navegación de la app**: el `Sidebar`, que en el teléfono ya se vuelve un drawer.
+
+<StorybookLink stories="Drawer" />
