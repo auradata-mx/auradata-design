@@ -30,7 +30,7 @@ import { FileDropzone } from '@/components/ui/file-dropzone';
 
 ### Importar
 
-La zona y la lista: uno subiendo, uno listo. Suelta o elige otro archivo; uno que no es CSV o pesa más de 10 MB queda en la lista con la razón. Para ver las primeras filas del CSV listo, `CsvPreview`.
+La zona y la lista: uno subiendo, uno listo. Suelta o elige otro archivo; uno que no es CSV o pesa más de 10 MB queda en la lista con la razón. El ejemplo de importación en Storybook muestra las primeras filas del archivo listo.
 
 <ComponentPreview name="file-dropzone/import" />
 
@@ -58,7 +58,7 @@ Acepta además las props de un `li` (`className`, `aria-*`…).
 
 ## Cuándo usarlo
 
-- **Un archivo para importar**: `FileDropzone` y `CsvPreview`; arrastrar o elegir, y ver las primeras filas.
+- **Un archivo para importar**: `FileDropzone` para arrastrar o elegir y validar el archivo.
 - **La descripción dice qué acepta**: el tipo, el tamaño y cómo debe venir («con los nombres de las columnas en la primera fila»).
 - **Un error por archivo**, en una frase, en lugar del tamaño: «No es un CSV.», «Pesa 12.4 MB…».
 

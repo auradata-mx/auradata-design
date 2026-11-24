@@ -49,20 +49,10 @@ function Thumbnail({ name }: { name: BlockName }) {
         </>
       ) : (
         <>
-          {name === 'login' && <Panel x={81} y={22} w={94} h={82} />}
-          <Line x={name === 'login' ? 94 : 60} y={31} width={47} />
-          {name === 'settings' && (
-            <>
-              <Line x={60} y={42} width={20} />
-              <Line x={88} y={42} width={36} />
-              <path d="M60 49h136" stroke="var(--color-fd-border)" />
-            </>
-          )}
-          {name === 'connection-form' && <Panel x={60} y={41} w={136} h={11} />}
-          {[57, 73].map((y) => (
-            <Panel key={y} x={name === 'login' ? 94 : 60} y={y} w={name === 'login' ? 68 : 136} h={11} />
-          ))}
-          <rect x={name === 'login' ? 94 : 60} y="89" width={name === 'login' ? 68 : 48} height="9" rx="3" fill="var(--color-fd-primary)" />
+          <Panel x={81} y={22} w={94} h={82} />
+          <Line x={94} y={31} width={47} />
+          {[57, 73].map((y) => <Panel key={y} x={94} y={y} w={68} h={11} />)}
+          <rect x={94} y={89} width={68} height={9} rx="3" fill="var(--color-fd-primary)" />
         </>
       )}
     </svg>

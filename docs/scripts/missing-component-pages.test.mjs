@@ -9,6 +9,7 @@ const items = [
   { name: 'data-table-views', type: 'registry:ui' },
   { name: 'auradata-theme', type: 'registry:theme' },
   { name: 'use-mobile', type: 'registry:hook' },
+  { name: 'logo', type: 'registry:ui' },
 ];
 
 test('a page covers every item its install blocks name', () => {

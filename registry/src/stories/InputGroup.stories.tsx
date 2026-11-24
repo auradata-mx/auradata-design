@@ -44,6 +44,18 @@ export const Default: Story = {
 }
 
 /** A button inside the group, at its end. */
+export const Phone: Story = {
+  name: 'Teléfono',
+  render: (args) => (
+    <InputGroup {...args}>
+      <InputGroupAddon>
+        <InputGroupText>+52</InputGroupText>
+      </InputGroupAddon>
+      <InputGroupInput type="tel" autoComplete="tel-national" aria-label="Teléfono en México (+52)" placeholder="55 1234 5678" />
+    </InputGroup>
+  ),
+}
+
 export const WithButton: Story = {
   name: 'With button',
   render: (args) => (

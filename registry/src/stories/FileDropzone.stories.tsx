@@ -197,29 +197,3 @@ export const Keyboard: Story = {
     blur()
   },
 }
-
-/** A wide file scrolls sideways inside its box on a phone; the box takes the focus, so the keys scroll it. */
-export const WidePreview: Story = {
-  name: 'Wide preview',
-  tags: ['mobile'],
-  render: () => (
-    <CsvPreview
-      className="max-w-xl"
-      rows={parseCsv(
-        `Región,Sucursal,Mes,Ventas,Clientes,Ticket promedio,Devoluciones
-Norte,Monterrey Centro,nov 2026,"1,284,500",312,"4,117",12
-Centro,Ciudad de México Polanco,nov 2026,"2,041,300",488,"4,183",9`
-      )}
-    />
-  ),
-  play: async ({ canvasElement }) => {
-    const box = canvasElement.querySelector<HTMLElement>('[data-slot=csv-preview-box]')!
-    const viewport = within(canvasElement).getByRole('region')
-    // The vitest browser is 414 px wide: the seven columns overflow and the hidden side fades.
-    await waitFor(() => expect(box).toHaveAttribute('data-more', 'end'))
-    viewport.scrollLeft = viewport.scrollWidth
-    await waitFor(() => expect(box).toHaveAttribute('data-more', 'start'))
-    viewport.scrollLeft = 0
-    await waitFor(() => expect(box).toHaveAttribute('data-more', 'end'))
-  },
-}

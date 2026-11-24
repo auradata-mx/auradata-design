@@ -1,4 +1,4 @@
-// registry: auradata (the «Nueva conexión» form: react-hook-form and zod on our Base UI fields, Spanish errors on blur and on submit, focus on the first error, server errors in their field or above the form)
+// Internal form example used by the brand validation guide.
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"

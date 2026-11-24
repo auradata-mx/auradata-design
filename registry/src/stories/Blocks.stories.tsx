@@ -7,7 +7,6 @@ import { AppShell, type NavGroup } from '@/components/blocks/app-shell'
 import { Chat, type ChatMessage } from '@/components/blocks/chat'
 import { Login } from '@/components/blocks/login'
 import { NotFound } from '@/components/blocks/not-found'
-import { Settings } from '@/components/blocks/settings'
 import { Button } from '@/components/ui/button'
 import { KpiCard } from '@/components/ui/kpi-card'
 import { PageHeader } from '@/components/ui/page-header'
@@ -161,17 +160,6 @@ export const Shell: Story = {
     await expect(chevron.left).toBeGreaterThanOrEqual(before.right)
     await expect(chevron.right).toBeLessThanOrEqual(after.left)
   },
-}
-
-export const SettingsPage: Story = {
-  tags: ['mobile'],
-  globals: ON_PHONE,
-  name: 'Settings',
-  render: () => (
-    <AppShell product="BI" nav={NAV} user={USER} workspaces={WORKSPACES} theme={THEME} breadcrumbs={['Ajustes']}>
-      <Settings />
-    </AppShell>
-  ),
 }
 
 export const NotFoundPage: Story = { tags: ['mobile'], globals: ON_PHONE, name: 'Not found', render: () => <NotFound /> }
@@ -544,45 +532,5 @@ export const SignInSubmit: LoginStory = {
     await expect(values).toEqual({ email: 'ana@empresa.mx', password: 'aurora-2026' })
     // Rest state for the screenshot: nothing focused.
     ;(document.activeElement as HTMLElement | null)?.blur()
-  },
-}
-
-type SettingsStory = StoryObj<typeof Settings>
-
-/** What the server rejected, under its field: `FieldError` text and `aria-invalid`; the other fields stay as they are. */
-export const SettingsErrors: SettingsStory = {
-  name: 'Settings errors',
-  render: (args) => (
-    <div className="p-6">
-      <Settings {...args} />
-    </div>
-  ),
-  args: {
-    errors: { email: 'Ese correo ya lo usa otra cuenta. Escribe otro.' },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    await expect(canvas.getByLabelText('Correo')).toHaveAttribute('aria-invalid', 'true')
-    await expect(canvas.getByRole('alert')).toHaveTextContent('Ese correo ya lo usa otra cuenta. Escribe otro.')
-    await expect(canvas.getByLabelText('Nombre')).not.toHaveAttribute('aria-invalid')
-    await expect(canvas.getByRole('combobox', { name: 'Idioma' })).not.toHaveAttribute('aria-invalid')
-  },
-}
-
-/** Saving: «Guardando…» with a spinner, disabled and `aria-busy`; the fields wait too. */
-export const SettingsSaving: SettingsStory = {
-  name: 'Settings saving',
-  render: (args) => (
-    <div className="p-6">
-      <Settings {...args} />
-    </div>
-  ),
-  args: { saving: true },
-  play: async ({ canvasElement }) => {
-    const save = within(canvasElement).getByRole('button', { name: 'Guardando…' })
-    await expect(save).toBeDisabled()
-    await expect(save).toHaveAttribute('aria-busy', 'true')
-    await expect(within(canvasElement).getByLabelText('Nombre')).toBeDisabled()
-    await expect(within(canvasElement).getByLabelText('Correo')).toBeDisabled()
   },
 }

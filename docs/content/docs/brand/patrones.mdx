@@ -51,14 +51,14 @@ El botón principal muestra un spinner y «Guardando…», queda deshabilitado c
 | Varios valores de una lista | `Combobox` con `multiple`: busca, y cada valor es un chip que se quita |
 | Etiquetas libres | `Combobox` con `multiple` y una opción «Crear «…»» (Components/Combobox/Tags) |
 | Un número con pasos | `NumberInput`: − y +, y las flechas del teclado |
-| Dinero | `CurrencyInput`: agrupa los miles al escribir (1,284,500.50) |
-| Teléfono | `PhoneInput`: 10 dígitos con lada; acepta +52 |
+| Dinero | `InputGroup`: muestra la moneda junto al importe |
+| Teléfono | `InputGroup` con `type="tel"` y un prefijo de país |
 | Un día | `DatePicker`: el calendario en español (21 nov 2026) |
 | Una hora | `TimePicker`: 24 horas, cada 30 minutos (14:30) |
 | Día y hora | `DateTimePicker`: un solo valor para los dos |
 | Contraseña nueva | `PasswordInput` y `PasswordStrength`: mostrarla, y qué le falta para ser segura |
 | Código de verificación | `InputOTP`: seis casillas; el teléfono ofrece el código del SMS |
-| Un archivo para importar | `FileDropzone` y `CsvPreview`: arrastrar o elegir, y ver las primeras filas |
+| Un archivo para importar | `FileDropzone`: arrastrar o elegir y validar el archivo |
 | Un formulario largo | `Stepper`: pocos campos por paso, y dónde vas |
 
 ### Formularios con validación
@@ -94,7 +94,7 @@ const form = useForm({ resolver: zodResolver(schema), defaultValues, mode: "onTo
 | Los errores del servidor | En su campo con `setError("name", …)`; los que no son de un campo, con `setError("root.server", …)` en un `Alert` arriba |
 | Mientras guarda | El botón con `loading` y «Guardando…» (`formState.isSubmitting`) |
 
-El bloque «Nueva conexión» (`connection-form`) junta todo: el esquema, los controles de Base UI y los errores del servidor. Prueba enviarlo vacío.
+El ejemplo interactivo de conexión junta todo: el esquema, los controles de Base UI y los errores del servidor. Prueba enviarlo vacío.
 
 <ConnectionFormExample />
 
@@ -129,12 +129,10 @@ Las piezas que se repiten en la navegación de AuraData BI. Úsalas antes de arm
 | Componente | Para qué y cómo |
 | --- | --- |
 | `TabsCount` | Secciones de una página con su conteo. El número es parte del nombre de la pestaña («Míos 12»); más de `max` se lee «99+» |
-| `MasterDetail` | Una lista y su detalle. En el teléfono el detalle reemplaza a la lista; «Volver» regresa a la fila que lo abrió |
-| `OnboardingChecklist` | Los primeros pasos. El siguiente lleva el botón principal; la guía se puede ocultar |
 | `Tour` | Presentar una pantalla nueva en tres a cinco pasos, cada uno en un elemento visible. Siempre se puede saltar y no vuelve a abrirse solo |
 | `ShortcutsDialog` | Los atajos. Se abre con «?» fuera de los campos de texto; las teclas van en `Kbd` |
 | `UserMenu` | La cuenta: espacio, tema, idioma, ayuda y «Cerrar sesión» al final |
-| `EmptyIllustration` | Nada que mostrar, dentro de `Empty`: qué falta y el primer paso. La ilustración es decorativa |
+| `Empty` | Explica qué falta y ofrece un primer paso |
 
 ## Chat con IA
 

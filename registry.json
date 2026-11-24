@@ -889,41 +889,6 @@
       ]
     },
     {
-      "name": "csv-preview",
-      "type": "registry:ui",
-      "title": "Csv preview",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/file-upload",
-        "cristianruben-dev/auradata-design/format",
-        "table"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/csv-preview.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "currency-input",
-      "type": "registry:ui",
-      "title": "Currency input",
-      "dependencies": [],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/amount-input",
-        "cristianruben-dev/auradata-design/input-group"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/currency-input.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "data-table-selection-bar",
       "type": "registry:ui",
       "title": "Data table selection bar",
@@ -1148,21 +1113,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/dropdown-menu.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "empty-illustration",
-      "type": "registry:ui",
-      "title": "Empty illustration",
-      "dependencies": [
-        "class-variance-authority",
-        "cn"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/empty-illustration.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1623,24 +1573,6 @@
       ]
     },
     {
-      "name": "master-detail",
-      "type": "registry:ui",
-      "title": "Master detail",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/master-detail.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "message-feedback",
       "type": "registry:ui",
       "title": "Message feedback",
@@ -1770,26 +1702,6 @@
       ]
     },
     {
-      "name": "onboarding-checklist",
-      "type": "registry:ui",
-      "title": "Onboarding checklist",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "card",
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/progress"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/onboarding-checklist.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "page-header",
       "type": "registry:ui",
       "title": "Page header",
@@ -1840,22 +1752,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/password-input.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "phone-input",
-      "type": "registry:ui",
-      "title": "Phone input",
-      "dependencies": [],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/input-group",
-        "cristianruben-dev/auradata-design/phone"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/phone-input.tsx",
           "type": "registry:ui"
         }
       ]
@@ -2416,32 +2312,6 @@
       ]
     },
     {
-      "name": "connection-form",
-      "type": "registry:block",
-      "title": "Connection form",
-      "dependencies": [
-        "@hookform/resolvers",
-        "react-hook-form",
-        "zod"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/alert",
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/field",
-        "cristianruben-dev/auradata-design/input",
-        "cristianruben-dev/auradata-design/number-input",
-        "cristianruben-dev/auradata-design/password-input",
-        "cristianruben-dev/auradata-design/select",
-        "cristianruben-dev/auradata-design/switch"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/connection-form.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
       "name": "dashboard",
       "type": "registry:block",
       "title": "Dashboard",
@@ -2502,27 +2372,6 @@
       "files": [
         {
           "path": "registry/src/components/blocks/not-found.tsx",
-          "type": "registry:block"
-        }
-      ]
-    },
-    {
-      "name": "settings",
-      "type": "registry:block",
-      "title": "Settings",
-      "dependencies": [],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/field",
-        "cristianruben-dev/auradata-design/input",
-        "cristianruben-dev/auradata-design/page-header",
-        "cristianruben-dev/auradata-design/select",
-        "cristianruben-dev/auradata-design/switch",
-        "cristianruben-dev/auradata-design/tabs"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/blocks/settings.tsx",
           "type": "registry:block"
         }
       ]

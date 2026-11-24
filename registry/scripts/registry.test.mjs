@@ -49,7 +49,7 @@ test('installs the Continua SVGs with the logo', () => {
 })
 
 test('publishes the blocks with their components', () => {
-  for (const name of ['login', 'app-shell', 'settings']) {
+  for (const name of ['login', 'app-shell', 'dashboard', 'chat', 'not-found']) {
     expect(item(name)?.type).toBe('registry:block')
   }
   expect(item('login').registryDependencies).toEqual(
@@ -69,6 +69,19 @@ test('publishes the blocks with their components', () => {
   )
   // The avatar comes with the user menu (T65).
   expect(item('user-menu').registryDependencies).toContain('cristianruben-dev/auradata-design/avatar')
+})
+
+test('omits retired catalog entries while keeping the internal logo and input group', () => {
+  for (const name of [
+    'onboarding-checklist', 'csv-preview', 'currency-input', 'empty-illustration',
+    'master-detail', 'phone-input', 'connection-form', 'settings',
+  ]) {
+    expect(item(name), name).toBeUndefined()
+  }
+  expect(item('input-group')?.type).toBe('registry:ui')
+  for (const name of ['app-shell', 'chat', 'login', 'not-found']) {
+    expect(item(name).registryDependencies).toContain(`${GITHUB}/logo`)
+  }
 })
 
 test('installs the workspace switcher and the theme toggle with the app shell', () => {
@@ -227,20 +240,6 @@ test('publishes tabs with counts and no segmented control', () => {
   expect(item('tabs').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/format']))
 })
 
-test('publishes the master-detail view', () => {
-  expect(item('master-detail')?.type).toBe('registry:ui')
-  expect(item('master-detail').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/button']),
-  )
-})
-
-test('publishes the onboarding checklist with its progress bar', () => {
-  expect(item('onboarding-checklist')?.type).toBe('registry:ui')
-  expect(item('onboarding-checklist').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/progress', 'card']),
-  )
-})
-
 test('publishes the guided tour on the Base UI popover', () => {
   expect(item('tour')?.type).toBe('registry:ui')
   expect(item('tour').dependencies).toContain('@base-ui/react')
@@ -268,10 +267,6 @@ test('publishes the user menu and installs it with the app shell', () => {
     ]),
   )
   expect(item('app-shell').registryDependencies).toContain('cristianruben-dev/auradata-design/user-menu')
-})
-
-test('publishes the empty-state illustrations', () => {
-  expect(item('empty-illustration')?.type).toBe('registry:ui')
 })
 
 test('installs the attachment with the chat block, for the files of a question', () => {
@@ -368,14 +363,12 @@ test('publishes the dashboard block without a dashboard grid', () => {
 test('publishes the advanced form controls with their helpers (T63)', () => {
   const names = registry.items.map((entry) => entry.name)
   for (const name of [
-    'number-input', 'currency-input', 'phone-input', 'file-dropzone', 'csv-preview', 'date-picker', 'time-picker',
+    'number-input', 'file-dropzone', 'date-picker', 'time-picker',
     'input-otp', 'password-input', 'stepper', 'amount-input', 'phone', 'file-upload', 'date-time', 'password-strength',
   ]) {
     expect(names).toContain(name)
   }
-  expect(item('currency-input').registryDependencies).toContain(`${GITHUB}/amount-input`)
   expect(item('amount-input').registryDependencies).toEqual([`${GITHUB}/format`])
-  expect(item('phone-input').registryDependencies).toContain(`${GITHUB}/phone`)
   expect(item('file-dropzone').registryDependencies).toEqual(
     expect.arrayContaining([`${GITHUB}/attachment`, `${GITHUB}/file-upload`, `${GITHUB}/progress`])
   )
@@ -383,14 +376,6 @@ test('publishes the advanced form controls with their helpers (T63)', () => {
     expect.arrayContaining([`${GITHUB}/calendar`, `${GITHUB}/time-picker`, `${GITHUB}/date-time`, 'popover'])
   )
   expect(item('input-otp').dependencies).toContain('input-otp')
-})
-
-test('publishes the validated connection form with react-hook-form and zod (T63)', () => {
-  expect(item('connection-form')?.type).toBe('registry:block')
-  expect(item('connection-form').dependencies).toEqual(['@hookform/resolvers', 'react-hook-form', 'zod'])
-  expect(item('connection-form').registryDependencies).toEqual(
-    expect.arrayContaining([`${GITHUB}/number-input`, `${GITHUB}/password-input`, `${GITHUB}/select`, `${GITHUB}/field`])
-  )
 })
 
 test('wires progressive-blur into sticky headers, scrollable overlays and the data table', () => {

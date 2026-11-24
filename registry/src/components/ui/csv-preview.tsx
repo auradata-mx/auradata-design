@@ -1,4 +1,4 @@
-// registry: auradata (the first rows of a CSV before importing it: a header row, cells that never wrap, a keyboard-scrollable box on phones, numbers aligned right and a caption with the row count)
+// Internal CSV preview used by the File Dropzone import example.
 "use client"
 
 import * as React from "react"
