@@ -52,13 +52,13 @@ test('antd.json carries the colors of the AuraData BI themes', () => {
     colorSuccess: '#34D399',
     colorWarning: '#F5B544',
     colorError: '#F87171',
-    colorBgLayout: '#0A0A0F',
-    colorBgContainer: '#111117',
-    colorBgElevated: '#191921',
-    colorBorder: '#26262F',
-    colorText: '#F5F5F7',
-    colorTextSecondary: '#A3A3AD',
-    colorTextTertiary: '#8B8B96',
+    colorBgLayout: '#141414',
+    colorBgContainer: '#1A1A1A',
+    colorBgElevated: '#222222',
+    colorBorder: '#2E2E2E',
+    colorText: '#F0F0F0',
+    colorTextSecondary: '#A3A3A3',
+    colorTextTertiary: '#8C8C8C',
   });
   expect(antd.dark.algorithm).toBe('dark');
 });
@@ -84,7 +84,7 @@ test('shadcn.css maps the shadcn variables to the AuraData ones', () => {
 test('shadcn-theme.json holds raw light and dark values for a registry theme item', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   expect(theme.light).toMatchObject({ primary: '#2563EB', background: '#FFFFFF', radius: '8px' });
-  expect(theme.dark).toMatchObject({ primary: '#3B82F6', background: '#111117' });
+  expect(theme.dark).toMatchObject({ primary: '#3B82F6', background: '#1A1A1A' });
   expect(theme.theme['font-sans']).toBe("Outfit, -apple-system, 'Segoe UI', sans-serif");
 });
 
@@ -119,7 +119,7 @@ test('tokens.css carries the full scale: space, type, z-index and focus', () => 
   expect(css).toMatch(/\.dark \{[^}]*--aura-color-focus-ring: #60A5FA;/s);
   // Fields take a soft edge; checkboxes and radios keep the 3:1 control border.
   expect(css).toMatch(/:root \{[^}]*--aura-color-border-field: #C4C4CC;/s);
-  expect(css).toMatch(/\.dark \{[^}]*--aura-color-border-field: #3B3B47;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-border-field: #404040;/s);
   expect(css).toMatch(/:root \{[^}]*--aura-color-success-foreground: #0A0A0F;/s);
 });
 
@@ -136,7 +136,7 @@ test('shadcn.css adds success, warning and info with foregrounds, and the focus 
 test('shadcn-theme.json exposes the status colors to Tailwind', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   expect(theme.light).toMatchObject({ success: '#059669', 'success-foreground': '#0A0A0F', ring: '#2563EB' });
-  expect(theme.dark).toMatchObject({ warning: '#F5B544', 'warning-foreground': '#0A0A0F' });
+  expect(theme.dark).toMatchObject({ warning: '#F5B544', 'warning-foreground': '#0A0A0A' });
   expect(theme.theme).toMatchObject({
     'color-success': 'var(--success)',
     'color-success-foreground': 'var(--success-foreground)',
@@ -190,11 +190,11 @@ test('the shadcn sidebar is the container color and its accent stands out from i
 });
 
 // Menus, lists and the command palette highlight a row with --accent on --popover. Both at fill-secondary left the
-// row invisible in dark (#1C1C24 on #191921) and faint in light (#F5F5F5 on #FFFFFF).
+// row invisible in dark (#1F1F1F on #222222) and faint in light (#F5F5F5 on #FFFFFF).
 test('the highlighted row of a menu stands out from the popover and from muted fills', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   expect(theme.light.accent).toBe('#EFEFF2');
-  expect(theme.dark.accent).toBe('#26262F');
+  expect(theme.dark.accent).toBe('#2E2E2E');
   for (const mode of ['light', 'dark']) {
     expect(theme[mode].accent).not.toBe(theme[mode].popover);
     expect(theme[mode].accent).not.toBe(theme[mode].muted);
@@ -228,12 +228,12 @@ test('echarts.json themes ECharts in light and dark from the tokens', () => {
     });
   }
 
-  expect(dark.title.textStyle.color).toBe('#F5F5F7');
-  expect(dark.legend.textStyle.color).toBe('#A3A3AD');
-  expect(dark.tooltip).toMatchObject({ backgroundColor: '#191921', borderColor: '#26262F', textStyle: { color: '#F5F5F7' } });
+  expect(dark.title.textStyle.color).toBe('#F0F0F0');
+  expect(dark.legend.textStyle.color).toBe('#A3A3A3');
+  expect(dark.tooltip).toMatchObject({ backgroundColor: '#222222', borderColor: '#2E2E2E', textStyle: { color: '#F0F0F0' } });
   expect(dark.valueAxis).toMatchObject({
-    axisLine: { lineStyle: { color: '#26262F' } },
-    axisLabel: { color: '#A3A3AD' },
+    axisLine: { lineStyle: { color: '#2E2E2E' } },
+    axisLabel: { color: '#A3A3A3' },
   });
   expect(dark.valueAxis.splitLine.lineStyle.color[0]).not.toBe(light.valueAxis.splitLine.lineStyle.color[0]);
 });
@@ -285,7 +285,7 @@ test('the theme gives a focused field a blue border and the glow alone', () => {
 test('the theme gives fields a soft border', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   expect(theme.light['field-border']).toBe('#C4C4CC');
-  expect(theme.dark['field-border']).toBe('#3B3B47');
+  expect(theme.dark['field-border']).toBe('#404040');
   expect(read('shadcn.css')).toContain('--field-border: var(--aura-color-border-field);');
   expect(theme.theme['color-field-border']).toBe('var(--field-border)');
 });
@@ -294,7 +294,7 @@ test('the theme gives fields a soft border', () => {
 test('the theme gives checkboxes and radios a border that reads 3:1', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   expect(theme.light['control-border']).toBe('#858585');
-  expect(theme.dark['control-border']).toBe('#6B6B76');
+  expect(theme.dark['control-border']).toBe('#707070');
   const rule = { '--input': 'var(--control-border)' };
   expect(theme.css['@layer base'][':where([data-slot="checkbox"], [data-slot="radio-group-item"])']).toEqual(rule);
   expect(read('shadcn.css')).toContain('--control-border: var(--aura-color-border-control);');
@@ -316,7 +316,7 @@ test('tokens.css carries the sequential and diverging palettes in light and dark
   expect(css).toMatch(/:root \{[^}]*--aura-color-sequential-1: #DBEAFE;[^}]*--aura-color-sequential-9: #1E3A8A;/s);
   expect(css).toMatch(/\.dark \{[^}]*--aura-color-sequential-1: #172554;[^}]*--aura-color-sequential-9: #BFDBFE;/s);
   expect(css).toMatch(/:root \{[^}]*--aura-color-diverging-5: #E5E5E5;/s);
-  expect(css).toMatch(/\.dark \{[^}]*--aura-color-diverging-5: #2E2E38;/s);
+  expect(css).toMatch(/\.dark \{[^}]*--aura-color-diverging-5: #333333;/s);
 });
 
 test('shadcn gets the sequential and diverging palettes as variables and Tailwind colors', () => {
@@ -445,8 +445,8 @@ test('the theme outlines elevated surfaces in forced colors', () => {
 test('the theme gives floating surfaces a frosted glass layer and disables it in forced colors', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   const css = read('shadcn.css');
-  expect(theme.light['surface-glass']).toBe('rgb(255 255 255 / 0.80)');
-  expect(theme.dark['surface-glass']).toBe('rgb(25 25 33 / 0.82)');
+  expect(theme.light['surface-glass']).toBe('rgb(255 255 255 / 0.55)');
+  expect(theme.dark['surface-glass']).toBe('rgb(34 34 34 / 0.58)');
   const supports = theme.css['@supports (backdrop-filter: blur(1px))']?.['@layer base'];
   expect(supports).toBeDefined();
   const [selector, rule] = Object.entries(supports)[0];
