@@ -1,5 +1,11 @@
 # @cristianruben-dev/auradata-tokens
 
+## 0.5.0
+
+### Minor Changes
+
+- [`765df3c`](https://github.com/auradata-mx/auradata-design/commit/765df3c760e2b34adc10b5dad22a6d7826b4456c) Thanks [@cristianruben-dev](https://github.com/cristianruben-dev)! - Make the dark theme neutral and softer: the backgrounds, borders and fills drop their blue tint (page `[#141414](https://github.com/auradata-mx/auradata-design/issues/141414)`, container `#1A1A1A`, elevated `[#222222](https://github.com/auradata-mx/auradata-design/issues/222222)`, border `#2E2E2E`) and the text eases from `#F5F5F7` to `#F0F0F0`, keeping every pair at WCAG AA. Floating glass surfaces are more translucent so the blur reads over content: `--surface-glass` goes to 55% white in light and 58% neutral night in dark. The tour card leaves the glass layer and stays solid, since it sits over its own scrim.
+
 ## 0.4.0
 
 ### Minor Changes
