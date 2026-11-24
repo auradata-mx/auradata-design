@@ -5,16 +5,16 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "predev": "npm run build -w @cristianruben-dev/auradata-tokens && node scripts/copy-brand-assets.mjs",
+    "predev": "npm run build -w @auradata/tokens && node scripts/copy-brand-assets.mjs",
     "dev": "next dev",
-    "prebuild": "npm run build -w @cristianruben-dev/auradata-tokens && node scripts/copy-brand-assets.mjs",
+    "prebuild": "npm run build -w @auradata/tokens && node scripts/copy-brand-assets.mjs",
     "build": "next build",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node --test scripts/",
     "pages:missing": "node scripts/missing-component-pages.mjs"
   },
   "dependencies": {
-    "@auradata/tokens": "npm:@cristianruben-dev/auradata-tokens@*",
+    "@auradata/tokens": "*",
     "@fontsource/geist-mono": "^5.3.0",
     "@fontsource/outfit": "^5.3.0",
     "fumadocs-core": "16.19.7",

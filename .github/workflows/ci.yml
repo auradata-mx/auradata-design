@@ -41,7 +41,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run build -w @cristianruben-dev/auradata-tokens
+      - run: npm run build -w @auradata/tokens
       - run: npx playwright install --with-deps chromium
         working-directory: registry
       - run: npm run test:stories -w registry
@@ -58,7 +58,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run build -w @cristianruben-dev/auradata-tokens
+      - run: npm run build -w @auradata/tokens
       - run: npm run build-storybook -w registry
       - run: npm run test:visual -w registry
         env:
