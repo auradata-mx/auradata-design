@@ -1,0 +1,74 @@
+---
+title: CLI y registro
+description: Declara el registro @auradata en components.json y busca, revisa e instala sus componentes con el CLI de shadcn.
+---
+
+AuraData no tiene un CLI propio: usa el de shadcn. Con el registro declarado como `@auradata`, cada componente se instala
+por su nombre (`@auradata/filter`) en vez de por su URL, y el CLI puede buscar en todo el catálogo. El servidor
+[MCP](/docs/ia/mcp) y la [skill](/docs/ia/skills) usan este mismo nombre.
+
+## Declara el registro
+
+En un proyecto que ya tiene `components.json` (ver [Instalación](/docs/installation)):
+
+```bash
+npx shadcn registry add "@auradata=https://design.auradata.mx/r/{name}.json"
+```
+
+El comando agrega esto a `components.json`; también puedes escribirlo a mano:
+
+```json title="components.json"
+{
+  "registries": {
+    "@auradata": "https://design.auradata.mx/r/{name}.json"
+  }
+}
+```
+
+## Instala
+
+Primero el tema, que trae los tokens de la marca; después cualquier componente:
+
+```bash
+npx shadcn add @auradata/auradata-theme
+npx shadcn add @auradata/filter @auradata/sparkline
+```
+
+Las dependencias de cada componente llegan solas, también las de otros componentes de AuraData.
+
+## Busca
+
+Sin `-q`, lista todo el registro. `-t` filtra por tipo (`ui`, `block`, `lib`, `hook`):
+
+```bash
+npx shadcn search @auradata -q filter
+npx shadcn search @auradata -t block
+```
+
+```txt
+Found 4 items matching "filter" in @auradata
+
+- @auradata/filter (ui)
+- @auradata/filter-chips (ui)
+- @auradata/filter-builder (ui)
+- @auradata/filter-conditions (lib)
+```
+
+Los nombres y las descripciones están en inglés: busca `filter`, no «filtro».
+
+## Revisa antes de instalar
+
+`view` muestra el JSON del componente: sus archivos, sus dependencias y el código que va a copiar.
+
+```bash
+npx shadcn view @auradata/filter
+```
+
+## Sin declarar el registro
+
+Las dos formas de siempre siguen funcionando, sin tocar `components.json`:
+
+```bash
+npx shadcn add https://design.auradata.mx/r/filter.json
+npx shadcn add cristianruben-dev/auradata-design/filter#v0.1.0   # desde GitHub, fijado a una versión
+```

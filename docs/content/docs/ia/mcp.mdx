@@ -1,0 +1,139 @@
+---
+title: MCP
+description: Configura el servidor MCP de shadcn para que tu agente busque e instale componentes de AuraData desde el chat.
+---
+
+El servidor MCP de shadcn le da a tu agente las mismas herramientas que el [CLI](/docs/ia/cli): buscar en el registro,
+ver un componente y su código, e instalarlo. Solo busca en los registros declarados en `components.json`.
+
+<Steps>
+<Step>
+
+### Declara el registro
+
+```bash
+npx shadcn registry add "@auradata=https://design.auradata.mx/r/{name}.json"
+```
+
+</Step>
+<Step>
+
+### Configura tu cliente
+
+<Tabs items={['Claude Code', 'Cursor', 'VS Code', 'OpenCode', 'Codex']}>
+<Tab value="Claude Code">
+
+```bash
+npx shadcn mcp init --client claude
+```
+
+Escribe `.mcp.json` en la raíz del proyecto:
+
+```json title=".mcp.json"
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    }
+  }
+}
+```
+
+</Tab>
+<Tab value="Cursor">
+
+```bash
+npx shadcn mcp init --client cursor
+```
+
+Escribe `.cursor/mcp.json`:
+
+```json title=".cursor/mcp.json"
+{
+  "mcpServers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    }
+  }
+}
+```
+
+</Tab>
+<Tab value="VS Code">
+
+```bash
+npx shadcn mcp init --client vscode
+```
+
+Escribe `.vscode/mcp.json`:
+
+```json title=".vscode/mcp.json"
+{
+  "servers": {
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    }
+  }
+}
+```
+
+</Tab>
+<Tab value="OpenCode">
+
+```bash
+npx shadcn mcp init --client opencode
+```
+
+Escribe `opencode.json`:
+
+```json title="opencode.json"
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "shadcn": {
+      "type": "local",
+      "command": ["npx", "shadcn@latest", "mcp"],
+      "enabled": true
+    }
+  }
+}
+```
+
+</Tab>
+<Tab value="Codex">
+
+Codex lee el servidor de su configuración global. Agrégalo a mano:
+
+```toml title="~/.codex/config.toml"
+[mcp_servers.shadcn]
+command = "npx"
+args = ["shadcn@latest", "mcp"]
+```
+
+</Tab>
+</Tabs>
+
+`mcp init` también agrega `shadcn` a las `devDependencies` del proyecto.
+
+</Step>
+<Step>
+
+### Reinicia el agente
+
+El cliente carga los servidores MCP al arrancar. Después, `shadcn` aparece entre sus herramientas.
+
+</Step>
+</Steps>
+
+## Pídele cosas
+
+- «¿Qué componentes de @auradata sirven para filtrar una tabla?»
+- «Agrega el tema de @auradata y el bloque dashboard.»
+- «Muéstrame el código de @auradata/sparkline antes de instalarlo.»
+- «Arma una pantalla de login con los componentes de @auradata.»
+
+El MCP sabe qué hay en el registro, pero no cuándo usar cada cosa ni las reglas de la marca. Para eso, instala también la
+[skill](/docs/ia/skills).

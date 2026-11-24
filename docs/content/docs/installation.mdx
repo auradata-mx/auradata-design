@@ -48,6 +48,16 @@ npx shadcn add card popover separator
 </Step>
 </Steps>
 
+## Por nombre
+
+Declara el registro una vez y cada componente se instala por su nombre. Es lo que usan el servidor MCP y la skill de
+[Herramientas para IA](/docs/ia/):
+
+```bash
+npx shadcn registry add "@auradata=https://design.auradata.mx/r/{name}.json"
+npx shadcn add @auradata/sparkline
+```
+
 ## Desde GitHub
 
 El mismo registro se puede leer del repositorio con la forma corta `cristianruben-dev/auradata-design/<item>`. Fija una versión con `#<tag o commit>`:

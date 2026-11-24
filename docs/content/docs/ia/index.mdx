@@ -1,0 +1,28 @@
+---
+title: Herramientas para IA
+description: El registro, el servidor MCP, la skill y las docs en Markdown para que un agente construya con AuraData.
+---
+
+Un agente de IA (Claude Code, Cursor, Codex, VS Code, OpenCode) construye con AuraData igual que una persona: instala los
+componentes del registro y sigue las reglas de la marca. Estas herramientas le dan ambas cosas.
+
+<Cards>
+  <Card title="CLI y registro" href="/docs/ia/cli" description="Declara el registro @auradata y busca, revisa e instala componentes por nombre." />
+  <Card title="MCP" href="/docs/ia/mcp" description="El servidor MCP de shadcn: el agente busca e instala del registro desde el chat." />
+  <Card title="Skill" href="/docs/ia/skills" description="Las reglas de AuraData para el agente: qué componente usar, la voz, el color y los estados." />
+</Cards>
+
+## Docs en Markdown
+
+Todo el sitio está también en Markdown, para pegarlo en un chat o dárselo a un agente:
+
+| Archivo | Contenido |
+| --- | --- |
+| [`/llms.txt`](/llms.txt) | El índice: cada página con su enlace y su descripción |
+| [`/llms-full.txt`](/llms-full.txt) | Todas las páginas completas en un solo archivo |
+
+## Por dónde empezar
+
+1. [Declara el registro](/docs/ia/cli#declara-el-registro) `@auradata` en `components.json`. El MCP y la skill lo necesitan.
+2. [Configura el MCP](/docs/ia/mcp) en tu editor.
+3. [Instala la skill](/docs/ia/skills).
