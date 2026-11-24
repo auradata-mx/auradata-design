@@ -1,0 +1,41 @@
+---
+title: Skill
+description: Instala la skill de AuraData para que tu agente elija el componente correcto y siga las reglas de la marca.
+---
+
+El [MCP](/docs/ia/mcp) le dice al agente qué hay en el registro; la skill le dice cómo usarlo. Con ella, un agente
+(Claude Code, Cursor, Codex, OpenCode y los demás que leen skills) sabe qué componente elegir para cada caso y escribe
+la interfaz con la voz, el color y los estados de AuraData.
+
+## Instalación
+
+```bash
+npx skills add cristianruben-dev/auradata-design
+```
+
+Se instala en el proyecto actual y el agente la carga solo cuando trabajas en una interfaz con AuraData. Agrega `-g`
+para tenerla en todos tus proyectos. Más sobre skills en [skills.sh](https://skills.sh).
+
+Los archivos están en el repositorio, en
+[`skills/auradata`](https://github.com/cristianruben-dev/auradata-design/tree/main/skills/auradata).
+
+## Qué incluye
+
+- **El camino de instalación.** Revisa `components.json`, declara el registro `@auradata` si falta, instala primero el
+  tema y después cada componente por su nombre. Los componentes de shadcn que AuraData no cambió llegan de shadcn. Si
+  la app no está sobre Base UI, se detiene y te avisa en vez de migrarla.
+- **Qué componente usar.** Los 99 elementos del registro por capa (Marca, Base, AuraData, Gráficas, Efectos, Bloques,
+  hooks y utilidades), con para qué sirve cada uno y qué usar en su lugar cuando no aplica. Un test de las docs
+  comprueba que el catálogo de la skill y el registro listen lo mismo.
+- **Las reglas de la marca.** La voz y el texto de la interfaz, el color solo con tokens, los estados vacío, cargando y
+  error, los formularios, el layout, el espaciado, la profundidad, el movimiento y los iconos.
+- **Las gráficas.** Qué gráfica para cada pregunta, las paletas, la leyenda y el tooltip, y los formatos de número.
+- **La revisión final.** Claro y oscuro, teclado y foco, cada control con nombre, el texto, los formatos, los estados y
+  que nada sea inventado.
+
+## Pídele cosas
+
+- «Haz la pantalla de ventas por región con AuraData.»
+- «Agrega un filtro de periodo a este dashboard.»
+- «Revisa que esta pantalla siga la voz y los colores de AuraData.»
+- «¿Qué gráfica uso para comparar el mes contra el anterior?»

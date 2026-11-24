@@ -144,6 +144,19 @@ npx shadcn add cristianruben-dev/auradata-design/logo            # also copies t
 
 Pin a release with `#<tag or commit>`: `cristianruben-dev/auradata-design/filter#v0.1.0`.
 
+## For AI agents
+
+The docs section `/docs/ia` covers the four pieces; in short:
+
+```bash
+npx shadcn registry add "@auradata=https://design.auradata.mx/r/{name}.json"  # items by name: @auradata/filter
+npx shadcn mcp init --client claude      # the shadcn MCP server searches and installs @auradata items
+npx skills add cristianruben-dev/auradata-design   # the skill in skills/auradata: which item to use and the brand rules
+```
+
+The whole docs site is also Markdown at `/llms.txt` and `/llms-full.txt`. `npm test -w docs` checks that the skill's
+catalog (`skills/auradata/references/catalog.md`) lists exactly the items of `registry.json`.
+
 ## License
 
 MIT for the code, the tokens and the docs (`LICENSE`). The AuraData name and logos are trademarks, not under MIT: see
