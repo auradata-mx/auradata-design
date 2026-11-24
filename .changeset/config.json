@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@4/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "cristianruben-dev/auradata-design" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "auradata-mx/auradata-design" }],
   "commit": false,
   "access": "public",
   "baseBranch": "main",
