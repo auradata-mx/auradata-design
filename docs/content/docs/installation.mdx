@@ -68,16 +68,11 @@ npx shadcn add cristianruben-dev/auradata-design/sparkline#v0.1.0
 
 ## Solo los tokens
 
-Un producto que no usa React (Docusaurus, AuraData BI con antd, ECharts) toma solo los tokens del paquete `@auradata/tokens`. Es un paquete privado de GitHub Packages publicado como `@cristianruben-dev/auradata-tokens`; se instala con ese alias para que cada import diga `@auradata/tokens/...`:
-
-```ini title=".npmrc"
-@cristianruben-dev:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
+Un producto que no usa React (Docusaurus, AuraData BI con antd, ECharts) toma solo los tokens del paquete público
+`@auradata/tokens` de npm. No hace falta ningún token:
 
 ```bash
-export GITHUB_TOKEN=$(gh auth token --user cristianruben-dev)   # o un token clásico con read:packages
-npm install @auradata/tokens@npm:@cristianruben-dev/auradata-tokens
+npm install @auradata/tokens
 ```
 
 | Producto | Archivo |

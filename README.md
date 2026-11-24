@@ -4,7 +4,7 @@ The AuraData brand for every product, in one repository.
 
 | Part | What it is | Who uses it |
 | --- | --- | --- |
-| `packages/tokens` (`@auradata/tokens`, published as `@cristianruben-dev/auradata-tokens`) | The brand as data (colors light and dark, fonts, radii, shadows, motion, chart palette), built by Style Dictionary | Every product |
+| `packages/tokens` (`@auradata/tokens` on npm) | The brand as data (colors light and dark, fonts, radii, shadows, motion, chart palette), built by Style Dictionary | Every product |
 | `registry` | A shadcn registry: components on Base UI and Tailwind 4, themed by the tokens | New React apps, React islands of auradata.mx |
 | `registry` (Storybook) | The workbench: every state of every component and block, with the visual and accessibility tests. The brand guide and usage live in `docs` | People building components |
 | `docs` | The public docs site (Fumadocs on Next.js, a static export): install, brand guide, components, blocks | People adopting AuraData |
@@ -27,29 +27,18 @@ The logo SVGs embed the mark as a PNG and draw the name with Outfit outlines: fi
 
 ## Installing the tokens
 
-They are a private package on GitHub Packages. GitHub only takes packages under the owner's scope, so the package is
-`@cristianruben-dev/auradata-tokens`; products install it under the alias `@auradata/tokens`, so every import reads
-`@auradata/tokens/...`.
-
-```ini
-# .npmrc of the product
-@cristianruben-dev:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
-```
+A public package on npm, under the `auradata` organization. No token is needed:
 
 ```bash
-export GITHUB_TOKEN=$(gh auth token --user cristianruben-dev)   # or a classic token with read:packages
-pnpm add @auradata/tokens@npm:@cristianruben-dev/auradata-tokens  # npm install works the same
+npm install @auradata/tokens
 ```
-
-In CI, `GITHUB_TOKEN` needs `read:packages` on this repository's package: a token of another repository's workflow only
-reads it once the package grants that repository access (package settings, "Manage Actions access").
 
 ## Releasing the tokens
 
 A change products will see needs a changeset: `npx changeset`, pick the bump (patch for a fix, minor for a new token,
 major for a renamed or removed one) and write one line. The release workflow opens a "Version packages" pull request on
-`main`; merging it publishes the version with its `CHANGELOG.md`.
+`main`; merging it publishes the version to npm with its `CHANGELOG.md`. The workflow publishes through npm trusted
+publishing: no npm token is stored, the package trusts `release.yml` of this repository (npmjs.com, package settings).
 
 ## Commands
 

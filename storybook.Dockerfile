@@ -6,7 +6,7 @@ COPY . .
 # Storybook builds with relative paths (./assets, ./sb-manager), so the same build serves from /storybook/.
 # The docs build copies the Continua logos to out/brand/continua, where the Logo stories also read them.
 RUN npm ci --no-audit --no-fund \
-  && npm run build -w @cristianruben-dev/auradata-tokens \
+  && npm run build -w @auradata/tokens \
   && npm run registry -w registry \
   && npm run build-storybook -w registry \
   && npm run build -w docs

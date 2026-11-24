@@ -8,8 +8,8 @@
     "docs"
   ],
   "scripts": {
-    "build": "npm run build -w @cristianruben-dev/auradata-tokens && npm run build -w registry && npm run build -w docs",
-    "test": "npm test -w @cristianruben-dev/auradata-tokens"
+    "build": "npm run build -w @auradata/tokens && npm run build -w registry && npm run build -w docs",
+    "test": "npm test -w @auradata/tokens"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^1.0.1",

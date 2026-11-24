@@ -1,5 +1,5 @@
 {
-  "name": "@cristianruben-dev/auradata-tokens",
+  "name": "@auradata/tokens",
   "version": "0.3.0",
   "license": "MIT",
   "description": "AuraData brand tokens for every product: CSS variables, Tailwind 4, shadcn, Docusaurus, antd and ECharts.",
@@ -9,8 +9,7 @@
     "directory": "packages/tokens"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "type": "module",
   "files": ["dist", "assets", "TRADEMARKS.md"],
