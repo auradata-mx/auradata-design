@@ -1,5 +1,21 @@
 # @cristianruben-dev/auradata-tokens
 
+## 0.4.0
+
+### Minor Changes
+
+- [`b274650`](https://github.com/cristianruben-dev/auradata-design/commit/b2746500f66fee84ae7cfb77d5bf7b82491f21e9) Thanks [@cristianruben-dev](https://github.com/cristianruben-dev)! - Add an elevation scale with depth, light and dark: `--aura-shadow-{raised,raised-hover,control,control-hover,pressed,sunken,overlay,modal}` (a top-edge highlight, a contact and an ambient shadow; `pressed` and `sunken` are inset) and the surface gradients `--aura-surface-{raised,filled}`, plus an opt-in dark grain, `--aura-surface-grain` (`none` in light). `shadcn.css` and `shadcn-theme.json` map them to `--elevation-*` and `--surface-*`, used as `shadow-(--elevation-raised)` and `bg-(image:--surface-raised)`. The theme raises the stock shadcn card (`[data-slot="card"]`) to `--elevation-raised` with `--surface-raised` from the base layer, so `shadow-none` on a card still wins. In forced colors, cards and elements with `shadow-(--elevation-raised)`, `-overlay` or `-modal` get a 1px `CanvasText` outline, since shadows vanish there. `shadow-card` and `shadow-float` keep their values, so AuraData BI (`antd.json`) does not change.
+
+- [`8acc502`](https://github.com/cristianruben-dev/auradata-design/commit/8acc5029a642c1fef24e166add6637345b8c0735) Thanks [@cristianruben-dev](https://github.com/cristianruben-dev)! - A softer focus and softer fields. `color-focus-ring` is Azul Aura (#2563EB light, 5.2:1; #60A5FA dark, 7.4:1) instead of near-black and near-white, and the theme draws focus as a halo: a 1px edge of `--ring` inside a 3px glow of it at 25 %, composed with the elevation shadow, with a transparent outline left for forced colors. A focused field (input, textarea, select trigger, native select, input group, combobox chips) turns its own border `--ring` and only glows; an invalid one glows `--destructive`. New `color-border-field` (#C4C4CC light, #3B3B47 dark; shadcn `--field-border`) is the soft edge of fields; `color-border-control` keeps 3:1 for checkboxes, radios and steps. Plain elements (links) keep a 2px outline, now blue.
+
+- [`1f74703`](https://github.com/cristianruben-dev/auradata-design/commit/1f747037fec044034e86a24459a1291fef5ff318) Thanks [@cristianruben-dev](https://github.com/cristianruben-dev)! - Add frosted floating surfaces (`--surface-glass` with `backdrop-filter: blur(14px) saturate(1.6)`, gated on `@supports` and disabled in forced colors, including neutral Sonner toasts), `--ease-fluid` and `--selection` (`::selection` highlight + discrete dark-aware scrollbars) in shadcn theme outputs, synchronized skeleton shimmer, smooth collapsible transitions, checkbox stroke-draw keyframes, concentric radii for nested cards and floating selection toolbars, asymmetric trigger-origin popup animations (`160ms` fluid enter / `90ms` fast exit with `prefers-reduced-motion` support), and View Transition rules for circular theme switching.
+
+- [`67b423a`](https://github.com/cristianruben-dev/auradata-design/commit/67b423a011e9b7a0f333a0e82a520b0f65270e22) Thanks [@cristianruben-dev](https://github.com/cristianruben-dev)! - Remove the global compact density and the print styles: `--aura-density-compact` and the `data-density` rules are gone (the AuraData data table keeps its own row density), and `tokens.css`, `shadcn.css` and `shadcn-theme.json` no longer carry `@media print` (the light values on paper, hidden navigation, page breaks, link URLs, `data-print="hide"` and `data-print="only"`).
+
+### Patch Changes
+
+- [`edb7228`](https://github.com/cristianruben-dev/auradata-design/commit/edb7228000dde36bbe4c8e552e68b73edee491c1) Thanks [@cristianruben-dev](https://github.com/cristianruben-dev)! - License the package under MIT (it was `UNLICENSED`). The AuraData name and the Continua logos in `assets/continua` stay trademarks, outside the MIT license: see `TRADEMARKS.md`.
+
 ## 0.3.0
 
 ### Minor Changes
