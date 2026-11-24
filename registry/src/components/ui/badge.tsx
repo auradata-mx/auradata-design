@@ -17,7 +17,9 @@ const badgeVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground [a]:hover:underline",
         // Keep both status colors opaque at hover so the underlying surface cannot reduce contrast.
-        success: "bg-success text-success-foreground [a]:hover:underline",
+        // Light: white on emerald 700 (5.5:1); the success green took near-black text, which read poorly on it.
+        // Dark inverts the scale, so 700 is the light green and keeps its dark text.
+        success: "bg-success-700 text-white dark:text-success-foreground [a]:hover:underline",
         warning: "bg-warning text-warning-foreground [a]:hover:underline",
         info: "bg-info text-info-foreground [a]:hover:underline",
         outline:
