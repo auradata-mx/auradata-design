@@ -17,7 +17,7 @@ const STEPS = [
 const meta = {
   title: 'AuraData/Stepper',
   component: Stepper,
-  args: { steps: STEPS, current: 1 },
+  args: { steps: STEPS, current: 1, className: 'max-w-xl' },
 } satisfies Meta<typeof Stepper>
 
 export default meta
@@ -26,8 +26,8 @@ type Story = StoryObj<typeof meta>
 const items = (canvasElement: HTMLElement) => within(canvasElement).getAllByRole('listitem')
 
 /**
- * Horizontal, for the top of a wizard: done, current and to come. On a phone only the current step keeps its
- * title; the others keep their number, and screen readers still hear all of them.
+ * Horizontal, for the top of a wizard: done, current and to come. In a narrow container only the current
+ * step keeps its visible title; screen readers still hear the titles and statuses of every step.
  */
 export const Horizontal: Story = {
   tags: ['mobile'],

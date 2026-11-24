@@ -1,6 +1,6 @@
-// registry: auradata (a copy-to-clipboard button whose icon morphs smoothly into a check with an aria-live announcement in Spanish)
+// registry: auradata (a copy-to-clipboard button that draws a confirmation check with an aria-live announcement in Spanish)
 import * as React from "react"
-import { CheckIcon, CopyIcon } from "lucide-react"
+import { CopyIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
@@ -12,14 +12,14 @@ type CopyButtonProps = React.ComponentProps<typeof Button> & {
   label?: string
   /** Accessible label and aria-live announcement right after copying. */
   copiedLabel?: string
-  /** Milliseconds before the check morphs back to the copy icon. */
+  /** Milliseconds before the copy icon returns. */
   timeout?: number
   /** Called after writing to the clipboard succeeds. */
   onCopied?: () => void
 }
 
 /**
- * Copies `value` to the clipboard and morphs the clipboard icon into a check mark with a live-region
+ * Copies `value` to the clipboard and draws a check mark with a live-region
  * confirmation. Works icon-only (default) or with a label as `children`.
  */
 function CopyButton({
@@ -73,16 +73,35 @@ function CopyButton({
         >
           <CopyIcon
             className={cn(
-              "col-start-1 row-start-1 transition-[opacity,transform,filter] duration-180 ease-(--ease-fluid) motion-reduce:transition-none",
-              copied ? "scale-50 opacity-0 blur-[1px]" : "scale-100 opacity-100 blur-0"
+              "col-start-1 row-start-1 transition-[opacity,scale,filter] duration-180 ease-(--ease-fluid) motion-reduce:transition-none",
+              copied
+                ? "scale-50 opacity-0 blur-[1px]"
+                : "scale-100 opacity-100 blur-0"
             )}
           />
-          <CheckIcon
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className={cn(
-              "col-start-1 row-start-1 text-success-700 transition-[opacity,transform,filter] duration-180 ease-(--ease-fluid) motion-reduce:transition-none",
-              copied ? "scale-100 opacity-100 blur-0" : "scale-50 opacity-0 blur-[1px]"
+              "col-start-1 row-start-1 text-success-700",
+              !copied && "opacity-0"
             )}
-          />
+          >
+            <path
+              d="m4 12 5 5L20 6"
+              pathLength="1"
+              className={cn(
+                "[stroke-dasharray:1] transition-[stroke-dashoffset] ease-(--ease-fluid) motion-reduce:transition-none",
+                copied
+                  ? "[stroke-dashoffset:0] duration-300"
+                  : "[stroke-dashoffset:1] duration-100"
+              )}
+            />
+          </svg>
         </span>
         {children && <span>{copied ? copiedLabel : children}</span>}
       </Button>

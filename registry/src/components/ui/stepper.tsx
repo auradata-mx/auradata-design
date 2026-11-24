@@ -9,7 +9,7 @@ type StepStatus = "complete" | "current" | "error" | "upcoming"
 
 type Step = {
   title: string
-  /** One line under the title; hidden on a phone in the horizontal stepper. */
+  /** Shown under the title; hidden when the horizontal stepper has limited space. */
   description?: string
 }
 
@@ -56,13 +56,18 @@ function Stepper({
       data-slot="stepper"
       data-orientation={orientation}
       aria-label={ariaLabel}
-      className={cn("group/stepper w-full", className)}
+      className={cn(
+        "group/stepper w-full",
+        orientation === "horizontal" && "@container/stepper",
+        className
+      )}
       {...props}
     >
       <ol
         className={cn(
-          "flex",
-          orientation === "horizontal" ? "items-start gap-2" : "flex-col"
+          orientation === "horizontal"
+            ? "grid auto-cols-fr grid-flow-col"
+            : "flex flex-col"
         )}
       >
         {steps.map((step, index) => {
@@ -77,11 +82,11 @@ function Stepper({
               key={step.title}
               data-slot="stepper-item"
               data-status={status}
-              aria-current={status === "current" ? "step" : undefined}
+              aria-current={index === current ? "step" : undefined}
               className={cn(
                 "group/step relative flex min-w-0",
                 orientation === "horizontal"
-                  ? "flex-1 items-center gap-2 last:flex-none"
+                  ? "flex-col"
                   : "gap-3 pb-6 last:pb-0"
               )}
             >
@@ -93,18 +98,19 @@ function Stepper({
                     }
                   : {})}
                 className={cn(
-                  "flex min-w-0 items-start gap-2 rounded-md text-left",
+                  "flex min-w-0 gap-2 rounded-md",
                   clickable &&
-                    "cursor-pointer hover:[&_[data-slot=stepper-title]]:underline",
-                  orientation === "horizontal" &&
-                    "shrink-0 max-sm:group-not-data-[status=current]/step:shrink"
+                    "cursor-pointer hover:[&_[data-slot=stepper-title]]:underline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring",
+                  orientation === "horizontal"
+                    ? "flex-col items-center px-1 text-center"
+                    : "items-start text-left"
                 )}
               >
                 <span
                   data-slot="stepper-indicator"
                   aria-hidden
                   className={cn(
-                    "relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold tabular-nums transition-colors [&_svg]:size-4",
+                    "relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold tabular-nums transition-colors motion-reduce:transition-none [&_svg]:size-4",
                     status === "complete" &&
                       "border-primary bg-primary text-primary-foreground",
                     status === "current" &&
@@ -125,10 +131,10 @@ function Stepper({
                 </span>
                 <span
                   className={cn(
-                    "flex min-w-0 flex-col gap-0.5 pt-1",
-                    // On a phone the horizontal stepper keeps only the current step's title.
-                    orientation === "horizontal" &&
-                      "max-sm:group-not-data-[status=current]/step:sr-only"
+                    "flex min-w-0 flex-col gap-0.5",
+                    orientation === "horizontal"
+                      ? "wrap-anywhere @max-md/stepper:group-not-aria-[current=step]/step:sr-only"
+                      : "pt-1"
                   )}
                 >
                   <span
@@ -147,7 +153,7 @@ function Stepper({
                       data-slot="stepper-description"
                       className={cn(
                         "text-xs leading-snug text-pretty text-muted-foreground",
-                        orientation === "horizontal" && "max-sm:hidden"
+                        orientation === "horizontal" && "@max-md/stepper:hidden"
                       )}
                     >
                       {step.description}
@@ -162,7 +168,7 @@ function Stepper({
                   className={cn(
                     "bg-[color:var(--control-border,var(--input))] group-data-[status=complete]/step:bg-primary",
                     orientation === "horizontal"
-                      ? "mt-3.5 h-px min-w-4 flex-1 self-start"
+                      ? "pointer-events-none absolute start-[calc(50%+1.125rem)] top-3.5 h-px w-[calc(100%-2.25rem)]"
                       : "absolute top-8 bottom-1 left-3.5 w-px -translate-x-1/2"
                   )}
                 />

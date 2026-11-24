@@ -14,13 +14,13 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 
-/** With a visible label alongside the morphing icon. */
+/** With a visible label alongside the animated icon. */
 export const WithLabel: Story = {
   name: 'With label',
   args: { variant: 'outline', size: 'sm', children: 'Copiar enlace' },
 }
 
-/** Clicking copies the text and morphs the icon into a check mark. */
+/** Clicking copies the text and draws a confirmation check. */
 export const Copied: Story = {
   args: { variant: 'outline', size: 'icon-sm', timeout: 60_000 },
   play: async ({ canvasElement }) => {

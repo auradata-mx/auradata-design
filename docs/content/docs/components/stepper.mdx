@@ -3,7 +3,7 @@ title: Stepper
 description: "Dónde va la persona en un asistente de varios pasos, y cuáles ya terminó."
 ---
 
-Un componente de AuraData: los pasos de un asistente, en horizontal o en vertical, cada uno completado, actual, con errores o pendiente. El estado también se dice con palabras para los lectores de pantalla («Credenciales (completado)») y el paso actual lleva `aria-current="step"`. En el teléfono, el stepper horizontal deja solo el título del paso actual; los demás conservan su número.
+Un componente de AuraData: los pasos de un asistente, en horizontal o en vertical, cada uno completado, actual, con errores o pendiente. El estado también se dice con palabras para los lectores de pantalla («Credenciales (completado)») y el paso actual lleva `aria-current="step"`. Cuando el componente tiene poco espacio, el stepper horizontal muestra solo el título del paso actual; los demás conservan su indicador.
 
 <ComponentPreview name="stepper/demo" />
 
@@ -54,7 +54,6 @@ Con `orientation="vertical"`, para una columna lateral. `errors` marca los pasos
 ## Cuándo no
 
 - **Secciones que se recorren en cualquier orden**: `Tabs`.
-- **Los primeros pasos de una cuenta**: `OnboardingChecklist`.
 - **Un formulario corto**: todos los campos en una sola página.
 
 <StorybookLink stories="Stepper" story="Horizontal" />
