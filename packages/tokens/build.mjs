@@ -213,9 +213,12 @@ const TRIGGER_POPUPS = [
   '[data-slot="tour"]',
 ];
 
-/** Floating surfaces that take the frosted glass layer: every trigger popup, chart tooltips, floating toolbars and neutral toasts. */
+/**
+ * Floating surfaces that take the frosted glass layer: every trigger popup, chart tooltips, floating toolbars and
+ * neutral toasts. The tour stays solid: its card sits over its own scrim, where glass only grays it out.
+ */
 const GLASS_SURFACES = [
-  ...TRIGGER_POPUPS,
+  ...TRIGGER_POPUPS.filter((slot) => slot !== '[data-slot="tour"]'),
   '[data-slot="chart-tooltip"]',
   '[data-slot="data-table-selection-bar"]',
   '[data-sonner-toast]:not([data-rich-colors="true"])',

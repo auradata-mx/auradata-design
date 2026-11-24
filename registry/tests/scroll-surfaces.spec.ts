@@ -134,8 +134,11 @@ for (const theme of ["light", "dark"]) {
     await checkGlass(page, page.locator(slot("navigation-menu-popup")))
   })
 
-  test(`tour popup uses shared glass with a forced-colors fallback (${theme})`, async ({ page }) => {
+  // The tour card sits over its own scrim, where glass would only gray it out.
+  test(`tour popup stays solid over its scrim (${theme})`, async ({ page }) => {
     await story(page, "auradata-tour--default", theme)
-    await checkGlass(page, page.getByRole("dialog", { name: "Crea un informe" }))
+    const popup = page.getByRole("dialog", { name: "Crea un informe" })
+    await expect(popup).toBeVisible()
+    await expect(popup).toHaveCSS("backdrop-filter", "none")
   })
 }
