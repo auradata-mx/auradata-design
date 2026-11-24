@@ -1,4 +1,12 @@
 {
   "title": "Documentación",
-  "pages": ["index", "installation", "brand", "guides", "components", "charts", "blocks"]
+  "pages": [
+    "index",
+    "installation",
+    "components",
+    "charts",
+    "blocks",
+    "brand",
+    "guides"
+  ]
 }

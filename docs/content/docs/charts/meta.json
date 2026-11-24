@@ -1,12 +1,12 @@
 {
   "title": "Gráficas",
   "pages": [
-    "../components/chart",
-    "../components/cartesian-chart",
-    "../components/donut-chart",
-    "../components/funnel-chart",
-    "../components/gauge",
-    "../components/heatmap",
-    "../components/sparkline"
+    "../components/(charts)/chart",
+    "../components/(charts)/cartesian-chart",
+    "../components/(charts)/donut-chart",
+    "../components/(charts)/funnel-chart",
+    "../components/(charts)/gauge",
+    "../components/(charts)/heatmap",
+    "../components/(charts)/sparkline"
   ]
 }
