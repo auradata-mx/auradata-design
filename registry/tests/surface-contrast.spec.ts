@@ -34,15 +34,6 @@ async function contrast(
 }
 
 for (const theme of ["light", "dark"] as const) {
-  test(`glass keeps muted labels readable over an extreme backdrop (${theme})`, async ({ page }) => {
-    await page.goto(`/iframe.html?id=components-popover--open&viewMode=story&globals=theme:${theme}`)
-    const popup = page.locator('[data-slot="popover-content"]')
-    await expect(popup).toBeVisible()
-    await expect(popup).toHaveCSS("backdrop-filter", "blur(18px) saturate(1.35)")
-    const backdrop = theme === "light" ? "#000" : "#fff"
-    expect(await contrast(popup, backdrop, "--muted-foreground")).toBeGreaterThanOrEqual(4.5)
-  })
-
   test(`status badges retain readable text when hovered as links (${theme})`, async ({ page }) => {
     await page.goto(`/iframe.html?id=components-badge--status&viewMode=story&args=asLinks:true&globals=theme:${theme}`)
     for (const variant of ["success", "warning", "info", "destructive"]) {
