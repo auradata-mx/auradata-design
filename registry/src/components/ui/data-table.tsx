@@ -65,8 +65,6 @@ import { cn } from "cn"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import { DataTableSelectionBar } from "@/components/ui/data-table-selection-bar"
-import { DataTableViews } from "@/components/ui/data-table-views"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -77,15 +75,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { DateRangeFilter } from "@/components/ui/date-range-filter"
-import { FacetedFilter, type FacetedFilterOption } from "@/components/ui/faceted-filter"
+import { Filter, type FilterOption, type NumberRange } from "@/components/ui/filter"
 import { FilterBuilder } from "@/components/ui/filter-builder"
 import { FilterChips } from "@/components/ui/filter-chips"
 import { Input } from "@/components/ui/input"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { ProgressiveBlur } from "@/components/ui/progressive-blur"
-import { RangeFilter, type NumberRange } from "@/components/ui/range-filter"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -95,6 +91,9 @@ import { divergingFill, sequentialFill } from "@/lib/chart-palette"
 import { countConditions, matchesFilter, type FilterField, type FilterGroup } from "@/lib/filter-conditions"
 import { formatDate, formatNumber } from "@/lib/format"
 import { downloadFile, MIME, toCsv, toXlsx, type ExportColumn } from "@/lib/table-export"
+
+import { DataTableSelectionBar } from "./data-table-selection-bar"
+import { DataTableViews } from "./data-table-views"
 
 /** Keeps the rows whose value is one of the chosen ones (a `select` filter); no choice keeps every row. */
 // A filter function serves any table, as the stock ones (`CreatedFilterFn<any, any>`).
@@ -158,12 +157,12 @@ const dataTableFeatures = tableFeatures({
 
 /**
  * A filter a column offers in the toolbar, named by `title` or the column's header:
- * - `select`: a `FacetedFilter` with the column's values and their counts (or the `options` given, to name them);
- * - `range`: a `RangeFilter` over the column's numbers (or `min`/`max`), written with `format`;
- * - `date`: a `DateRangeFilter` over the column's days (`Date`, timestamp or `YYYY-MM-DD`); `today` fixes its presets.
+ * - `select`: a `Filter type="select"` with the column's values and their counts (or the `options` given, to name them);
+ * - `range`: a `Filter type="range"` over the column's numbers (or `min`/`max`), written with `format`;
+ * - `date`: a `Filter type="date"` over the column's days (`Date`, timestamp or `YYYY-MM-DD`); `today` fixes its presets.
  */
 type DataTableColumnFilter =
-  | { type: "select"; title?: string; options?: FacetedFilterOption[] }
+  | { type: "select"; title?: string; options?: FilterOption[] }
   | { type: "range"; title?: string; min?: number; max?: number; step?: number; format?: (value: number) => string }
   | { type: "date"; title?: string; today?: Date }
 
@@ -260,7 +259,7 @@ type DataTableProps<TData extends RowData> = Omit<React.ComponentProps<"div">, "
   virtualize?: boolean | { height?: number | string }
   /** Receives the exported file instead of downloading it (to send it to a server, or in a test). */
   onExport?: (file: DataTableExport) => void
-  /** Filters beside the search, in the toolbar: a `DateRangeFilter`, the filter system's popovers. */
+  /** Filters beside the search, in the toolbar: a `Filter type="date"`, the filter system's popovers. */
   filters?: React.ReactNode
   /** The page's own actions at the end of the toolbar («Nuevo informe»). */
   actions?: React.ReactNode
@@ -992,7 +991,7 @@ function DataTable<TData extends RowData>({
   const hideable = table.getAllLeafColumns().filter((column) => column.getCanHide())
   const filterable = table.getAllLeafColumns().filter((column) => column.columnDef.meta?.filter)
   type FilterColumn = (typeof filterable)[number]
-  const optionsOf = (column: FilterColumn): FacetedFilterOption[] => {
+  const optionsOf = (column: FilterColumn): FilterOption[] => {
     // Keyed by text, as the filter compares values: a number column counts under "12".
     const counts = new Map([...column.getFacetedUniqueValues()].map(([value, count]) => [String(value), count]))
     const filter = column.columnDef.meta?.filter
@@ -1110,8 +1109,9 @@ function DataTable<TData extends RowData>({
     if (filter?.type === "range") {
       const [min, max] = spanOf(column)
       return (
-        <RangeFilter
+        <Filter
           key={column.id}
+          type="range"
           title={title}
           min={min}
           max={max}
@@ -1124,8 +1124,9 @@ function DataTable<TData extends RowData>({
     }
     if (filter?.type === "date")
       return (
-        <DateRangeFilter
+        <Filter
           key={column.id}
+          type="date"
           placeholder={title}
           today={filter.today}
           className="border-dashed"
@@ -1135,8 +1136,9 @@ function DataTable<TData extends RowData>({
         />
       )
     return (
-      <FacetedFilter
+      <Filter
         key={column.id}
+        type="select"
         title={title}
         options={optionsOf(column)}
         value={(column.getFilterValue() as string[] | undefined) ?? []}

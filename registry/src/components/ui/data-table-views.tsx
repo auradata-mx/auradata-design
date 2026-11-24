@@ -1,4 +1,4 @@
-// registry: auradata (a «Vistas» menu: apply a saved view, save the current one under a name, delete the applied one)
+// Part of DataTable, shipped inside its item: a «Vistas» menu: apply a saved view, save the current one under a name, delete the applied one.
 import * as React from "react"
 import { BookmarkIcon, BookmarkPlusIcon, Trash2Icon } from "lucide-react"
 import { cn } from "cn"

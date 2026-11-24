@@ -17,7 +17,7 @@
  *
  * `shadcn build` then turns it into registry/public/r/*.json, for installs from a local file.
  */
-import { readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { basename, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -89,6 +89,39 @@ function registryDependenciesOf(source) {
 /** "dropdown-menu" → "Dropdown menu". */
 const titleOf = (name) => (name.charAt(0).toUpperCase() + name.slice(1)).replaceAll('-', ' ');
 
+/** The siblings a file imports relatively: `from "./kpi-card"` → "kpi-card". */
+const siblingImportsOf = (source) => [
+  ...new Set([...source.matchAll(/from\s+["']\.\/([^"'/]+)["']/g)].map((match) => match[1])),
+];
+
+/**
+ * An item's files: the source and, by relative import, its internal siblings (files without the marker), which ship
+ * inside it and land beside it, so `./name` still resolves in the consumer's app. A sibling with the marker is an item
+ * of its own: a registry dependency, not a file.
+ */
+function bundleOf(folder, file, source) {
+  const { dir, type, extension } = FOLDERS[folder];
+  const files = [{ path: `registry/src/${folder}/${file}`, type }];
+  const sources = [source];
+  const siblingItems = new Set();
+  const seen = new Set([file]);
+  for (let index = 0; index < sources.length; index++) {
+    for (const name of siblingImportsOf(sources[index])) {
+      const sibling = name + extension;
+      if (seen.has(sibling) || !existsSync(join(dir, sibling))) continue;
+      seen.add(sibling);
+      const siblingSource = readFileSync(join(dir, sibling), 'utf8');
+      if (isAuraData(siblingSource)) {
+        siblingItems.add(`${GITHUB}/${name}`);
+        continue;
+      }
+      files.push({ path: `registry/src/${folder}/${sibling}`, type });
+      sources.push(siblingSource);
+    }
+  }
+  return { files, sources, siblingItems };
+}
+
 /** One registry item per AuraData source file of a folder. */
 function itemsOf(folder) {
   const { dir, type, extension } = FOLDERS[folder];
@@ -99,14 +132,17 @@ function itemsOf(folder) {
     .filter(({ source }) => isAuraData(source))
     .map(({ file, source }) => {
       const name = basename(file, extension);
-      const registryDependencies = registryDependenciesOf(source);
+      const { files, sources, siblingItems } = bundleOf(folder, file, source);
+      const registryDependencies = [
+        ...new Set([...sources.flatMap(registryDependenciesOf), ...siblingItems]),
+      ].sort();
       return {
         name,
         type,
         title: titleOf(name),
-        dependencies: dependenciesOf(source),
+        dependencies: [...new Set(sources.flatMap(dependenciesOf))].sort(),
         ...(registryDependencies.length ? { registryDependencies } : {}),
-        files: [{ path: `registry/src/${folder}/${file}`, type }, ...(EXTRA_FILES[name] ?? [])],
+        files: [...files, ...(EXTRA_FILES[name] ?? [])],
       };
     });
 }

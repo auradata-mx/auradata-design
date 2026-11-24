@@ -1,4 +1,4 @@
-// registry: auradata (a bar that floats over the bottom of the screen while rows are selected: the count, the bulk actions and «Quitar selección»)
+// Part of DataTable, shipped inside its item: a bar that floats over the bottom of the screen while rows are selected: the count, the bulk actions and «Quitar selección».
 import * as React from "react"
 import { XIcon } from "lucide-react"
 import { cn } from "cn"

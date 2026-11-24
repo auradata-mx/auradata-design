@@ -16,7 +16,20 @@ El periodo aparece antes de los indicadores, la tendencia contra el año anterio
 
 ## Componentes del registro
 
-`PageHeader` y `DateRangeFilter` encabezan la vista. `KpiCard`, `ChartCard`, `LineChart`, `BarChart`, `DonutChart` y `FunnelChart` resumen los datos; `DataTable` y `Delta` muestran el detalle.
+`PageHeader` y `DateRangeFilter` encabezan la vista. `LineChart`, `BarChart`, `DonutChart` y `FunnelChart` resumen los datos; `DataTable` y `Delta` muestran el detalle.
+
+## Piezas
+
+El bloque trae dos piezas propias. Llegan con él, junto a `dashboard.tsx`, y se importan con una ruta relativa (`./kpi-card`).
+
+| Pieza | Qué hace | Props clave |
+| --- | --- | --- |
+| `KpiCard` | Una cifra clave con su cambio contra el periodo anterior y la forma de su tendencia. La flecha y el signo expresan el cambio aunque no se distinga el color. Tiene esqueleto de carga y estado «Sin datos» | `label`, `value` (ya formateado), `change`, `comparison`, `trend`, `goodDirection`, `loading` |
+| `ChartCard` | Envuelve una gráfica con título, descripción y un filtro propio. Su menú exporta un PNG y abre «Ver datos». Conserva su altura al cargar, actualizar, quedar vacía o fallar | `title`, `description`, `data` y `columns` (para «Ver datos»), `loading`, `error`, `onRetry` |
+
+<ComponentPreview name="blocks/parts/kpi-card" />
+
+<ComponentPreview name="blocks/parts/chart-card" />
 
 ## Cómo adaptarlo
 

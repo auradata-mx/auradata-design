@@ -5,7 +5,7 @@ import { loader } from 'fumadocs-core/source';
 import { parseStoriesFile, storyIdFor } from '../src/lib/storybook-id.mjs';
 
 const chartPages = [
-  'chart', 'chart-card', 'cartesian-chart', 'donut-chart', 'funnel-chart', 'gauge', 'heatmap', 'sparkline',
+  'chart', 'cartesian-chart', 'donut-chart', 'funnel-chart', 'gauge', 'heatmap', 'sparkline',
 ];
 
 test('Gráficas owns the chart navigation entries without moving their static routes', async () => {
@@ -32,7 +32,6 @@ test('Gráficas owns the chart navigation entries without moving their static ro
 test('chart stories belong to Gráficas while keeping their legacy story IDs', async () => {
   const legacyIds = {
     Chart: 'chart',
-    ChartCard: 'chart-card',
     Charts: 'charts',
     DonutChart: 'donut-chart',
     FunnelChart: 'funnel-chart',

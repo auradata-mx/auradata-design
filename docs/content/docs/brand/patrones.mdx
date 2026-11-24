@@ -105,7 +105,7 @@ De arriba abajo, siempre en este orden:
 | Bloque | Componente | Qué lleva |
 | --- | --- | --- |
 | Encabezado | `PageHeader` | El título y, a la derecha, el periodo y las acciones |
-| Filtros | `DateRangeFilter`, `FacetedFilter`, `RangeFilter`, `FilterChips` | El periodo primero; luego los segmentos (región, producto) y los rangos (monto); los chips debajo dicen qué está filtrado |
+| Filtros | `Filter` (`date`, `select` y `range`), `FilterChips` | El periodo primero; luego los segmentos (región, producto) y los rangos (monto); los chips debajo dicen qué está filtrado |
 | KPI | `KpiCard` | De 3 a 4, con su cambio contra el periodo anterior |
 | Gráficas | `Chart` | La tendencia primero, luego las comparaciones |
 | Detalle | `DataTable` | Búsqueda, filtros por columna, orden y columnas |
@@ -118,7 +118,7 @@ De arriba abajo, siempre en este orden:
 | El periodo siempre visible | «1 nov 2026 – 21 nov 2026» en el botón, no solo «Este mes» al abrirlo |
 | Lo filtrado, a la vista | Un chip por filtro con su «×» y «Limpiar todo»; cada filtro cuenta lo que dejan los demás. Las condiciones Y/O van en `FilterBuilder` |
 | Un KPI, una comparación | «vs. octubre» dice contra qué se mide el cambio |
-| Estados por bloque | Cada gráfica carga, falla o queda vacía sola: un `ErrorState` no tumba la página |
+| Estados por bloque | Cada gráfica carga, falla o queda vacía sola: un `EmptyError` no tumba la página |
 
 Ve el shell completo en [Blocks / App / Shell](/storybook/?path=/story/blocks-app--shell) y las piezas en [Layout y grilla](/docs/brand/layout/).
 

@@ -1,4 +1,9 @@
 {
   "title": "Componentes",
-  "pages": ["index", "..."]
+  "pages": [
+    "index",
+    "(base)",
+    "(auradata)",
+    "(effects)"
+  ]
 }

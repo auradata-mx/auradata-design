@@ -1,0 +1,53 @@
+---
+title: Sonner
+description: "Confirma el resultado de una acción con un aviso temporal."
+---
+
+El toaster de AuraData usa la tipografía y los botones de marca. Con `richColors`, el estado tiñe el fondo, el borde y el ícono sin cambiar el color del texto.
+
+<ComponentPreview name="sonner/demo" />
+
+## Instalación
+
+<ComponentInstall item="sonner" />
+
+## Uso
+
+```tsx
+import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
+
+// Monta uno en el layout de la app.
+<Toaster richColors />;
+
+// Después de publicar:
+toast.success('Informe publicado');
+```
+
+## Ejemplos
+
+### Con progreso
+
+`toastProgress` actualiza el mismo toast y quita la barra al terminar. En la app, llama a `update` con los datos de la tarea real.
+
+<ComponentPreview name="sonner/progress" />
+
+## Props
+
+### Toaster
+
+<ComponentProps file="sonner" type="Pick<React.ComponentProps<typeof Toaster>, 'position' | 'theme' | 'richColors' | 'duration' | 'closeButton' | 'toastOptions'>" />
+
+### ToastProgress
+
+<ComponentProps file="sonner" type="Pick<React.ComponentProps<typeof ToastProgress>, 'value' | 'label'>" />
+
+## Cuándo usarlo
+
+- Para el resultado inmediato de una acción o el avance de una tarea larga. Si la exportación termina con una descarga, deja otra forma de encontrar el archivo.
+
+## Cuándo no
+
+- No dejes la única acción necesaria dentro de un toast que desaparece. Usa `Alert` para un aviso persistente o `EmptyError` si el contenido no se pudo cargar.
+
+<StorybookLink stories="Sonner" story="Default" />

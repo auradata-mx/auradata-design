@@ -100,7 +100,7 @@ test("heatmap values stay in the named table while its own viewport scrolls", as
 })
 
 test("chart data still scrolls inside the dialog without replacing its table", async ({ page }) => {
-  await story(page, "auradata-chart-card--data-open")
+  await story(page, "blocks-parts-chart-card--data-open")
   const dialog = page.getByRole("dialog", { name: "Ventas por región" })
   const table = dialog.getByRole("table")
   await expect(table.getByRole("row")).toHaveCount(5)
@@ -140,7 +140,7 @@ test("code block scrolls natively with its preformatted keyboard target intact",
 })
 
 test("long error details keep native disclosure and scroll boundaries", async ({ page }) => {
-  await story(page, "auradata-error-state--with-detail")
+  await story(page, "auradata-empty-state--error-with-detail")
   const accordion = page.locator("details")
   const detail = accordion.locator("pre")
   await expect(detail).toBeHidden()

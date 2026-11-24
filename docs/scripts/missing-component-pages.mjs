@@ -38,7 +38,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const dir = new URL('../content/docs/components/', import.meta.url);
   /** @type {Record<string, string>} */
   const pages = {};
-  for (const file of readdirSync(dir)) {
+  // Pages sit in layer folders, `(base)/button.mdx`: read them all.
+  for (const file of readdirSync(dir, { recursive: true })) {
     if (file.endsWith('.mdx')) pages[file] = readFileSync(new URL(file, dir), 'utf8');
   }
   const ui = registry.items.filter(isCatalogItem);

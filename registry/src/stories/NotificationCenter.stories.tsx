@@ -15,7 +15,7 @@ import {
 import { AppShell } from '@/components/blocks/app-shell'
 import { AnnouncementBanner } from '@/components/ui/announcement-banner'
 import { Button } from '@/components/ui/button'
-import { NotificationCenter, type Notification } from '@/components/ui/notification-center'
+import { NotificationCenter, type Notification } from '@/components/blocks/notification-center'
 
 const NOTIFICATIONS: Notification[] = [
   {
@@ -59,7 +59,7 @@ const NOTIFICATIONS: Notification[] = [
 const ON_PHONE = { viewport: { value: 'mobile', isRotated: false } }
 
 const meta = {
-  title: 'AuraData/Notification center',
+  title: 'Blocks/Parts/Notification center',
   component: NotificationCenter,
   args: { notifications: NOTIFICATIONS, onMarkAllRead: fn(), onSelect: fn() },
   // Room for the open popover under the bell, at the right as in the top bar.

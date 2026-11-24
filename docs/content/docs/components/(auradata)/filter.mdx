@@ -1,0 +1,110 @@
+---
+title: Filter
+description: "Un filtro del sistema de filtros: valores de un campo, un rango de números o un periodo."
+---
+
+`Filter` es un botón que abre un panel para filtrar por un campo. `type` elige qué filtra: `"select"` para valores con su conteo, `"range"` para un rango de números y `"date"` para el periodo. No sabe nada de tablas: un tablero le pasa las opciones y guarda el valor; `DataTable` crea uno por columna con `meta.filter`.
+
+<ComponentPreview name="filter/demo" />
+
+## Instalación
+
+<ComponentInstall item="filter" />
+
+## Uso
+
+```tsx
+import { Filter, presetRange } from '@/components/ui/filter';
+import { formatCurrency } from '@/lib/format';
+
+<>
+  <Filter type="date" defaultValue={presetRange('this-month')} onValueChange={setPeriodo} />
+  <Filter type="select" title="Región" options={regiones} value={elegidas} onValueChange={setElegidas} />
+  <Filter type="range" title="Ventas" min={0} max={500000} step={1000} format={formatCurrency} onValueChange={setRango} />
+</>;
+```
+
+| `type` | Filtra | El botón dice |
+| --- | --- | --- |
+| `"select"` | Varios valores de un campo, con búsqueda y conteo | El campo y hasta dos valores, o el total a partir de tres |
+| `"range"` | Un rango de números, con slider y los dos extremos | El campo y el rango con su formato |
+| `"date"` | Un periodo: los de siempre o cualquier rango en el calendario | Las fechas: «1 nov 2026 – 21 nov 2026» |
+
+## Valores: `type="select"`
+
+Abre un panel con búsqueda, una casilla por valor y el conteo cuando lo pasas. El botón resume la selección: hasta dos nombres, o un total a partir de tres. «Limpiar filtro» vacía la selección.
+
+<ComponentPreview name="filter/select" />
+
+### Selección inicial
+
+Con `defaultValue` eliges cómo empieza el filtro. Para sincronizarlo con la tabla o con los chips de la página, controla `value`.
+
+<ComponentPreview name="filter/select-chosen" />
+
+## Rango de números: `type="range"`
+
+Un slider de dos pulgares sobre todo el campo y los dos extremos como números. El slider da la idea del rango; los inputs, la cifra exacta. Un input se aplica con Enter o al salir del campo, nunca mientras se escribe; «Limpiar» quita el rango.
+
+<ComponentPreview name="filter/range" />
+
+### Con un rango elegido
+
+El botón escribe el rango con el formato del campo. Con `value` controlado, `null` es sin filtro.
+
+<ComponentPreview name="filter/range-chosen" />
+
+## Periodo: `type="date"`
+
+Los periodos que usan los informes (Hoy, Últimos 7 días, Este mes, Este trimestre, Este año), en español y con nombres para lectores de pantalla, y un calendario de dos meses para cualquier rango. El botón escribe el periodo.
+
+<ComponentPreview name="filter/date" />
+
+`presetRange` da el rango de un periodo, del primer día a hoy: `'today'`, `'last-7-days'`, `'this-month'`, `'this-quarter'` o `'this-year'`.
+
+### Sin periodo
+
+Sin rango, el botón lo pide con `placeholder`.
+
+<ComponentPreview name="filter/date-empty" />
+
+## Props
+
+Todos aceptan además las props del botón (`className`, `disabled`, `aria-*`…).
+
+### `type="select"`
+
+<ComponentProps
+  file="filter"
+  type="Pick<Extract<FilterProps, { type: 'select' }>, 'type' | 'title' | 'options' | 'value' | 'defaultValue' | 'onValueChange' | 'defaultOpen'>"
+/>
+
+### `type="range"`
+
+<ComponentProps
+  file="filter"
+  type="Pick<Extract<FilterProps, { type: 'range' }>, 'type' | 'title' | 'min' | 'max' | 'step' | 'value' | 'defaultValue' | 'onValueChange' | 'format' | 'defaultOpen'>"
+/>
+
+### `type="date"`
+
+<ComponentProps
+  file="filter"
+  type="Pick<Extract<FilterProps, { type: 'date' }>, 'type' | 'value' | 'defaultValue' | 'onValueChange' | 'placeholder' | 'today' | 'locale' | 'defaultOpen'>"
+/>
+
+## Cuándo usarlo
+
+- **El periodo de un informe**, arriba de todo lo que filtra: quien lee sabe de qué periodo son los números antes de verlos. El botón dice las fechas, no solo «Este mes».
+- **Primero el periodo**; luego los segmentos (`type="select"`) y los rangos (`type="range"`), y los chips (`FilterChips`) debajo.
+- **Varios valores discretos de un mismo campo**, como regiones o estados: pon el nombre del campo en `title`.
+- **Un rango de montos o cantidades**, con el formato del campo: `formatCurrency` para dinero; `formatNumber` por omisión.
+
+## Cuándo no
+
+- **Combinar campos con Y/O**: `FilterBuilder`.
+- **Un número en un formulario**: `NumberInput`.
+- **Un día en un formulario**: `DatePicker`.
+- **Un calendario siempre a la vista**: `Calendar`.
+
+<StorybookLink stories="Filter" story="SelectChoosing" />

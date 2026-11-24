@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
 import { Sidebar, SidebarContent, SidebarGroup, SidebarProvider } from '@/components/ui/sidebar'
-import { WorkspaceSwitcher, type Workspace } from '@/components/ui/workspace-switcher'
+import { WorkspaceSwitcher, type Workspace } from '@/components/blocks/workspace-switcher'
 
 const WORKSPACES: Workspace[] = [
   { id: 'ventas', name: 'Ventas', description: '12 miembros' },
@@ -32,7 +32,7 @@ function Frame({ defaultOpen, workspaces = WORKSPACES, initial = 'ventas' }: { d
 }
 
 const meta = {
-  title: 'AuraData/Workspace switcher',
+  title: 'Blocks/Parts/Workspace switcher',
   component: WorkspaceSwitcher,
   parameters: { layout: 'fullscreen', themeFrame: { padded: false } },
   args: { workspaces: WORKSPACES, current: 'ventas' },

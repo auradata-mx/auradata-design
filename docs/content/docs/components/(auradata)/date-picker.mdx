@@ -1,0 +1,74 @@
+---
+title: Date picker
+description: "Un día desde un campo de formulario, con el calendario en español; y un día con su hora."
+---
+
+Un selector de fecha de AuraData sobre nuestro `Calendar` en español, que se ve como un campo de formulario. Elegir un día cierra el calendario y devuelve el foco al campo; el día se lee «21 nov 2026». `DateTimePicker` pone una lista de horas de 24 horas junto al calendario, en un solo valor.
+
+<ComponentPreview name="date-picker/demo" />
+
+## Instalación
+
+<ComponentInstall item="date-picker" />
+
+## Uso
+
+```tsx
+import { DatePicker } from '@/components/ui/date-picker';
+
+<DatePicker id="due" value={date} onValueChange={setDate} />;
+```
+
+El valor es un `Date`, o `undefined` sin día. Con el teclado: Enter abre en hoy, las flechas se mueven por día y semana, Enter elige y Escape cierra.
+
+## Ejemplos
+
+### Solo días hábiles
+
+`disabledDays` con matchers de react-day-picker: desde hoy, sin fines de semana.
+
+<ComponentPreview name="date-picker/weekdays-only" />
+
+### Día y hora
+
+`DateTimePicker`: un `Date` con los dos. Elegir el día conserva la hora y elegir la hora conserva el día; una hora elegida antes del día cae en hoy.
+
+<ComponentPreview name="date-picker/date-and-time" />
+
+### Inválido
+
+<ComponentPreview name="date-picker/invalid" />
+
+## Props
+
+### DatePicker
+
+<ComponentProps
+  file="date-picker"
+  type="Pick<React.ComponentProps<typeof DatePicker>, 'value' | 'defaultValue' | 'onValueChange' | 'placeholder' | 'disabledDays' | 'today' | 'locale' | 'defaultOpen' | 'disabled' | 'aria-invalid'>"
+/>
+
+Acepta además las props de `Button` (variante, tamaño, `className`…).
+
+### DateTimePicker
+
+<ComponentProps
+  file="date-picker"
+  type="Pick<React.ComponentProps<typeof DateTimePicker>, 'value' | 'defaultValue' | 'onValueChange' | 'placeholder' | 'disabledDays' | 'today' | 'locale' | 'defaultOpen' | 'step' | 'timeLabel' | 'disabled' | 'aria-invalid'>"
+/>
+
+Acepta además las props de `Button` (variante, tamaño, `className`…).
+
+## Cuándo usarlo
+
+- **Un día en un formulario**: una fecha de entrega, de envío, de corte.
+- **En formularios**, con `react-hook-form`: no es un input nativo, así que va con `Controller` (`value` y `onValueChange`).
+- **Fija `today` en pruebas e historias**, para que el calendario no cambie con el reloj.
+
+## Cuándo no
+
+- **Solo una hora**: `TimePicker`.
+- **El periodo de un informe**: `Filter` con `type="date"`.
+- **Un calendario siempre visible**: `Calendar`.
+
+<StorybookLink stories="DatePicker" />

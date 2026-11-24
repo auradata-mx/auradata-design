@@ -1,0 +1,104 @@
+---
+title: Empty
+description: "Explica qué falta y cuál es el primer paso."
+---
+
+AuraData da más peso al título que a la descripción. El borde discontinuo opcional se distingue también en modo oscuro. `EmptyError` es la variante para cuando algo falló.
+
+<ComponentPreview name="empty/demo" />
+
+## Instalación
+
+<ComponentInstall item="empty" />
+
+## Uso
+
+```tsx
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty';
+
+<Empty>
+  <EmptyHeader>
+    <EmptyTitle>Aún no hay informes</EmptyTitle>
+    <EmptyDescription>Crea el primero desde un dataset.</EmptyDescription>
+  </EmptyHeader>
+</Empty>;
+```
+
+## Ejemplos
+
+### Sin resultados
+
+La lista existe, pero la búsqueda no encontró coincidencias. Sugiere ajustar la búsqueda o quitar los filtros.
+
+<ComponentPreview name="empty/no-results" />
+
+### Error
+
+`EmptyError` va donde debía aparecer el contenido si un error lo bloqueó. Se anuncia como alerta y, con `onRetry`, muestra «Reintentar». Explica qué pasó sin culpar a la persona y da un siguiente paso.
+
+```tsx
+import { EmptyError } from '@/components/ui/empty';
+
+<EmptyError
+  title="No se pudo cargar el informe"
+  description="Revisa la conexión en Ajustes e inténtalo de nuevo."
+  onRetry={retry}
+/>;
+```
+
+<ComponentPreview name="empty/error" />
+
+### Error con detalle técnico
+
+Empieza por el mensaje útil para la persona; deja el código para soporte dentro de «Detalle técnico» con `detail`.
+
+<ComponentPreview name="empty/error-detail" />
+
+## Props
+
+### Empty
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof Empty>, 'className' | 'children'>" />
+
+### EmptyHeader
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyHeader>, 'children'>" />
+
+### EmptyMedia
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyMedia>, 'variant' | 'children'>" />
+
+### EmptyTitle
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyTitle>, 'children'>" />
+
+### EmptyDescription
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyDescription>, 'children'>" />
+
+### EmptyContent
+
+<ComponentProps file="empty" type="Pick<React.ComponentProps<typeof EmptyContent>, 'children'>" />
+
+### EmptyError
+
+<ComponentProps file="empty" type="Pick<EmptyErrorProps, 'title' | 'description' | 'onRetry' | 'retryLabel' | 'detail' | 'children'>" />
+
+## Cuándo usarlo
+
+- Cuando todavía no hay informes, datos o resultados. Escribe qué falta y ofrece el primer paso cuando exista.
+- `EmptyError`: donde debía aparecer el contenido si un error lo bloqueó.
+
+## Cuándo no
+
+- Si la consulta falló, usa `EmptyError`, no un `Empty`. Mientras carga contenido, usa un `Skeleton` con la forma del contenido.
+- Para un aviso al lado de contenido que sigue disponible, usa `Alert`, no `EmptyError`.
+
+<StorybookLink stories="Empty" story="Default" />

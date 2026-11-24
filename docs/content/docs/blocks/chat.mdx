@@ -16,7 +16,18 @@ El panel reúne el historial, las preguntas sugeridas y el campo para escribir. 
 
 ## Componentes del registro
 
-`Message`, `MessageScroller` y `Bubble` componen el historial. `Textarea` y las piezas de `Attachment` componen el envío. `KpiCard`, `Chart`, `InsightCard`, `Trace`, `CodeBlock` y `MessageFeedback` muestran la evidencia y recogen valoraciones.
+`Message`, `MessageScroller` y `Bubble` componen el historial. `Textarea` y las piezas de `Attachment` componen el envío. `Chart`, `Trace`, `CodeBlock` y `MessageFeedback` muestran la evidencia y recogen valoraciones.
+
+## Piezas
+
+El bloque trae dos piezas propias para la evidencia de las respuestas. Llegan con él, junto a `chat.tsx`, y se importan con una ruta relativa (`./insight-card`).
+
+| Pieza | Qué hace | Props clave |
+| --- | --- | --- |
+| `KpiCard` | Una cifra de la respuesta con su cambio y su tendencia; la misma tarjeta del bloque `Dashboard` | `label`, `value`, `change`, `comparison`, `trend` |
+| `InsightCard` | Un «Hallazgo»: encabeza con una frase, no con el nombre de una métrica. La cifra y su cambio la respaldan y «Ver detalle» lleva a la evidencia | `title`, `value`, `change`, `comparison`, `description`, `action` |
+
+<ComponentPreview name="blocks/parts/insight-card" />
 
 ## Cómo adaptarlo
 

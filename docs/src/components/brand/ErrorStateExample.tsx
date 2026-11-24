@@ -1,9 +1,9 @@
 'use client';
 
-import { ErrorState } from '@/components/ui/error-state'
+import { EmptyError } from '@/components/ui/empty'
 
 export function ErrorStateExample() {
   return (
-    <ErrorState title="No pudimos cargar la gráfica" onRetry={() => {}} detail="timeout after 30s (query 8f2c)" />
+    <EmptyError title="No pudimos cargar la gráfica" onRetry={() => {}} detail="timeout after 30s (query 8f2c)" />
   );
 }

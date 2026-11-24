@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ChartColumnIcon, LayoutDashboardIcon } from 'lucide-react';
 import { AppShell, type NavGroup } from '@/components/blocks/app-shell';
 import { Button } from '@/components/ui/button';
-import { KpiCard } from '@/components/ui/kpi-card';
+import { KpiCard } from '@/components/blocks/kpi-card';
 import { PageHeader } from '@/components/ui/page-header';
 
 const nav: NavGroup[] = [

@@ -1,0 +1,52 @@
+---
+title: Page header
+description: "El encabezado de cada página: el título, una línea sobre ella y sus acciones principales."
+---
+
+Un componente de AuraData: el `h1` de la página, una descripción opcional y las acciones a la derecha. Un título largo salta de línea y nunca se corta (una palabra muy larga se parte en lugar de desbordar); en el teléfono las acciones bajan debajo del título.
+
+<ComponentPreview name="page-header/demo" />
+
+## Instalación
+
+<ComponentInstall item="page-header" />
+
+## Uso
+
+```tsx
+import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/ui/page-header';
+
+<PageHeader
+  title="Ventas 2026"
+  description="Actualizado hace 5 minutos."
+  actions={<Button>Compartir</Button>}
+/>;
+```
+
+Lo que pongas como `children` va debajo de la descripción, del lado del título.
+
+## Ejemplos
+
+### Título largo
+
+El título ocupa el espacio que le dejan las acciones y salta de línea; en una pantalla angosta las acciones bajan.
+
+<ComponentPreview name="page-header/long-title" />
+
+## Props
+
+<ComponentProps file="page-header" type="Pick<PageHeaderProps, 'title' | 'description' | 'actions'>" />
+
+## Cuándo usarlo
+
+- **Arriba de cada página de la app**, un solo título por página: es el primer bloque de un informe.
+- **A la derecha, el periodo y las acciones**: un `Filter` de periodo y «Compartir», o «Importar» y «Nuevo informe».
+- **La acción principal al final**, con `variant="default"`; las demás, `outline`.
+
+## Cuándo no
+
+- **Una sección de una página de marketing**: el [encabezado de sección](/docs/components/gradient-heading/#encabezado-de-sección), con su eyebrow y su degradado.
+- **El título de una tarjeta o de un bloque** dentro de la página: el encabezado de la `Card`.
+
+<StorybookLink stories="PageHeader" />

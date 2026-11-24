@@ -1,57 +1,32 @@
 ---
 title: Componentes
-description: Cada componente del registro con un ejemplo en vivo, su comando de instalación y sus props.
+description: Cada componente del registro con un ejemplo en vivo, su comando de instalación y sus props, ordenados por capa.
 ---
 
 Todos los componentes del registro se instalan directamente en tu código con el CLI de shadcn (`npx shadcn add https://design.auradata.mx/r/<componente>.json`), sobre Base UI y Tailwind 4 con los tokens de AuraData aplicados.
 
-Si buscas pantallas completas listas para ensamblar, revisa la [galería de bloques](/docs/blocks/). Si quieres inspeccionar todos los estados visuales y pruebas de accesibilidad de un componente, abre el enlace a Storybook al final de cada página.
+Están ordenados por capa: qué tan lejos están de shadcn. Las combinaciones de componentes no viven aquí: son piezas de los [bloques](/docs/blocks/). Para ver todos los estados visuales y las pruebas de accesibilidad de un componente, abre el enlace a Storybook al final de su página.
 
-## Acciones y controles
+## Base
 
-- [Button](/docs/components/button/) · [Button Group](/docs/components/button-group/) · [Copy Button](/docs/components/copy-button/) · [Shimmer Button](/docs/components/shimmer-button/)
-- [Toggle](/docs/components/toggle/) · [Toggle Group](/docs/components/toggle-group/) · [Theme Toggle](/docs/components/theme-toggle/)
+Los componentes de shadcn sobre Base UI con los cambios de AuraData: estados, contraste, textos en español y diseño en el teléfono. Los que shadcn ya resuelve tal cual (`card`, `popover`, `separator`, `skeleton`, `table`…) se instalan directo de shadcn y el tema les da la marca.
 
-## Formularios y entradas
+[Accordion](/docs/components/accordion/) · [Alert](/docs/components/alert/) · [Alert dialog](/docs/components/alert-dialog/) · [Attachment](/docs/components/attachment/) · [Avatar](/docs/components/avatar/) · [Badge](/docs/components/badge/) · [Breadcrumb](/docs/components/breadcrumb/) · [Bubble](/docs/components/bubble/) · [Button](/docs/components/button/) · [Button group](/docs/components/button-group/) · [Calendar](/docs/components/calendar/) · [Carousel](/docs/components/carousel/) · [Checkbox](/docs/components/checkbox/) · [Code block](/docs/components/code-block/) · [Combobox](/docs/components/combobox/) · [Command](/docs/components/command/) · [Context menu](/docs/components/context-menu/) · [Dialog](/docs/components/dialog/) · [Drawer](/docs/components/drawer/) · [Dropdown menu](/docs/components/dropdown-menu/) · [Empty](/docs/components/empty/) · [Field](/docs/components/field/) · [Hover card](/docs/components/hover-card/) · [Input](/docs/components/input/) · [Input group](/docs/components/input-group/) · [Input OTP](/docs/components/input-otp/) · [Item](/docs/components/item/) · [Kbd](/docs/components/kbd/) · [Label](/docs/components/label/) · [Message scroller](/docs/components/message-scroller/) · [Native select](/docs/components/native-select/) · [Navigation menu](/docs/components/navigation-menu/) · [Pagination](/docs/components/pagination/) · [Progress](/docs/components/progress/) · [Radio group](/docs/components/radio-group/) · [Resizable](/docs/components/resizable/) · [Scroll area](/docs/components/scroll-area/) · [Select](/docs/components/select/) · [Sidebar](/docs/components/sidebar/) · [Slider](/docs/components/slider/) · [Sonner](/docs/components/sonner/) · [Switch](/docs/components/switch/) · [Tabs](/docs/components/tabs/) · [Textarea](/docs/components/textarea/) · [Toggle](/docs/components/toggle/) · [Toggle group](/docs/components/toggle-group/) · [Tooltip](/docs/components/tooltip/) · [Trace](/docs/components/trace/)
 
-- [Field](/docs/components/field/) · [Label](/docs/components/label/) · [Input](/docs/components/input/) · [Input Group](/docs/components/input-group/) · [Textarea](/docs/components/textarea/)
-- [Number Input](/docs/components/number-input/) · [Password Input](/docs/components/password-input/) · [Input OTP](/docs/components/input-otp/)
-- [Select](/docs/components/select/) · [Native Select](/docs/components/native-select/) · [Combobox](/docs/components/combobox/) · [Checkbox](/docs/components/checkbox/) · [Radio Group](/docs/components/radio-group/) · [Switch](/docs/components/switch/) · [Slider](/docs/components/slider/)
-- [Calendar](/docs/components/calendar/) · [Date Picker](/docs/components/date-picker/) · [Time Picker](/docs/components/time-picker/) · [Date Range Filter](/docs/components/date-range-filter/) · [Range Filter](/docs/components/range-filter/) · [File Dropzone](/docs/components/file-dropzone/)
+## AuraData
 
-## Datos, tablas y filtros
+Lo que no existe en shadcn y AuraData construyó: la tabla de datos y su sistema de filtros, los controles de formulario avanzados y los patrones de las apps.
 
-- [Data Table](/docs/components/data-table/) · [Data Table Selection Bar](/docs/components/data-table-selection-bar/) · [Data Table Views](/docs/components/data-table-views/)
-- [Faceted Filter](/docs/components/faceted-filter/) · [Filter Builder](/docs/components/filter-builder/) · [Filter Chips](/docs/components/filter-chips/)
-- [Code Block](/docs/components/code-block/) · [Kbd](/docs/components/kbd/)
+[Announcement banner](/docs/components/announcement-banner/) · [Copy button](/docs/components/copy-button/) · [Data table](/docs/components/data-table/) · [Date picker](/docs/components/date-picker/) · [Delta](/docs/components/delta/) · [File dropzone](/docs/components/file-dropzone/) · [Filter](/docs/components/filter/) · [Filter builder](/docs/components/filter-builder/) · [Filter chips](/docs/components/filter-chips/) · [Message feedback](/docs/components/message-feedback/) · [Number input](/docs/components/number-input/) · [Page header](/docs/components/page-header/) · [Password input](/docs/components/password-input/) · [Stepper](/docs/components/stepper/) · [Theme toggle](/docs/components/theme-toggle/) · [Time picker](/docs/components/time-picker/) · [Tour](/docs/components/tour/)
 
-## Gráficas y métricas
+## Gráficas
 
-- [Ver la sección Gráficas](/docs/charts/): series, distribuciones y visualizaciones compactas.
-- [KPI Card](/docs/components/kpi-card/) · [Insight Card](/docs/components/insight-card/) · [Delta](/docs/components/delta/) · [Number Ticker](/docs/components/number-ticker/)
+Las gráficas de la marca. Para elegir una según lo que quieres mostrar, mira la [sección Gráficas](/docs/charts/).
 
-## Navegación y estructura
+[Cartesian chart](/docs/components/cartesian-chart/) · [Chart](/docs/components/chart/) · [Donut chart](/docs/components/donut-chart/) · [Funnel chart](/docs/components/funnel-chart/) · [Gauge](/docs/components/gauge/) · [Heatmap](/docs/components/heatmap/) · [Sparkline](/docs/components/sparkline/)
 
-- [Sidebar](/docs/components/sidebar/) · [Navigation Menu](/docs/components/navigation-menu/) · [Breadcrumb](/docs/components/breadcrumb/) · [Tabs](/docs/components/tabs/) · [Pagination](/docs/components/pagination/) · [Stepper](/docs/components/stepper/)
-- [Page Header](/docs/components/page-header/) · [Section Header](/docs/components/section-header/) · [Item](/docs/components/item/) · [Workspace Switcher](/docs/components/workspace-switcher/) · [User Menu](/docs/components/user-menu/)
-- [Accordion](/docs/components/accordion/) · [Resizable](/docs/components/resizable/) · [Scroll Area](/docs/components/scroll-area/)
+## Efectos
 
-## Superposiciones y menús
+Movimiento y decoración para las páginas de marketing y las superficies con scroll; todos respetan el movimiento reducido.
 
-- [Dialog](/docs/components/dialog/) · [Alert Dialog](/docs/components/alert-dialog/) · [Drawer](/docs/components/drawer/) · [Shortcuts Dialog](/docs/components/shortcuts-dialog/)
-- [Command](/docs/components/command/) · [Search Command](/docs/components/search-command/) · [Dropdown Menu](/docs/components/dropdown-menu/) · [Context Menu](/docs/components/context-menu/)
-- [Hover Card](/docs/components/hover-card/) · [Tooltip](/docs/components/tooltip/) · [Tour](/docs/components/tour/)
-
-## Retroalimentación y estado
-
-- [Alert](/docs/components/alert/) · [Announcement Banner](/docs/components/announcement-banner/) · [Sonner](/docs/components/sonner/) · [Notification Center](/docs/components/notification-center/)
-- [Progress](/docs/components/progress/) · [Empty](/docs/components/empty/) · [Error State](/docs/components/error-state/)
-
-## Conversación e IA
-
-- [Bubble](/docs/components/bubble/) · [Attachment](/docs/components/attachment/) · [Message Feedback](/docs/components/message-feedback/) · [Message Scroller](/docs/components/message-scroller/) · [Trace](/docs/components/trace/)
-
-## Marca y presentación
-
-- [Eyebrow](/docs/components/eyebrow/) · [Gradient Heading](/docs/components/gradient-heading/) · [Aura Background](/docs/components/aura-background/)
-- [Avatar](/docs/components/avatar/) · [Badge](/docs/components/badge/) · [Carousel](/docs/components/carousel/) · [Marquee](/docs/components/marquee/) · [Progressive Blur](/docs/components/progressive-blur/)
+[Aura background](/docs/components/aura-background/) · [Eyebrow](/docs/components/eyebrow/) · [Gradient heading](/docs/components/gradient-heading/) · [Marquee](/docs/components/marquee/) · [Number ticker](/docs/components/number-ticker/) · [Progressive blur](/docs/components/progressive-blur/)
