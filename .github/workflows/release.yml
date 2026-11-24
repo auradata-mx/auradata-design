@@ -26,7 +26,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm test
-      - uses: changesets/action@v1
+      - uses: changesets/action@v2
         with:
           title: "chore: version packages"
           commit: "chore: version packages"
