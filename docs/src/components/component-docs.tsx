@@ -49,7 +49,8 @@ export async function ComponentPreview({
           <Example />
         </div>
       </Tab>
-      <Tab value="Código" className="p-0">
+      {/* Fumadocs offsets an only-child figure by the tab's default padding. */}
+      <Tab value="Código">
         <ServerCodeBlock code={code} lang="tsx" codeblock={{ className: 'rounded-none border-0' }} />
       </Tab>
     </Tabs>

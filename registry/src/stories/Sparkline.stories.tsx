@@ -9,7 +9,8 @@ const UP = [3.2, 3.4, 3.3, 3.6, 3.8, 3.7, 3.9, 4.0, 4.16]
 const DOWN = [52, 50, 51, 47, 46, 44, 45, 42, 41]
 
 const meta = {
-  title: 'AuraData/Sparkline',
+  title: 'Gráficas/Sparkline',
+  id: 'auradata-sparkline',
   component: Sparkline,
   args: { values: UP },
 } satisfies Meta<typeof Sparkline>

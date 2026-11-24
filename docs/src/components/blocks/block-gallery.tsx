@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { blocks, blockPath, type BlockName } from './block-catalog';
 
 function Line({ x, y, width }: { x: number; y: number; width: number }) {
-  return <rect x={x} y={y} width={width} height="4" rx="2" fill="var(--fd-muted-foreground)" opacity=".45" />;
+  return <rect x={x} y={y} width={width} height="4" rx="2" fill="var(--color-fd-muted-foreground)" opacity=".45" />;
 }
 
 function Panel({ x, y, w, h }: { x: number; y: number; w: number; h: number }) {
-  return <rect x={x} y={y} width={w} height={h} rx="5" fill="var(--fd-card)" stroke="var(--fd-border)" />;
+  return <rect x={x} y={y} width={w} height={h} rx="5" fill="var(--color-fd-card)" stroke="var(--color-fd-border)" />;
 }
 
 function Thumbnail({ name }: { name: BlockName }) {
@@ -15,7 +15,7 @@ function Thumbnail({ name }: { name: BlockName }) {
       <Panel x={20} y={12} w={216} h={102} />
       {name === 'app-shell' ? (
         <>
-          <path d="M78 12v102m0-79h158" stroke="var(--fd-border)" />
+          <path d="M78 12v102m0-79h158" stroke="var(--color-fd-border)" />
           <Line x={29} y={23} width={35} />
           {[45, 57, 69, 100].map((y) => <Line key={y} x={29} y={y} width={32} />)}
           <Line x={88} y={23} width={54} />
@@ -27,8 +27,8 @@ function Thumbnail({ name }: { name: BlockName }) {
           <Line x={30} y={23} width={54} />
           {[30, 80, 130, 180].map((x) => <Panel key={x} x={x} y={34} w={46} h={20} />)}
           <Panel x={30} y={61} w={124} h={43} />
-          <path d="m40 93 21-9 22 2 21-13 19 5 21-10" fill="none" stroke="var(--fd-primary)" strokeWidth="2" />
-          <circle cx="190" cy="81" r="15" fill="none" stroke="var(--fd-primary)" strokeWidth="6" strokeDasharray="68 26" />
+          <path d="m40 93 21-9 22 2 21-13 19 5 21-10" fill="none" stroke="var(--color-fd-primary)" strokeWidth="2" />
+          <circle cx="190" cy="81" r="15" fill="none" stroke="var(--color-fd-primary)" strokeWidth="6" strokeDasharray="68 26" />
         </>
       ) : name === 'chat' ? (
         <>
@@ -38,14 +38,14 @@ function Thumbnail({ name }: { name: BlockName }) {
           <Line x={58} y={55} width={97} />
           <Line x={58} y={65} width={67} />
           <Panel x={50} y={87} w={156} h={17} />
-          <circle cx="195" cy="95.5" r="5" fill="var(--fd-primary)" />
+          <circle cx="195" cy="95.5" r="5" fill="var(--color-fd-primary)" />
         </>
       ) : name === 'not-found' ? (
         <>
-          <text x="128" y="54" textAnchor="middle" fontSize="20" fontWeight="600" fill="var(--fd-primary)">404</text>
+          <text x="128" y="54" textAnchor="middle" fontSize="20" fontWeight="600" fill="var(--color-fd-primary)">404</text>
           <Line x={84} y={65} width={88} />
           <Line x={96} y={74} width={64} />
-          <rect x="104" y="86" width="48" height="12" rx="4" fill="var(--fd-primary)" />
+          <rect x="104" y="86" width="48" height="12" rx="4" fill="var(--color-fd-primary)" />
         </>
       ) : (
         <>
@@ -55,14 +55,14 @@ function Thumbnail({ name }: { name: BlockName }) {
             <>
               <Line x={60} y={42} width={20} />
               <Line x={88} y={42} width={36} />
-              <path d="M60 49h136" stroke="var(--fd-border)" />
+              <path d="M60 49h136" stroke="var(--color-fd-border)" />
             </>
           )}
           {name === 'connection-form' && <Panel x={60} y={41} w={136} h={11} />}
           {[57, 73].map((y) => (
             <Panel key={y} x={name === 'login' ? 94 : 60} y={y} w={name === 'login' ? 68 : 136} h={11} />
           ))}
-          <rect x={name === 'login' ? 94 : 60} y="89" width={name === 'login' ? 68 : 48} height="9" rx="3" fill="var(--fd-primary)" />
+          <rect x={name === 'login' ? 94 : 60} y="89" width={name === 'login' ? 68 : 48} height="9" rx="3" fill="var(--color-fd-primary)" />
         </>
       )}
     </svg>

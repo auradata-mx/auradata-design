@@ -54,7 +54,7 @@ const preview: Preview = {
     // Inicio (the pointer to the docs site) first, then what apps install, then the stock shadcn components.
     options: {
       storySort: {
-        order: ['Inicio', 'AuraData', 'Blocks', 'Components'],
+        order: ['Inicio', 'AuraData', 'Gráficas', 'Blocks', 'Components'],
       },
     },
     controls: {

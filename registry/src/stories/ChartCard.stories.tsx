@@ -54,7 +54,8 @@ const PERIOD = (
 )
 
 const meta = {
-  title: 'AuraData/Chart card',
+  title: 'Gráficas/Chart card',
+  id: 'auradata-chart-card',
   component: ChartCard,
   args: {
     title: 'Ventas por región',

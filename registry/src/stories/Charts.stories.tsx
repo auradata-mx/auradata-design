@@ -22,7 +22,8 @@ const pesos = (value: number) => formatCurrency(value * 1000)
 const pesosShort = (value: number) => formatCompact(value * 1000, { currency: 'MXN' })
 
 const meta = {
-  title: 'AuraData/Charts',
+  title: 'Gráficas/Charts',
+  id: 'auradata-charts',
   component: LineChart,
   args: {
     data: MONTHS,

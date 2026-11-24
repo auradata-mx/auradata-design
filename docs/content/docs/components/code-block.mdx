@@ -21,6 +21,8 @@ import { CodeBlock, CodeBlockContent } from '@/components/ui/code-block';
 </CodeBlock>;
 ```
 
+El color de sintaxis es opcional: `CodeBlockContent` acepta texto plano o líneas con tokens resaltados. Los ejemplos generan los tokens SQL con Shiki y usan la consulta original para copiar.
+
 ## Ejemplos
 
 ### Números de línea
@@ -59,4 +61,4 @@ Activa `lineNumbers` para señalar líneas concretas. Si el fragmento empieza a 
 
 - Para una tecla o un atajo, usa `Kbd`. Para editar una consulta, usa un campo o un editor, no un bloque de solo lectura.
 
-<StorybookLink stories="Blocks" story="ChatWithSql" />
+<StorybookLink stories="CodeBlock" story="HighlightedSql" />

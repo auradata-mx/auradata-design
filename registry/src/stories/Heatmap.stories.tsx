@@ -18,7 +18,8 @@ const QUERIES = [
 ]
 
 const meta = {
-  title: 'AuraData/Heatmap',
+  title: 'Gráficas/Heatmap',
+  id: 'auradata-heatmap',
   component: Heatmap,
   args: { rows: DAYS, columns: HOURS, values: QUERIES, caption: 'Consultas por día y hora' },
 } satisfies Meta<typeof Heatmap>

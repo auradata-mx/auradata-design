@@ -28,11 +28,11 @@ function storyNameFromExport(exportName) {
 /**
  * The id of a story: `Components/Button` + `IconSizes` -> `components-button--icon-sizes`.
  * The export name decides the id; a `name:` on the story only changes its label.
- * @param {string} title The `title` of the stories file's meta.
+ * @param {string} titleOrId The stories file's meta `id`, or its `title` if it has no explicit id.
  * @param {string} exportName The story's export.
  */
-export function storyIdFor(title, exportName) {
-  return `${sanitize(title)}--${sanitize(storyNameFromExport(exportName))}`;
+export function storyIdFor(titleOrId, exportName) {
+  return `${sanitize(titleOrId)}--${sanitize(storyNameFromExport(exportName))}`;
 }
 
 /**
@@ -47,11 +47,17 @@ export function storyUrlFor(base, storyId) {
 /**
  * The meta title and the story exports of a `*.stories.tsx` source.
  * @param {string} source
- * @returns {{ title: string, stories: string[] }}
+ * @returns {{ title: string, id?: string, stories: string[] }}
  */
 export function parseStoriesFile(source) {
-  const meta = /const meta\b[^=]*=\s*\{[\s\S]*?\btitle:\s*(['"])(.+?)\1/.exec(source);
-  if (!meta) throw new Error('The stories file has no meta title (`const meta = { title: ... }`).');
+  const title = /const meta\b[^=]*=\s*\{[\s\S]*?\btitle:\s*(['"])(.+?)\1/.exec(source);
+  if (!title) throw new Error('The stories file has no meta title (`const meta = { title: ... }`).');
+  const meta = /const meta\b[^=]*=\s*\{([\s\S]*?)^\}/m.exec(source)?.[1] ?? '';
+  const propertyIndent = /^([ \t]*)title:/m.exec(meta)?.[1];
+  const idProperty = propertyIndent === undefined
+    ? undefined
+    : meta.split('\n').find((line) => line.startsWith(`${propertyIndent}id:`));
+  const id = idProperty?.trim().match(/^id:\s*(['"])(.+?)\1/)?.[2];
   const stories = [...source.matchAll(/^export const (\w+)\b/gm)].map((match) => match[1]);
-  return { title: meta[2], stories };
+  return { title: title[2], ...(id ? { id } : {}), stories };
 }

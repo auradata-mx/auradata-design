@@ -1,29 +1,54 @@
-'use client';
-
+import { highlight } from 'fumadocs-core/highlight';
 import {
   CodeBlock,
   CodeBlockActions,
   CodeBlockContent,
-  CodeBlockCopyButton,
   CodeBlockHeader,
+  CodeBlockLine,
   CodeBlockTitle,
 } from '@/components/ui/code-block';
+import { CopyQueryButton } from './copy-query-button';
 
 const SQL = `SELECT region, SUM(ventas) AS total
 FROM pedidos
 GROUP BY region
 ORDER BY total DESC;`;
 
-export default function CodeBlockDemo() {
+export async function SalesQuery({ numbered = false }: { numbered?: boolean }) {
+  const code = await highlight(SQL, {
+    lang: 'sql',
+    defaultColor: false,
+    components: {
+      pre: ({ children }) => (
+        <CodeBlockContent
+          aria-label="SQL: ventas por región"
+          className="shiki"
+          lineNumbers={numbered}
+          startLine={numbered ? 12 : undefined}
+        >
+          {children}
+        </CodeBlockContent>
+      ),
+      code: ({ children }) => <>{children}</>,
+      span: ({ className, ...props }) => className === 'line'
+        ? <CodeBlockLine>{props.children}</CodeBlockLine>
+        : <span className={className} {...props} />,
+    },
+  });
+
   return (
-    <CodeBlock>
+    <CodeBlock size={numbered ? 'sm' : 'default'}>
       <CodeBlockHeader>
         <CodeBlockTitle>Consulta SQL</CodeBlockTitle>
         <CodeBlockActions>
-          <CodeBlockCopyButton value={SQL} />
+          <CopyQueryButton value={SQL} />
         </CodeBlockActions>
       </CodeBlockHeader>
-      <CodeBlockContent aria-label="SQL: ventas por región">{SQL}</CodeBlockContent>
+      {code}
     </CodeBlock>
   );
+}
+
+export default function CodeBlockDemo() {
+  return <SalesQuery />;
 }

@@ -44,3 +44,20 @@ const helper = 1
 test('a stories file without a meta title is an error, not a broken link', () => {
   assert.throws(() => parseStoriesFile('export const Primary = {}'), /no meta title/);
 });
+
+test('an explicit CSF component id takes priority over the sidebar title, but a nested args id does not', () => {
+  const source = `
+const meta = {
+  title: 'Gráficas/Chart card',
+  id: 'auradata-chart-card',
+  args: {
+    id: 'widget',
+  },
+}
+export default meta
+export const ViewData = {}
+`;
+  const story = parseStoriesFile(source);
+  assert.equal(storyIdFor(story.id ?? story.title, 'ViewData'), 'auradata-chart-card--view-data');
+  assert.equal(parseStoriesFile(source.replace("  id: 'auradata-chart-card',\n", '')).id, undefined);
+});

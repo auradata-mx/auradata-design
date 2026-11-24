@@ -11,7 +11,8 @@ const STAGES = [
 ]
 
 const meta = {
-  title: 'AuraData/Funnel chart',
+  title: 'Gráficas/Funnel chart',
+  id: 'auradata-funnel-chart',
   component: FunnelChart,
   args: { data: STAGES, index: 'etapa', value: 'personas', className: 'w-full max-w-xl' },
 } satisfies Meta<typeof FunnelChart>

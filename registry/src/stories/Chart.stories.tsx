@@ -64,7 +64,8 @@ function LegendLines() {
 }
 
 const meta = {
-  title: 'AuraData/Chart',
+  title: 'Gráficas/Chart',
+  id: 'auradata-chart',
   component: ChartContainer,
   args: { config, children: <></> },
 } satisfies Meta<typeof ChartContainer>

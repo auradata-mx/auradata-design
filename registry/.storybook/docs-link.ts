@@ -9,8 +9,8 @@ const ITEMS = new Set(registry.items.filter((item) => item.type === 'registry:ui
 /** Story titles whose last segment does not read as the item name. */
 const ALIASES: Record<string, string> = {
   'AuraData/Charts': 'chart',
+  'Gráficas/Charts': 'chart',
   'AuraData/Empty state': 'empty',
-  'AuraData/Empty illustrations': 'empty-illustration',
 }
 
 /** Storybook's `sanitize`: `KPI card` -> `kpi-card`. */
@@ -25,6 +25,7 @@ function sanitize(value: string) {
 /** Story titles whose page is a section of the brand guide, not a component page. */
 const BRAND_PAGES: Record<string, string> = {
   // "Depth is the theme, not a component": the elevation guide lives in Espaciado.
+  'AuraData/Logo': '/docs/brand/logotipo/',
   'AuraData/Depth': '/docs/brand/espaciado/#sombras-y-elevación',
 }
 

@@ -47,11 +47,11 @@ export async function getStoryUrl(stories: string, story: string): Promise<strin
     throw new Error(`registry/src/stories has no file named «${fileName}» (case-sensitive check).`);
   }
   const source = await readFile(path.join(storiesDir, fileName), 'utf8');
-  const { title, stories: exports } = parseStoriesFile(source);
+  const { title, id, stories: exports } = parseStoriesFile(source);
   if (!exports.includes(story)) {
     throw new Error(`${fileName} has no story «${story}». Its stories: ${exports.join(', ')}.`);
   }
-  return storybookStoryUrl(storyIdFor(title, story));
+  return storybookStoryUrl(storyIdFor(id ?? title, story));
 }
 
 /** One TypeScript generator for every props table, cached between builds. */

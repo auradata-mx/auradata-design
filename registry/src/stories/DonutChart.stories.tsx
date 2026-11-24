@@ -14,7 +14,8 @@ const CHANNELS = [
 const pesos = (value: number) => formatCurrency(value * 1000)
 
 const meta = {
-  title: 'AuraData/Donut chart',
+  title: 'Gráficas/Donut chart',
+  id: 'auradata-donut-chart',
   component: DonutChart,
   args: {
     data: CHANNELS,

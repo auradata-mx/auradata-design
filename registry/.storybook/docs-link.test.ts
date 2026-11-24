@@ -9,8 +9,9 @@ describe("docsUrlForTitle", () => {
 
   it("aliases the stories whose title does not read as the item name", () => {
     expect(docsUrlForTitle("AuraData/Charts")).toBe(`${DOCS_ORIGIN}/docs/components/chart/`)
+    expect(docsUrlForTitle("Gráficas/Charts")).toBe(`${DOCS_ORIGIN}/docs/components/chart/`)
     expect(docsUrlForTitle("AuraData/Empty state")).toBe(`${DOCS_ORIGIN}/docs/components/empty/`)
-    expect(docsUrlForTitle("AuraData/Empty illustrations")).toBe(`${DOCS_ORIGIN}/docs/components/empty-illustration/`)
+    expect(docsUrlForTitle("AuraData/Logo")).toBe(`${DOCS_ORIGIN}/docs/brand/logotipo/`)
   })
 
   it("links the Depth showcase to the elevation guide of the brand docs", () => {

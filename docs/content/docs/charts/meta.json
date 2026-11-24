@@ -1,0 +1,13 @@
+{
+  "title": "Gráficas",
+  "pages": [
+    "../components/chart",
+    "../components/chart-card",
+    "../components/cartesian-chart",
+    "../components/donut-chart",
+    "../components/funnel-chart",
+    "../components/gauge",
+    "../components/heatmap",
+    "../components/sparkline"
+  ]
+}

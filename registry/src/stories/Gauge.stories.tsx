@@ -5,7 +5,8 @@ import { Gauge } from '@/components/ui/gauge'
 import { formatNumber } from '@/lib/format'
 
 const meta = {
-  title: 'AuraData/Gauge',
+  title: 'Gráficas/Gauge',
+  id: 'auradata-gauge',
   component: Gauge,
   args: { value: 0.72, label: 'Meta del trimestre' },
 } satisfies Meta<typeof Gauge>
