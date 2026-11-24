@@ -1,7 +1,7 @@
 /**
  * Writes the registry.json at the root of the repository from the source, so the registry never
  * drifts from it. The shadcn CLI reads it straight from GitHub (`npx shadcn add
- * cristianruben-dev/auradata-design/<item>`), so every path is relative to the repository root:
+ * auradata-mx/auradata-design/<item>`), so every path is relative to the repository root:
  *
  *   - one registry:theme item, `auradata-theme`, with the cssVars and the css (the brand focus ring)
  *     that @auradata/tokens builds;
@@ -25,7 +25,7 @@ import { pathToFileURL } from 'node:url';
 const root = join(import.meta.dirname, '..');
 const repoRoot = join(root, '..');
 /** The GitHub address of this registry: owner/repo. */
-export const GITHUB = 'cristianruben-dev/auradata-design';
+export const GITHUB = 'auradata-mx/auradata-design';
 const uiDir = join(root, 'src/components/ui');
 const hooksDir = join(root, 'src/hooks');
 const libDir = join(root, 'src/lib');

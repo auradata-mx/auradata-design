@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-// The installable agent skill (`npx skills add cristianruben-dev/auradata-design`) must not drift from the registry.
+// The installable agent skill (`npx skills add auradata-mx/auradata-design`) must not drift from the registry.
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const skillDir = join(root, 'skills/auradata');
 const componentsDir = join(root, 'docs/content/docs/components');

@@ -2037,7 +2037,6 @@
         "recharts"
       ],
       "registryDependencies": [
-        "card",
         "auradata-mx/auradata-design/attachment",
         "auradata-mx/auradata-design/bubble",
         "auradata-mx/auradata-design/button",
@@ -2053,6 +2052,7 @@
         "auradata-mx/auradata-design/sparkline",
         "auradata-mx/auradata-design/textarea",
         "auradata-mx/auradata-design/trace",
+        "card",
         "message",
         "skeleton"
       ],
@@ -2081,7 +2081,6 @@
         "react-day-picker"
       ],
       "registryDependencies": [
-        "card",
         "auradata-mx/auradata-design/button",
         "auradata-mx/auradata-design/cartesian-chart",
         "auradata-mx/auradata-design/chart-export",
@@ -2097,6 +2096,7 @@
         "auradata-mx/auradata-design/page-header",
         "auradata-mx/auradata-design/progressive-blur",
         "auradata-mx/auradata-design/sparkline",
+        "card",
         "skeleton",
         "table"
       ],
@@ -2123,12 +2123,12 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "card",
         "auradata-mx/auradata-design/alert",
         "auradata-mx/auradata-design/button",
         "auradata-mx/auradata-design/field",
         "auradata-mx/auradata-design/input",
-        "auradata-mx/auradata-design/logo"
+        "auradata-mx/auradata-design/logo",
+        "card"
       ],
       "files": [
         {

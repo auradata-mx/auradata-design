@@ -19,7 +19,7 @@ export function storybookStoryUrl(storyId: string): string {
 }
 
 export const gitConfig = {
-  user: 'cristianruben-dev',
+  user: 'auradata-mx',
   repo: 'auradata-design',
   branch: 'main',
 };

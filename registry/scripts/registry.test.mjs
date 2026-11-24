@@ -33,11 +33,11 @@ test('lists files from the repository root, as a GitHub registry needs', () => {
 })
 
 test('points at shadcn for stock dependencies and at this GitHub repository for ours', () => {
-  expect(item('login').registryDependencies).toContain('cristianruben-dev/auradata-design/button')
+  expect(item('login').registryDependencies).toContain('auradata-mx/auradata-design/button')
   expect(item('dashboard').registryDependencies).toEqual(
-    expect.arrayContaining(['card', 'cristianruben-dev/auradata-design/delta', 'cristianruben-dev/auradata-design/sparkline', 'skeleton']),
+    expect.arrayContaining(['card', 'auradata-mx/auradata-design/delta', 'auradata-mx/auradata-design/sparkline', 'skeleton']),
   )
-  expect(item('chart-palette').registryDependencies).toEqual(['cristianruben-dev/auradata-design/chart'])
+  expect(item('chart-palette').registryDependencies).toEqual(['auradata-mx/auradata-design/chart'])
 })
 
 test('installs the Continua SVGs with the logo', () => {
@@ -52,20 +52,20 @@ test('publishes the blocks with their components', () => {
   }
   expect(item('login').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/logo',
+      'auradata-mx/auradata-design/logo',
       'card',
-      'cristianruben-dev/auradata-design/field',
-      'cristianruben-dev/auradata-design/input',
+      'auradata-mx/auradata-design/field',
+      'auradata-mx/auradata-design/input',
     ]),
   )
   expect(item('app-shell').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/logo',
-      'cristianruben-dev/auradata-design/sidebar',
+      'auradata-mx/auradata-design/logo',
+      'auradata-mx/auradata-design/sidebar',
     ]),
   )
   // The avatar comes with the user menu, a part of the shell (T65).
-  expect(item('app-shell').registryDependencies).toContain('cristianruben-dev/auradata-design/avatar')
+  expect(item('app-shell').registryDependencies).toContain('auradata-mx/auradata-design/avatar')
 })
 
 test('omits retired catalog entries while keeping the internal logo and input group', () => {
@@ -82,15 +82,15 @@ test('omits retired catalog entries while keeping the internal logo and input gr
 })
 
 test('installs the theme toggle with the app shell, whose workspace switcher ships inside it', () => {
-  expect(item('app-shell').registryDependencies).toContain('cristianruben-dev/auradata-design/theme-toggle')
+  expect(item('app-shell').registryDependencies).toContain('auradata-mx/auradata-design/theme-toggle')
   expect(filesOf('app-shell')).toContain('registry/src/components/blocks/workspace-switcher.tsx')
-  expect(item('app-shell').registryDependencies).toContain('cristianruben-dev/auradata-design/initials')
+  expect(item('app-shell').registryDependencies).toContain('auradata-mx/auradata-design/initials')
 })
 
 // No marketing blocks (hero, pricing, FAQ…) and no spotlight card, gradient border or text reveal: the effects
 // that stay are components of their own.
 test('publishes the effects without the marketing blocks', () => {
-  const ours = (name) => `cristianruben-dev/auradata-design/${name}`
+  const ours = (name) => `auradata-mx/auradata-design/${name}`
   const names = registry.items.map((entry) => entry.name)
   const removed = ['hero', 'logo-cloud', 'benefits-grid', 'feature-tabs', 'testimonials', 'pricing', 'plan-comparison',
     'faq', 'changelog', 'cta-band', 'site-footer', 'spotlight-card', 'gradient-border', 'text-reveal']
@@ -109,10 +109,10 @@ test('publishes the chat block with the KPI card inside it and the chart palette
   expect(filesOf('chat')).toContain('registry/src/components/blocks/kpi-card.tsx')
   expect(item('chat').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/chart-palette',
-      'cristianruben-dev/auradata-design/logo',
-      'cristianruben-dev/auradata-design/chart',
-      'cristianruben-dev/auradata-design/textarea',
+      'auradata-mx/auradata-design/chart-palette',
+      'auradata-mx/auradata-design/logo',
+      'auradata-mx/auradata-design/chart',
+      'auradata-mx/auradata-design/textarea',
     ]),
   )
   expect(item('chat').dependencies).toContain('recharts')
@@ -123,10 +123,10 @@ test("builds the chat block on shadcn's chat primitives", () => {
   expect(item('chat').registryDependencies).toEqual(
     expect.arrayContaining([
       'message',
-      'cristianruben-dev/auradata-design/bubble',
-      'cristianruben-dev/auradata-design/message-scroller',
-      'cristianruben-dev/auradata-design/code-block',
-      'cristianruben-dev/auradata-design/trace',
+      'auradata-mx/auradata-design/bubble',
+      'auradata-mx/auradata-design/message-scroller',
+      'auradata-mx/auradata-design/code-block',
+      'auradata-mx/auradata-design/trace',
     ]),
   )
 })
@@ -162,42 +162,42 @@ test('gives the theme the data palettes and status scales, without density or pr
 // One panel component: the responsive drawer comes up from the bottom on a phone and from a side on a wide screen.
 test('has no sheet: the sidebar and the notification center open a drawer on a phone', () => {
   expect(registry.items.map((entry) => entry.name)).not.toContain('sheet')
-  expect(item('sidebar').registryDependencies).toContain('cristianruben-dev/auradata-design/drawer')
+  expect(item('sidebar').registryDependencies).toContain('auradata-mx/auradata-design/drawer')
   expect(item('drawer').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/button', 'cristianruben-dev/auradata-design/use-mobile']),
+    expect.arrayContaining(['auradata-mx/auradata-design/button', 'auradata-mx/auradata-design/use-mobile']),
   )
 })
 
 // T60: notifications.
 test('publishes the announcement banner, and gives the app shell the bell inside it', () => {
-  expect(item('announcement-banner').registryDependencies).toEqual(['cristianruben-dev/auradata-design/button'])
+  expect(item('announcement-banner').registryDependencies).toEqual(['auradata-mx/auradata-design/button'])
   expect(filesOf('app-shell')).toContain('registry/src/components/blocks/notification-center.tsx')
   expect(item('app-shell').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/button',
-      'cristianruben-dev/auradata-design/empty',
+      'auradata-mx/auradata-design/button',
+      'auradata-mx/auradata-design/empty',
       'popover',
-      'cristianruben-dev/auradata-design/drawer',
+      'auradata-mx/auradata-design/drawer',
       'skeleton',
-      'cristianruben-dev/auradata-design/use-mobile',
+      'auradata-mx/auradata-design/use-mobile',
     ]),
   )
 })
 
 test('installs the progress bar and the formatter with sonner, for progress toasts', () => {
   expect(item('sonner').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/progress', 'cristianruben-dev/auradata-design/format']),
+    expect.arrayContaining(['auradata-mx/auradata-design/progress', 'auradata-mx/auradata-design/format']),
   )
 })
 
 test('installs the data table with its own parts (T61)', () => {
   expect(item('data-table').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/checkbox',
-      'cristianruben-dev/auradata-design/filter',
-      'cristianruben-dev/auradata-design/filter-chips',
-      'cristianruben-dev/auradata-design/filter-builder',
-      'cristianruben-dev/auradata-design/filter-conditions',
+      'auradata-mx/auradata-design/checkbox',
+      'auradata-mx/auradata-design/filter',
+      'auradata-mx/auradata-design/filter-chips',
+      'auradata-mx/auradata-design/filter-builder',
+      'auradata-mx/auradata-design/filter-conditions',
     ])
   )
   // The selection bar and the views menu are parts of the table: files of its item, not items of their own.
@@ -206,26 +206,26 @@ test('installs the data table with its own parts (T61)', () => {
     expect(filesOf('data-table')).toContain(`registry/src/components/ui/${part}.tsx`)
   }
   expect(item('data-table').registryDependencies).toEqual(
-    expect.arrayContaining(['separator', 'cristianruben-dev/auradata-design/dialog', 'cristianruben-dev/auradata-design/field'])
+    expect.arrayContaining(['separator', 'auradata-mx/auradata-design/dialog', 'auradata-mx/auradata-design/field'])
   )
   // The filter system stands alone: a dashboard installs a filter without the table.
   for (const filter of ['filter', 'filter-chips'])
-    expect(item(filter).registryDependencies).not.toContain('cristianruben-dev/auradata-design/data-table')
-  expect(item('filter').registryDependencies).toContain('cristianruben-dev/auradata-design/slider')
+    expect(item(filter).registryDependencies).not.toContain('auradata-mx/auradata-design/data-table')
+  expect(item('filter').registryDependencies).toContain('auradata-mx/auradata-design/slider')
   expect(item('filter-builder').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/filter-conditions', 'cristianruben-dev/auradata-design/native-select'])
+    expect.arrayContaining(['auradata-mx/auradata-design/filter-conditions', 'auradata-mx/auradata-design/native-select'])
   )
   expect(item('filter-conditions').type).toBe('registry:lib')
   expect(item('table-export').dependencies).toEqual(['fflate'])
   expect(item('use-saved-views').type).toBe('registry:hook')
   expect(item('data-table').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/use-saved-views'])
+    expect.arrayContaining(['auradata-mx/auradata-design/use-saved-views'])
   )
   expect(item('use-data-table-url-state').type).toBe('registry:hook')
-  expect(item('use-data-table-url-state').registryDependencies).toEqual(['cristianruben-dev/auradata-design/data-table'])
-  expect(item('data-table').registryDependencies).toContain('cristianruben-dev/auradata-design/table-export')
+  expect(item('use-data-table-url-state').registryDependencies).toEqual(['auradata-mx/auradata-design/data-table'])
+  expect(item('data-table').registryDependencies).toContain('auradata-mx/auradata-design/table-export')
   expect(item('filter').registryDependencies).toEqual(
-    expect.arrayContaining(['cristianruben-dev/auradata-design/command', 'popover', 'cristianruben-dev/auradata-design/badge', 'cristianruben-dev/auradata-design/calendar'])
+    expect.arrayContaining(['auradata-mx/auradata-design/command', 'popover', 'auradata-mx/auradata-design/badge', 'auradata-mx/auradata-design/calendar'])
   )
 })
 
@@ -233,13 +233,13 @@ test('installs the data table with its own parts (T61)', () => {
 // No segmented control: it looked like the tabs; one choice among views takes tabs or a toggle group.
 test('publishes tabs with counts and no segmented control', () => {
   expect(registry.items.map((entry) => entry.name)).not.toContain('segmented-control')
-  expect(item('tabs').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/format']))
+  expect(item('tabs').registryDependencies).toEqual(expect.arrayContaining(['auradata-mx/auradata-design/format']))
 })
 
 test('publishes the guided tour on the Base UI popover', () => {
   expect(item('tour')?.type).toBe('registry:ui')
   expect(item('tour').dependencies).toContain('@base-ui/react')
-  expect(item('tour').registryDependencies).toEqual(expect.arrayContaining(['cristianruben-dev/auradata-design/button']))
+  expect(item('tour').registryDependencies).toEqual(expect.arrayContaining(['auradata-mx/auradata-design/button']))
 })
 
 test('ships the user menu and the shortcuts dialog inside the app shell, with the command whose key labels it reuses', () => {
@@ -249,35 +249,35 @@ test('ships the user menu and the shortcuts dialog inside the app shell, with th
   }
   expect(item('app-shell').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/command',
-      'cristianruben-dev/auradata-design/kbd',
-      'cristianruben-dev/auradata-design/dialog',
-      'cristianruben-dev/auradata-design/dropdown-menu',
+      'auradata-mx/auradata-design/command',
+      'auradata-mx/auradata-design/kbd',
+      'auradata-mx/auradata-design/dialog',
+      'auradata-mx/auradata-design/dropdown-menu',
     ]),
   )
   expect(registry.items.map((entry) => entry.name)).not.toContain('search-command')
 })
 
 test('installs the attachment with the chat block, for the files of a question', () => {
-  expect(item('chat').registryDependencies).toContain('cristianruben-dev/auradata-design/attachment')
+  expect(item('chat').registryDependencies).toContain('auradata-mx/auradata-design/attachment')
 })
 
 test('publishes the message feedback and installs it with the chat block', () => {
   expect(item('message-feedback')?.type).toBe('registry:ui')
-  expect(item('chat').registryDependencies).toContain('cristianruben-dev/auradata-design/message-feedback')
+  expect(item('chat').registryDependencies).toContain('auradata-mx/auradata-design/message-feedback')
 })
 
 test('ships the insight card inside the chat block', () => {
   expect(item('insight-card')).toBeUndefined()
   expect(filesOf('chat')).toContain('registry/src/components/blocks/insight-card.tsx')
-  expect(item('chat').registryDependencies).toEqual(expect.arrayContaining(['card', 'cristianruben-dev/auradata-design/format']))
+  expect(item('chat').registryDependencies).toEqual(expect.arrayContaining(['card', 'auradata-mx/auradata-design/format']))
 })
 
 test('publishes the chart pieces with the formats and the delta they share', () => {
-  expect(item('delta').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
+  expect(item('delta').registryDependencies).toEqual(['auradata-mx/auradata-design/format'])
   expect(item('chart').registryDependencies).toEqual([
-    'cristianruben-dev/auradata-design/delta',
-    'cristianruben-dev/auradata-design/format',
+    'auradata-mx/auradata-design/delta',
+    'auradata-mx/auradata-design/format',
   ])
 })
 
@@ -290,10 +290,10 @@ test('ships the chart card inside the dashboard, with its states, its menu and t
   expect(item('dashboard').registryDependencies).toEqual(
     expect.arrayContaining([
       'table',
-      'cristianruben-dev/auradata-design/chart-export',
-      'cristianruben-dev/auradata-design/dialog',
-      'cristianruben-dev/auradata-design/dropdown-menu',
-      'cristianruben-dev/auradata-design/empty',
+      'auradata-mx/auradata-design/chart-export',
+      'auradata-mx/auradata-design/dialog',
+      'auradata-mx/auradata-design/dropdown-menu',
+      'auradata-mx/auradata-design/empty',
     ]),
   )
   // The error state is a part of the empty state now.
@@ -302,33 +302,33 @@ test('ships the chart card inside the dashboard, with its states, its menu and t
 
 test('publishes the cartesian charts on the chart, its palette and the formats', () => {
   expect(item('cartesian-chart').registryDependencies).toEqual([
-    'cristianruben-dev/auradata-design/chart',
-    'cristianruben-dev/auradata-design/chart-palette',
-    'cristianruben-dev/auradata-design/format',
+    'auradata-mx/auradata-design/chart',
+    'auradata-mx/auradata-design/chart-palette',
+    'auradata-mx/auradata-design/format',
   ])
   expect(item('cartesian-chart').dependencies).toEqual(['cn', 'recharts'])
 })
 
 test('publishes the donut and the funnel on the palette and the formats', () => {
   expect(item('donut-chart').registryDependencies).toEqual([
-    'cristianruben-dev/auradata-design/chart',
-    'cristianruben-dev/auradata-design/chart-palette',
-    'cristianruben-dev/auradata-design/format',
+    'auradata-mx/auradata-design/chart',
+    'auradata-mx/auradata-design/chart-palette',
+    'auradata-mx/auradata-design/format',
   ])
-  expect(item('funnel-chart').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
+  expect(item('funnel-chart').registryDependencies).toEqual(['auradata-mx/auradata-design/format'])
 })
 
 test('publishes the sparkline on its own and the gauge with the formats', () => {
   expect(item('sparkline').dependencies).toEqual(['cn'])
   expect(item('sparkline').registryDependencies).toBeUndefined()
-  expect(item('gauge').registryDependencies).toEqual(['cristianruben-dev/auradata-design/format'])
+  expect(item('gauge').registryDependencies).toEqual(['auradata-mx/auradata-design/format'])
 })
 
 test('publishes the heatmaps on the sequential and diverging palettes', () => {
   expect(item('heatmap').registryDependencies).toEqual([
-    'cristianruben-dev/auradata-design/chart-palette',
-    'cristianruben-dev/auradata-design/format',
-    'cristianruben-dev/auradata-design/progressive-blur',
+    'auradata-mx/auradata-design/chart-palette',
+    'auradata-mx/auradata-design/format',
+    'auradata-mx/auradata-design/progressive-blur',
   ])
 })
 
@@ -338,12 +338,12 @@ test('publishes the dashboard block without a dashboard grid', () => {
   expect(item('dashboard').type).toBe('registry:block')
   expect(item('dashboard').registryDependencies).toEqual(
     expect.arrayContaining([
-      'cristianruben-dev/auradata-design/cartesian-chart',
-      'cristianruben-dev/auradata-design/donut-chart',
-      'cristianruben-dev/auradata-design/funnel-chart',
-      'cristianruben-dev/auradata-design/data-table',
-      'cristianruben-dev/auradata-design/filter',
-      'cristianruben-dev/auradata-design/page-header',
+      'auradata-mx/auradata-design/cartesian-chart',
+      'auradata-mx/auradata-design/donut-chart',
+      'auradata-mx/auradata-design/funnel-chart',
+      'auradata-mx/auradata-design/data-table',
+      'auradata-mx/auradata-design/filter',
+      'auradata-mx/auradata-design/page-header',
     ]),
   )
 })
