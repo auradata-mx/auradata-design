@@ -10,6 +10,7 @@ import { cn } from "cn"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useScrollBlurViewport, ViewportScrollBlur } from "@/components/ui/progressive-blur"
 import { Separator } from "@/components/ui/separator"
 import {
   Drawer,
@@ -163,6 +164,7 @@ function Sidebar({
   collapsible?: "offcanvas" | "icon" | "none"
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const [mobileViewport, mobileViewportRef] = useScrollBlurViewport<HTMLDivElement>()
 
   if (collapsible === "none") {
     return (
@@ -195,7 +197,12 @@ function Sidebar({
             <DrawerTitle>Barra lateral</DrawerTitle>
             <DrawerDescription>Navegación de la app</DrawerDescription>
           </DrawerHeader>
-          <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto">{children}</div>
+          <div className="relative flex min-h-0 w-full flex-1 flex-col">
+            <div ref={mobileViewportRef} className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+              {children}
+            </div>
+            <ViewportScrollBlur viewport={mobileViewport} />
+          </div>
         </DrawerContent>
       </Drawer>
     )
@@ -361,17 +368,23 @@ function SidebarSeparator({
   )
 }
 
-function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
+function SidebarContent({ className, ref, ...props }: React.ComponentProps<"div">) {
+  const [viewport, viewportRef] = useScrollBlurViewport(ref)
+
   return (
-    <div
-      data-slot="sidebar-content"
-      data-sidebar="content"
-      className={cn(
-        "no-scrollbar flex min-h-0 flex-1 flex-col gap-0 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
-        className
-      )}
-      {...props}
-    />
+    <div className="relative isolate flex min-h-0 min-w-0 flex-1 flex-col">
+      <div
+        ref={viewportRef}
+        data-slot="sidebar-content"
+        data-sidebar="content"
+        className={cn(
+          "no-scrollbar flex min-h-0 flex-1 flex-col gap-0 overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+          className
+        )}
+        {...props}
+      />
+      <ViewportScrollBlur viewport={viewport} className="group-data-[collapsible=icon]:hidden" />
+    </div>
   )
 }
 

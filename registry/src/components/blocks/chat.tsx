@@ -45,6 +45,7 @@ import {
   MessageScrollerProvider,
   MessageScrollerViewport,
 } from "@/components/ui/message-scroller"
+import { useScrollBlurViewport, ViewportScrollBlur } from "@/components/ui/progressive-blur"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Trace,
@@ -317,12 +318,11 @@ function ChatMessageRow({
       <Message align="end" data-slot="chat-message" data-role="user">
         <MessageContent className="items-end">
           {message.attachments && message.attachments.length > 0 && (
-            // Sent files wrap and end flush with the bubble: the group's scroll fade and end padding are for
-            // a row that overflows to the right.
+            // Sent files wrap and end flush with the bubble.
             <FileChips
               files={message.attachments}
               label="Archivos de la pregunta"
-              className="flex-wrap justify-end overflow-visible pe-1 mask-none"
+              className="flex-wrap justify-end overflow-visible"
             />
           )}
           <Bubble align="end">
@@ -430,6 +430,7 @@ function Chat({
   const [text, setText] = useState("")
   const [files, setFiles] = useState<File[]>([])
   const fileInput = useRef<HTMLInputElement>(null)
+  const [suggestionsViewport, suggestionsViewportRef] = useScrollBlurViewport<HTMLDivElement>()
   const inputId = useId()
   const titleId = useId()
   const maxFiles = attach?.maxFiles ?? 5
@@ -455,29 +456,32 @@ function Chat({
       {...props}
     >
       {messages.length === 0 && !loading ? (
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto flex h-full max-w-xl flex-col items-center justify-center gap-6 px-6 py-10 text-center">
-            <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-              <SparklesIcon aria-hidden className="size-6" />
-            </span>
-            <div className="grid gap-2">
-              <h2 id={titleId} className="font-heading text-2xl font-semibold tracking-tight">
-                {title}
-              </h2>
-              <p className="text-sm text-balance text-muted-foreground">{description}</p>
+        <div className="relative isolate flex min-h-0 flex-1 flex-col">
+          <div ref={suggestionsViewportRef} className="min-h-0 flex-1 overflow-y-auto">
+            <div className="mx-auto flex min-h-full max-w-xl flex-col items-center justify-center gap-6 px-6 py-10 text-center">
+              <span className="flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+                <SparklesIcon aria-hidden className="size-6" />
+              </span>
+              <div className="grid gap-2">
+                <h2 id={titleId} className="font-heading text-2xl font-semibold tracking-tight">
+                  {title}
+                </h2>
+                <p className="text-sm text-balance text-muted-foreground">{description}</p>
+              </div>
+              {suggestions.length > 0 && (
+                <ul aria-label="Sugerencias" className="flex flex-wrap justify-center gap-2">
+                  {suggestions.map((suggestion) => (
+                    <li key={suggestion}>
+                      <Button variant="outline" className="h-auto rounded-full px-3 py-1.5" onClick={() => send(suggestion)}>
+                        {suggestion}
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-            {suggestions.length > 0 && (
-              <ul aria-label="Sugerencias" className="flex flex-wrap justify-center gap-2">
-                {suggestions.map((suggestion) => (
-                  <li key={suggestion}>
-                    <Button variant="outline" className="h-auto rounded-full px-3 py-1.5" onClick={() => send(suggestion)}>
-                      {suggestion}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
+          <ViewportScrollBlur viewport={suggestionsViewport} />
         </div>
       ) : (
         // The scroller keeps the latest message in view and lets the reader scroll back.

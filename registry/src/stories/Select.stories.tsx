@@ -195,3 +195,24 @@ export const LongValueOpen: Story = {
     await expect(option.getBoundingClientRect().right).toBeLessThanOrEqual(popup.getBoundingClientRect().right)
   },
 }
+
+const MANY_PERIODS = Array.from({ length: 50 }, (_, index) => ({
+  value: String(index + 1),
+  label: `Period ${index + 1}`,
+}))
+
+/** A long list scrolls through the native up and down arrows. */
+export const Overflow: Story = {
+  render: () => (
+    <Select items={MANY_PERIODS} defaultValue={MANY_PERIODS[0].value} defaultOpen>
+      <SelectTrigger className="w-48" aria-label="Period">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent alignItemWithTrigger>
+        {MANY_PERIODS.map((period) => (
+          <SelectItem key={period.value} value={period.value}>{period.label}</SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  ),
+}

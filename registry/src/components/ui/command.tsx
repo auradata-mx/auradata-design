@@ -2,6 +2,7 @@
 import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { cn } from "cn"
+import { ViewportScrollBlur, useScrollBlurViewport } from "@/components/ui/progressive-blur"
 
 import {
   Dialog,
@@ -94,7 +95,7 @@ function CommandList({
   ref,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.List>) {
-  const listRef = React.useRef<HTMLDivElement>(null)
+  const [list, setRef] = useScrollBlurViewport(ref)
   const hasMeasured = React.useRef(false)
   const [indicator, setIndicator] = React.useState<{
     top: number
@@ -104,17 +105,7 @@ function CommandList({
     animate: boolean
   } | null>(null)
 
-  const setRef = React.useCallback(
-    (node: HTMLDivElement | null) => {
-      listRef.current = node
-      if (typeof ref === "function") ref(node)
-      else if (ref) ref.current = node
-    },
-    [ref]
-  )
-
   React.useLayoutEffect(() => {
-    const list = listRef.current
     if (!list) return
     const measure = () => {
       const selected = list.querySelector<HTMLElement>(
@@ -162,38 +153,41 @@ function CommandList({
       mutations.disconnect()
       resize.disconnect()
     }
-  }, [])
+  }, [list])
 
   return (
-    <CommandPrimitive.List
-      ref={setRef}
-      data-slot="command-list"
-      data-indicator-ready={indicator ? "true" : undefined}
-      className={cn(
-        "group/command-list relative no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
-        className
-      )}
-      {...props}
-    >
-      {indicator && (
-        <div
-          aria-hidden="true"
-          role="presentation"
-          data-slot="command-active-indicator"
-          style={{
-            transform: `translate3d(${indicator.left}px, ${indicator.top}px, 0)`,
-            width: indicator.width,
-            height: indicator.height,
-          }}
-          className={cn(
-            "pointer-events-none absolute top-0 left-0 z-0 rounded-[calc(var(--radius)-4px)] bg-accent in-data-[slot=dialog-content]:rounded-lg",
-            indicator.animate &&
-              "transition-[transform,width,height] duration-150 ease-(--ease-fluid) motion-reduce:transition-none"
-          )}
-        />
-      )}
-      {children}
-    </CommandPrimitive.List>
+    <div className="relative min-h-0">
+      <CommandPrimitive.List
+        ref={setRef}
+        data-slot="command-list"
+        data-indicator-ready={indicator ? "true" : undefined}
+        className={cn(
+          "group/command-list relative no-scrollbar max-h-72 scroll-py-1 overflow-x-hidden overflow-y-auto outline-none",
+          className
+        )}
+        {...props}
+      >
+        {indicator && (
+          <div
+            aria-hidden="true"
+            role="presentation"
+            data-slot="command-active-indicator"
+            style={{
+              transform: `translate3d(${indicator.left}px, ${indicator.top}px, 0)`,
+              width: indicator.width,
+              height: indicator.height,
+            }}
+            className={cn(
+              "pointer-events-none absolute top-0 left-0 z-0 rounded-[calc(var(--radius)-4px)] bg-accent in-data-[slot=dialog-content]:rounded-lg",
+              indicator.animate &&
+                "transition-[transform,width,height] duration-150 ease-(--ease-fluid) motion-reduce:transition-none"
+            )}
+          />
+        )}
+        {children}
+      </CommandPrimitive.List>
+      <ViewportScrollBlur viewport={list} />
+    </div>
   )
 }
 

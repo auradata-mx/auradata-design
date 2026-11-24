@@ -339,6 +339,7 @@ test('publishes the heatmaps on the sequential and diverging palettes', () => {
   expect(item('heatmap').registryDependencies).toEqual([
     'cristianruben-dev/auradata-design/chart-palette',
     'cristianruben-dev/auradata-design/format',
+    'cristianruben-dev/auradata-design/progressive-blur',
   ])
 })
 
@@ -379,7 +380,11 @@ test('publishes the advanced form controls with their helpers (T63)', () => {
 })
 
 test('wires progressive-blur into sticky headers, scrollable overlays and the data table', () => {
-  for (const name of ['page-header', 'dialog', 'drawer', 'data-table']) {
+  for (const name of [
+    'attachment', 'carousel', 'chart-card', 'code-block', 'combobox', 'command', 'context-menu',
+    'data-table', 'dialog', 'drawer', 'dropdown-menu', 'error-state', 'heatmap', 'message-scroller',
+    'notification-center', 'page-header', 'scroll-area', 'select', 'shortcuts-dialog', 'sidebar',
+  ]) {
     expect(item(name).registryDependencies).toContain(`${GITHUB}/progressive-blur`)
   }
 })

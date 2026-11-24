@@ -1,12 +1,15 @@
 // registry: auradata (shadcn code block with its copy button in Spanish and icon morph)
+"use client"
+
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
 import { CopyButton, type CopyButtonProps } from "@/components/ui/copy-button"
+import { useScrollBlurViewport, ViewportScrollBlur } from "@/components/ui/progressive-blur"
 
 const codeBlockVariants = cva(
-  "group/code-block relative flex w-full min-w-0 flex-col overflow-hidden rounded-lg text-sm has-[>[data-slot=code-block-content]:focus-visible]:ring-3 has-[>[data-slot=code-block-content]:focus-visible]:ring-ring/50 data-[size=sm]:text-xs",
+  "group/code-block relative flex w-full min-w-0 flex-col overflow-hidden rounded-lg text-sm has-[>[data-slot=code-block-content-frame]>[data-slot=code-block-content]:focus-visible]:ring-3 has-[>[data-slot=code-block-content-frame]>[data-slot=code-block-content]:focus-visible]:ring-ring/50 data-[size=sm]:text-xs",
   {
     variants: {
       variant: {
@@ -102,40 +105,48 @@ function CodeBlockContent({
   wrap = false,
   lineNumbers = false,
   startLine = 1,
+  dir = "ltr",
+  ref,
   ...props
 }: React.ComponentProps<"pre"> & {
   wrap?: boolean
   lineNumbers?: boolean
   startLine?: number
 }) {
+  const [viewport, viewportRef] = useScrollBlurViewport(ref)
+
   return (
-    <pre
-      data-slot="code-block-content"
-      data-wrap={wrap || undefined}
-      data-numbered={lineNumbers || undefined}
-      dir="ltr"
-      tabIndex={0}
-      style={{ counterReset: `line ${startLine - 1}`, ...style }}
-      className={cn(
-        "min-h-0 min-w-0 scroll-fade-x scrollbar-thin overflow-auto px-3 py-3 text-start font-mono leading-relaxed outline-none group-has-data-[slot=code-block-footer]/code-block:pb-2 group-has-data-[slot=code-block-header]/code-block:pt-2 group-data-[size=sm]/code-block:px-2.5 group-data-[size=sm]/code-block:py-2.5 group-data-[size=sm]/code-block:group-has-data-[slot=code-block-header]/code-block:pt-1.5 data-wrap:scroll-fade-y data-wrap:wrap-break-word data-wrap:whitespace-pre-wrap",
-        className
-      )}
-      {...props}
-    >
-      <code
-        data-slot="code-block-code"
-        className="grid min-h-lh min-w-max content-start in-data-numbered:grid-cols-[auto_1fr] in-data-wrap:min-w-0"
+    <div dir={dir} data-slot="code-block-content-frame" className="relative isolate flex min-h-0 min-w-0 flex-col">
+      <pre
+        ref={viewportRef}
+        data-slot="code-block-content"
+        data-wrap={wrap || undefined}
+        data-numbered={lineNumbers || undefined}
+        dir={dir}
+        tabIndex={0}
+        style={{ counterReset: `line ${startLine - 1}`, ...style }}
+        className={cn(
+          "min-h-0 min-w-0 scrollbar-thin overflow-auto px-3 py-3 text-start font-mono leading-relaxed outline-none group-has-data-[slot=code-block-footer]/code-block:pb-2 group-has-data-[slot=code-block-header]/code-block:pt-2 group-data-[size=sm]/code-block:px-2.5 group-data-[size=sm]/code-block:py-2.5 group-data-[size=sm]/code-block:group-has-data-[slot=code-block-header]/code-block:pt-1.5 data-wrap:wrap-break-word data-wrap:whitespace-pre-wrap",
+          className
+        )}
+        {...props}
       >
-        {lineNumbers && typeof children === "string"
-          ? children
-              .replace(/\n$/, "")
-              .split("\n")
-              .map((line, index) => (
-                <CodeBlockLine key={index}>{line}</CodeBlockLine>
-              ))
-          : children}
-      </code>
-    </pre>
+        <code
+          data-slot="code-block-code"
+          className="grid min-h-lh min-w-max content-start in-data-numbered:grid-cols-[auto_1fr] in-data-wrap:min-w-0"
+        >
+          {lineNumbers && typeof children === "string"
+            ? children
+                .replace(/\n$/, "")
+                .split("\n")
+                .map((line, index) => (
+                  <CodeBlockLine key={index}>{line}</CodeBlockLine>
+                ))
+            : children}
+        </code>
+      </pre>
+      <ViewportScrollBlur viewport={viewport} bothAxes size="0.75rem" />
+    </div>
   )
 }
 

@@ -4,6 +4,7 @@
 import * as React from "react"
 import { cn } from "cn"
 
+import { useScrollBlurViewport, ViewportScrollBlur } from "@/components/ui/progressive-blur"
 import { divergingFill, sequentialFill } from "@/lib/chart-palette"
 import { formatDate, formatNumber } from "@/lib/format"
 
@@ -50,6 +51,7 @@ function Heatmap({
   className,
   ...props
 }: HeatmapProps) {
+  const [viewport, viewportRef] = useScrollBlurViewport<HTMLDivElement>()
   const numbers = values.flat().filter((value): value is number => typeof value === "number")
   const sequentialDomain: [number, number] = domain ?? [0, Math.max(0, ...numbers)]
   const divergingLimit = limit ?? Math.max(...numbers.map((value) => Math.abs(value - center)), 0)
@@ -61,49 +63,52 @@ function Heatmap({
   return (
     <div data-slot="heatmap" className={cn("grid gap-3", className)} {...props}>
       {/* A phone scrolls the table inside itself, never the page; the keyboard can focus it to scroll. */}
-      <div role="region" aria-label={caption} tabIndex={0} className="overflow-x-auto rounded-sm">
-        <table className="border-separate border-spacing-0.5 text-xs">
-          <caption className={cn("pb-2 text-left text-sm font-medium", !showCaption && "sr-only")}>{caption}</caption>
-          <thead>
-            <tr>
-              <td />
-              {columns.map((column) => (
-                <th key={column} scope="col" className="px-1 pb-1 font-normal text-muted-foreground">
-                  {column}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, rowIndex) => (
-              <tr key={row}>
-                <th scope="row" className="pr-2 text-left font-normal whitespace-nowrap text-muted-foreground">
-                  {row}
-                </th>
-                {columns.map((column, columnIndex) => {
-                  const value = values[rowIndex]?.[columnIndex]
-                  if (typeof value !== "number") {
+      <div className="relative isolate min-w-0 rounded-sm">
+        <div ref={viewportRef} role="region" aria-label={caption} tabIndex={0} className="overflow-x-auto rounded-[inherit]">
+          <table className="border-separate border-spacing-0.5 text-xs">
+            <caption className={cn("pb-2 text-left text-sm font-medium", !showCaption && "sr-only")}>{caption}</caption>
+            <thead>
+              <tr>
+                <td />
+                {columns.map((column) => (
+                  <th key={column} scope="col" className="px-1 pb-1 font-normal text-muted-foreground">
+                    {column}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, rowIndex) => (
+                <tr key={row}>
+                  <th scope="row" className="pr-2 text-left font-normal whitespace-nowrap text-muted-foreground">
+                    {row}
+                  </th>
+                  {columns.map((column, columnIndex) => {
+                    const value = values[rowIndex]?.[columnIndex]
+                    if (typeof value !== "number") {
+                      return (
+                        <td key={column} className="h-9 min-w-11 rounded-sm bg-muted/50 text-center text-muted-foreground">
+                          <span aria-hidden>—</span>
+                          <span className="sr-only">Sin datos</span>
+                        </td>
+                      )
+                    }
                     return (
-                      <td key={column} className="h-9 min-w-11 rounded-sm bg-muted/50 text-center text-muted-foreground">
-                        <span aria-hidden>—</span>
-                        <span className="sr-only">Sin datos</span>
+                      <td
+                        key={column}
+                        className="h-9 min-w-11 rounded-sm px-1 text-center font-medium tabular-nums"
+                        style={fillOf(value)}
+                      >
+                        {valueFormatter(value)}
                       </td>
                     )
-                  }
-                  return (
-                    <td
-                      key={column}
-                      className="h-9 min-w-11 rounded-sm px-1 text-center font-medium tabular-nums"
-                      style={fillOf(value)}
-                    >
-                      {valueFormatter(value)}
-                    </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ViewportScrollBlur viewport={viewport} bothAxes />
       </div>
       <ScaleLegend palette={scale} low={valueFormatter(low)} high={valueFormatter(high)} />
     </div>
@@ -165,6 +170,7 @@ function CalendarHeatmap({
   ...props
 }: CalendarHeatmapProps) {
   const scrollerRef = React.useRef<HTMLDivElement>(null)
+  const [viewport, viewportRef] = useScrollBlurViewport(scrollerRef)
   const [active, setActive] = React.useState<{ date: string; value: number; left: number; top: number } | null>(null)
   const byDate = new Map(data.map((entry) => [entry.date, entry.value]))
   const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date))
@@ -193,7 +199,9 @@ function CalendarHeatmap({
   // On a phone the latest weeks matter most: open at the end.
   React.useEffect(() => {
     const scroller = scrollerRef.current
-    if (scroller) scroller.scrollLeft = scroller.scrollWidth
+    if (scroller) scroller.scrollLeft = getComputedStyle(scroller).direction === "rtl"
+      ? -scroller.scrollWidth
+      : scroller.scrollWidth
   }, [])
 
   const unitText = unit ? ` ${unit}` : ""
@@ -218,51 +226,54 @@ function CalendarHeatmap({
           ))}
         </div>
         {/* One image with its summary, and focusable, so the keyboard can scroll the weeks on a phone. */}
-        <div ref={scrollerRef} role="img" aria-label={summary} tabIndex={0} className="min-w-0 overflow-x-auto rounded-sm pb-1">
-          <div className="grid w-max gap-1">
-            <div aria-hidden className="grid h-4" style={{ gridTemplateColumns: columns, columnGap: GAP }}>
-              {months.map((month) => (
-                <span
-                  key={month.key}
-                  className="truncate"
-                  style={{ gridColumn: `${month.column + 1} / span ${month.span}` }}
-                >
-                  {formatDate(month.date, { month: "short", day: undefined, year: undefined })}
-                </span>
-              ))}
-            </div>
-            <div
-              className="grid"
-              style={{ gridTemplateColumns: columns, gridTemplateRows: `repeat(7, ${DAY}px)`, gap: GAP }}
-              onPointerLeave={() => setActive(null)}
-            >
-              {days.map((day) => {
-                const value = byDate.get(day.key)
-                return (
+        <div className="relative isolate min-w-0 rounded-sm">
+          <div ref={viewportRef} role="img" aria-label={summary} tabIndex={0} className="overflow-x-auto rounded-[inherit] pb-1">
+            <div className="grid w-max gap-1">
+              <div aria-hidden className="grid h-4" style={{ gridTemplateColumns: columns, columnGap: GAP }}>
+                {months.map((month) => (
                   <span
-                    key={day.key}
-                    data-slot="calendar-heatmap-day"
-                    data-date={day.key}
-                    className={cn(
-                      "rounded-[3px] hover:outline-2 hover:outline-offset-1 hover:outline-foreground",
-                      value === undefined && "bg-muted/50"
-                    )}
-                    style={{
-                      gridColumnStart: day.column + 1,
-                      gridRowStart: day.row + 1,
-                      ...(value !== undefined ? { backgroundColor: sequentialFill(value, [0, max]).backgroundColor } : {}),
-                    }}
-                    onPointerEnter={(event) => {
-                      if (value === undefined) return setActive(null)
-                      const box = event.currentTarget.getBoundingClientRect()
-                      const frame = event.currentTarget.closest('[data-slot="calendar-heatmap"]')!.getBoundingClientRect()
-                      setActive({ date: day.key, value, left: box.left - frame.left + DAY / 2, top: box.top - frame.top })
-                    }}
-                  />
-                )
-              })}
+                    key={month.key}
+                    className="truncate"
+                    style={{ gridColumn: `${month.column + 1} / span ${month.span}` }}
+                  >
+                    {formatDate(month.date, { month: "short", day: undefined, year: undefined })}
+                  </span>
+                ))}
+              </div>
+              <div
+                className="grid"
+                style={{ gridTemplateColumns: columns, gridTemplateRows: `repeat(7, ${DAY}px)`, gap: GAP }}
+                onPointerLeave={() => setActive(null)}
+              >
+                {days.map((day) => {
+                  const value = byDate.get(day.key)
+                  return (
+                    <span
+                      key={day.key}
+                      data-slot="calendar-heatmap-day"
+                      data-date={day.key}
+                      className={cn(
+                        "rounded-[3px] hover:outline-2 hover:outline-offset-1 hover:outline-foreground",
+                        value === undefined && "bg-muted/50"
+                      )}
+                      style={{
+                        gridColumnStart: day.column + 1,
+                        gridRowStart: day.row + 1,
+                        ...(value !== undefined ? { backgroundColor: sequentialFill(value, [0, max]).backgroundColor } : {}),
+                      }}
+                      onPointerEnter={(event) => {
+                        if (value === undefined) return setActive(null)
+                        const box = event.currentTarget.getBoundingClientRect()
+                        const frame = event.currentTarget.closest('[data-slot="calendar-heatmap"]')!.getBoundingClientRect()
+                        setActive({ date: day.key, value, left: box.left - frame.left + DAY / 2, top: box.top - frame.top })
+                      }}
+                    />
+                  )
+                })}
+              </div>
             </div>
           </div>
+          <ViewportScrollBlur viewport={viewport} bothAxes />
         </div>
       </div>
       {active && (

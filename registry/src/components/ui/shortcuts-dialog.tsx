@@ -4,6 +4,7 @@
 import * as React from "react"
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { ViewportScrollBlur, useScrollBlurViewport } from "@/components/ui/progressive-blur"
 import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import { shortcutLabel } from "@/components/ui/search-command"
 
@@ -77,6 +78,7 @@ function isTyping(target: EventTarget | null) {
 
 /** A dialog with every shortcut of the app, grouped («Navegación», «Informes»…), each key in a `Kbd`. */
 function ShortcutsDialog({ groups, open: openProp, defaultOpen = false, onOpenChange, hotkey = "?" }: ShortcutsDialogProps) {
+  const [viewport, viewportRef] = useScrollBlurViewport()
   const [openState, setOpenState] = React.useState(defaultOpen)
   const open = openProp ?? openState
   const setOpen = React.useCallback(
@@ -114,23 +116,26 @@ function ShortcutsDialog({ groups, open: openProp, defaultOpen = false, onOpenCh
             )}
           </DialogDescription>
         </DialogHeader>
-        <div className="-mx-4 grid max-h-[min(32rem,70svh)] gap-6 overflow-y-auto px-4 sm:-mx-6 sm:grid-cols-2 sm:gap-x-8 sm:px-6">
-          {groups.map((group) => (
-            <section key={group.heading} className="grid content-start gap-2">
-              <h3 className="text-xs font-medium text-muted-foreground">{group.heading}</h3>
-              <ul className="grid">
-                {group.shortcuts.map((shortcut) => (
-                  <li
-                    key={shortcut.label}
-                    className="flex min-h-9 items-center justify-between gap-4 border-b py-1.5 last:border-b-0"
-                  >
-                    <span>{shortcut.label}</span>
-                    <Keys keys={shortcut.keys} />
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ))}
+        <div className="relative -mx-4 sm:-mx-6">
+          <div ref={viewportRef} data-slot="shortcuts-list-viewport" className="grid max-h-[min(32rem,70svh)] gap-6 overflow-y-auto px-4 sm:grid-cols-2 sm:gap-x-8 sm:px-6">
+            {groups.map((group) => (
+              <section key={group.heading} className="grid content-start gap-2">
+                <h3 className="text-xs font-medium text-muted-foreground">{group.heading}</h3>
+                <ul className="grid">
+                  {group.shortcuts.map((shortcut) => (
+                    <li
+                      key={shortcut.label}
+                      className="flex min-h-9 items-center justify-between gap-4 border-b py-1.5 last:border-b-0"
+                    >
+                      <span>{shortcut.label}</span>
+                      <Keys keys={shortcut.keys} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+          <ViewportScrollBlur viewport={viewport} />
         </div>
       </DialogContent>
     </Dialog>

@@ -3,12 +3,14 @@
 
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area"
 import { cn } from "cn"
+import { ViewportScrollBlur, useScrollBlurViewport } from "@/components/ui/progressive-blur"
 
 function ScrollArea({
   className,
   children,
   ...props
 }: ScrollAreaPrimitive.Root.Props) {
+  const [viewport, viewportRef] = useScrollBlurViewport()
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
@@ -16,11 +18,13 @@ function ScrollArea({
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
+        ref={viewportRef}
         data-slot="scroll-area-viewport"
         className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
         {children}
       </ScrollAreaPrimitive.Viewport>
+      <ViewportScrollBlur viewport={viewport} bothAxes />
       <ScrollBar />
       <ScrollAreaPrimitive.Corner />
     </ScrollAreaPrimitive.Root>
@@ -38,7 +42,7 @@ function ScrollBar({
       data-orientation={orientation}
       orientation={orientation}
       className={cn(
-        "flex touch-none p-px transition-colors select-none data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:px-1.5 data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:py-1.5 data-vertical:border-l data-vertical:border-l-transparent",
+        "z-20 flex touch-none p-px transition-colors select-none data-horizontal:h-2.5 data-horizontal:flex-col data-horizontal:px-1.5 data-horizontal:border-t data-horizontal:border-t-transparent data-vertical:h-full data-vertical:w-2.5 data-vertical:py-1.5 data-vertical:border-l data-vertical:border-l-transparent",
         className
       )}
       {...props}

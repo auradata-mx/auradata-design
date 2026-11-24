@@ -4,6 +4,7 @@
 import * as React from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react"
 import { cn } from "cn"
+import { ViewportScrollBlur, useScrollBlurViewport } from "@/components/ui/progressive-blur"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -127,16 +128,21 @@ function ComboboxContent({
   )
 }
 
-function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
+function ComboboxList({ className, ref, ...props }: ComboboxPrimitive.List.Props) {
+  const [viewport, viewportRef] = useScrollBlurViewport(ref)
   return (
-    <ComboboxPrimitive.List
-      data-slot="combobox-list"
-      className={cn(
-        "no-scrollbar max-h-[min(calc(--spacing(72)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto overscroll-contain p-1 data-empty:p-0",
-        className
-      )}
-      {...props}
-    />
+    <div className="relative">
+      <ComboboxPrimitive.List
+        ref={viewportRef}
+        data-slot="combobox-list"
+        className={cn(
+          "no-scrollbar max-h-[min(calc(--spacing(72)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto overscroll-contain p-1 data-empty:p-0",
+          className
+        )}
+        {...props}
+      />
+      <ViewportScrollBlur viewport={viewport} />
+    </div>
   )
 }
 

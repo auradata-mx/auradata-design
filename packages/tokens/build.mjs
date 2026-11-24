@@ -199,7 +199,7 @@ const TW_BOX_SHADOW = ['inset-shadow', 'inset-ring-shadow', 'ring-offset-shadow'
   .map((name) => `var(--tw-${name}, 0 0 #0000)`)
   .join(', ');
 
-/** Floating popups born from a trigger: menus, selects, popovers, hover cards, comboboxes. */
+/** Floating popups attached to a trigger or anchor. */
 const TRIGGER_POPUPS = [
   '[data-slot="dropdown-menu-content"]',
   '[data-slot="dropdown-menu-sub-content"]',
@@ -209,6 +209,8 @@ const TRIGGER_POPUPS = [
   '[data-slot="popover-content"]',
   '[data-slot="hover-card-content"]',
   '[data-slot="combobox-content"]',
+  '[data-slot="navigation-menu-popup"]',
+  '[data-slot="tour"]',
 ];
 
 /** Floating surfaces that take the frosted glass layer: every trigger popup, chart tooltips, floating toolbars and neutral toasts. */

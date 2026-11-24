@@ -1,9 +1,12 @@
 // registry: auradata (an error state on the shadcn empty state, with a retry and the technical detail)
+"use client"
+
 import { ChevronRightIcon, CircleAlertIcon, RotateCwIcon } from "lucide-react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { useScrollBlurViewport, ViewportScrollBlur } from "@/components/ui/progressive-blur"
 
 type ErrorStateProps = Omit<React.ComponentProps<typeof Empty>, "title"> & {
   title?: React.ReactNode
@@ -26,6 +29,8 @@ function ErrorState({
   children,
   ...props
 }: ErrorStateProps) {
+  const [viewport, viewportRef] = useScrollBlurViewport<HTMLPreElement>()
+
   return (
     <Empty data-slot="error-state" role="alert" className={cn("border", className)} {...props}>
       <EmptyHeader>
@@ -54,9 +59,15 @@ function ErrorState({
                 />
                 Detalle técnico
               </summary>
-              <pre className="mt-2 max-h-40 overflow-auto rounded-md bg-muted p-3 font-mono whitespace-pre-wrap text-foreground">
-                {detail}
-              </pre>
+              <div className="relative isolate mt-2 min-w-0 rounded-md">
+                <pre
+                  ref={viewportRef}
+                  className="max-h-40 overflow-auto rounded-[inherit] bg-muted p-3 font-mono whitespace-pre-wrap text-foreground"
+                >
+                  <code className="block w-max max-w-full">{detail}</code>
+                </pre>
+                <ViewportScrollBlur viewport={viewport} bothAxes />
+              </div>
             </details>
           )}
         </EmptyContent>

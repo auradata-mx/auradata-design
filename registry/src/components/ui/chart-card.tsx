@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { ErrorState } from "@/components/ui/error-state"
+import { useScrollBlurViewport, ViewportScrollBlur } from "@/components/ui/progressive-blur"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { exportChartPng } from "@/lib/chart-export"
@@ -89,6 +90,7 @@ function ChartCard({
 }: ChartCardProps) {
   const cardRef = React.useRef<HTMLDivElement>(null)
   const [dataOpen, setDataOpen] = React.useState(false)
+  const [dataViewport, dataViewportRef] = useScrollBlurViewport<HTMLDivElement>()
   const failed = error !== undefined && error !== false
   const ready = !loading && !failed && !empty
   const tableColumns = columns ?? Object.keys(data?.[0] ?? {}).map((key) => ({ key, label: key }))
@@ -214,29 +216,35 @@ function ChartCard({
               <DialogTitle>{title}</DialogTitle>
               <DialogDescription>{description ?? "Los datos de la gráfica."}</DialogDescription>
             </DialogHeader>
-            <div className="-mx-4 max-h-[60vh] overflow-auto px-4">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {tableColumns.map((column, index) => (
-                      <TableHead key={column.key} className={cn(index > 0 && "text-right")}>
-                        {column.label}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.map((row, rowIndex) => (
-                    <TableRow key={rowIndex}>
+            <div className="relative isolate -mx-4 min-w-0">
+              <div
+                ref={dataViewportRef}
+                className="max-h-[60vh] overflow-auto px-4 [&>[data-slot=table-container]]:w-max [&>[data-slot=table-container]]:min-w-full"
+              >
+                <Table>
+                  <TableHeader>
+                    <TableRow>
                       {tableColumns.map((column, index) => (
-                        <TableCell key={column.key} className={cn(index > 0 && "text-right tabular-nums")}>
-                          {cellOf(row[column.key], column)}
-                        </TableCell>
+                        <TableHead key={column.key} className={cn(index > 0 && "text-right")}>
+                          {column.label}
+                        </TableHead>
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.map((row, rowIndex) => (
+                      <TableRow key={rowIndex}>
+                        {tableColumns.map((column, index) => (
+                          <TableCell key={column.key} className={cn(index > 0 && "text-right tabular-nums")}>
+                            {cellOf(row[column.key], column)}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <ViewportScrollBlur viewport={dataViewport} bothAxes />
             </div>
           </DialogContent>
         </Dialog>

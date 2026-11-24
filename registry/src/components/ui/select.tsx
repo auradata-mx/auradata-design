@@ -4,6 +4,7 @@
 import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "cn"
+import { ProgressiveBlur } from "@/components/ui/progressive-blur"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
 const Select = SelectPrimitive.Root
@@ -157,13 +158,13 @@ function SelectScrollUpButton({
     <SelectPrimitive.ScrollUpArrow
       data-slot="select-scroll-up-button"
       className={cn(
-        "top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+        "top-0 isolate z-10 flex w-full cursor-default items-center justify-center forced-colors:bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     >
-      <ChevronUpIcon
-      />
+      <ProgressiveBlur side="top" size="100%" blur={6} tint className="[--blur-tint:var(--popover)] forced-colors:hidden" />
+      <ChevronUpIcon className="relative" />
     </SelectPrimitive.ScrollUpArrow>
   )
 }
@@ -176,13 +177,13 @@ function SelectScrollDownButton({
     <SelectPrimitive.ScrollDownArrow
       data-slot="select-scroll-down-button"
       className={cn(
-        "bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+        "bottom-0 isolate z-10 flex w-full cursor-default items-center justify-center forced-colors:bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
     >
-      <ChevronDownIcon
-      />
+      <ProgressiveBlur side="bottom" size="100%" blur={6} tint className="[--blur-tint:var(--popover)] forced-colors:hidden" />
+      <ChevronDownIcon className="relative" />
     </SelectPrimitive.ScrollDownArrow>
   )
 }

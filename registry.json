@@ -378,7 +378,7 @@
           ":where([data-slot=\"card\"], [data-slot=\"popover-content\"], [class*=\"--elevation-raised)\"], [class*=\"--elevation-overlay)\"], [class*=\"--elevation-modal)\"])": {
             "outline": "1px solid CanvasText"
           },
-          ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"], [data-sonner-toast]:not([data-rich-colors=\"true\"]))": {
+          ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"navigation-menu-popup\"], [data-slot=\"tour\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"], [data-sonner-toast]:not([data-rich-colors=\"true\"]))": {
             "--popover": "Canvas",
             "--normal-bg": "Canvas",
             "-webkit-backdrop-filter": "none",
@@ -392,7 +392,7 @@
         },
         "@supports (backdrop-filter: blur(1px))": {
           "@layer base": {
-            ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"], [data-sonner-toast]:not([data-rich-colors=\"true\"]))": {
+            ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"navigation-menu-popup\"], [data-slot=\"tour\"], [data-slot=\"chart-tooltip\"], [data-slot=\"data-table-selection-bar\"], [data-sonner-toast]:not([data-rich-colors=\"true\"]))": {
               "--popover": "var(--surface-glass)",
               "--normal-bg": "var(--surface-glass)",
               "--muted-foreground": "color-mix(in srgb, var(--popover-foreground) 73%, var(--background))",
@@ -415,21 +415,21 @@
         ":where([data-slot=\"data-table-selection-bar\"]) :where([data-slot=\"button\"])": {
           "border-radius": "max(var(--radius-sm), calc(var(--radius-xl) - 0.5rem))"
         },
-        ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"])": {
+        ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"navigation-menu-popup\"], [data-slot=\"tour\"])": {
           "transform-origin": "var(--transform-origin)",
           "--tw-enter-scale": "0.94",
           "--tw-exit-scale": "0.96"
         },
-        ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"])[data-open]": {
+        ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"navigation-menu-popup\"], [data-slot=\"tour\"])[data-open]": {
           "--tw-animation-duration": "160ms",
           "--tw-ease": "var(--ease-fluid, cubic-bezier(0.32, 0.72, 0, 1))"
         },
-        ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"])[data-closed]": {
+        ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"navigation-menu-popup\"], [data-slot=\"tour\"])[data-closed]": {
           "--tw-animation-duration": "90ms",
           "--tw-ease": "cubic-bezier(0.4, 0, 1, 1)"
         },
         "@media (prefers-reduced-motion: reduce)": {
-          ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"])[data-open], :where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"])[data-closed]": {
+          ":where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"navigation-menu-popup\"], [data-slot=\"tour\"])[data-open], :where([data-slot=\"dropdown-menu-content\"], [data-slot=\"dropdown-menu-sub-content\"], [data-slot=\"context-menu-content\"], [data-slot=\"context-menu-sub-content\"], [data-slot=\"select-content\"], [data-slot=\"popover-content\"], [data-slot=\"hover-card-content\"], [data-slot=\"combobox-content\"], [data-slot=\"navigation-menu-popup\"], [data-slot=\"tour\"])[data-closed]": {
             "--tw-animation-duration": "0ms"
           },
           ":where([data-slot=\"skeleton\"])": {
@@ -552,7 +552,8 @@
         "cn"
       ],
       "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -705,7 +706,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -751,6 +753,7 @@
         "cristianruben-dev/auradata-design/empty",
         "cristianruben-dev/auradata-design/error-state",
         "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/progressive-blur",
         "skeleton",
         "table"
       ],
@@ -805,7 +808,8 @@
         "cn"
       ],
       "registryDependencies": [
-        "cristianruben-dev/auradata-design/copy-button"
+        "cristianruben-dev/auradata-design/copy-button",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -825,7 +829,8 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/input-group"
+        "cristianruben-dev/auradata-design/input-group",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -845,7 +850,8 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/dialog",
-        "cristianruben-dev/auradata-design/input-group"
+        "cristianruben-dev/auradata-design/input-group",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -862,6 +868,9 @@
         "@base-ui/react",
         "cn",
         "lucide-react"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -1110,6 +1119,9 @@
         "cn",
         "lucide-react"
       ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/progressive-blur"
+      ],
       "files": [
         {
           "path": "registry/src/components/ui/dropdown-menu.tsx",
@@ -1142,7 +1154,8 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/empty"
+        "cristianruben-dev/auradata-design/empty",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -1326,7 +1339,8 @@
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/chart-palette",
-        "cristianruben-dev/auradata-design/format"
+        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -1601,7 +1615,8 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
@@ -1654,6 +1669,7 @@
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/drawer",
         "cristianruben-dev/auradata-design/empty",
+        "cristianruben-dev/auradata-design/progressive-blur",
         "cristianruben-dev/auradata-design/use-mobile",
         "popover",
         "skeleton"
@@ -1848,6 +1864,9 @@
         "@base-ui/react",
         "cn"
       ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/progressive-blur"
+      ],
       "files": [
         {
           "path": "registry/src/components/ui/scroll-area.tsx",
@@ -1904,6 +1923,9 @@
         "cn",
         "lucide-react"
       ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/progressive-blur"
+      ],
       "files": [
         {
           "path": "registry/src/components/ui/select.tsx",
@@ -1936,6 +1958,7 @@
       "registryDependencies": [
         "cristianruben-dev/auradata-design/dialog",
         "cristianruben-dev/auradata-design/kbd",
+        "cristianruben-dev/auradata-design/progressive-blur",
         "cristianruben-dev/auradata-design/search-command"
       ],
       "files": [
@@ -1959,6 +1982,7 @@
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/drawer",
         "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/progressive-blur",
         "cristianruben-dev/auradata-design/tooltip",
         "cristianruben-dev/auradata-design/use-mobile",
         "separator",
@@ -2300,6 +2324,7 @@
         "cristianruben-dev/auradata-design/logo",
         "cristianruben-dev/auradata-design/message-feedback",
         "cristianruben-dev/auradata-design/message-scroller",
+        "cristianruben-dev/auradata-design/progressive-blur",
         "cristianruben-dev/auradata-design/textarea",
         "cristianruben-dev/auradata-design/trace",
         "message"

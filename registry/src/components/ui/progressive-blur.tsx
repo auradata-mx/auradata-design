@@ -1,3 +1,5 @@
+"use client"
+
 // registry: auradata (a gradual blur for sticky headers and the edges of scrolling lists)
 import * as React from "react"
 import { cn } from "cn"
@@ -91,6 +93,156 @@ function ProgressiveBlur({
 
 type More = "none" | "start" | "end" | "both"
 
+function remaining(offset: number, room: number): More {
+  // A pixel of slack covers fractional scroll bounds on zoomed pages.
+  const start = Math.abs(offset) > 1
+  const end = room - Math.abs(offset) > 1
+  return start && end ? "both" : start ? "start" : end ? "end" : "none"
+}
+
+/** Observe the native viewport without replacing any primitive event handlers or refs. */
+function useScrollBlurViewport<T extends HTMLElement>(ref?: React.Ref<T>) {
+  const [viewport, setViewport] = React.useState<T | null>(null)
+  const viewportRef = React.useCallback((node: T | null) => {
+    setViewport(node)
+    if (typeof ref === "function") {
+      const cleanup = ref(node)
+      if (typeof cleanup === "function") {
+        return () => {
+          cleanup()
+          setViewport(null)
+        }
+      }
+    } else if (ref) {
+      ref.current = node
+    }
+  }, [ref])
+  return [viewport, viewportRef] as const
+}
+
+const NO_OVERFLOW = { vertical: "none", horizontal: "none" } as const
+
+function useOverflowEdges(viewport: HTMLElement | null) {
+  const [edges, setEdges] = React.useState<{ vertical: More; horizontal: More }>(NO_OVERFLOW)
+  React.useEffect(() => {
+    if (!viewport) return
+    const measure = () => {
+      const vertical = remaining(viewport.scrollTop, viewport.scrollHeight - viewport.clientHeight)
+      const horizontal = remaining(viewport.scrollLeft, viewport.scrollWidth - viewport.clientWidth)
+      setEdges((current) => current.vertical === vertical && current.horizontal === horizontal
+        ? current
+        : { vertical, horizontal })
+    }
+
+    const resize = new ResizeObserver(measure)
+    resize.observe(viewport)
+    let children = new Set<Element>()
+    const syncChildren = () => {
+      const next = new Set(viewport.children)
+      for (const child of children) {
+        if (!next.has(child)) resize.unobserve(child)
+      }
+      for (const child of next) {
+        if (!children.has(child)) resize.observe(child)
+      }
+      children = next
+      measure()
+    }
+    const mutations = new MutationObserver(syncChildren)
+    mutations.observe(viewport, { childList: true, subtree: true })
+    viewport.addEventListener("scroll", measure, { passive: true })
+    syncChildren()
+
+    return () => {
+      viewport.removeEventListener("scroll", measure)
+      resize.disconnect()
+      mutations.disconnect()
+    }
+  }, [viewport])
+  return viewport ? edges : NO_OVERFLOW
+}
+
+type ScrollBlurEdgesProps = Pick<ProgressiveBlurProps, "size" | "blur" | "tint" | "className"> & {
+  orientation?: "vertical" | "horizontal"
+  direction?: "ltr" | "rtl"
+  showStart: boolean
+  showEnd: boolean
+}
+
+/** Paint over a viewport, never inside its scrolling contents or above its controls. */
+function ScrollBlurEdges({
+  orientation = "vertical",
+  direction,
+  showStart,
+  showEnd,
+  size = "1rem",
+  blur = 5,
+  tint,
+  className,
+}: ScrollBlurEdgesProps) {
+  const horizontal = orientation === "horizontal"
+  const first = direction === "rtl" && horizontal ? showEnd : showStart
+  const last = direction === "rtl" && horizontal ? showStart : showEnd
+  const followsDirection = horizontal && direction === undefined
+
+  return (
+    <div
+      aria-hidden="true"
+      className={cn("pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-[inherit] forced-colors:hidden", className)}
+    >
+      <ProgressiveBlur
+        side={horizontal ? "left" : "top"}
+        size={size}
+        blur={blur}
+        tint={tint}
+        className={cn(
+          "transition-opacity duration-200 motion-reduce:transition-none",
+          first ? "opacity-100" : "opacity-0",
+          followsDirection && (last ? "rtl:opacity-100" : "rtl:opacity-0")
+        )}
+      />
+      <ProgressiveBlur
+        side={horizontal ? "right" : "bottom"}
+        size={size}
+        blur={blur}
+        tint={tint}
+        className={cn(
+          "transition-opacity duration-200 motion-reduce:transition-none",
+          last ? "opacity-100" : "opacity-0",
+          followsDirection && (first ? "rtl:opacity-100" : "rtl:opacity-0")
+        )}
+      />
+    </div>
+  )
+}
+
+type ViewportScrollBlurProps = Omit<ScrollBlurEdgesProps, "orientation" | "direction" | "showStart" | "showEnd"> & {
+  viewport: HTMLElement | null
+  bothAxes?: boolean
+}
+
+/** Adds visual edges to a scroll viewport owned by an existing primitive. */
+function ViewportScrollBlur({ viewport, bothAxes, ...props }: ViewportScrollBlurProps) {
+  const { vertical, horizontal } = useOverflowEdges(viewport)
+  return (
+    <>
+      <ScrollBlurEdges showStart={includesEdge(vertical, "start")} showEnd={includesEdge(vertical, "end")} {...props} />
+      {bothAxes && (
+        <ScrollBlurEdges
+          orientation="horizontal"
+          showStart={includesEdge(horizontal, "start")}
+          showEnd={includesEdge(horizontal, "end")}
+          {...props}
+        />
+      )}
+    </>
+  )
+}
+
+function includesEdge(more: More, side: "start" | "end") {
+  return more === side || more === "both"
+}
+
 type ScrollBlurProps = React.ComponentProps<"div"> & {
   orientation?: "vertical" | "horizontal"
   /** Passed to both edges. */
@@ -111,58 +263,38 @@ function ScrollBlur({
   className,
   viewportClassName,
   children,
+  ref,
   ...props
 }: ScrollBlurProps) {
-  const viewport = React.useRef<HTMLDivElement>(null)
-  const [more, setMore] = React.useState<More>("none")
-  const vertical = orientation === "vertical"
+  const [viewport, viewportRef] = useScrollBlurViewport(ref)
+  const more = useOverflowEdges(viewport)[orientation]
 
-  React.useEffect(() => {
-    const element = viewport.current
-    if (!element) return
-    const update = () => {
-      const offset = vertical ? element.scrollTop : element.scrollLeft
-      const room = vertical
-        ? element.scrollHeight - element.clientHeight
-        : element.scrollWidth - element.clientWidth
-      // A pixel of slack: zoomed pages scroll to fractions and never quite reach the end.
-      const start = Math.abs(offset) > 1
-      const end = room - Math.abs(offset) > 1
-      setMore(start && end ? "both" : start ? "start" : end ? "end" : "none")
-    }
-    update()
-    element.addEventListener("scroll", update, { passive: true })
-    const observer = new ResizeObserver(update)
-    observer.observe(element)
-    for (const child of element.children) observer.observe(child)
-    return () => {
-      element.removeEventListener("scroll", update)
-      observer.disconnect()
-    }
-  }, [vertical])
-
-  const edge = "z-10 transition-opacity duration-200 motion-reduce:transition-none"
-  const show = (side: "start" | "end") => (more === side || more === "both" ? "opacity-100" : "opacity-0")
   return (
     <div data-slot="scroll-blur" data-more={more} className={cn("relative isolate flex flex-col overflow-hidden", className)}>
       <div
-        ref={viewport}
+        ref={viewportRef}
         data-slot="scroll-blur-viewport"
         role="region"
         tabIndex={0}
         className={cn(
           "min-h-0 min-w-0 flex-1 size-full overscroll-contain rounded-[inherit] focus-visible:outline-offset-[-2px]",
-          vertical ? "overflow-y-auto" : "overflow-x-auto",
+          orientation === "vertical" ? "overflow-y-auto" : "overflow-x-auto",
           viewportClassName
         )}
         {...props}
       >
         {children}
       </div>
-      <ProgressiveBlur side={vertical ? "top" : "left"} size={size} blur={blur} tint className={cn(edge, show("start"))} />
-      <ProgressiveBlur side={vertical ? "bottom" : "right"} size={size} blur={blur} tint className={cn(edge, show("end"))} />
+      <ScrollBlurEdges
+        orientation={orientation}
+        showStart={includesEdge(more, "start")}
+        showEnd={includesEdge(more, "end")}
+        size={size}
+        blur={blur}
+        tint
+      />
     </div>
   )
 }
 
-export { ProgressiveBlur, ScrollBlur }
+export { ProgressiveBlur, ScrollBlur, ScrollBlurEdges, ViewportScrollBlur, useScrollBlurViewport }

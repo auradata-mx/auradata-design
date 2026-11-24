@@ -1,4 +1,5 @@
-// registry: auradata (shadcn attachment whose group fades at the cut edge on a phone and whose remove button sits evenly in the card; an error description in the full destructive color, which reads AA on the card)
+"use client"
+// registry: auradata (shadcn attachment with scroll cues and an evenly aligned remove button)
 import * as React from "react"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
@@ -6,6 +7,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button"
+import { useScrollBlurViewport, ViewportScrollBlur } from "@/components/ui/progressive-blur"
 
 const attachmentVariants = cva(
   "group/attachment relative flex w-fit max-w-full min-w-0 shrink-0 flex-wrap rounded-xl border bg-card text-card-foreground transition-colors focus-within:ring-1 focus-within:ring-ring/50 has-[>a,>button]:hover:bg-muted/50 data-[state=error]:border-destructive/30 data-[state=idle]:border-dashed",
@@ -182,19 +184,23 @@ function AttachmentTrigger({
   })
 }
 
-function AttachmentGroup({ className, ...props }: React.ComponentProps<"div">) {
+function AttachmentGroup({ className, dir, ref, ...props }: React.ComponentProps<"div">) {
+  const [viewport, viewportRef] = useScrollBlurViewport(ref)
+
   return (
-    <div
-      data-slot="attachment-group"
-      // AuraData: the end edge fades, so a card cut by a narrow screen reads as "scroll for more" (stock's
-      // scroll-driven fade barely showed on a short overflow); the end padding lets the last card leave the
-      // fade, and 4 px on each side keep the focus outline unclipped.
-      className={cn(
-        "-mx-1 flex min-w-0 snap-x snap-mandatory scroll-px-1 scrollbar-none gap-3 overflow-x-auto overscroll-x-contain px-1 py-1 pe-8 mask-[linear-gradient(to_right,#000_calc(100%-2rem),transparent)] *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start",
-        className
-      )}
-      {...props}
-    />
+    <div dir={dir} className="relative isolate -mx-1 grid w-fit max-w-full min-w-0 grid-cols-[minmax(0,1fr)]">
+      <div
+        ref={viewportRef}
+        dir={dir}
+        data-slot="attachment-group"
+        className={cn(
+          "flex min-w-0 snap-x snap-mandatory scroll-px-1 scrollbar-none gap-3 overflow-x-auto overscroll-x-contain p-1 *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start",
+          className
+        )}
+        {...props}
+      />
+      <ViewportScrollBlur viewport={viewport} bothAxes />
+    </div>
   )
 }
 

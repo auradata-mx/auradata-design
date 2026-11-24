@@ -450,7 +450,7 @@ test('the theme gives floating surfaces a frosted glass layer and disables it in
   const supports = theme.css['@supports (backdrop-filter: blur(1px))']?.['@layer base'];
   expect(supports).toBeDefined();
   const [selector, rule] = Object.entries(supports)[0];
-  for (const slot of ['dropdown-menu-content', 'dropdown-menu-sub-content', 'context-menu-content', 'context-menu-sub-content', 'select-content', 'popover-content', 'combobox-content', 'hover-card-content', 'chart-tooltip', 'data-table-selection-bar']) {
+  for (const slot of ['dropdown-menu-content', 'dropdown-menu-sub-content', 'context-menu-content', 'context-menu-sub-content', 'select-content', 'popover-content', 'combobox-content', 'hover-card-content', 'navigation-menu-popup', 'tour', 'chart-tooltip', 'data-table-selection-bar']) {
     expect(selector).toContain(`[data-slot="${slot}"]`);
   }
   expect(selector).toContain('[data-sonner-toast]:not([data-rich-colors="true"])');

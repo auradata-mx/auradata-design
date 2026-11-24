@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover"
+import { ViewportScrollBlur, useScrollBlurViewport } from "@/components/ui/progressive-blur"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useIsMobile } from "@/hooks/use-mobile"
 
@@ -113,7 +114,7 @@ function NotificationCenter({
             <DrawerTitle>{title}</DrawerTitle>
             {markAll}
           </DrawerHeader>
-          <div className="min-h-0 flex-1 overflow-y-auto">{body}</div>
+          <NotificationViewport className="min-h-0 flex-1">{body}</NotificationViewport>
           {footer && <div className="border-t p-2">{footer}</div>}
         </DrawerContent>
       </Drawer>
@@ -131,10 +132,26 @@ function NotificationCenter({
           <PopoverTitle className="text-sm">{title}</PopoverTitle>
           {markAll}
         </div>
-        <div className="max-h-[min(28rem,60vh)] overflow-y-auto">{body}</div>
+        <NotificationViewport viewportClassName="max-h-[min(28rem,60vh)]">{body}</NotificationViewport>
         {footer && <div className="border-t p-1.5">{footer}</div>}
       </PopoverContent>
     </Popover>
+  )
+}
+
+function NotificationViewport({
+  className,
+  viewportClassName,
+  children,
+}: React.PropsWithChildren<{ className?: string; viewportClassName?: string }>) {
+  const [viewport, viewportRef] = useScrollBlurViewport()
+  return (
+    <div className={cn("relative", className)}>
+      <div ref={viewportRef} data-slot="notification-list-viewport" className={cn("max-h-full overflow-y-auto", viewportClassName)}>
+        {children}
+      </div>
+      <ViewportScrollBlur viewport={viewport} />
+    </div>
   )
 }
 
