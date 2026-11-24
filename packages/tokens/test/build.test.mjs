@@ -445,18 +445,24 @@ test('the theme outlines elevated surfaces in forced colors', () => {
 test('the theme gives floating surfaces a frosted glass layer and disables it in forced colors', () => {
   const theme = JSON.parse(read('shadcn-theme.json'));
   const css = read('shadcn.css');
-  expect(theme.light['surface-glass']).toBe('rgb(255 255 255 / 0.84)');
-  expect(theme.dark['surface-glass']).toBe('rgb(25 25 33 / 0.86)');
+  expect(theme.light['surface-glass']).toBe('rgb(255 255 255 / 0.80)');
+  expect(theme.dark['surface-glass']).toBe('rgb(25 25 33 / 0.82)');
   const supports = theme.css['@supports (backdrop-filter: blur(1px))']?.['@layer base'];
   expect(supports).toBeDefined();
   const [selector, rule] = Object.entries(supports)[0];
-  for (const slot of ['dropdown-menu-content', 'select-content', 'popover-content', 'chart-tooltip', 'data-table-selection-bar']) {
+  for (const slot of ['dropdown-menu-content', 'dropdown-menu-sub-content', 'context-menu-content', 'context-menu-sub-content', 'select-content', 'popover-content', 'combobox-content', 'hover-card-content', 'chart-tooltip', 'data-table-selection-bar']) {
     expect(selector).toContain(`[data-slot="${slot}"]`);
   }
+  expect(selector).toContain('[data-sonner-toast]:not([data-rich-colors="true"])');
   expect(rule['--popover']).toBe('var(--surface-glass)');
-  expect(rule['backdrop-filter']).toContain('blur(');
-  expect(rule['backdrop-filter']).toContain('saturate(');
-  expect(theme.css['@media (forced-colors: active)'][selector]['backdrop-filter']).toBe('none');
+  expect(rule['--muted-foreground']).toContain('var(--popover-foreground)');
+  expect(rule['backdrop-filter']).toBe('blur(18px) saturate(1.35)');
+  expect(rule['-webkit-backdrop-filter']).toBe(rule['backdrop-filter']);
+  expect(theme.css['@media (forced-colors: active)'][selector]).toMatchObject({
+    '--popover': 'Canvas',
+    '--normal-bg': 'Canvas',
+    'backdrop-filter': 'none',
+  });
   expect(css).toContain('@supports (backdrop-filter: blur(1px))');
 });
 

@@ -8,10 +8,10 @@ const meta = {
   title: 'Components/Badge',
   component: Badge,
   args: { children: 'Publicado' },
-} satisfies Meta<typeof Badge>
+} satisfies Meta<React.ComponentProps<typeof Badge> & { asLinks?: boolean }>
 
 export default meta
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<React.ComponentProps<typeof Badge> & { asLinks?: boolean }>
 
 export const Default: Story = {}
 
@@ -33,12 +33,13 @@ export const Variants: Story = {
 
 /** The states of a report, as the data table shows them. */
 export const Status: Story = {
-  render: () => (
+  args: { asLinks: false },
+  render: ({ asLinks }) => (
     <div className="flex flex-wrap gap-2">
-      <Badge variant="success">Publicado</Badge>
-      <Badge variant="warning">Desactualizado</Badge>
-      <Badge variant="info">Borrador</Badge>
-      <Badge variant="destructive">Con errores</Badge>
+      <Badge render={asLinks ? <a href="#published" /> : undefined} variant="success">Publicado</Badge>
+      <Badge render={asLinks ? <a href="#outdated" /> : undefined} variant="warning">Desactualizado</Badge>
+      <Badge render={asLinks ? <a href="#draft" /> : undefined} variant="info">Borrador</Badge>
+      <Badge render={asLinks ? <a href="#error" /> : undefined} variant="destructive">Con errores</Badge>
     </div>
   ),
 }

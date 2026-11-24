@@ -102,6 +102,6 @@
     "raised": { "$value": "linear-gradient(180deg, rgb(255 255 255 / 0) 0%, rgb(15 23 42 / 0.025) 100%)", "$description": "Laid over the card color: white at the top, a touch darker at the bottom" },
     "filled": { "$value": "linear-gradient(180deg, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0) 50%, rgb(0 0 0 / 0.08) 100%)", "$description": "Laid over a filled button: lit at the top, the fill itself behind the label in the middle" },
     "grain": { "$value": "none", "$description": "Opt-in noise; dark only" },
-    "glass": { "$value": "rgb(255 255 255 / 0.84)", "$description": "Frosted floating surfaces (menus, selects, popovers, chart tooltips): lets color underneath tint through while keeping AA contrast" }
+    "glass": { "$value": "rgb(255 255 255 / 0.80)", "$description": "Frosted floating surfaces: 80% white tint; the theme strengthens muted labels on glass" }
   }
 }

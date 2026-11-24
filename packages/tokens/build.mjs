@@ -259,15 +259,20 @@ function glassCss() {
         [glass]: {
           '--popover': 'var(--surface-glass)',
           '--normal-bg': 'var(--surface-glass)',
-          'backdrop-filter': 'blur(14px) saturate(1.6)',
-          '-webkit-backdrop-filter': 'blur(14px) saturate(1.6)',
+          // Muted copy must still read when the translucent surface sits over the opposite theme's colors.
+          '--muted-foreground': 'color-mix(in srgb, var(--popover-foreground) 73%, var(--background))',
+          // Keep the standard declaration last so CSS optimizers retain it for Chromium.
+          '-webkit-backdrop-filter': 'blur(18px) saturate(1.35)',
+          'backdrop-filter': 'blur(18px) saturate(1.35)',
         },
       },
     },
     '@media (forced-colors: active)': {
       [glass]: {
-        'backdrop-filter': 'none',
+        '--popover': 'Canvas',
+        '--normal-bg': 'Canvas',
         '-webkit-backdrop-filter': 'none',
+        'backdrop-filter': 'none',
       },
     },
   };

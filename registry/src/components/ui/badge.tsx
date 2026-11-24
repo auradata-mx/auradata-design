@@ -15,11 +15,11 @@ const badgeVariants = cva(
           "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
         // AuraData: a solid fill. The stock tint put #DC2626 on #FCE9E9, 4.1:1, below WCAG AA.
         destructive:
-          "bg-destructive text-destructive-foreground [a]:hover:bg-destructive/90",
-        // AuraData: status badges are solid too; each -foreground reads AA on its fill.
-        success: "bg-success text-success-foreground [a]:hover:bg-success/90",
-        warning: "bg-warning text-warning-foreground [a]:hover:bg-warning/90",
-        info: "bg-info text-info-foreground [a]:hover:bg-info/90",
+          "bg-destructive text-destructive-foreground [a]:hover:underline",
+        // Keep both status colors opaque at hover so the underlying surface cannot reduce contrast.
+        success: "bg-success text-success-foreground [a]:hover:underline",
+        warning: "bg-warning text-warning-foreground [a]:hover:underline",
+        info: "bg-info text-info-foreground [a]:hover:underline",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
         ghost:
