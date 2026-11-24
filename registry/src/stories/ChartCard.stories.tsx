@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test'
 
-import { ChartCard } from '@/components/ui/chart-card'
+import { ChartCard } from '@/components/blocks/chart-card'
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { chartConfig } from '@/lib/chart-palette'
@@ -54,8 +54,7 @@ const PERIOD = (
 )
 
 const meta = {
-  title: 'Gráficas/Chart card',
-  id: 'auradata-chart-card',
+  title: 'Blocks/Parts/Chart card',
   component: ChartCard,
   args: {
     title: 'Ventas por región',

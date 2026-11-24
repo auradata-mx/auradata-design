@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, within } from 'storybook/test'
 
-import { KpiCard } from '@/components/ui/kpi-card'
+import { KpiCard } from '@/components/blocks/kpi-card'
 
 const meta = {
-  title: 'AuraData/KPI card',
+  title: 'Blocks/Parts/KPI card',
   component: KpiCard,
   args: { label: 'Ventas del mes', value: '$4.16 M', change: 0.062, comparison: 'vs. septiembre', className: 'max-w-sm' },
   argTypes: { goodDirection: { control: 'inline-radio', options: ['up', 'down'] } },

@@ -3,7 +3,7 @@ title: Command
 description: "Una lista que se filtra al escribir, para elegir un informe o correr una acción."
 ---
 
-El menú de comandos de shadcn (sobre [cmdk](https://cmdk.paco.me)) con la fila resaltada en `--accent`, distinta del fondo del popover; toda la caja de búsqueda recibe el clic, no solo la línea del texto; el mensaje de vacío va atenuado, y el separador es tan ancho como las filas.
+El menú de comandos de shadcn (sobre [cmdk](https://cmdk.paco.me)) con la fila resaltada en `--accent`, distinta del fondo del popover; toda la caja de búsqueda recibe el clic, no solo la línea del texto; el mensaje de vacío va atenuado, y el separador es tan ancho como las filas. `CommandSearch` es la búsqueda de toda la app, lista para usar.
 
 <ComponentPreview name="command/demo" />
 
@@ -44,6 +44,39 @@ Entre grupos, una línea fina con `before:` en el `CommandGroup` (como en los ej
 
 <ComponentPreview name="command/dialog" />
 
+### Búsqueda de la app
+
+`CommandSearch` es la búsqueda de toda la app, armada con `Command`: el botón «Buscar…» con su atajo en `Kbd`, el atajo ⌘K (macOS) o Ctrl+K escuchado en toda la página, la paleta en español con grupos, «Sin resultados» fuera de la lista (una lista vacía falla axe) y una fila de «Buscando…» con spinner, anunciada como estado, mientras los resultados cargan. En el teléfono la paleta queda arriba, para que el teclado no tape los resultados, y el botón no muestra el atajo.
+
+<ComponentPreview name="command/search-demo" />
+
+Este sitio ya usa ⌘K para su propia búsqueda, así que el ejemplo escucha ⌘J (`hotkey="j"`). En tu app deja el valor por omisión, `k`.
+
+```tsx
+import { CommandSearch, shortcutLabel, type CommandSearchGroup } from '@/components/ui/command';
+
+const groups: CommandSearchGroup[] = [
+  {
+    heading: 'Informes',
+    items: [{ id: 'ventas-por-region', label: 'Ventas por región', onSelect: () => router.push('/informes/ventas') }],
+  },
+  {
+    heading: 'Acciones',
+    items: [{ id: 'nuevo-informe', label: 'Crear informe', shortcut: shortcutLabel('n') }],
+  },
+];
+
+<CommandSearch groups={groups} />;
+```
+
+Al elegir un ítem corre su `onSelect` y la paleta se cierra. `keywords` encuentra el ítem por otras palabras, como su espacio o su dueño. `shortcutLabel('n')` escribe «⌘N» en Apple y «Ctrl N» en lo demás.
+
+### Búsqueda cargando
+
+Con `loading`, la paleta dice «Buscando…» en lugar de «Sin resultados» mientras llega la respuesta del servidor. El ejemplo tarda un momento cada vez que se abre.
+
+<ComponentPreview name="command/search-loading" />
+
 ## Props
 
 ### Command
@@ -62,15 +95,28 @@ Entre grupos, una línea fina con `before:` en el `CommandGroup` (como en los ej
 
 <ComponentProps file="command" type="Pick<React.ComponentProps<typeof CommandItem>, 'value' | 'keywords' | 'onSelect' | 'disabled'>" />
 
+### CommandSearch
+
+<ComponentProps
+  file="command"
+  type="Pick<CommandSearchProps, 'groups' | 'open' | 'defaultOpen' | 'onOpenChange' | 'placeholder' | 'emptyText' | 'hotkey' | 'loading' | 'loadingText' | 'children'>"
+/>
+
+### CommandSearchItem
+
+<ComponentProps file="command" name="CommandSearchItem" />
+
 ## Cuándo usarlo
 
 - **Elegir entre muchos objetos** por su nombre: informes, datasets, espacios.
 - **Correr acciones** desde el teclado, con su atajo en `CommandShortcut`.
 - **Grupos con encabezado** («Informes», «Datasets», «Acciones») y «Sin resultados» cuando nada coincide.
+- **Una sola búsqueda por app** (`CommandSearch`), en la barra superior: informes, datasets y acciones en un solo lugar; `loading` mientras llegan los resultados del servidor.
 
 ## Cuándo no
 
-- **La búsqueda de toda la app con ⌘K**: `SearchCommand`, que ya trae el botón, el atajo y la fila de «Buscando…».
+- **La búsqueda de toda la app con ⌘K**: no la armes a mano, usa `CommandSearch`, que ya trae el botón, el atajo y la fila de «Buscando…».
+- **Filtrar una tabla**: la búsqueda de `DataTable`.
 - **Un valor de un formulario**: `Combobox` (o `Select` con pocas opciones).
 - **Pocas acciones de un objeto**: `DropdownMenu`.
 

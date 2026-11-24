@@ -1,11 +1,11 @@
 'use client';
 
 import { ConnectionForm } from '@/components/blocks/connection-form'
+import { KpiCard } from '@/components/blocks/kpi-card'
 import { Button } from '@/components/ui/button'
-import { DateRangeFilter, presetRange } from '@/components/ui/date-range-filter'
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Filter, presetRange } from '@/components/ui/filter'
 import { Input } from '@/components/ui/input'
-import { KpiCard } from '@/components/ui/kpi-card'
 import { PageHeader } from '@/components/ui/page-header'
 
 const TODAY = new Date(2026, 10, 21)
@@ -51,7 +51,7 @@ export function ReportExample() {
         description="Actualizado hace 5 minutos."
         actions={
           <>
-            <DateRangeFilter today={TODAY} defaultValue={presetRange('this-month', TODAY)} />
+            <Filter type="date" today={TODAY} defaultValue={presetRange('this-month', TODAY)} />
             <Button>Compartir</Button>
           </>
         }

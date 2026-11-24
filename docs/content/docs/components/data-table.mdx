@@ -30,9 +30,19 @@ const columns: DataTableColumn<Informe, string>[] = [
 
 ### Selección y acciones en bloque
 
-Con `selectable`, cada fila lleva una casilla y una barra flota con el conteo y las acciones de `bulkActions`. `rowLabel` le da nombre a cada casilla.
+Con `selectable`, cada fila lleva una casilla; `rowLabel` le da nombre a cada una. Con `bulkActions`, mientras hay filas seleccionadas flota abajo una barra con el conteo, anunciado con una región viva, y tus acciones. `bulkActions` recibe las filas elegidas y `clear`, que vacía la selección; «Quitar selección» y Escape dentro de la barra también la vacían. Este ejemplo confirma qué informes se marcaron o eliminaron.
 
 <ComponentPreview name="data-table/selection" align="start" />
+
+Las acciones que afectan a una sola fila van en esa fila, no en la barra.
+
+### Vistas guardadas
+
+Con `savedViews`, la barra de herramientas suma un menú «Vistas»: guarda bajo un nombre cómo se ve la tabla (orden, búsqueda, filtros, columnas, tamaño de página y densidad) y vuelve a aplicarla después. Guardar con un nombre que ya existe reemplaza esa vista; el menú dice cuál está aplicada y la deja eliminar. Ordena o filtra, guarda la vista y vuelve a ella desde «Vistas».
+
+<ComponentPreview name="data-table/saved-views" align="start" />
+
+`savedViews="informes"` guarda en `localStorage` bajo esa clave; `savedViews={{ key, storage }}` usa otro almacén con `getItem` y `setItem` (una caché respaldada por el servidor). Este ejemplo guarda en memoria: al recargar se restablece.
 
 ### Cargando
 
@@ -46,7 +56,7 @@ Filas esqueleto para una página completa, la región con `aria-busy` y el pagin
 
 <ComponentPreview name="data-table/empty" align="start" />
 
-Hay muchos más estados (filtros por columna, filtro avanzado, edición en la celda, totales, vistas guardadas, estado en la URL) en su Storybook.
+Hay muchos más estados (filtros por columna, filtro avanzado, edición en la celda, totales, estado en la URL) en su Storybook.
 
 ## Props
 

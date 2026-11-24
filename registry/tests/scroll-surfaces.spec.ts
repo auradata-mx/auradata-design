@@ -66,8 +66,8 @@ const nativeSurfaces = [
   { id: "components-dropdown-menu--open", viewport: "dropdown-menu-content", frame: null },
   { id: "components-context-menu--open", viewport: "context-menu-content", frame: null },
   { id: "components-scroll-area--default", viewport: "scroll-area-viewport", frame: "scroll-area" },
-  { id: "auradata-notification-center--open", viewport: "notification-list-viewport", frame: "popover-content" },
-  { id: "auradata-shortcuts-dialog--open", viewport: "shortcuts-list-viewport", frame: "dialog-content" },
+  { id: "blocks-parts-notification-center--open", viewport: "notification-list-viewport", frame: "popover-content" },
+  { id: "blocks-parts-shortcuts-dialog--open", viewport: "shortcuts-list-viewport", frame: "dialog-content" },
 ] as const
 
 for (const surface of nativeSurfaces) {

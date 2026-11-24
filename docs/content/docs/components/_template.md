@@ -71,7 +71,7 @@ This file starts with `_`, so the site does not publish it.
    - When the props come from Base UI, `Pick` only the AuraData props and the few a reader needs, and pass
      `baseUi="<base-ui page>"` (`button`, `select`, `dialog`…, the slug of `https://base-ui.com/react/components/<slug>`).
    - A compound component (Select, Dialog) gets one `### Part` heading and one `ComponentProps` per part with props.
-5. **One page may cover several items** (a component and its parts, `data-table` and `data-table-views`): add one
+5. **One page may cover several items** (a component and a helper item it documents): add one
    `<ComponentInstall item="…" />` per item. That is what `npm run pages:missing -w docs` counts.
 6. **Check it:**
    - `npm run build -w docs`: a wrong item, story, example name or type fails the build with its name.

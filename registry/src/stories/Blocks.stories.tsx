@@ -8,7 +8,7 @@ import { Chat, type ChatMessage } from '@/components/blocks/chat'
 import { Login } from '@/components/blocks/login'
 import { NotFound } from '@/components/blocks/not-found'
 import { Button } from '@/components/ui/button'
-import { KpiCard } from '@/components/ui/kpi-card'
+import { KpiCard } from '@/components/blocks/kpi-card'
 import { PageHeader } from '@/components/ui/page-header'
 
 const NAV: NavGroup[] = [
@@ -159,6 +159,43 @@ export const Shell: Story = {
     const chevron = nav.querySelector('[data-slot=breadcrumb-separator] svg')!.getBoundingClientRect()
     await expect(chevron.left).toBeGreaterThanOrEqual(before.right)
     await expect(chevron.right).toBeLessThanOrEqual(after.left)
+  },
+}
+
+/** `shortcuts`: «Atajos de teclado» in the user menu opens the app's shortcuts. Without it, the shell is `Shell`. */
+export const ShellShortcuts: Story = {
+  render: () => (
+    <AppShell
+      product="BI"
+      nav={NAV}
+      user={USER}
+      breadcrumbs={['Informes', 'Ventas 2026']}
+      shortcuts={[
+        {
+          heading: 'Navegación',
+          shortcuts: [
+            { label: 'Buscar', keys: 'mod+k' },
+            { label: 'Ir a informes', keys: 'g i' },
+          ],
+        },
+        { heading: 'General', shortcuts: [{ label: 'Ver los atajos', keys: '?' }] },
+      ]}
+    >
+      <PageHeader title="Ventas 2026" description="Actualizado hace 5 minutos." />
+    </AppShell>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body)
+    await expect(body.queryByRole('dialog')).toBeNull()
+    await userEvent.click(within(canvasElement).getByRole('button', { name: /Ana López/ }))
+    const menu = await body.findByRole('menu')
+    await userEvent.click(await within(menu).findByRole('menuitem', { name: /Atajos de teclado/ }))
+    const dialog = await body.findByRole('dialog', { name: 'Atajos de teclado' })
+    // waitFor: the dialog fades in.
+    await waitFor(() => expect(within(dialog).getByRole('heading', { name: 'Navegación' })).toBeVisible())
+    await userEvent.keyboard('{Escape}')
+    await waitFor(() => expect(body.queryByRole('dialog')).toBeNull())
+    ;(document.activeElement as HTMLElement | null)?.blur()
   },
 }
 

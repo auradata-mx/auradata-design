@@ -11,8 +11,9 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Logo, ProductTag } from "@/components/ui/logo"
-import { NotificationCenter } from "@/components/ui/notification-center"
+import { NotificationCenter } from "./notification-center"
 import { Separator } from "@/components/ui/separator"
+import type { ShortcutGroup } from "./shortcuts-dialog"
 import {
   Sidebar,
   SidebarContent,
@@ -30,8 +31,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { UserMenu, type UserMenuProps } from "@/components/ui/user-menu"
-import { WorkspaceSwitcher } from "@/components/ui/workspace-switcher"
+import { UserMenu, type UserMenuProps } from "./user-menu"
+import { WorkspaceSwitcher } from "./workspace-switcher"
 
 export type NavItem = { title: string; href: string; icon: LucideIcon; active?: boolean }
 export type NavGroup = { label: string; items: NavItem[] }
@@ -55,7 +56,9 @@ type AppShellProps = {
   /** An announcement for the whole app (an `AnnouncementBanner`), pinned under the top bar. */
   banner?: React.ReactNode
   /** The account menu at the foot of the sidebar: its actions and sections (`UserMenu`). */
-  userMenu?: Omit<UserMenuProps, "user" | "variant" | "trigger" | "side" | "align">
+  userMenu?: Omit<UserMenuProps, "user" | "variant" | "trigger" | "side" | "align" | "shortcuts">
+  /** The app's keyboard shortcuts: «Atajos de teclado» in the user menu, and «?» from anywhere, open them. */
+  shortcuts?: ShortcutGroup[]
   children: React.ReactNode
 }
 
@@ -71,6 +74,7 @@ export function AppShell({
   notifications,
   banner,
   userMenu,
+  shortcuts,
   children,
 }: AppShellProps) {
   return (
@@ -115,6 +119,7 @@ export function AppShell({
                 align="start"
                 trigger={<SidebarMenuButton size="lg" className="data-popup-open:bg-sidebar-accent" />}
                 {...userMenu}
+                shortcuts={shortcuts}
               />
             </SidebarMenuItem>
           </SidebarMenu>

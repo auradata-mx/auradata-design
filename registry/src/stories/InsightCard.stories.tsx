@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, within } from 'storybook/test'
 
-import { InsightCard } from '@/components/ui/insight-card'
+import { InsightCard } from '@/components/blocks/insight-card'
 
 const meta = {
-  title: 'AuraData/Insight card',
+  title: 'Blocks/Parts/Insight card',
   component: InsightCard,
   args: {
     title: 'El Norte creció más que ninguna región',

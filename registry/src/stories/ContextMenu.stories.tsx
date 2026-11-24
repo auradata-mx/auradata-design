@@ -9,7 +9,7 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
-import { shortcutLabel } from '@/components/ui/search-command'
+import { shortcutLabel } from '@/components/ui/command'
 
 const meta = {
   title: 'Components/Context menu',

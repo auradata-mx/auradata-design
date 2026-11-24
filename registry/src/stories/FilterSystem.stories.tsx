@@ -3,11 +3,9 @@ import * as React from 'react'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 import type { DateRange } from 'react-day-picker'
 
-import { DateRangeFilter, presetRange } from '@/components/ui/date-range-filter'
-import { FacetedFilter } from '@/components/ui/faceted-filter'
+import { KpiCard } from '@/components/blocks/kpi-card'
+import { Filter, presetRange, type NumberRange } from '@/components/ui/filter'
 import { FilterChips, type FilterChip } from '@/components/ui/filter-chips'
-import { KpiCard } from '@/components/ui/kpi-card'
-import { RangeFilter, type NumberRange } from '@/components/ui/range-filter'
 import { formatCompact, formatCurrency, formatDate, formatNumber } from '@/lib/format'
 
 const TODAY = new Date(2026, 10, 21)
@@ -62,20 +60,23 @@ function Dashboard() {
   return (
     <div className="grid gap-4">
       <div className="flex flex-wrap items-center gap-2">
-        <DateRangeFilter today={TODAY} value={periodo ?? { from: undefined }} onValueChange={setPeriodo} />
-        <FacetedFilter
+        <Filter type="date" today={TODAY} value={periodo ?? { from: undefined }} onValueChange={setPeriodo} />
+        <Filter
+          type="select"
           title="Región"
           options={REGIONES.map((value) => ({ value, count: regionCounts.get(value) ?? 0 }))}
           value={regiones}
           onValueChange={setRegiones}
         />
-        <FacetedFilter
+        <Filter
+          type="select"
           title="Canal"
           options={CANALES.map((value) => ({ value, count: canalCounts.get(value) ?? 0 }))}
           value={canales}
           onValueChange={setCanales}
         />
-        <RangeFilter
+        <Filter
+          type="range"
           title="Monto"
           min={0}
           max={50000}

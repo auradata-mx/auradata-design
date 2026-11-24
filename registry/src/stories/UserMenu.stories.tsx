@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
-import { UserMenu } from '@/components/ui/user-menu'
+import { UserMenu } from '@/components/blocks/user-menu'
 
 const USER = { name: 'Ana López', email: 'ana@empresa.mx' }
 
 const meta = {
-  title: 'AuraData/User menu',
+  title: 'Blocks/Parts/User menu',
   component: UserMenu,
   args: {
     user: USER,

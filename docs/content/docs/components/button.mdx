@@ -3,7 +3,7 @@ title: Button
 description: "Dispara una acción: guardar, compartir, eliminar. Con variantes, tamaños y un estado de carga."
 ---
 
-El botón de shadcn con lo que AuraData le suma: un destructivo sólido que cumple el contraste AA, un estado `loading` con spinner y `aria-busy`, y profundidad: sube 1 px al pasar el mouse y se hunde al presionarlo.
+El botón de shadcn con lo que AuraData le suma: un destructivo sólido que cumple el contraste AA, un estado `loading` con spinner y `aria-busy`, y profundidad: sube 1 px al pasar el mouse y se hunde al presionarlo. Con `shimmer`, un brillo para la llamada principal de una página de presentación.
 
 <ComponentPreview name="button/demo" />
 
@@ -43,11 +43,17 @@ Mientras la acción corre, `loading` pone un spinner, `aria-busy` y lo deshabili
 
 <ComponentPreview name="button/loading" />
 
+### Brillo
+
+`shimmer` deja pasar un brillo por debajo de la etiqueta cada pocos segundos. Es decorativo (`aria-hidden`, no recibe clics) y desaparece mientras carga o si el usuario prefiere reducir el movimiento. Úsalo una sola vez por página, en la llamada principal de una página de presentación; para navegar, usa `render` con un enlace y conserva su semántica.
+
+<ComponentPreview name="button/shimmer" />
+
 ## Props
 
 <ComponentProps
   file="button"
-  type="Pick<React.ComponentProps<typeof Button>, 'variant' | 'size' | 'loading' | 'disabled'>"
+  type="Pick<React.ComponentProps<typeof Button>, 'variant' | 'size' | 'loading' | 'shimmer' | 'disabled'>"
   baseUi="button"
 />
 
@@ -61,6 +67,7 @@ Mientras la acción corre, `loading` pone un spinner, `aria-busy` y lo deshabili
 ## Cuándo no
 
 - Para elegir una opción entre varias usa `Tabs` o `ToggleGroup`, no un grupo de botones.
+- `shimmer` en menús, formularios o tablas: compite con la tarea principal. Ahí el botón va sin brillo.
 - Para borrar algo que no se puede deshacer, el botón `destructive` abre un `AlertDialog` que nombra el objeto y la consecuencia; no borra directo.
 
 <StorybookLink stories="Button" story="Variants" />

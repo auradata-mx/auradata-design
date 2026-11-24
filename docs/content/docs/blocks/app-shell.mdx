@@ -16,7 +16,41 @@ Usa esta estructura para envolver las pantallas de una app. La barra lateral agr
 
 ## Componentes del registro
 
-`Sidebar` organiza la navegación y `Breadcrumb` muestra la ubicación. `Logo`, `ProductTag`, `WorkspaceSwitcher` y `UserMenu` identifican la app, el espacio y la cuenta. `ThemeToggle` y `NotificationCenter` son opcionales.
+`Sidebar` organiza la navegación y `Breadcrumb` muestra la ubicación. `Logo` y `ProductTag` identifican la app. `ThemeToggle` es opcional.
+
+## Piezas
+
+El bloque trae cuatro piezas propias. Llegan con él, junto a `app-shell.tsx`, y se importan con una ruta relativa (`./user-menu`). Cada una aparece según las props que pases a `AppShell`.
+
+| Pieza | Qué hace | Se activa con |
+| --- | --- | --- |
+| `WorkspaceSwitcher` | El espacio actual arriba de la barra lateral y un menú para cambiarlo; «Nuevo espacio» aparece solo con `onCreate`. Un nombre largo se corta con puntos suspensivos | `workspaces`: `{ workspaces, current, onSelect, onCreate }` |
+| `UserMenu` | El menú de la cuenta al pie de la barra: «Mi cuenta» y «Ajustes»; espacio, tema e idioma en submenús; ayuda y atajos; «Cerrar sesión» al final. Cada sección aparece cuando la pasas | Siempre; sus secciones con `userMenu` |
+| `NotificationCenter` | La campana con el conteo sin leer. Abre un popover en escritorio y un panel desde abajo en el teléfono, con «Sin leer» y «Leídas» | `notifications`: `{ notifications, onMarkAllRead, onSelect }` |
+| `ShortcutsDialog` | Todos los atajos de la app, agrupados, cada tecla en un `Kbd`. Se abre con «?» fuera de un campo de texto y con «Atajos de teclado» del menú de la cuenta | `shortcuts`: los grupos de atajos |
+
+<ComponentPreview name="blocks/parts/user-menu" />
+
+<ComponentPreview name="blocks/parts/notification-center" />
+
+### Atajos de teclado
+
+Pasa `shortcuts` una vez y el bloque hace el resto: agrega «Atajos de teclado» al menú de la cuenta y escucha «?» en toda la página. Las teclas se escriben `mod+k` (⌘K en Apple, Ctrl K en lo demás), `shift+d`, `esc`, `?`, y un espacio entre los pasos de una secuencia (`g i` se lee «G luego I»). Sin `shortcuts`, el bloque se ve igual que antes.
+
+```tsx
+<AppShell
+  nav={nav}
+  user={user}
+  shortcuts={[
+    { heading: 'Navegación', shortcuts: [{ label: 'Buscar', keys: 'mod+k' }, { label: 'Ir a informes', keys: 'g i' }] },
+    { heading: 'General', shortcuts: [{ label: 'Ver los atajos', keys: '?' }] },
+  ]}
+>
+  {children}
+</AppShell>;
+```
+
+<ComponentPreview name="blocks/parts/shortcuts-dialog" />
 
 ## Cómo adaptarlo
 

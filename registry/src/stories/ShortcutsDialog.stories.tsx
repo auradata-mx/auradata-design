@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
 import { Input } from '@/components/ui/input'
-import { shortcutLabel } from '@/components/ui/search-command'
-import { ShortcutsDialog, type ShortcutGroup } from '@/components/ui/shortcuts-dialog'
+import { shortcutLabel } from '@/components/ui/command'
+import { ShortcutsDialog, type ShortcutGroup } from '@/components/blocks/shortcuts-dialog'
 
 const GROUPS: ShortcutGroup[] = [
   {
@@ -43,7 +43,7 @@ function Page(props: React.ComponentProps<typeof ShortcutsDialog>) {
 }
 
 const meta = {
-  title: 'AuraData/Shortcuts dialog',
+  title: 'Blocks/Parts/Shortcuts dialog',
   component: Page,
   args: { groups: GROUPS, onOpenChange: fn() },
 } satisfies Meta<typeof Page>

@@ -737,34 +737,6 @@
       ]
     },
     {
-      "name": "chart-card",
-      "type": "registry:ui",
-      "title": "Chart card",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "card",
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/chart-export",
-        "cristianruben-dev/auradata-design/dialog",
-        "cristianruben-dev/auradata-design/dropdown-menu",
-        "cristianruben-dev/auradata-design/empty",
-        "cristianruben-dev/auradata-design/error-state",
-        "cristianruben-dev/auradata-design/format",
-        "cristianruben-dev/auradata-design/progressive-blur",
-        "skeleton",
-        "table"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/chart-card.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "chart",
       "type": "registry:ui",
       "title": "Chart",
@@ -849,9 +821,12 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/dialog",
         "cristianruben-dev/auradata-design/input-group",
-        "cristianruben-dev/auradata-design/progressive-blur"
+        "cristianruben-dev/auradata-design/kbd",
+        "cristianruben-dev/auradata-design/progressive-blur",
+        "spinner"
       ],
       "files": [
         {
@@ -898,48 +873,6 @@
       ]
     },
     {
-      "name": "data-table-selection-bar",
-      "type": "registry:ui",
-      "title": "Data table selection bar",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/format",
-        "separator"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/data-table-selection-bar.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "data-table-views",
-      "type": "registry:ui",
-      "title": "Data table views",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/dialog",
-        "cristianruben-dev/auradata-design/dropdown-menu",
-        "cristianruben-dev/auradata-design/field",
-        "cristianruben-dev/auradata-design/input"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/data-table-views.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "data-table",
       "type": "registry:ui",
       "title": "Data table",
@@ -954,11 +887,10 @@
         "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/chart-palette",
         "cristianruben-dev/auradata-design/checkbox",
-        "cristianruben-dev/auradata-design/data-table-selection-bar",
-        "cristianruben-dev/auradata-design/data-table-views",
-        "cristianruben-dev/auradata-design/date-range-filter",
+        "cristianruben-dev/auradata-design/dialog",
         "cristianruben-dev/auradata-design/dropdown-menu",
-        "cristianruben-dev/auradata-design/faceted-filter",
+        "cristianruben-dev/auradata-design/field",
+        "cristianruben-dev/auradata-design/filter",
         "cristianruben-dev/auradata-design/filter-builder",
         "cristianruben-dev/auradata-design/filter-chips",
         "cristianruben-dev/auradata-design/filter-conditions",
@@ -966,18 +898,26 @@
         "cristianruben-dev/auradata-design/input",
         "cristianruben-dev/auradata-design/native-select",
         "cristianruben-dev/auradata-design/progressive-blur",
-        "cristianruben-dev/auradata-design/range-filter",
         "cristianruben-dev/auradata-design/select",
         "cristianruben-dev/auradata-design/table-export",
         "cristianruben-dev/auradata-design/toggle",
         "cristianruben-dev/auradata-design/use-saved-views",
         "popover",
+        "separator",
         "skeleton",
         "table"
       ],
       "files": [
         {
           "path": "registry/src/components/ui/data-table.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/src/components/ui/data-table-selection-bar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/src/components/ui/data-table-views.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1003,30 +943,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/date-picker.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "date-range-filter",
-      "type": "registry:ui",
-      "title": "Date range filter",
-      "dependencies": [
-        "cn",
-        "date-fns",
-        "lucide-react",
-        "react-day-picker"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/calendar",
-        "cristianruben-dev/auradata-design/format",
-        "cristianruben-dev/auradata-design/use-mobile",
-        "popover"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/date-range-filter.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1135,31 +1051,16 @@
       "title": "Empty",
       "dependencies": [
         "class-variance-authority",
-        "cn"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/empty.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "error-state",
-      "type": "registry:ui",
-      "title": "Error state",
-      "dependencies": [
         "cn",
         "lucide-react"
       ],
       "registryDependencies": [
         "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/empty",
         "cristianruben-dev/auradata-design/progressive-blur"
       ],
       "files": [
         {
-          "path": "registry/src/components/ui/error-state.tsx",
+          "path": "registry/src/components/ui/empty.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1174,29 +1075,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/eyebrow.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "faceted-filter",
-      "type": "registry:ui",
-      "title": "Faceted filter",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/badge",
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/command",
-        "cristianruben-dev/auradata-design/format",
-        "popover",
-        "separator"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/faceted-filter.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1277,6 +1155,36 @@
       "files": [
         {
           "path": "registry/src/components/ui/filter-chips.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "filter",
+      "type": "registry:ui",
+      "title": "Filter",
+      "dependencies": [
+        "cn",
+        "date-fns",
+        "lucide-react",
+        "react-day-picker"
+      ],
+      "registryDependencies": [
+        "cristianruben-dev/auradata-design/badge",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/calendar",
+        "cristianruben-dev/auradata-design/command",
+        "cristianruben-dev/auradata-design/format",
+        "cristianruben-dev/auradata-design/input",
+        "cristianruben-dev/auradata-design/label",
+        "cristianruben-dev/auradata-design/slider",
+        "cristianruben-dev/auradata-design/use-mobile",
+        "popover",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "registry/src/components/ui/filter.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1416,26 +1324,6 @@
       ]
     },
     {
-      "name": "insight-card",
-      "type": "registry:ui",
-      "title": "Insight card",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "card",
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/format"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/insight-card.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "item",
       "type": "registry:ui",
       "title": "Item",
@@ -1464,26 +1352,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/kbd.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "kpi-card",
-      "type": "registry:ui",
-      "title": "Kpi card",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "card",
-        "cristianruben-dev/auradata-design/delta",
-        "cristianruben-dev/auradata-design/sparkline",
-        "skeleton"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/kpi-card.tsx",
           "type": "registry:ui"
         }
       ]
@@ -1658,30 +1526,6 @@
       ]
     },
     {
-      "name": "notification-center",
-      "type": "registry:ui",
-      "title": "Notification center",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/drawer",
-        "cristianruben-dev/auradata-design/empty",
-        "cristianruben-dev/auradata-design/progressive-blur",
-        "cristianruben-dev/auradata-design/use-mobile",
-        "popover",
-        "skeleton"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/notification-center.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "number-input",
       "type": "registry:ui",
       "title": "Number input",
@@ -1817,31 +1661,6 @@
       ]
     },
     {
-      "name": "range-filter",
-      "type": "registry:ui",
-      "title": "Range filter",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/badge",
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/format",
-        "cristianruben-dev/auradata-design/input",
-        "cristianruben-dev/auradata-design/label",
-        "cristianruben-dev/auradata-design/slider",
-        "popover",
-        "separator"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/range-filter.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "resizable",
       "type": "registry:ui",
       "title": "Resizable",
@@ -1875,46 +1694,6 @@
       ]
     },
     {
-      "name": "search-command",
-      "type": "registry:ui",
-      "title": "Search command",
-      "dependencies": [
-        "cmdk",
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/command",
-        "cristianruben-dev/auradata-design/kbd",
-        "spinner"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/search-command.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "section-header",
-      "type": "registry:ui",
-      "title": "Section header",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/eyebrow",
-        "cristianruben-dev/auradata-design/gradient-heading"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/section-header.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "select",
       "type": "registry:ui",
       "title": "Select",
@@ -1929,41 +1708,6 @@
       "files": [
         {
           "path": "registry/src/components/ui/select.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "shimmer-button",
-      "type": "registry:ui",
-      "title": "Shimmer button",
-      "dependencies": [
-        "cn"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/button"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/shimmer-button.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "shortcuts-dialog",
-      "type": "registry:ui",
-      "title": "Shortcuts dialog",
-      "dependencies": [],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/dialog",
-        "cristianruben-dev/auradata-design/kbd",
-        "cristianruben-dev/auradata-design/progressive-blur",
-        "cristianruben-dev/auradata-design/search-command"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/shortcuts-dialog.tsx",
           "type": "registry:ui"
         }
       ]
@@ -2233,50 +1977,6 @@
       ]
     },
     {
-      "name": "user-menu",
-      "type": "registry:ui",
-      "title": "User menu",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/avatar",
-        "cristianruben-dev/auradata-design/button",
-        "cristianruben-dev/auradata-design/dropdown-menu",
-        "cristianruben-dev/auradata-design/initials",
-        "cristianruben-dev/auradata-design/theme-toggle",
-        "cristianruben-dev/auradata-design/workspace-switcher"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/user-menu.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "workspace-switcher",
-      "type": "registry:ui",
-      "title": "Workspace switcher",
-      "dependencies": [
-        "cn",
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "cristianruben-dev/auradata-design/avatar",
-        "cristianruben-dev/auradata-design/dropdown-menu",
-        "cristianruben-dev/auradata-design/initials",
-        "cristianruben-dev/auradata-design/sidebar"
-      ],
-      "files": [
-        {
-          "path": "registry/src/components/ui/workspace-switcher.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "app-shell",
       "type": "registry:block",
       "title": "App shell",
@@ -2285,18 +1985,44 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "cristianruben-dev/auradata-design/avatar",
         "cristianruben-dev/auradata-design/breadcrumb",
+        "cristianruben-dev/auradata-design/button",
+        "cristianruben-dev/auradata-design/command",
+        "cristianruben-dev/auradata-design/dialog",
+        "cristianruben-dev/auradata-design/drawer",
+        "cristianruben-dev/auradata-design/dropdown-menu",
+        "cristianruben-dev/auradata-design/empty",
+        "cristianruben-dev/auradata-design/initials",
+        "cristianruben-dev/auradata-design/kbd",
         "cristianruben-dev/auradata-design/logo",
-        "cristianruben-dev/auradata-design/notification-center",
+        "cristianruben-dev/auradata-design/progressive-blur",
         "cristianruben-dev/auradata-design/sidebar",
         "cristianruben-dev/auradata-design/theme-toggle",
-        "cristianruben-dev/auradata-design/user-menu",
-        "cristianruben-dev/auradata-design/workspace-switcher",
-        "separator"
+        "cristianruben-dev/auradata-design/use-mobile",
+        "popover",
+        "separator",
+        "skeleton"
       ],
       "files": [
         {
           "path": "registry/src/components/blocks/app-shell.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/notification-center.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/shortcuts-dialog.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/user-menu.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/workspace-switcher.tsx",
           "type": "registry:block"
         }
       ]
@@ -2318,20 +2044,29 @@
         "cristianruben-dev/auradata-design/chart",
         "cristianruben-dev/auradata-design/chart-palette",
         "cristianruben-dev/auradata-design/code-block",
+        "cristianruben-dev/auradata-design/delta",
         "cristianruben-dev/auradata-design/format",
-        "cristianruben-dev/auradata-design/insight-card",
-        "cristianruben-dev/auradata-design/kpi-card",
         "cristianruben-dev/auradata-design/logo",
         "cristianruben-dev/auradata-design/message-feedback",
         "cristianruben-dev/auradata-design/message-scroller",
         "cristianruben-dev/auradata-design/progressive-blur",
+        "cristianruben-dev/auradata-design/sparkline",
         "cristianruben-dev/auradata-design/textarea",
         "cristianruben-dev/auradata-design/trace",
-        "message"
+        "message",
+        "skeleton"
       ],
       "files": [
         {
           "path": "registry/src/components/blocks/chat.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/insight-card.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/kpi-card.tsx",
           "type": "registry:block"
         }
       ]
@@ -2341,24 +2076,41 @@
       "type": "registry:block",
       "title": "Dashboard",
       "dependencies": [
+        "cn",
+        "lucide-react",
         "react-day-picker"
       ],
       "registryDependencies": [
         "card",
+        "cristianruben-dev/auradata-design/button",
         "cristianruben-dev/auradata-design/cartesian-chart",
-        "cristianruben-dev/auradata-design/chart-card",
+        "cristianruben-dev/auradata-design/chart-export",
         "cristianruben-dev/auradata-design/data-table",
-        "cristianruben-dev/auradata-design/date-range-filter",
         "cristianruben-dev/auradata-design/delta",
+        "cristianruben-dev/auradata-design/dialog",
         "cristianruben-dev/auradata-design/donut-chart",
+        "cristianruben-dev/auradata-design/dropdown-menu",
+        "cristianruben-dev/auradata-design/empty",
+        "cristianruben-dev/auradata-design/filter",
         "cristianruben-dev/auradata-design/format",
         "cristianruben-dev/auradata-design/funnel-chart",
-        "cristianruben-dev/auradata-design/kpi-card",
-        "cristianruben-dev/auradata-design/page-header"
+        "cristianruben-dev/auradata-design/page-header",
+        "cristianruben-dev/auradata-design/progressive-blur",
+        "cristianruben-dev/auradata-design/sparkline",
+        "skeleton",
+        "table"
       ],
       "files": [
         {
           "path": "registry/src/components/blocks/dashboard.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/chart-card.tsx",
+          "type": "registry:block"
+        },
+        {
+          "path": "registry/src/components/blocks/kpi-card.tsx",
           "type": "registry:block"
         }
       ]

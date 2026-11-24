@@ -1,4 +1,4 @@
-// registry: auradata (shadcn button with a solid destructive variant and a loading state: spinner, aria-busy, disabled; fills paint under the border, so filled and outline buttons are the same height; the brand focus outline alone, no border change; a legible busy state; a roomier lg)
+// registry: auradata (shadcn button with a solid destructive variant and a loading state: spinner, aria-busy, disabled; fills paint under the border, so filled and outline buttons are the same height; the brand focus outline alone, no border change; a legible busy state; a roomier lg; an optional sheen for the main call to action)
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "cn"
@@ -11,6 +11,11 @@ import { Spinner } from "@/components/ui/spinner"
  */
 const RAISED =
   "shadow-(--elevation-control) hover:-translate-y-px hover:shadow-(--elevation-control-hover) active:not-aria-[haspopup]:shadow-(--elevation-pressed)"
+
+// The sheen rests off the left edge (`-translate-x-full`, the `translate` property) and the animation's
+// `transform` adds to it: it crosses in the first 40% of the loop, then rests, a glint every 3.5 s.
+// Stopped (reduced motion, a screenshot tool), it stays off the button.
+const SHIMMER_KEYFRAMES = "@keyframes shimmer-sweep{0%{transform:translateX(0)}40%,100%{transform:translateX(200%)}}"
 
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px motion-reduce:transition-none disabled:pointer-events-none disabled:bg-none disabled:opacity-50 disabled:shadow-none aria-busy:opacity-100 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/25 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -55,6 +60,7 @@ function Button({
   variant = "default",
   size = "default",
   loading = false,
+  shimmer = false,
   disabled,
   children,
   ...props
@@ -62,6 +68,13 @@ function Button({
   VariantProps<typeof buttonVariants> & {
     /** The action is running: a spinner before the label, `aria-busy` and disabled, so it is not sent twice. */
     loading?: boolean
+    /**
+     * A light sheen sweeping across the button: for the one main call to action of a marketing page. The sheen is
+     * decorative (`aria-hidden`, no clicks), hides with reduced motion and while the button is loading. It passes under
+     * the label, so the text stays crisp. It is a band of white light in both themes (dark mode's button text is dark,
+     * so its own color would read as a shadow), never the brand gradient.
+     */
+    shimmer?: boolean
   }) {
   const iconOnly = typeof size === "string" && size.startsWith("icon")
   return (
@@ -72,6 +85,7 @@ function Button({
         buttonVariants({ variant, size }),
         // The spinner takes the place of a leading icon, so a button with one keeps its width.
         loading && "[&>[data-icon=inline-start]:not([data-slot=spinner])]:hidden",
+        shimmer && "relative isolate overflow-hidden",
         className
       )}
       disabled={disabled || loading}
@@ -86,6 +100,18 @@ function Button({
         />
       )}
       {loading && iconOnly ? null : children}
+      {shimmer && !loading && (
+        <>
+          <style href="shimmer-sweep" precedence="default">
+            {SHIMMER_KEYFRAMES}
+          </style>
+          <span
+            data-slot="shimmer"
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 -z-10 -translate-x-full animate-[shimmer-sweep_3.5s_ease-in-out_infinite] bg-[linear-gradient(105deg,transparent_30%,rgb(255_255_255/0.35)_50%,transparent_70%)] motion-reduce:hidden"
+          />
+        </>
+      )}
     </ButtonPrimitive>
   )
 }

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { DownloadIcon, PlusIcon, RefreshCwIcon } from 'lucide-react'
+import { ArrowRightIcon, DownloadIcon, PlusIcon, RefreshCwIcon } from 'lucide-react'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Button, buttonVariants } from '@/components/ui/button'
@@ -161,5 +161,46 @@ export const LoadingIcon: Story = {
     await expect(button).toHaveAttribute('aria-busy', 'true')
     await expect(button.querySelector('[data-slot=spinner]')).not.toBeNull()
     await expect(button.querySelector('.lucide-refresh-cw')).toBeNull()
+  },
+}
+
+/**
+ * `shimmer`: the main call to action of a marketing page, a sheen crosses it every few seconds. One per page;
+ * reduced motion hides the sheen.
+ */
+export const Shimmer: Story = {
+  args: { shimmer: true, size: 'lg', children: 'Iniciar proyecto' },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole('button', { name: 'Iniciar proyecto' })
+    const sheen = button.querySelector('[data-slot=shimmer]')!
+    await expect(sheen).toHaveAttribute('aria-hidden', 'true')
+    await expect(getComputedStyle(sheen).animationName).toBe('shimmer-sweep')
+    await expect(getComputedStyle(sheen).pointerEvents).toBe('none')
+  },
+}
+
+/** With a trailing icon, as a link. */
+export const ShimmerAsLink: Story = {
+  args: {
+    shimmer: true,
+    size: 'lg',
+    render: <a href="#contacto" />,
+    nativeButton: false,
+    children: (
+      <>
+        Agenda una demo
+        <ArrowRightIcon data-icon="inline-end" />
+      </>
+    ),
+  },
+}
+
+/** Busy: the spinner shows and the sheen stops, so nothing competes with it. */
+export const ShimmerLoading: Story = {
+  args: { shimmer: true, size: 'lg', loading: true, children: 'Enviando…' },
+  play: async ({ canvas }) => {
+    const button = canvas.getByRole('button', { name: 'Enviando…' })
+    await expect(button).toHaveAttribute('aria-busy', 'true')
+    await expect(button.querySelector('[data-slot=shimmer]')).toBeNull()
   },
 }

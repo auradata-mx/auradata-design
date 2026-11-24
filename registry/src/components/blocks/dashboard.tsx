@@ -6,13 +6,13 @@ import type { DateRange } from "react-day-picker"
 
 import { BarChart, LineChart } from "@/components/ui/cartesian-chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ChartCard } from "@/components/ui/chart-card"
+import { ChartCard } from "./chart-card"
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table"
-import { DateRangeFilter, presetRange } from "@/components/ui/date-range-filter"
+import { Filter, presetRange } from "@/components/ui/filter"
 import { Delta } from "@/components/ui/delta"
 import { DonutChart } from "@/components/ui/donut-chart"
 import { FunnelChart } from "@/components/ui/funnel-chart"
-import { KpiCard } from "@/components/ui/kpi-card"
+import { KpiCard } from "./kpi-card"
 import { PageHeader } from "@/components/ui/page-header"
 import { formatCompact, formatCurrency } from "@/lib/format"
 
@@ -96,7 +96,7 @@ function Dashboard({
       <PageHeader title={title} description={description} />
       {/* One row of filters, above everything they scope. */}
       <div data-slot="dashboard-filters" className="flex flex-wrap items-center gap-2">
-        <DateRangeFilter
+        <Filter type="date"
           value={period}
           onValueChange={(next) => {
             setOwnRange(next)

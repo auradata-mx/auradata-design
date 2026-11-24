@@ -7,7 +7,8 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTable, type DataTableColumn } from '@/components/ui/data-table'
-import { DateRangeFilter } from '@/components/ui/date-range-filter'
+// Aliased: `Filter` is also a story of this file.
+import { Filter as ToolbarFilter } from '@/components/ui/filter'
 import { useDataTableUrlState } from '@/hooks/use-data-table-url-state'
 import type { FilterField } from '@/lib/filter-conditions'
 import { formatCurrency, formatDate, formatNumber, formatPercent } from '@/lib/format'
@@ -291,7 +292,7 @@ export const Toolbar: Story = {
   args: {
     densityToggle: true,
     exportable: true,
-    filters: <DateRangeFilter today={new Date(2026, 10, 21)} placeholder="Periodo" />,
+    filters: <ToolbarFilter type="date" today={new Date(2026, 10, 21)} placeholder="Periodo" />,
     actions: (
       <Button>
         <PlusIcon data-icon="inline-start" aria-hidden />

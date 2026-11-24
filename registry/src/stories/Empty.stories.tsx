@@ -1,8 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { LayoutDashboardIcon } from 'lucide-react'
+import { expect, fn, userEvent, within } from 'storybook/test'
 
 import { Button } from '@/components/ui/button'
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyError,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 
 const meta = {
   title: 'AuraData/Empty state',
@@ -68,4 +77,41 @@ export const LongText: Story = {
       </EmptyContent>
     </Empty>
   ),
+}
+
+type ErrorStory = StoryObj<typeof EmptyError>
+
+const renderError: ErrorStory['render'] = (args) => <EmptyError {...args} />
+
+/** `EmptyError`: something failed where content should be, with «Reintentar». */
+export const ErrorDefault: ErrorStory = { args: { onRetry: () => {} }, render: renderError }
+
+/** A chart that failed to load, with the error for support. */
+export const ErrorWithDetail: ErrorStory = {
+  args: {
+    onRetry: () => {},
+    title: 'No pudimos cargar la gráfica',
+    description: 'La consulta a «Ventas por región» tardó demasiado. Reintenta o revisa el dataset.',
+    detail: 'QueryTimeoutError: la consulta superó 60 s\n  dataset: ventas_2026 (id 42)\n  solicitud: 7f3c9a1e',
+  },
+  render: renderError,
+}
+
+/** The detail unfolded, for the visual tests. */
+export const ErrorDetailOpen: ErrorStory = {
+  ...ErrorWithDetail,
+  play: async ({ canvasElement }) => {
+    canvasElement.querySelector('details')?.setAttribute('open', '')
+  },
+}
+
+/** «Reintentar» calls `onRetry`. */
+export const ErrorRetry: ErrorStory = {
+  args: { onRetry: fn() },
+  render: renderError,
+  play: async ({ args, canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Reintentar' }))
+    await expect(args.onRetry).toHaveBeenCalledOnce()
+    ;(document.activeElement as HTMLElement | null)?.blur()
+  },
 }

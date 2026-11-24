@@ -26,7 +26,7 @@ Un componente no está terminado hasta que cubre sus estados: cargando, vacío, 
 | Cargando contenido | `Skeleton` con la forma del contenido | La región lleva `aria-busy` |
 | Cargando una acción | Spinner en el botón, deshabilitado | `aria-busy` en el botón |
 | Vacío | `Empty`: qué falta y el primer paso | Texto normal |
-| Error | `ErrorState` con «Reintentar» | `role="alert"` |
+| Error | `EmptyError` con «Reintentar» | `role="alert"` |
 | Confirmación | Toast de `Sonner` | Región viva del toast |
 
 ## Foco visible
@@ -97,7 +97,7 @@ Un estado vacío dice qué falta y ofrece el primer paso. Un error dice qué pas
 | Algo que afecta a la página | `Alert` | Persiste hasta que cambia la causa |
 | Algo que afecta a toda la app | `AnnouncementBanner` | «Nueva versión disponible», «Mantenimiento programado». Fijo arriba, con una acción y «Cerrar aviso» |
 | Lo que pasó mientras no estabas | `NotificationCenter` | La campana del top bar: «Sin leer» y «Leídas», con «Marcar todas como leídas» |
-| Algo que bloquea el contenido | `ErrorState` | En lugar del contenido que falló |
+| Algo que bloquea el contenido | `EmptyError` | En lugar del contenido que falló |
 
 <div className="not-prose my-6 max-w-xl">
   <Alert variant="warning">
