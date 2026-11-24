@@ -102,7 +102,8 @@ The theme and these items, listed in `/registry.json`:
 The rest (`card`, `popover`, `separator`, `skeleton`, `table`, `spinner`, `message`, `collapsible`) comes
 straight from shadcn: the theme already gives it the brand. Storybook shows them all, so the brand can be seen on each one.
 
-A file is published when it says so on a line of its own: `// registry: auradata (<why>)`.
+A file is published when it says so on a line of its own: `// registry: auradata (<why>)`. A file without that line that another file imports
+relatively (`./kpi-card`) is an internal part: it ships inside every item that imports it and lands beside it.
 
 ## Adding a component
 
