@@ -100,21 +100,26 @@ function remaining(offset: number, room: number): More {
   return start && end ? "both" : start ? "start" : end ? "end" : "none"
 }
 
+function assignRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
+  if (typeof ref === "function") {
+    return ref(node)
+  }
+  if (ref) {
+    ref.current = node
+  }
+}
+
 /** Observe the native viewport without replacing any primitive event handlers or refs. */
 function useScrollBlurViewport<T extends HTMLElement>(ref?: React.Ref<T>) {
   const [viewport, setViewport] = React.useState<T | null>(null)
   const viewportRef = React.useCallback((node: T | null) => {
     setViewport(node)
-    if (typeof ref === "function") {
-      const cleanup = ref(node)
-      if (typeof cleanup === "function") {
-        return () => {
-          cleanup()
-          setViewport(null)
-        }
+    const cleanup = assignRef(ref, node)
+    if (typeof cleanup === "function") {
+      return () => {
+        cleanup()
+        setViewport(null)
       }
-    } else if (ref) {
-      ref.current = node
     }
   }, [ref])
   return [viewport, viewportRef] as const
