@@ -5,7 +5,7 @@
   "description": "AuraData brand tokens for every product: CSS variables, Tailwind 4, shadcn, Docusaurus, antd and ECharts.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cristianruben-dev/auradata-design.git",
+    "url": "git+https://github.com/auradata-mx/auradata-design.git",
     "directory": "packages/tokens"
   },
   "publishConfig": {

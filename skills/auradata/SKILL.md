@@ -3,13 +3,13 @@ name: auradata
 description: "Trigger: building or editing UI in a React app that uses AuraData, the @auradata shadcn registry or the AuraData brand. Install, pick and use AuraData components with its brand rules."
 license: MIT
 metadata:
-  author: "cristianruben-dev"
+  author: "auradata-mx"
   version: "1.0"
 ---
 
 ## Activation Contract
 
-Load this skill when you build or change UI in a React app that installs items from the AuraData registry (`@auradata/<item>`, `https://design.auradata.mx/r/<item>.json`, `cristianruben-dev/auradata-design/<item>`) or must follow the AuraData brand: screens, forms, reports, dashboards, charts, empty/error states, UI copy.
+Load this skill when you build or change UI in a React app that installs items from the AuraData registry (`@auradata/<item>`, `https://design.auradata.mx/r/<item>.json`, `auradata-mx/auradata-design/<item>`) or must follow the AuraData brand: screens, forms, reports, dashboards, charts, empty/error states, UI copy.
 
 ## Hard Rules
 
